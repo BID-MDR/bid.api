@@ -4,8 +4,11 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { EnviromentVariablesEnum } from 'src/core/enums/environment-variables.enum';
 import { UserEntity } from './entitites/user.entity';
 import { UserRepository } from './repositories/user.repository';
+import { AddressEntity } from './entitites/address.entity';
+import { BeneficiaryUserInfoEntity } from './entitites/beneficiary-user-info.entity';
+import { ProfessionalUserInfoEntity } from './entitites/professional-user-info.entity';
 
-const ENTITIES = [UserEntity];
+const ENTITIES = [UserEntity, AddressEntity, BeneficiaryUserInfoEntity, ProfessionalUserInfoEntity];
 const REPOSITORIES = [UserRepository];
 
 @Module({

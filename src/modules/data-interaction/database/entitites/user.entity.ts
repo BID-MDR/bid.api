@@ -59,7 +59,7 @@ export class UserEntity extends BaseEntity {
         type: 'smallint',
         unsigned: true,
     })
-    gradYear: string;
+    gradYear: number;
 
     @Column({
         type: 'enum',
