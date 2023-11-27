@@ -3,15 +3,17 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { EnviromentVariablesEnum } from 'src/core/enums/environment-variables.enum';
 import { UserEntity } from './entitites/user.entity';
+import { UserRepository } from './repositories/user.repository';
 
 const ENTITIES = [UserEntity];
+const REPOSITORIES = [UserRepository];
 
 @Module({
     imports: [
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
             useFactory: (configService: ConfigService): TypeOrmModuleOptions => ({
-                type: 'mysql',
+                type: 'mariadb',
                 host: configService.get<string>(EnviromentVariablesEnum.SQL_SERVER_ADDRESS),
                 port: Number(configService.get<string>(EnviromentVariablesEnum.SQL_SERVER_PORT)),
                 username: configService.get<string>(EnviromentVariablesEnum.SQL_SERVER_USER),
@@ -24,5 +26,7 @@ const ENTITIES = [UserEntity];
             inject: [ConfigService],
         }),
     ],
+    providers: [...REPOSITORIES],
+    exports: [...REPOSITORIES],
 })
 export class DatabaseModule {}
