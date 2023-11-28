@@ -7,6 +7,8 @@ import { WorkRequestRoomTypeQuantityEntity } from './work-request-room-type-quan
 import { WorkRequestMediaEntity } from './work-request-media.entity';
 import { WorkRequestWelfareProgramEntity } from './work-request-welfare-program.entity';
 import { WorkRequestPrevailingConstructionMaterialEntity } from './work-request-prevailing-construction-materials.entity';
+import { WorkRequestPrecarityEntity } from './work-request-precarity.entity';
+import { TechnicalVisitEntity } from './technical-visit.entity';
 
 @Entity({ name: 'work-request' })
 export class WorkRequestEntity extends BaseEntity {
@@ -62,11 +64,11 @@ export class WorkRequestEntity extends BaseEntity {
     })
     roomsToBeWorked: WorkRequestRoomToWorkEntity[];
 
-    @Column({
-        type: 'varchar',
-        length: 100,
+    @OneToMany(() => WorkRequestPrecarityEntity, (precarity) => precarity.workRequest, {
+        cascade: true,
+        eager: true,
     })
-    problemToBeSolved: string;
+    precaritysToBeSolved: WorkRequestPrecarityEntity[];
 
     @Column({
         type: 'varchar',
@@ -79,4 +81,9 @@ export class WorkRequestEntity extends BaseEntity {
         eager: true,
     })
     picturesAndVideos: WorkRequestMediaEntity[];
+
+    @OneToMany(() => TechnicalVisitEntity, (technicalVisit) => technicalVisit.workRequest, {
+        eager: true,
+    })
+    technicalVisits: TechnicalVisitEntity[];
 }

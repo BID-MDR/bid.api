@@ -1,5 +1,5 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
-import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { LevelOfEducationEnum } from '../enums/level-of-education.enum';
 import { MaritalStatusEnum } from '../enums/marital-status.enum';
 import { RaceEnum } from '../enums/race.enum';
@@ -7,6 +7,7 @@ import { UserTypeEnum } from '../enums/user-type.enum';
 import { AddressEntity } from './address.entity';
 import { BeneficiaryUserInfoEntity } from './beneficiary-user-info.entity';
 import { ProfessionalUserInfoEntity } from './professional-user-info.entity';
+import { TechnicalVisitEntity } from './technical-visit.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -98,12 +99,26 @@ export class UserEntity extends BaseEntity {
     @OneToOne(() => BeneficiaryUserInfoEntity, (beneficiaryUserInfo) => beneficiaryUserInfo.user, {
         cascade: true,
         eager: true,
+        nullable: true,
     })
+    @JoinColumn()
     beneficiaryUserInfo: BeneficiaryUserInfoEntity;
 
     @OneToOne(() => ProfessionalUserInfoEntity, (professionalUserInfo) => professionalUserInfo.user, {
         cascade: true,
         eager: true,
+        nullable: true,
     })
+    @JoinColumn()
     professionalUserInfo: ProfessionalUserInfoEntity;
+
+    @OneToMany(() => TechnicalVisitEntity, (technicalVisit) => technicalVisit.professional, {
+        eager: true,
+    })
+    technicalVisitsAsProfessional: TechnicalVisitEntity[];
+
+    @OneToMany(() => TechnicalVisitEntity, (technicalVisit) => technicalVisit.beneficiary, {
+        eager: true,
+    })
+    technicalVisitsAsBeneficiary: TechnicalVisitEntity[];
 }

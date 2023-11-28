@@ -13,6 +13,8 @@ import { WorkRequestRoomToWorkEntity } from './entitites/work-request-room-to-wo
 import { WorkRequestRoomTypeQuantityEntity } from './entitites/work-request-room-type-quantity.entity';
 import { WorkRequestPrevailingConstructionMaterialEntity } from './entitites/work-request-prevailing-construction-materials.entity';
 import { WorkRequestWelfareProgramEntity } from './entitites/work-request-welfare-program.entity';
+import { WorkRequestPrecarityEntity } from './entitites/work-request-precarity.entity';
+import { TechnicalVisitEntity } from './entitites/technical-visit.entity';
 
 const ENTITIES = [
     UserEntity,
@@ -25,6 +27,8 @@ const ENTITIES = [
     WorkRequestMediaEntity,
     WorkRequestPrevailingConstructionMaterialEntity,
     WorkRequestWelfareProgramEntity,
+    WorkRequestPrecarityEntity,
+    TechnicalVisitEntity,
 ];
 const REPOSITORIES = [UserRepository];
 
