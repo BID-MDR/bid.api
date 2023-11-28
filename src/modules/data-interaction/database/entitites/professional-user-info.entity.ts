@@ -3,7 +3,7 @@ import { Column, Entity, OneToOne } from 'typeorm';
 import { PortifolioTypeEnum } from '../enums/portifolio-type.enum';
 import { UserEntity } from './user.entity';
 
-@Entity()
+@Entity({ name: 'professional_user_info' })
 export class ProfessionalUserInfoEntity extends BaseEntity {
     @Column({
         type: 'enum',
@@ -17,6 +17,39 @@ export class ProfessionalUserInfoEntity extends BaseEntity {
         length: 100,
     })
     portifolioLink: string;
+
+    @Column({
+        type: 'varchar',
+        length: 30,
+        nullable: true,
+    })
+    confeaRegistrationNumber: string;
+
+    @Column({
+        type: 'varchar',
+        length: 30,
+        nullable: true,
+    })
+    cauRegistrationNumber: string;
+
+    @Column({
+        type: 'boolean',
+        default: false,
+    })
+    laborAvailability: boolean;
+
+    @Column({
+        type: 'boolean',
+        default: false,
+    })
+    materialPurchaseAndDeliveryAvailability: boolean;
+
+    @Column({
+        type: 'decimal',
+        precision: 10,
+        scale: 2,
+    })
+    laborValue: number;
 
     @OneToOne(() => UserEntity, (user) => user.professionalUserInfo)
     user: UserEntity;

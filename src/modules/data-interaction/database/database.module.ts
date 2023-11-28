@@ -2,13 +2,30 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { EnviromentVariablesEnum } from 'src/core/enums/environment-variables.enum';
-import { UserEntity } from './entitites/user.entity';
-import { UserRepository } from './repositories/user.repository';
 import { AddressEntity } from './entitites/address.entity';
 import { BeneficiaryUserInfoEntity } from './entitites/beneficiary-user-info.entity';
 import { ProfessionalUserInfoEntity } from './entitites/professional-user-info.entity';
+import { UserEntity } from './entitites/user.entity';
+import { UserRepository } from './repositories/user.repository';
+import { WorkRequestEntity } from './entitites/work-request.entity';
+import { WorkRequestMediaEntity } from './entitites/work-request-media.entity';
+import { WorkRequestRoomToWorkEntity } from './entitites/work-request-room-to-work.entity';
+import { WorkRequestRoomTypeQuantityEntity } from './entitites/work-request-room-type-quantity.entity';
+import { WorkRequestPrevailingConstructionMaterialEntity } from './entitites/work-request-prevailing-construction-materials.entity';
+import { WorkRequestWelfareProgramEntity } from './entitites/work-request-welfare-program.entity';
 
-const ENTITIES = [UserEntity, AddressEntity, BeneficiaryUserInfoEntity, ProfessionalUserInfoEntity];
+const ENTITIES = [
+    UserEntity,
+    AddressEntity,
+    BeneficiaryUserInfoEntity,
+    ProfessionalUserInfoEntity,
+    WorkRequestRoomToWorkEntity,
+    WorkRequestRoomTypeQuantityEntity,
+    WorkRequestEntity,
+    WorkRequestMediaEntity,
+    WorkRequestPrevailingConstructionMaterialEntity,
+    WorkRequestWelfareProgramEntity,
+];
 const REPOSITORIES = [UserRepository];
 
 @Module({

@@ -2,7 +2,7 @@ import { BaseEntity } from 'src/core/entities/base.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { UserEntity } from './user.entity';
 
-@Entity()
+@Entity({ name: 'address' })
 export class AddressEntity extends BaseEntity {
     @Column({
         type: 'varchar',

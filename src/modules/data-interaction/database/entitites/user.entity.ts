@@ -8,7 +8,7 @@ import { AddressEntity } from './address.entity';
 import { BeneficiaryUserInfoEntity } from './beneficiary-user-info.entity';
 import { ProfessionalUserInfoEntity } from './professional-user-info.entity';
 
-@Entity()
+@Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
     @Column({
         type: 'enum',
@@ -85,7 +85,7 @@ export class UserEntity extends BaseEntity {
 
     @Column({
         type: 'varchar',
-        length: 100,
+        length: 200,
     })
     profilePicture: string;
 
