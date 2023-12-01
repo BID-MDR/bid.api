@@ -6,8 +6,10 @@ import { RaceEnum } from '../enums/race.enum';
 import { UserTypeEnum } from '../enums/user-type.enum';
 import { AddressEntity } from './address.entity';
 import { BeneficiaryUserInfoEntity } from './beneficiary-user-info.entity';
+import { CostEstimationEntity } from './cost-estimation.entity';
 import { ProfessionalUserInfoEntity } from './professional-user-info.entity';
 import { TechnicalVisitEntity } from './technical-visit.entity';
+import { WorkRequestEntity } from './work-request.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -121,4 +123,12 @@ export class UserEntity extends BaseEntity {
         eager: true,
     })
     technicalVisitsAsBeneficiary: TechnicalVisitEntity[];
+
+    @OneToMany(() => CostEstimationEntity, (costEstimation) => costEstimation.professional, {
+        eager: true,
+    })
+    costEstimationsAsProfessional: CostEstimationEntity[];
+
+    @OneToOne(() => WorkRequestEntity, (workRequest) => workRequest.beneficiary)
+    workRequest: WorkRequestEntity;
 }

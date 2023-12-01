@@ -1,14 +1,15 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
-import { Column, Entity, OneToMany } from 'typeorm';
-import { PrevalingConstructionMaterialsEnum } from '../enums/prevailing-construction-materials.enum';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { PropertyTypeEnum } from '../enums/property-type.enum';
+import { CostEstimationEntity } from './cost-estimation.entity';
+import { TechnicalVisitEntity } from './technical-visit.entity';
+import { UserEntity } from './user.entity';
+import { WorkRequestMediaEntity } from './work-request-media.entity';
+import { WorkRequestPrecarityEntity } from './work-request-precarity.entity';
+import { WorkRequestPrevailingConstructionMaterialEntity } from './work-request-prevailing-construction-materials.entity';
 import { WorkRequestRoomToWorkEntity } from './work-request-room-to-work.entity';
 import { WorkRequestRoomTypeQuantityEntity } from './work-request-room-type-quantity.entity';
-import { WorkRequestMediaEntity } from './work-request-media.entity';
 import { WorkRequestWelfareProgramEntity } from './work-request-welfare-program.entity';
-import { WorkRequestPrevailingConstructionMaterialEntity } from './work-request-prevailing-construction-materials.entity';
-import { WorkRequestPrecarityEntity } from './work-request-precarity.entity';
-import { TechnicalVisitEntity } from './technical-visit.entity';
 
 @Entity({ name: 'work-request' })
 export class WorkRequestEntity extends BaseEntity {
@@ -86,4 +87,15 @@ export class WorkRequestEntity extends BaseEntity {
         eager: true,
     })
     technicalVisits: TechnicalVisitEntity[];
+
+    @OneToMany(() => CostEstimationEntity, (costEstimation) => costEstimation.workRequest, {
+        eager: true,
+    })
+    costEstimations: CostEstimationEntity[];
+
+    @OneToOne(() => UserEntity, (user) => user.workRequest, {
+        eager: true,
+    })
+    @JoinColumn()
+    beneficiary: UserEntity;
 }

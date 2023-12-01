@@ -15,6 +15,8 @@ import { WorkRequestPrevailingConstructionMaterialEntity } from './entitites/wor
 import { WorkRequestWelfareProgramEntity } from './entitites/work-request-welfare-program.entity';
 import { WorkRequestPrecarityEntity } from './entitites/work-request-precarity.entity';
 import { TechnicalVisitEntity } from './entitites/technical-visit.entity';
+import { CostEstimationEntity } from './entitites/cost-estimation.entity';
+import { CostEstimationRoomSolutionCostEntity } from './entitites/cost-estimation-room-solution-cost.entity';
 
 const ENTITIES = [
     UserEntity,
@@ -29,6 +31,8 @@ const ENTITIES = [
     WorkRequestWelfareProgramEntity,
     WorkRequestPrecarityEntity,
     TechnicalVisitEntity,
+    CostEstimationEntity,
+    CostEstimationRoomSolutionCostEntity
 ];
 const REPOSITORIES = [UserRepository];
 
