@@ -4,7 +4,7 @@ import { CostEstimationStatusEnum } from '../enums/cost-estimation-status.enum';
 import { UserEntity } from './user.entity';
 import { ProfessionalDeclineResponseEnum } from '../enums/professional-decline-response.enum';
 import { WorkRequestEntity } from './work-request.entity';
-import { CostEstimationRoomSolutionCostEntity } from './cost-estimation-room-solution-cost.entity';
+import { RoomSolutionEntity } from './room-solution.entity';
 
 @Entity({ name: 'cost-estimation' })
 export class CostEstimationEntity extends BaseEntity {
@@ -35,11 +35,11 @@ export class CostEstimationEntity extends BaseEntity {
     @ManyToOne(() => WorkRequestEntity, (workRequest) => workRequest.costEstimations)
     workRequest: WorkRequestEntity;
 
-    @OneToMany(() => CostEstimationRoomSolutionCostEntity, (roomSolutionCost) => roomSolutionCost.costEstimation, {
+    @OneToMany(() => RoomSolutionEntity, (roomSolutionCost) => roomSolutionCost.costEstimation, {
         cascade: true,
         eager: true,
     })
-    roomsSolutionsCosts: CostEstimationRoomSolutionCostEntity[];
+    roomsSolutions: RoomSolutionEntity[];
 
     @Column({
         type: 'smallint',

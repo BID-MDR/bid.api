@@ -16,11 +16,15 @@ import { WorkRequestWelfareProgramEntity } from './entitites/work-request-welfar
 import { WorkRequestPrecarityEntity } from './entitites/work-request-precarity.entity';
 import { TechnicalVisitEntity } from './entitites/technical-visit.entity';
 import { CostEstimationEntity } from './entitites/cost-estimation.entity';
-import { CostEstimationRoomSolutionCostEntity } from './entitites/cost-estimation-room-solution-cost.entity';
+import { RoomSolutionEntity } from './entitites/room-solution.entity';
 import { ContractEntity } from './entitites/contract.entity';
+import { ConstructionEntity } from './entitites/construction.entity';
+import { ConstructionRoomMediaEntity } from './entitites/construction-room-media.entity';
+import { UserRatingEntity } from './entitites/user-rating.entity';
 
 const ENTITIES = [
     UserEntity,
+    UserRatingEntity,
     AddressEntity,
     BeneficiaryUserInfoEntity,
     ProfessionalUserInfoEntity,
@@ -33,8 +37,10 @@ const ENTITIES = [
     WorkRequestPrecarityEntity,
     TechnicalVisitEntity,
     CostEstimationEntity,
-    CostEstimationRoomSolutionCostEntity,
+    RoomSolutionEntity,
     ContractEntity,
+    ConstructionEntity,
+    ConstructionRoomMediaEntity,
 ];
 const REPOSITORIES = [UserRepository];
 

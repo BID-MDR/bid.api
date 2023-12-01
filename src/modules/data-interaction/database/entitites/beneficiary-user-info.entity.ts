@@ -2,7 +2,7 @@ import { BaseEntity } from 'src/core/entities/base.entity';
 import { Column, Entity, OneToOne } from 'typeorm';
 import { UserEntity } from './user.entity';
 
-@Entity({ name: 'beneficiary_user_info' })
+@Entity({ name: 'beneficiary-user-info' })
 export class BeneficiaryUserInfoEntity extends BaseEntity {
     @Column({
         type: 'boolean',
