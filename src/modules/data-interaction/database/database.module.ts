@@ -17,6 +17,7 @@ import { WorkRequestPrecarityEntity } from './entitites/work-request-precarity.e
 import { TechnicalVisitEntity } from './entitites/technical-visit.entity';
 import { CostEstimationEntity } from './entitites/cost-estimation.entity';
 import { CostEstimationRoomSolutionCostEntity } from './entitites/cost-estimation-room-solution-cost.entity';
+import { ContractEntity } from './entitites/contract.entity';
 
 const ENTITIES = [
     UserEntity,
@@ -32,7 +33,8 @@ const ENTITIES = [
     WorkRequestPrecarityEntity,
     TechnicalVisitEntity,
     CostEstimationEntity,
-    CostEstimationRoomSolutionCostEntity
+    CostEstimationRoomSolutionCostEntity,
+    ContractEntity,
 ];
 const REPOSITORIES = [UserRepository];
 
