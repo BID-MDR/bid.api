@@ -1656,6 +1656,19 @@ braces@^3.0.2, braces@~3.0.2:
   dependencies:
     fill-range "^7.0.1"
 
+brazilian-class-validator@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/brazilian-class-validator/-/brazilian-class-validator-0.1.6.tgz#cebeab6ded10d55321f99a3865095ff1f1dc1b33"
+  integrity sha512-5HxqwwVTJqd9v0JbCcZXtjBCJP+n8eNFBHlmcqFVzScYFDQu2haYnR6Mwm7+PTptPgB5kj4WgSZdAE/wqAVmCQ==
+  dependencies:
+    brazilian-values "^0.10.1"
+    class-validator "^0.13.1"
+
+brazilian-values@^0.10.1:
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/brazilian-values/-/brazilian-values-0.10.1.tgz#057736f2136342a2eb224af8175b2e7db213eecf"
+  integrity sha512-HruDLDug8oD2lydSEP/L7JJTNcgwTH2uIdXUQKRKjwqHDMbSsJ0Hxi5GOJwxPYBrAx2a6RZXnUbG8krjbw4GGw==
+
 browserslist@^4.14.5, browserslist@^4.21.9:
   version "4.22.1"
   resolved "https://registry.yarnpkg.com/browserslist/-/browserslist-4.22.1.tgz#ba91958d1a59b87dab6fed8dfbcb3da5e2e9c619"
@@ -1808,6 +1821,14 @@ class-transformer@^0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/class-transformer/-/class-transformer-0.5.1.tgz#24147d5dffd2a6cea930a3250a677addf96ab336"
   integrity sha512-SQa1Ws6hUbfC98vKGxZH3KFY0Y1lm5Zm0SY8XX9zbK7FJCyVEac3ATW0RIpwzW+oOfmHE5PMPufDG9hCfoEOMw==
+
+class-validator@^0.13.1:
+  version "0.13.2"
+  resolved "https://registry.yarnpkg.com/class-validator/-/class-validator-0.13.2.tgz#64b031e9f3f81a1e1dcd04a5d604734608b24143"
+  integrity sha512-yBUcQy07FPlGzUjoLuUfIOXzgynnQPPruyK1Ge2B74k9ROwnle1E+NxLWnUv5OLU8hA/qL5leAE9XnXq3byaBw==
+  dependencies:
+    libphonenumber-js "^1.9.43"
+    validator "^13.7.0"
 
 class-validator@^0.14.0:
   version "0.14.0"
@@ -3613,7 +3634,7 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-libphonenumber-js@^1.10.14:
+libphonenumber-js@^1.10.14, libphonenumber-js@^1.9.43:
   version "1.10.51"
   resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.10.51.tgz#a3b8c15db2721c3e5f7fe6759e2a524712b578e6"
   integrity sha512-vY2I+rQwrDQzoPds0JeTEpeWzbUJgqoV0O4v31PauHBb/e+1KCXKylHcDnBMgJZ9fH9mErsEbROJY3Z3JtqEmg==
