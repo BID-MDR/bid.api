@@ -7,6 +7,9 @@ import { DataInteractionModule } from 'src/modules/data-interaction/data-interac
 import { ServerExceptionFilter } from 'src/core/filters/exception.filter';
 import { CoreModule } from 'src/core/core.module';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 @Module({
     imports: [
         ConfigModule.forRoot({
