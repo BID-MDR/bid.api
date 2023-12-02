@@ -10,7 +10,7 @@ import { CaubRegistrationRequestDto } from './dtos/caub-resgistration-request.dt
 export class FeatureUserController {
     constructor(private featureUserService: FeatureUserService) {}
 
-    @Get('caub/check-professional-status/cpf/:cpf')
+    @Get('caubr/check-professional-status/cpf/:cpf')
     @ApiParam({
         name: 'cpf',
         description: 'CPF do usuário.',
@@ -19,11 +19,11 @@ export class FeatureUserController {
     })
     @ApiOperation({
         description: 'Necessário para cadastrar o usuário profissional arquiteto/urbanista na plataforma.',
-        summary: 'Retorna o status do registro do profissional no CAUB pelo CPF.',
+        summary: 'Retorna o status do registro do profissional no CAUBR pelo CPF.',
     })
     @ApiOkResponseDtoData({
         type: CaubRegistrationResponseDto,
-        description: 'Retorna o status do registro do profissional no CAUB.',
+        description: 'Retorna o status do registro do profissional no CAUBR.',
     })
     @SerializeOptions({
         type: CaubRegistrationResponseDto,
