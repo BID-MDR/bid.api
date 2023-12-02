@@ -37,3 +37,6 @@ lerna-debug.log*
 .flaskenv*
 !.env.project
 !.env.vault
+
+yarn.lock
+package-lock.json
