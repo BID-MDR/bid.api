@@ -8,6 +8,7 @@ import { ServerExceptionFilter } from 'src/core/filters/exception.filter';
 import { CoreModule } from 'src/core/core.module';
 
 import * as dotenv from 'dotenv';
+import { FacadeModule } from 'src/modules/data-interaction/facade/facade.module';
 dotenv.config();
 
 @Module({
@@ -19,6 +20,7 @@ dotenv.config();
         BusinessLogicModule,
         DataInteractionModule,
         CoreModule,
+        FacadeModule,
     ],
     controllers: [AppController],
     providers: [
