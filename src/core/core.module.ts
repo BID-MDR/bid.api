@@ -3,10 +3,26 @@ import { ExistsInDBConstraint } from './decorators/class-validator/exists-in-db.
 import { JwtAccessTokenStrategy } from './strategies/jwt-access-token-strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { EnviromentVariablesEnum } from './enums/environment-variables.enum';
 
 @Module({
-    imports: [PassportModule.register({ defaultStrategy: 'jwt' }), JwtModule.register({})],
+    imports: [
+        PassportModule.register({ defaultStrategy: 'jwt' }),
+        JwtModule.registerAsync({
+            imports: [ConfigModule],
+            useFactory: async (configService: ConfigService) => {
+                return {
+                    secret: configService.get(EnviromentVariablesEnum.JWT_PAYLOAD_KEY),
+                    signOptions: {
+                        expiresIn: '15m',
+                    },
+                };
+            },
+            inject: [ConfigService],
+        }),
+    ],
     providers: [ExistsInDBConstraint, JwtAccessTokenStrategy],
-    exports: [ExistsInDBConstraint],
+    exports: [ExistsInDBConstraint, JwtModule],
 })
 export class CoreModule {}
