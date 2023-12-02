@@ -15,11 +15,15 @@ export class CaubSubsystem {
     }
 
     async getProfessionalRegistrationStatusFromCaub(cpf: string) {
-        const result: CaubProfessionalRegistrationResponse =
+        const result: CaubProfessionalRegistrationResponse = (
             await this.soapClient.ConvenioSNH_PesquisarProfissionalAsync({
                 cpf,
                 senha: this.configService.get<string>(EnviromentVariablesEnum.CAUB_SOAP_PASSWORD),
-            });
-        return result.retorno.existe.$value && result.retorno.situacao_cau.$value.toUpperCase() === 'ATIVO';
+            })
+        )[0];
+        return {
+            registered: result.retorno.existe.$value,
+            active: result.retorno.existe.$value && result.retorno.situacao_cau.$value.toUpperCase() === 'ATIVO',
+        };
     }
 }
