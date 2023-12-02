@@ -19,11 +19,11 @@ export class FeatureUserController {
     })
     @ApiOperation({
         description: 'Necessário para cadastrar o usuário profissional arquiteto/urbanista na plataforma.',
-        summary: 'Retorna o status do registro do profissional no CAUBR pelo CPF.',
+        summary: 'Retorna o status do registro de um cpf no CAUBR.',
     })
     @ApiOkResponseDtoData({
         type: CaubRegistrationResponseDto,
-        description: 'Retorna o status do registro do profissional no CAUBR.',
+        description: 'Retorna o status do registro do profissional no CAUBR e se existe um registro para o CPF informado.',
     })
     @SerializeOptions({
         type: CaubRegistrationResponseDto,
