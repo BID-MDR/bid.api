@@ -1,34 +1,34 @@
-import { Controller, Post, UseGuards, Body, Get, SerializeOptions } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiBody } from '@nestjs/swagger';
+import { Controller, Get, Param, SerializeOptions } from '@nestjs/common';
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ApiOkResponseDtoData } from 'src/core/decorators/swagger/api-ok-response-dto.decorator';
-import { JwtAccessTokenGuard } from 'src/core/guards/jwt-access-token.guard';
+import { CaubRegistrationResponseDto } from './dtos/caub-resgistration-reponse.dto';
 import { FeatureUserService } from './feature-user.service';
-import { CreateUserDto } from 'src/modules/data-interaction/database/dtos/user/create-user.dto';
-import { ResponseUserDto } from 'src/modules/data-interaction/database/dtos/user/reponse-user.dto';
+import { CaubRegistrationRequestDto } from './dtos/caub-resgistration-request.dto';
 
 @Controller('user')
 @ApiTags('User/Usuário')
 export class FeatureUserController {
     constructor(private featureUserService: FeatureUserService) {}
 
-    @Post()
-    @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard)
-    @ApiOperation({
-        description: 'Cria um usuário.',
-        summary: 'Cria um usuário.',
+    @Get('caubr/check-professional-status/cpf/:cpf')
+    @ApiParam({
+        name: 'cpf',
+        description: 'CPF do usuário.',
+        required: true,
+        allowEmptyValue: false,
     })
-    @ApiBody({
-        type: CreateUserDto,
+    @ApiOperation({
+        description: 'Necessário para cadastrar o usuário profissional arquiteto/urbanista na plataforma.',
+        summary: 'Retorna o status do registro de um cpf no CAUBR.',
     })
     @ApiOkResponseDtoData({
-        type: ResponseUserDto,
-        description: 'Retorna o usuário criado.',
+        type: CaubRegistrationResponseDto,
+        description: 'Retorna o status do registro do profissional no CAUBR e se existe um registro para o CPF informado.',
     })
     @SerializeOptions({
-        type: ResponseUserDto,
+        type: CaubRegistrationResponseDto,
     })
-    async createUser(@Body() dto: CreateUserDto) {
-        return await this.featureUserService.create(dto);
+    async checkProfessionalUserCaubRegistration(@Param() reqParams: CaubRegistrationRequestDto) {
+        return await this.featureUserService.checkProfessionalUserCaubRegistration(reqParams.cpf);
     }
 }

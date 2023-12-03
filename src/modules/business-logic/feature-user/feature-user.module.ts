@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { DatabaseModule } from 'src/modules/data-interaction/database/database.module';
 import { FeatureUserService } from './feature-user.service';
 import { FeatureUserController } from './feature-user.controller';
+import { FacadeModule } from 'src/modules/data-interaction/facade/facade.module';
 
 @Module({
-    imports: [DatabaseModule],
+    imports: [DatabaseModule, FacadeModule],
     providers: [FeatureUserService],
     controllers: [FeatureUserController],
 })
