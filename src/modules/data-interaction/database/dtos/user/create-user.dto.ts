@@ -19,6 +19,7 @@ import { RaceEnum } from '../../enums/race.enum';
 import { UserTypeEnum } from '../../enums/user-type.enum';
 import { CreateAddressDto } from '../address/create-address.dto';
 import { PortifolioTypeEnum } from '../../enums/portifolio-type.enum';
+import { Type } from 'class-transformer';
 
 class BeneficiaryUserInfoDto {
     @ApiProperty()
@@ -55,6 +56,7 @@ export class CreateUserDto {
 
     @ApiProperty({ type: CreateAddressDto, isArray: true })
     @ValidateNested({ each: true })
+    @Type(() => CreateAddressDto)
     addresses: CreateAddressDto[];
 
     @ApiProperty()
@@ -99,11 +101,13 @@ export class CreateUserDto {
 
     @ApiProperty({ type: BeneficiaryUserInfoDto, required: false })
     @ValidateNested({ each: true })
+    @Type(() => BeneficiaryUserInfoDto)
     @IsOptional()
     beneficiaryUserInfo: BeneficiaryUserInfoDto;
 
     @ApiProperty({ type: ProfessionalUserInfoDto, required: false })
     @ValidateNested({ each: true })
+    @Type(() => ProfessionalUserInfoDto)
     @IsOptional()
     professionalUserInfo: ProfessionalUserInfoDto;
 }
