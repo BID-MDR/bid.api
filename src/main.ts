@@ -63,12 +63,7 @@ async function bootstrap() {
 
     if (configService.get(EnviromentVariablesEnum.ENABLE_DOCS) === 'true') {
         const swaggerOptions = new DocumentBuilder()
-            .setTitle(
-                appName +
-                    ` - ${configService
-                        .get(EnviromentVariablesEnum.NODE_ENV)
-                        ?.toUpperCase()}`,
-            )
+            .setTitle(appName + ` - ${configService.get(EnviromentVariablesEnum.NODE_ENV)?.toUpperCase()}`)
             .setVersion(appVersion)
             .addBearerAuth({
                 type: 'http',
@@ -77,13 +72,8 @@ async function bootstrap() {
             })
             .build();
 
-        if (
-            configService.get(EnviromentVariablesEnum.NODE_ENV) !==
-            'development'
-        ) {
-            app.setGlobalPrefix(
-                configService.get(EnviromentVariablesEnum.SERVER_PATH_PREFIX),
-            );
+        if (configService.get(EnviromentVariablesEnum.NODE_ENV) !== 'development') {
+            app.setGlobalPrefix(configService.get(EnviromentVariablesEnum.SERVER_PATH_PREFIX));
         }
 
         const document = SwaggerModule.createDocument(app, swaggerOptions, {
@@ -99,7 +89,11 @@ async function bootstrap() {
 
     const port = configService.get(EnviromentVariablesEnum.PORT) || 3000;
     await app.listen(port);
-    Logger.log(`🚀 Application is running on: http://localhost:${port}`);
+    Logger.log(
+        `🚀 Application is running on: http://localhost:${port} - ${configService.get(
+            EnviromentVariablesEnum.NODE_ENV,
+        ).toUpperCase()} MODE`,
+    );
 }
 
 bootstrap();

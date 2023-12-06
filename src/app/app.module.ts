@@ -1,14 +1,17 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { BusinessLogicModule } from 'src/modules/business-logic/business-logic.module';
 import { DataInteractionModule } from 'src/modules/data-interaction/data-interaction.module';
 import { ServerExceptionFilter } from 'src/core/filters/exception.filter';
 import { CoreModule } from 'src/core/core.module';
+import { FacadeModule } from 'src/modules/data-interaction/facade/facade.module';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { EnviromentVariablesEnum } from 'src/core/enums/environment-variables.enum';
 
 import * as dotenv from 'dotenv';
-import { FacadeModule } from 'src/modules/data-interaction/facade/facade.module';
+
 dotenv.config();
 
 @Module({
@@ -16,6 +19,20 @@ dotenv.config();
         ConfigModule.forRoot({
             isGlobal: true,
             cache: true,
+        }),
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
+            useFactory: (configService: ConfigService): TypeOrmModuleOptions => ({
+                type: 'mariadb',
+                host: configService.get<string>(EnviromentVariablesEnum.SQL_SERVER_ADDRESS),
+                port: Number(configService.get<string>(EnviromentVariablesEnum.SQL_SERVER_PORT)),
+                username: configService.get<string>(EnviromentVariablesEnum.SQL_SERVER_USER),
+                password: configService.get<string>(EnviromentVariablesEnum.SQL_SERVER_PASSWORD),
+                database: configService.get<string>(EnviromentVariablesEnum.SQL_SERVER_DATABASE),
+                autoLoadEntities: true,
+                synchronize: false,
+            }),
+            inject: [ConfigService],
         }),
         BusinessLogicModule,
         DataInteractionModule,

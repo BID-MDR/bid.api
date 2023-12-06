@@ -9,11 +9,15 @@ import { CaubRegistrationResponseDto } from './dtos/caub-resgistration-reponse.d
 
 @Injectable()
 export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, UpdateUserDto> {
-    constructor(repository: UserRepository, private readonly caubFacade: CaubFacade) {
+    constructor(private repository: UserRepository, private readonly caubFacade: CaubFacade) {
         super(repository);
     }
 
     async checkProfessionalUserCaubRegistration(cpf: string): Promise<CaubRegistrationResponseDto> {
         return this.caubFacade.getProfessionalRegistrationStatusFromCaub(cpf);
+    }
+
+    async getUserWithAgendaById(id: number) {
+        return this.repository.getUserWithAgendaById(id);
     }
 }
