@@ -13,20 +13,20 @@ export abstract class BaseRepository<
     }
 
     async findAll(): Promise<T[]> {
-        return this.__repository.find();
+        return await this.__repository.find();
     }
 
     async findById(id: number): Promise<T> {
-        return this.__repository.findOne(id as any);
+        return await this.__repository.findOne(id as any);
     }
 
     async count(): Promise<number> {
-        return this.__repository.count();
+        return await this.__repository.count();
     }
 
     async create(data: CreateDto): Promise<T> {
         const entity = this.__repository.create(data);
-        return this.__repository.save(entity)[0];
+        return await this.__repository.save(entity)[0];
     }
 
     async update(id: number, data: UpdateDto): Promise<T> {

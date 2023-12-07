@@ -14,26 +14,26 @@ export abstract class BaseService<
     }
 
     async findAll(): Promise<T[]> {
-        return this.__repository.findAll();
+        return await this.__repository.findAll();
     }
 
     async findById(id: number): Promise<T> {
-        return this.__repository.findById(id);
+        return await this.__repository.findById(id);
     }
 
     async count(): Promise<number> {
-        return this.__repository.count();
+        return await this.__repository.count();
     }
 
     async create(data: CreateDto): Promise<T> {
-        return this.__repository.create(data);
+        return await this.__repository.create(data);
     }
 
     async update(id: number, data: UpdatedDto): Promise<T> {
-        return this.__repository.update(id, data);
+        return await this.__repository.update(id, data);
     }
 
     async hardDelete(id: number): Promise<void> {
-        return this.__repository.hardDelete(id);
+        return await this.__repository.hardDelete(id);
     }
 }

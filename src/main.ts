@@ -1,11 +1,11 @@
-import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
+import { BadRequestException, Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';
 
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { useContainer } from 'class-validator';
+import { ValidationError, useContainer } from 'class-validator';
 import * as bodyParser from 'body-parser';
 import 'reflect-metadata';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
@@ -32,6 +32,9 @@ async function bootstrap() {
             skipUndefinedProperties: false,
             skipNullProperties: false,
             forbidNonWhitelisted: true,
+            exceptionFactory: (validationErrors: ValidationError[] = []) => {
+                return new BadRequestException(validationErrors);
+            },
         }),
     );
     app.useGlobalInterceptors(new ApiReponseInterceptor(app.get(Reflector)));
@@ -90,9 +93,9 @@ async function bootstrap() {
     const port = configService.get(EnviromentVariablesEnum.PORT) || 3000;
     await app.listen(port);
     Logger.log(
-        `🚀 Application is running on: http://localhost:${port} - ${configService.get(
-            EnviromentVariablesEnum.NODE_ENV,
-        ).toUpperCase()} MODE`,
+        `🚀 Application is running on: http://localhost:${port} - ${configService
+            .get(EnviromentVariablesEnum.NODE_ENV)
+            .toUpperCase()} MODE`,
     );
 }
 

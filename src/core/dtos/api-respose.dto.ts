@@ -1,25 +1,27 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ErrorApiResponseInterface } from '../interfaces/error-api-response.interface';
 
-export class ErrorApiResponseDto {
-    @ApiProperty({})
+export class ErrorApiResponseDto implements ErrorApiResponseInterface {
+    @ApiProperty()
     statusCode: number;
-    @ApiProperty({})
+    @ApiProperty()
+    message: string;
+    @ApiProperty()
+    code: string;
+    @ApiProperty()
     timestamp: string;
-    @ApiProperty({})
+    @ApiProperty()
     path: string;
-    @ApiProperty({ nullable: true })
-    message?: string;
+    @ApiProperty()
+    method: string;
 
-    constructor(
-        statusCode: number,
-        timestamp: string,
-        path: string,
-        message?: string,
-    ) {
+    constructor(statusCode: number, message: string, code: string, timestamp: string, path: string, method: string) {
         this.statusCode = statusCode;
+        this.message = message;
+        this.code = code;
         this.timestamp = timestamp;
         this.path = path;
-        this.message = message;
+        this.method = method;
     }
 }
 

@@ -33,7 +33,13 @@ class ProfessionalUserInfoDto {
     portifolioType: PortifolioTypeEnum;
 
     @ApiProperty()
-    @IsUrl()
+    @IsUrl({
+        allow_fragments: true,
+        require_protocol: true,
+        allow_protocol_relative_urls: true,
+        allow_query_components: true,
+        allow_underscores: true,
+    })
     portifolioLink: string;
 }
 
@@ -60,7 +66,7 @@ export class CreateUserDto {
     addresses: CreateAddressDto[];
 
     @ApiProperty()
-    @Min(1)
+    @Min(18)
     @Max(120)
     age: number;
 
