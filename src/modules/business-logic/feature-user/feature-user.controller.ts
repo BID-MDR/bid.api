@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Param, Post, Req, SerializeOptions, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Param,
+    Post,
+    Put,
+    Req,
+    SerializeOptions,
+    UseGuards,
+    UseInterceptors,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { ApiBodyEncripted } from 'src/core/decorators/swagger/api-body-encripted.decorator';
@@ -11,6 +22,7 @@ import { UserResponseDto } from 'src/modules/data-interaction/database/dtos/user
 import { CaubRegistrationResponseDto } from './dtos/caub-resgistration-reponse.dto';
 import { CaubRegistrationRequestDto } from './dtos/caub-resgistration-request.dto';
 import { FeatureUserService } from './feature-user.service';
+import { UpdateUserDto } from 'src/modules/data-interaction/database/dtos/user/update-user.dto';
 
 @Controller('user')
 @ApiTags('User/Usuário')
@@ -56,6 +68,49 @@ export class FeatureUserController {
     })
     async create(@Body() body: CreateUserDto) {
         return await this.featureUserService.create(body);
+    }
+
+    @Post('password/update/request')
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiBearerAuth()
+    @UseInterceptors(new EncryptInterceptor())
+    @ApiOperation({
+        description: 'Cria um código de 6 dígitos e manda por email para o ususário que iniciou a requisição.',
+        summary: 'Inicia a requisição de alteração de senha.',
+    })
+    @ApiOkResponseDtoData({
+        type: null,
+    })
+    async updatePasswordRequest(@Req() req: Request) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+
+        return await this.featureUserService.updatePasswordRequest(Number(userId));
+    }
+
+    @Put('')
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiBearerAuth()
+    @UseInterceptors(new EncryptInterceptor())
+    @ApiOperation({
+        description: 'Enpoint único para Atualizar beneficiário ou profissional.',
+        summary: 'Atualiza um usuário de ambos os tipos.',
+    })
+    @ApiBodyEncripted({
+        type: UpdateUserDto,
+        required: true,
+        description: 'Usuário a ser atualizado.',
+    })
+    @ApiOkResponseDtoData({
+        type: UserResponseDto,
+        description: 'Usuário atualizado.',
+    })
+    @SerializeOptions({
+        type: UserResponseDto,
+    })
+    async update(@Req() req: Request, @Body() body: CreateUserDto) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+
+        return await this.featureUserService.update(Number(userId), body);
     }
 
     @Get('caubr/check-professional-status/cpf/:cpf')

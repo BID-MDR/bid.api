@@ -5,11 +5,11 @@ import { MaritalStatusEnum } from '../enums/marital-status.enum';
 import { RaceEnum } from '../enums/race.enum';
 import { UserTypeEnum } from '../enums/user-type.enum';
 import { AddressEntity } from './address.entity';
-import { BeneficiaryUserInfoEntity } from './beneficiary-user-info.entity';
 import { CostEstimationEntity } from './cost-estimation.entity';
-import { ProfessionalUserInfoEntity } from './professional-user-info.entity';
 import { TechnicalVisitEntity } from './technical-visit.entity';
 import { WorkRequestEntity } from './work-request.entity';
+import { UserBeneficiaryInfoEntity } from './user-beneficiary-info.entity';
+import { UserProfessionalInfoEntity } from './user-professional-info.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -98,21 +98,21 @@ export class UserEntity extends BaseEntity {
     })
     password: string;
 
-    @OneToOne(() => BeneficiaryUserInfoEntity, (beneficiaryUserInfo) => beneficiaryUserInfo.user, {
+    @OneToOne(() => UserBeneficiaryInfoEntity, (beneficiaryUserInfo) => beneficiaryUserInfo.user, {
         cascade: true,
         nullable: true,
         eager: true,
     })
     @JoinColumn()
-    beneficiaryUserInfo: BeneficiaryUserInfoEntity;
+    beneficiaryUserInfo: UserBeneficiaryInfoEntity;
 
-    @OneToOne(() => ProfessionalUserInfoEntity, (professionalUserInfo) => professionalUserInfo.user, {
+    @OneToOne(() => UserProfessionalInfoEntity, (professionalUserInfo) => professionalUserInfo.user, {
         cascade: true,
         nullable: true,
         eager: true,
     })
     @JoinColumn()
-    professionalUserInfo: ProfessionalUserInfoEntity;
+    professionalUserInfo: UserProfessionalInfoEntity;
 
     @OneToMany(() => TechnicalVisitEntity, (technicalVisit) => technicalVisit.professional, {
         eager: true,

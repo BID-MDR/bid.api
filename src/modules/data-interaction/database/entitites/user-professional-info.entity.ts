@@ -3,8 +3,8 @@ import { Column, Entity, OneToOne } from 'typeorm';
 import { PortifolioTypeEnum } from '../enums/portifolio-type.enum';
 import { UserEntity } from './user.entity';
 
-@Entity({ name: 'professional-user-info' })
-export class ProfessionalUserInfoEntity extends BaseEntity {
+@Entity({ name: 'user-professional-info' })
+export class UserProfessionalInfoEntity extends BaseEntity {
     @Column({
         type: 'enum',
         enum: PortifolioTypeEnum,

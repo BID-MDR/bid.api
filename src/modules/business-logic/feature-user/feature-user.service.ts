@@ -25,8 +25,11 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
     async create(data: CreateUserDto): Promise<UserEntity> {
         data.password = await this.hashPassword(data.password);
 
-        const user = await super.create(data);
-        return user;
+        return await super.create(data);
+    }
+
+    async updatePasswordRequest(userId: number) {
+        
     }
 
     private async hashPassword(password: string): Promise<string> {
