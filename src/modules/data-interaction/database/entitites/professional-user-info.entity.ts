@@ -34,7 +34,7 @@ export class ProfessionalUserInfoEntity extends BaseEntity {
 
     @Column({
         type: 'boolean',
-        default: false,
+        default: true,
     })
     laborAvailability: boolean;
 

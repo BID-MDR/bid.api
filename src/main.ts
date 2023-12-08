@@ -32,9 +32,6 @@ async function bootstrap() {
             skipUndefinedProperties: false,
             skipNullProperties: false,
             forbidNonWhitelisted: true,
-            exceptionFactory: (validationErrors: ValidationError[] = []) => {
-                return new BadRequestException(validationErrors);
-            },
         }),
     );
     app.useGlobalInterceptors(new ApiReponseInterceptor(app.get(Reflector)));

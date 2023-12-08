@@ -100,16 +100,16 @@ export class UserEntity extends BaseEntity {
 
     @OneToOne(() => BeneficiaryUserInfoEntity, (beneficiaryUserInfo) => beneficiaryUserInfo.user, {
         cascade: true,
-        eager: true,
         nullable: true,
+        eager: true,
     })
     @JoinColumn()
     beneficiaryUserInfo: BeneficiaryUserInfoEntity;
 
     @OneToOne(() => ProfessionalUserInfoEntity, (professionalUserInfo) => professionalUserInfo.user, {
         cascade: true,
-        eager: true,
         nullable: true,
+        eager: true,
     })
     @JoinColumn()
     professionalUserInfo: ProfessionalUserInfoEntity;

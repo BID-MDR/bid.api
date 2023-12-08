@@ -1,15 +1,49 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Transform } from 'class-transformer';
 import { LevelOfEducationEnum } from '../../enums/level-of-education.enum';
 import { MaritalStatusEnum } from '../../enums/marital-status.enum';
 import { RaceEnum } from '../../enums/race.enum';
 import { AddressResponseDto } from '../address/response-address.dto';
+import { PortifolioTypeEnum } from '../../enums/portifolio-type.enum';
+import { UserTypeEnum } from '../../enums/user-type.enum';
+
+class ProfessionalUserInfoResponseDto {
+    @ApiProperty({ enum: PortifolioTypeEnum })
+    portifolioType: PortifolioTypeEnum;
+
+    @ApiProperty()
+    portifolioLink: string;
+
+    @ApiProperty()
+    confeaRegistrationNumber: string;
+
+    @ApiProperty()
+    cauRegistrationNumber: string;
+
+    @ApiProperty()
+    laborAvailability: boolean;
+
+    @ApiProperty()
+    materialPurchaseAndDeliveryAvailability: boolean;
+
+    @ApiProperty()
+    laborValue: number;
+}
+
+export class BeneficiaryUserInfoResponseDto {
+    @ApiProperty()
+    allowProfileListing: boolean;
+}
 
 @Exclude()
 export class UserResponseDto {
     @ApiProperty()
     @Expose()
     name: string;
+
+    @ApiProperty({ enum: UserTypeEnum })
+    @Expose()
+    type: UserTypeEnum;
 
     @ApiProperty()
     @Expose()
@@ -60,6 +94,16 @@ export class UserResponseDto {
     @ApiProperty()
     @Expose()
     profilePicture: string;
+
+    @ApiProperty({ type: () => ProfessionalUserInfoResponseDto })
+    @Expose()
+    @Transform(({ value }) => value ?? undefined)
+    professionalUserInfo: ProfessionalUserInfoResponseDto;
+
+    @ApiProperty({ type: () => BeneficiaryUserInfoResponseDto })
+    @Expose()
+    @Transform(({ value }) => value ?? undefined)
+    beneficiaryUserInfo: BeneficiaryUserInfoResponseDto;
 
     @ApiProperty({ type: Date, isArray: true })
     @Expose()

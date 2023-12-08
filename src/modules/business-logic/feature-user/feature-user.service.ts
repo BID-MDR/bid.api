@@ -6,6 +6,7 @@ import { UserEntity } from 'src/modules/data-interaction/database/entitites/user
 import { UserRepository } from 'src/modules/data-interaction/database/repositories/user.repository';
 import { CaubFacade } from 'src/modules/data-interaction/facade/apis/gov/caubr/caub.facade';
 import { CaubRegistrationResponseDto } from './dtos/caub-resgistration-reponse.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -19,5 +20,16 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
 
     async getUserWithAgendaById(id: number) {
         return this.repository.getUserWithAgendaById(id);
+    }
+
+    async create(data: CreateUserDto): Promise<UserEntity> {
+        data.password = await this.hashPassword(data.password);
+
+        const user = await super.create(data);
+        return user;
+    }
+
+    private async hashPassword(password: string): Promise<string> {
+        return bcrypt.hash(password, 13);
     }
 }

@@ -13,11 +13,18 @@ export abstract class BaseRepository<
     }
 
     async findAll(): Promise<T[]> {
-        return await this.__repository.find();
+        return await this.__repository.find({
+            loadEagerRelations: true,
+        });
     }
 
     async findById(id: number): Promise<T> {
-        return await this.__repository.findOne(id as any);
+        return await this.__repository.findOne({
+            where: {
+                id: id as any,
+            },
+            loadEagerRelations: true,
+        });
     }
 
     async count(): Promise<number> {
@@ -26,7 +33,8 @@ export abstract class BaseRepository<
 
     async create(data: CreateDto): Promise<T> {
         const entity = this.__repository.create(data);
-        return await this.__repository.save(entity)[0];
+        const registeredData = await this.__repository.save(entity);
+        return await this.findById(registeredData.id);
     }
 
     async update(id: number, data: UpdateDto): Promise<T> {

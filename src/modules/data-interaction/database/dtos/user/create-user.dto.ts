@@ -1,25 +1,27 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
     IsBoolean,
+    IsCurrency,
+    IsDefined,
     IsEmail,
     IsEnum,
     IsNumberString,
-    IsOptional,
     IsPhoneNumber,
-    IsPositive,
     IsUrl,
     Length,
     Max,
     Min,
+    ValidateBy,
+    ValidateIf,
     ValidateNested,
 } from 'class-validator';
 import { LevelOfEducationEnum } from '../../enums/level-of-education.enum';
 import { MaritalStatusEnum } from '../../enums/marital-status.enum';
+import { PortifolioTypeEnum } from '../../enums/portifolio-type.enum';
 import { RaceEnum } from '../../enums/race.enum';
 import { UserTypeEnum } from '../../enums/user-type.enum';
 import { CreateAddressDto } from '../address/create-address.dto';
-import { PortifolioTypeEnum } from '../../enums/portifolio-type.enum';
-import { Type } from 'class-transformer';
 
 class BeneficiaryUserInfoDto {
     @ApiProperty()
@@ -41,6 +43,16 @@ class ProfessionalUserInfoDto {
         allow_underscores: true,
     })
     portifolioLink: string;
+
+    @ApiProperty()
+    @IsCurrency({
+        allow_decimal: true,
+        digits_after_decimal: [1, 2],
+        require_symbol: false,
+        allow_negatives: false,
+        symbol: 'R$',
+    })
+    laborValue: number;
 }
 
 export class CreateUserDto {
@@ -88,8 +100,12 @@ export class CreateUserDto {
     maritalStatus: MaritalStatusEnum;
 
     @ApiProperty()
-    @Max(999_999_999)
-    @IsPositive()
+    @IsCurrency({
+        allow_decimal: true,
+        digits_after_decimal: [1, 2],
+        require_symbol: false,
+        allow_negatives: false,
+    })
     monthlyFamilyIncome: number;
 
     @ApiProperty({ enum: RaceEnum })
@@ -108,12 +124,14 @@ export class CreateUserDto {
     @ApiProperty({ type: BeneficiaryUserInfoDto, required: false })
     @ValidateNested({ each: true })
     @Type(() => BeneficiaryUserInfoDto)
-    @IsOptional()
+    @ValidateIf((o) => o.type === UserTypeEnum.BENEFICIARIO)
+    @IsDefined()
     beneficiaryUserInfo: BeneficiaryUserInfoDto;
 
     @ApiProperty({ type: ProfessionalUserInfoDto, required: false })
     @ValidateNested({ each: true })
     @Type(() => ProfessionalUserInfoDto)
-    @IsOptional()
+    @ValidateIf((o) => o.type === UserTypeEnum.PROFISSIONAL)
+    @IsDefined()
     professionalUserInfo: ProfessionalUserInfoDto;
 }
