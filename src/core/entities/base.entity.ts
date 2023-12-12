@@ -2,11 +2,11 @@ import { BaseEntity as TypeOrmBaseEntity, PrimaryGeneratedColumn, CreateDateColu
 
 export abstract class BaseEntity extends TypeOrmBaseEntity {
     @PrimaryGeneratedColumn('uuid')
-    id: number;
+    id?: number;
 
     @CreateDateColumn()
-    createdAt: Date;
+    createdAt?: Date;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updatedAt?: Date;
 }

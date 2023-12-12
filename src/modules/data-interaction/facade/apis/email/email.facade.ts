@@ -5,7 +5,7 @@ import { SendGridSubsystem } from './send-grid.subsystem';
 export class EmailFacade {
     constructor(private readonly sendGridSubsystem: SendGridSubsystem) {}
 
-    async getProfessionalRegistrationStatusFromCaub(code: string, userEmail: string) {
-        return this.sendGridSubsystem.sendPasswordCodeEmail(code, userEmail);
+    async sendPasswordResetCodeEmail(code: string, userEmail: string) {
+        return this.sendGridSubsystem.sendPasswordResetCodeEmail(code, userEmail);
     }
 }

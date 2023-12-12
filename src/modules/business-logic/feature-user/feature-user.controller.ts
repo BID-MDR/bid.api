@@ -19,10 +19,13 @@ import { EncryptInterceptor } from 'src/core/interceptors/encrypt.interceptor';
 import { JwtPayloadInterface } from 'src/core/interfaces/jwt-payload.interface';
 import { CreateUserDto } from 'src/modules/data-interaction/database/dtos/user/create-user.dto';
 import { UserResponseDto } from 'src/modules/data-interaction/database/dtos/user/reponse-user.dto';
+import { UpdateUserDto } from 'src/modules/data-interaction/database/dtos/user/update-user.dto';
+import { ConfirmPasswordUpdateRequestDto } from './dtos/confirm-password-update.request.dto';
 import { ProfessionalCouncilRegistrationResponseDto } from './dtos/professional-council-resgistration-reponse.dto';
 import { ProfessionalCouncilRegistrationRequestDto } from './dtos/professional-council-resgistration-request.dto';
+import { TokenVerifyParamsDto } from './dtos/token-verify-params.dto';
+import { TokenVerifyReponseDto } from './dtos/token-verify-reponse.dto';
 import { FeatureUserService } from './feature-user.service';
-import { UpdateUserDto } from 'src/modules/data-interaction/database/dtos/user/update-user.dto';
 
 @Controller('user')
 @ApiTags('User/Usuário')
@@ -84,7 +87,55 @@ export class FeatureUserController {
     async updatePasswordRequest(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
 
-        return await this.featureUserService.updatePasswordRequest(Number(userId));
+        await this.featureUserService.updatePasswordRequest(Number(userId));
+    }
+
+    @Post('password/update/verify/token/:token')
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiBearerAuth()
+    @ApiOperation({
+        description:
+            'Verifica a validade do código de autenticação informado no parâmetro usando o ID do usuário contido no JWT para identificação no banco.',
+        summary: 'Verifica a validade do código de alteração de senha.',
+    })
+    @ApiParam({
+        name: 'token',
+        description: 'Código de autenticação de 6 dígitos.',
+        required: true,
+        allowEmptyValue: false,
+    })
+    @ApiOkResponseDtoData({
+        type: TokenVerifyReponseDto,
+    })
+    @SerializeOptions({
+        type: TokenVerifyReponseDto,
+    })
+    async verifyUpdatePasswordRequest(@Req() req: Request, @Param() paramDto: TokenVerifyParamsDto) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+
+        return await this.featureUserService.verifyToken(Number(userId), paramDto.token);
+    }
+
+    @Post('password/update/confirm')
+    @UseInterceptors(new EncryptInterceptor())
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOperation({
+        description: 'Cria um código de 6 dígitos e manda para o email cadastrado do usuário que iniciou a requisição.',
+        summary: 'Inicia a requisição de alteração de senha.',
+    })
+    @ApiOkResponseDtoData({
+        type: null,
+    })
+    @ApiBodyEncripted({
+        type: ConfirmPasswordUpdateRequestDto,
+        required: true,
+        description: 'Usuário a ser atualizado.',
+    })
+    async confirmUpdatePasswordRequest(@Req() req: Request, @Body() dto: ConfirmPasswordUpdateRequestDto) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+
+        return await this.featureUserService.confirmUpdatePasswordRequest(Number(userId), dto);
     }
 
     @Put('')

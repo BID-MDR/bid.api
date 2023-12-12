@@ -12,7 +12,7 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
         super(repository);
     }
 
-    async getUserWithAgendaById(id: number) {
+    async findUserWithAgendaById(id: number) {
         return 'new Promise()';
     }
 }

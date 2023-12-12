@@ -21,6 +21,7 @@ import { WorkRequestEntity } from './entitites/work-request.entity';
 import { UserRepository } from './repositories/user.repository';
 import { UserRestingDayEntity } from './entitites/user-resting-day.entity';
 import { UserAppointmentEntity } from './entitites/user-appointment.entity';
+import { UserOtpRequestEntity } from './entitites/user-otp-request.entity';
 
 const ENTITIES = [
     UserEntity,
@@ -29,6 +30,7 @@ const ENTITIES = [
     UserProfessionalInfoEntity,
     UserRestingDayEntity,
     UserAppointmentEntity,
+    UserOtpRequestEntity,
     WorkRequestRoomToWorkEntity,
     WorkRequestRoomTypeQuantityEntity,
     WorkRequestEntity,

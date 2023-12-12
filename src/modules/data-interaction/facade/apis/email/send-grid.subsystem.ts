@@ -11,7 +11,7 @@ export class SendGridSubsystem {
         this.sendGridClient.setApiKey(this.configService.get(EnviromentVariablesEnum.SENDGRID_API_KEY));
     }
 
-    async sendPasswordCodeEmail(code: string, userEmail: string) {
+    async sendPasswordResetCodeEmail(code: string, userEmail: string) {
         const message = {
             to: userEmail,
             from: this.configService.get(EnviromentVariablesEnum.SENDGRID_EMAIL_SENDER),

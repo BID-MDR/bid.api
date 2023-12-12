@@ -11,6 +11,7 @@ import { WorkRequestEntity } from './work-request.entity';
 import { UserBeneficiaryInfoEntity } from './user-beneficiary-info.entity';
 import { UserProfessionalInfoEntity } from './user-professional-info.entity';
 import { UserAppointmentEntity } from './user-appointment.entity';
+import { UserOtpRequestEntity } from './user-otp-request.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -138,4 +139,12 @@ export class UserEntity extends BaseEntity {
 
     @OneToOne(() => WorkRequestEntity, (workRequest) => workRequest.beneficiary)
     workRequest: WorkRequestEntity;
+
+    @OneToOne(() => UserOtpRequestEntity, (otpRequest) => otpRequest.user, {
+        eager: true,
+        cascade: true,
+        nullable: true,
+    })
+    @JoinColumn()
+    otpRequest: UserOtpRequestEntity;
 }
