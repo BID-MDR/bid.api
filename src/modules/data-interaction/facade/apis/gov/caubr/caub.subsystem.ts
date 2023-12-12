@@ -24,6 +24,7 @@ export class CaubSubsystem {
         return {
             registered: result.retorno.existe.$value,
             active: result.retorno.existe.$value && result.retorno.situacao_cau.$value.toUpperCase() === 'ATIVO',
+            registryNumber: null,
         };
     }
 }

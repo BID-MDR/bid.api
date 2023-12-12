@@ -1,6 +1,6 @@
 import { IsCPF } from 'brazilian-class-validator';
 
-export class CaubRegistrationRequestDto {
+export class ProfessionalCouncilRegistrationRequestDto {
     @IsCPF()
     cpf: string;
 }

@@ -15,22 +15,24 @@ export class AwsSubsystem {
                 secretAccessKey: configService.get(EnviromentVariablesEnum.AWS_BUCKET_SECRET_ACCESS_KEY),
             },
             endpoint: configService.get(EnviromentVariablesEnum.AWS_BUCKET_ENDPOINT),
-            // s3ForcePathStyle: false,
         });
     }
 
     async uploadMedia(fileMimeType: string, fileName: string, file: Buffer | string) {
-        
+        if (typeof file === 'string') {
+            file = Buffer.from(file.split(';base64,').pop(), 'base64');
+        }
 
-        return await this.s3Client
-            .upload({
-                Bucket: S3_BUCKET,
-                Key: directory ? `${directory}/${key}` : key,
-                Body: buffer,
-                // ContentEncoding: 'base64',
-                ContentType: type,
-                ACL: 'public-read',
-            })
-            .promise();
+        return (
+            await this.s3Client
+                .upload({
+                    Bucket: this.configService.get(EnviromentVariablesEnum.AWS_BUCKET_NAME),
+                    Key: fileName,
+                    Body: file,
+                    ContentType: fileMimeType,
+                    ACL: 'public-read',
+                })
+                .promise()
+        ).Location;
     }
 }

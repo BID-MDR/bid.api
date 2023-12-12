@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
 import { AppController } from './app.controller';
@@ -16,6 +17,7 @@ dotenv.config();
 
 @Module({
     imports: [
+        CacheModule.register(),
         ConfigModule.forRoot({
             isGlobal: true,
             cache: true,

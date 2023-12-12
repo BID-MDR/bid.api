@@ -19,8 +19,8 @@ import { EncryptInterceptor } from 'src/core/interceptors/encrypt.interceptor';
 import { JwtPayloadInterface } from 'src/core/interfaces/jwt-payload.interface';
 import { CreateUserDto } from 'src/modules/data-interaction/database/dtos/user/create-user.dto';
 import { UserResponseDto } from 'src/modules/data-interaction/database/dtos/user/reponse-user.dto';
-import { CaubRegistrationResponseDto } from './dtos/caub-resgistration-reponse.dto';
-import { CaubRegistrationRequestDto } from './dtos/caub-resgistration-request.dto';
+import { ProfessionalCouncilRegistrationResponseDto } from './dtos/professional-council-resgistration-reponse.dto';
+import { ProfessionalCouncilRegistrationRequestDto } from './dtos/professional-council-resgistration-request.dto';
 import { FeatureUserService } from './feature-user.service';
 import { UpdateUserDto } from 'src/modules/data-interaction/database/dtos/user/update-user.dto';
 
@@ -125,14 +125,38 @@ export class FeatureUserController {
         summary: 'Retorna o status do registro de um cpf no CAUBR.',
     })
     @ApiOkResponseDtoData({
-        type: CaubRegistrationResponseDto,
+        type: ProfessionalCouncilRegistrationResponseDto,
         description:
             'Retorna o status do registro do profissional no CAUBR e se existe um registro para o CPF informado.',
     })
     @SerializeOptions({
-        type: CaubRegistrationResponseDto,
+        type: ProfessionalCouncilRegistrationResponseDto,
     })
-    async checkProfessionalUserCaubRegistration(@Param() reqParams: CaubRegistrationRequestDto) {
+    async checkProfessionalUserCaubRegistration(@Param() reqParams: ProfessionalCouncilRegistrationRequestDto) {
         return await this.featureUserService.checkProfessionalUserCaubRegistration(reqParams.cpf);
+    }
+
+    @Get('confea/check-professional-status/cpf/:cpf')
+    @ApiParam({
+        name: 'cpf',
+        description: 'CPF do usuário.',
+        required: true,
+        allowEmptyValue: false,
+    })
+    @ApiOperation({
+        description:
+            'Necessário para cadastrar o usuário profissional [Engenheiro Civil, Engenheiro Civil e Ambiental, Tecnólogo em Construção Civil, Tecnólogo em Construção Civil - Edificações] na plataforma.',
+        summary: 'Retorna o status do registro de um cpf no CONFEA.',
+    })
+    @ApiOkResponseDtoData({
+        type: ProfessionalCouncilRegistrationResponseDto,
+        description:
+            'Retorna o status do registro do profissional no CONFEA e se existe um registro para o CPF informado.',
+    })
+    @SerializeOptions({
+        type: ProfessionalCouncilRegistrationResponseDto,
+    })
+    async checkProfessionalUserConfeaRegistration(@Param() reqParams: ProfessionalCouncilRegistrationRequestDto) {
+        return await this.featureUserService.checkProfessionalUserConfeaRegistration(reqParams.cpf);
     }
 }

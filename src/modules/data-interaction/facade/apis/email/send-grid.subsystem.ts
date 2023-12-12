@@ -5,7 +5,7 @@ import { EnviromentVariablesEnum } from 'src/core/enums/environment-variables.en
 
 @Injectable()
 export class SendGridSubsystem {
-    sendGridClient: MailService;
+    sendGridClient = new MailService();
 
     constructor(private readonly configService: ConfigService) {
         this.sendGridClient.setApiKey(this.configService.get(EnviromentVariablesEnum.SENDGRID_API_KEY));
