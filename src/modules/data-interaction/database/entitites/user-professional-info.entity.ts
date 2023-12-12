@@ -1,7 +1,8 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { PortifolioTypeEnum } from '../enums/portifolio-type.enum';
 import { UserEntity } from './user.entity';
+import { UserRestingDayEntity } from './user-resting-day.entity';
 
 @Entity({ name: 'user-professional-info' })
 export class UserProfessionalInfoEntity extends BaseEntity {
@@ -50,6 +51,30 @@ export class UserProfessionalInfoEntity extends BaseEntity {
         scale: 2,
     })
     laborValue: number;
+
+    @OneToMany(() => UserRestingDayEntity, (restingDay) => restingDay.userProfessionalInfo, {
+        cascade: true,
+        eager: true,
+    })
+    restingDays: UserRestingDayEntity[];
+
+    @Column({
+        type: 'varchar',
+        length: 4,
+    })
+    worksFrom: string;
+
+    @Column({
+        type: 'varchar',
+        length: 4,
+    })
+    worksTo: string;
+
+    @Column({
+        type: 'smallint',
+        unsigned: true,
+    })
+    maximumDistanceToWorks: number;
 
     @OneToOne(() => UserEntity, (user) => user.professionalUserInfo)
     user: UserEntity;

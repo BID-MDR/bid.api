@@ -3,16 +3,19 @@ import { Type } from 'class-transformer';
 import {
     IsBoolean,
     IsCurrency,
+    IsDataURI,
     IsDefined,
     IsEmail,
     IsEnum,
+    IsMilitaryTime,
     IsNumberString,
+    IsOptional,
     IsPhoneNumber,
+    IsPositive,
     IsUrl,
     Length,
     Max,
     Min,
-    ValidateBy,
     ValidateIf,
     ValidateNested,
 } from 'class-validator';
@@ -22,11 +25,18 @@ import { PortifolioTypeEnum } from '../../enums/portifolio-type.enum';
 import { RaceEnum } from '../../enums/race.enum';
 import { UserTypeEnum } from '../../enums/user-type.enum';
 import { CreateAddressDto } from '../address/create-address.dto';
+import { RestingDayEnum } from '../../enums/resting-day.enu';
 
 class BeneficiaryUserInfoDto {
     @ApiProperty()
     @IsBoolean()
     allowProfileListing: boolean;
+}
+
+class UserRestingDayDto {
+    @ApiProperty({ enum: RestingDayEnum })
+    @IsEnum(RestingDayEnum)
+    day: RestingDayEnum;
 }
 
 class ProfessionalUserInfoDto {
@@ -44,6 +54,16 @@ class ProfessionalUserInfoDto {
     })
     portifolioLink: string;
 
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsNumberString()
+    confeaRegistrationNumber: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    @IsNumberString()
+    cauRegistrationNumber: string;
+
     @ApiProperty()
     @IsCurrency({
         allow_decimal: true,
@@ -53,6 +73,23 @@ class ProfessionalUserInfoDto {
         symbol: 'R$',
     })
     laborValue: number;
+
+    @ApiProperty({ type: UserRestingDayDto })
+    @ValidateNested({ each: true })
+    @Type(() => UserRestingDayDto)
+    restingDays: UserRestingDayDto[];
+
+    @ApiProperty({ description: 'Horário militar' })
+    @IsMilitaryTime()
+    worksFrom: string;
+
+    @ApiProperty({ description: 'Horário militar' })
+    @IsMilitaryTime()
+    worksTo: string;
+
+    @ApiProperty()
+    @IsPositive()
+    maximumDistanceToWorks: number;
 }
 
 export class CreateUserDto {
@@ -113,7 +150,7 @@ export class CreateUserDto {
     race: RaceEnum;
 
     @ApiProperty()
-    @IsUrl({})
+    @IsDataURI()
     profilePicture: string;
 
     @ApiProperty()

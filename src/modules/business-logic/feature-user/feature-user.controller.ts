@@ -75,7 +75,7 @@ export class FeatureUserController {
     @ApiBearerAuth()
     @UseInterceptors(new EncryptInterceptor())
     @ApiOperation({
-        description: 'Cria um código de 6 dígitos e manda por email para o ususário que iniciou a requisição.',
+        description: 'Cria um código de 6 dígitos e manda para o email cadastrado do usuário que iniciou a requisição.',
         summary: 'Inicia a requisição de alteração de senha.',
     })
     @ApiOkResponseDtoData({
@@ -107,7 +107,7 @@ export class FeatureUserController {
     @SerializeOptions({
         type: UserResponseDto,
     })
-    async update(@Req() req: Request, @Body() body: CreateUserDto) {
+    async update(@Req() req: Request, @Body() body: UpdateUserDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
 
         return await this.featureUserService.update(Number(userId), body);

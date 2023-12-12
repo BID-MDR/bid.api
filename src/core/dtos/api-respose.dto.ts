@@ -35,7 +35,7 @@ export class ApiResponseDto<T> {
     @ApiProperty({ nullable: true })
     limit: number | null = null;
 
-    @ApiProperty()
+    @ApiProperty({ type: Boolean })
     success = true;
 
     @ApiProperty({ isArray: true, type: ErrorApiResponseDto, nullable: true })

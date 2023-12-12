@@ -10,6 +10,7 @@ import { TechnicalVisitEntity } from './technical-visit.entity';
 import { WorkRequestEntity } from './work-request.entity';
 import { UserBeneficiaryInfoEntity } from './user-beneficiary-info.entity';
 import { UserProfessionalInfoEntity } from './user-professional-info.entity';
+import { UserAppointmentEntity } from './user-appointment.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -118,6 +119,12 @@ export class UserEntity extends BaseEntity {
         eager: true,
     })
     technicalVisitsAsProfessional: TechnicalVisitEntity[];
+
+    @OneToMany(() => UserAppointmentEntity, (appointment) => appointment.user, {
+        eager: true,
+        cascade: true,
+    })
+    appointments: UserAppointmentEntity[];
 
     @OneToMany(() => TechnicalVisitEntity, (technicalVisit) => technicalVisit.beneficiary, {
         eager: true,

@@ -19,13 +19,16 @@ import { WorkRequestRoomTypeQuantityEntity } from './entitites/work-request-room
 import { WorkRequestWelfareProgramEntity } from './entitites/work-request-welfare-program.entity';
 import { WorkRequestEntity } from './entitites/work-request.entity';
 import { UserRepository } from './repositories/user.repository';
+import { UserRestingDayEntity } from './entitites/user-resting-day.entity';
+import { UserAppointmentEntity } from './entitites/user-appointment.entity';
 
 const ENTITIES = [
     UserEntity,
     UserRatingEntity,
-    AddressEntity,
     UserBeneficiaryInfoEntity,
     UserProfessionalInfoEntity,
+    UserRestingDayEntity,
+    UserAppointmentEntity,
     WorkRequestRoomToWorkEntity,
     WorkRequestRoomTypeQuantityEntity,
     WorkRequestEntity,
@@ -33,12 +36,13 @@ const ENTITIES = [
     WorkRequestPrevailingConstructionMaterialEntity,
     WorkRequestWelfareProgramEntity,
     WorkRequestPrecarityEntity,
+    ConstructionEntity,
+    ConstructionRoomMediaEntity,
     TechnicalVisitEntity,
     CostEstimationEntity,
     RoomSolutionEntity,
     ContractEntity,
-    ConstructionEntity,
-    ConstructionRoomMediaEntity,
+    AddressEntity,
 ];
 const REPOSITORIES = [UserRepository];
 
