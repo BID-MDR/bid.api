@@ -18,7 +18,7 @@ export abstract class BaseRepository<
         });
     }
 
-    async findById(id: number): Promise<T> {
+    async findById(id: string): Promise<T> {
         return await this.__repository.findOne({
             where: {
                 id: id as any,
@@ -37,16 +37,21 @@ export abstract class BaseRepository<
         return await this.findById(registeredData.id);
     }
 
-    async update(id: number, data: UpdateDto): Promise<T> {
+    async createMany(data: CreateDto[]): Promise<T[]> {
+        const entities = this.__repository.create(data);
+        return await this.__repository.save(entities);
+    }
+
+    async update(id: string, data: UpdateDto): Promise<T> {
         await this.__repository.update(id, data as any);
         return this.findById(id);
     }
 
-    async hardDelete(id: number): Promise<void> {
+    async hardDelete(id: string): Promise<void> {
         await this.__repository.delete(id);
     }
 
-    async softDelete(id: number): Promise<void> {
+    async softDelete(id: string): Promise<void> {
         await this.__repository.softDelete(id);
     }
 }

@@ -1,31 +1,48 @@
 import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
-import { CreateUserDto } from './create-user.dto';
-import { IsEnum, IsISO8601, IsMilitaryTime, IsOptional, ValidateNested } from 'class-validator';
-import { UserAppointmentTypeEnum } from '../../enums/user-appointment-type.enum';
 import { Type } from 'class-transformer';
+import { IsDefined, IsOptional, ValidateIf, ValidateNested } from 'class-validator';
+import { UserTypeEnum } from '../../enums/user-type.enum';
+import { UpdateAddressDto } from '../address/update-address.dto';
+import { CreateUserDto } from './create-user.dto';
+import { CreateUserAppointmentDto } from './user-appointment/create-user-appointment.dto';
+import { UpdateUserAppointmentDto } from './user-appointment/update-user-appointment.dto';
+import { UpdateUserBeneficiaryInfoDto } from './user-beneficiary-info/update-user-beneficiary-info.dto';
+import { UpdateUserProfessionalInfoDto } from './user-professional-info/update-user-professional-info.dto';
 
-class AppointmentDto {
-    @ApiProperty({ description: 'Ano-Mes-Dia' })
-    @IsISO8601()
-    date: string;
-
-    @ApiProperty({ description: 'Horário militar' })
-    @IsMilitaryTime()
-    timeFrom: string;
-
-    @ApiProperty({ description: 'Horário militar' })
-    @IsMilitaryTime()
-    timeTo: string;
-
-    @ApiProperty({ enum: UserAppointmentTypeEnum })
-    @IsEnum(UserAppointmentTypeEnum)
-    type: UserAppointmentTypeEnum;
-}
-
-export class UpdateUserDto extends OmitType(PartialType(CreateUserDto), ['password']) {
-    @ApiProperty({ type: AppointmentDto, isArray: true })
+export class UpdateUserDto extends OmitType(PartialType(CreateUserDto), [
+    'password',
+    'beneficiaryUserInfo',
+    'professionalUserInfo',
+    'addresses',
+]) {
+    @ApiProperty({ type: CreateUserAppointmentDto, isArray: true })
     @ValidateNested({ each: true })
-    @Type(() => AppointmentDto)
+    @Type(() => CreateUserAppointmentDto)
     @IsOptional()
-    appointments: AppointmentDto[];
+    newAppointments: CreateUserAppointmentDto[];
+
+    @ApiProperty({ type: UpdateUserAppointmentDto, isArray: true })
+    @ValidateNested({ each: true })
+    @Type(() => UpdateUserAppointmentDto)
+    @IsOptional()
+    updateAppointments: UpdateUserAppointmentDto[];
+
+    @ApiProperty({ type: UpdateUserBeneficiaryInfoDto, required: false })
+    @ValidateNested({ each: true })
+    @Type(() => UpdateUserBeneficiaryInfoDto)
+    @ValidateIf((o) => o.type === UserTypeEnum.BENEFICIARIO)
+    @IsDefined()
+    beneficiaryUserInfo: UpdateUserBeneficiaryInfoDto;
+
+    @ApiProperty({ type: UpdateUserProfessionalInfoDto, required: false })
+    @ValidateNested({ each: true })
+    @Type(() => UpdateUserProfessionalInfoDto)
+    @ValidateIf((o) => o.type === UserTypeEnum.PROFISSIONAL)
+    @IsDefined()
+    professionalUserInfo: UpdateUserProfessionalInfoDto;
+
+    @ApiProperty({ type: UpdateAddressDto, isArray: true })
+    @ValidateNested({ each: true })
+    @Type(() => UpdateAddressDto)
+    addresses: UpdateAddressDto[];
 }

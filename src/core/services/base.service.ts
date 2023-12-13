@@ -2,11 +2,7 @@ import { DeepPartial } from 'typeorm';
 import { BaseEntity } from '../entities/base.entity';
 import { BaseRepository } from '../repositories/base.repository';
 
-export abstract class BaseService<
-    T extends BaseEntity,
-    CreateDto extends DeepPartial<T>,
-    UpdatedDto extends DeepPartial<T>,
-> {
+export abstract class BaseService<T extends BaseEntity, CreateDto extends DeepPartial<T>, UpdatedDto extends DeepPartial<T>> {
     private __repository: BaseRepository<T, CreateDto, UpdatedDto>;
 
     constructor(repository: BaseRepository<T, CreateDto, UpdatedDto>) {
@@ -17,7 +13,7 @@ export abstract class BaseService<
         return await this.__repository.findAll();
     }
 
-    async findById(id: number): Promise<T> {
+    async findById(id: string): Promise<T> {
         return await this.__repository.findById(id);
     }
 
@@ -29,11 +25,15 @@ export abstract class BaseService<
         return await this.__repository.create(data);
     }
 
-    async update(id: number, data: UpdatedDto): Promise<T> {
+    async createMany(data: CreateDto[]): Promise<T[]> {
+        return await this.__repository.createMany(data);
+    }
+
+    async update(id: string, data: UpdatedDto): Promise<T> {
         return await this.__repository.update(id, data);
     }
 
-    async hardDelete(id: number): Promise<void> {
+    async hardDelete(id: string): Promise<void> {
         return await this.__repository.hardDelete(id);
     }
 }

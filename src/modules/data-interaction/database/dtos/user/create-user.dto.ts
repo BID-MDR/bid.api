@@ -1,18 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
-    IsBoolean,
     IsCurrency,
     IsDataURI,
     IsDefined,
     IsEmail,
     IsEnum,
-    IsMilitaryTime,
     IsNumberString,
-    IsOptional,
     IsPhoneNumber,
-    IsPositive,
-    IsUrl,
     Length,
     Max,
     Min,
@@ -21,76 +16,11 @@ import {
 } from 'class-validator';
 import { LevelOfEducationEnum } from '../../enums/level-of-education.enum';
 import { MaritalStatusEnum } from '../../enums/marital-status.enum';
-import { PortifolioTypeEnum } from '../../enums/portifolio-type.enum';
 import { RaceEnum } from '../../enums/race.enum';
 import { UserTypeEnum } from '../../enums/user-type.enum';
 import { CreateAddressDto } from '../address/create-address.dto';
-import { RestingDayEnum } from '../../enums/resting-day.enu';
-
-class BeneficiaryUserInfoDto {
-    @ApiProperty()
-    @IsBoolean()
-    allowProfileListing: boolean;
-}
-
-class UserRestingDayDto {
-    @ApiProperty({ enum: RestingDayEnum })
-    @IsEnum(RestingDayEnum)
-    day: RestingDayEnum;
-}
-
-class ProfessionalUserInfoDto {
-    @ApiProperty({ enum: PortifolioTypeEnum })
-    @IsEnum(PortifolioTypeEnum)
-    portifolioType: PortifolioTypeEnum;
-
-    @ApiProperty()
-    @IsUrl({
-        allow_fragments: true,
-        require_protocol: true,
-        allow_protocol_relative_urls: true,
-        allow_query_components: true,
-        allow_underscores: true,
-    })
-    portifolioLink: string;
-
-    @ApiProperty({ required: false })
-    @IsOptional()
-    @IsNumberString()
-    confeaRegistrationNumber: string;
-
-    @ApiProperty({ required: false })
-    @IsOptional()
-    @IsNumberString()
-    cauRegistrationNumber: string;
-
-    @ApiProperty()
-    @IsCurrency({
-        allow_decimal: true,
-        digits_after_decimal: [1, 2],
-        require_symbol: false,
-        allow_negatives: false,
-        symbol: 'R$',
-    })
-    laborValue: number;
-
-    @ApiProperty({ type: UserRestingDayDto })
-    @ValidateNested({ each: true })
-    @Type(() => UserRestingDayDto)
-    restingDays: UserRestingDayDto[];
-
-    @ApiProperty({ description: 'Horário militar' })
-    @IsMilitaryTime()
-    worksFrom: string;
-
-    @ApiProperty({ description: 'Horário militar' })
-    @IsMilitaryTime()
-    worksTo: string;
-
-    @ApiProperty()
-    @IsPositive()
-    maximumDistanceToWorks: number;
-}
+import { CreateUserBeneficiaryInfoDto } from './user-beneficiary-info/create-user-beneficiary-info.dto';
+import { CreateUserProfessionalInfoDto } from './user-professional-info/create-user-professional-info.dto';
 
 export class CreateUserDto {
     @ApiProperty()
@@ -101,11 +31,11 @@ export class CreateUserDto {
     @IsEnum(UserTypeEnum)
     type: UserTypeEnum;
 
-    @ApiProperty()
+    @ApiProperty({ example: '+5511999999999' })
     @IsPhoneNumber('BR')
     phone: string;
 
-    @ApiProperty()
+    @ApiProperty({ example: 'test@email.com' })
     @IsEmail()
     email: string;
 
@@ -114,7 +44,7 @@ export class CreateUserDto {
     @Type(() => CreateAddressDto)
     addresses: CreateAddressDto[];
 
-    @ApiProperty()
+    @ApiProperty({ example: 18 })
     @Min(18)
     @Max(120)
     age: number;
@@ -136,7 +66,7 @@ export class CreateUserDto {
     @IsEnum(MaritalStatusEnum)
     maritalStatus: MaritalStatusEnum;
 
-    @ApiProperty()
+    @ApiProperty({ type: String, example: '1000.00' })
     @IsCurrency({
         allow_decimal: true,
         digits_after_decimal: [1, 2],
@@ -149,26 +79,26 @@ export class CreateUserDto {
     @IsEnum(RaceEnum)
     race: RaceEnum;
 
-    @ApiProperty()
+    @ApiProperty({ example: 'data:image/png;base64,base64string' })
     @IsDataURI()
     profilePicture: string;
 
-    @ApiProperty()
+    @ApiProperty({ example: '1234' })
     @IsNumberString()
     @Length(4, 4)
     password: string;
 
-    @ApiProperty({ type: BeneficiaryUserInfoDto, required: false })
+    @ApiProperty({ type: CreateUserBeneficiaryInfoDto, required: false })
     @ValidateNested({ each: true })
-    @Type(() => BeneficiaryUserInfoDto)
+    @Type(() => CreateUserBeneficiaryInfoDto)
     @ValidateIf((o) => o.type === UserTypeEnum.BENEFICIARIO)
     @IsDefined()
-    beneficiaryUserInfo: BeneficiaryUserInfoDto;
+    beneficiaryUserInfo: CreateUserBeneficiaryInfoDto;
 
-    @ApiProperty({ type: ProfessionalUserInfoDto, required: false })
+    @ApiProperty({ type: CreateUserProfessionalInfoDto, required: false })
     @ValidateNested({ each: true })
-    @Type(() => ProfessionalUserInfoDto)
+    @Type(() => CreateUserProfessionalInfoDto)
     @ValidateIf((o) => o.type === UserTypeEnum.PROFISSIONAL)
     @IsDefined()
-    professionalUserInfo: ProfessionalUserInfoDto;
+    professionalUserInfo: CreateUserProfessionalInfoDto;
 }

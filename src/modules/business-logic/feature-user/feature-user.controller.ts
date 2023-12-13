@@ -48,7 +48,29 @@ export class FeatureUserController {
     })
     async getLogged(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
-        return await this.featureUserService.findById(Number(userId));
+        return await this.featureUserService.findById(userId);
+    }
+
+    @Get('id/:id')
+    @ApiOperation({
+        summary: 'Teste get de usuario por id',
+    })
+    @ApiOkResponseDtoData({
+        type: UserResponseDto,
+    })
+    @ApiParam({
+        name: 'id',
+        description: 'Id do usuário.',
+        required: true,
+        allowEmptyValue: false,
+    })
+    @SerializeOptions({
+        type: UserResponseDto,
+    })
+    async getTest(@Param('id') id: string) {
+        const data = await this.featureUserService.findById(id);
+        console.log(JSON.stringify(data));
+        return data;
     }
 
     @Post('')
@@ -79,7 +101,7 @@ export class FeatureUserController {
     @UseInterceptors(new EncryptInterceptor())
     @ApiOperation({
         description: 'Cria um código de 6 dígitos e manda para o email cadastrado do usuário que iniciou a requisição.',
-        summary: 'Inicia a requisição de alteração de senha.',
+        summary: 'Método para usuário logado. Inicia a requisição de alteração de senha e envia um código.',
     })
     @ApiOkResponseDtoData({
         type: null,
@@ -87,7 +109,7 @@ export class FeatureUserController {
     async updatePasswordRequest(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
 
-        await this.featureUserService.updatePasswordRequest(Number(userId));
+        await this.featureUserService.updatePasswordRequest(userId);
     }
 
     @Post('password/update/verify/token/:token')
@@ -96,7 +118,7 @@ export class FeatureUserController {
     @ApiOperation({
         description:
             'Verifica a validade do código de autenticação informado no parâmetro usando o ID do usuário contido no JWT para identificação no banco.',
-        summary: 'Verifica a validade do código de alteração de senha.',
+        summary: 'Método para usuário logado. Verifica a validade do código de alteração de senha.',
     })
     @ApiParam({
         name: 'token',
@@ -113,7 +135,7 @@ export class FeatureUserController {
     async verifyUpdatePasswordRequest(@Req() req: Request, @Param() paramDto: TokenVerifyParamsDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
 
-        return await this.featureUserService.verifyToken(Number(userId), paramDto.token);
+        return await this.featureUserService.verifyToken(userId, paramDto.token);
     }
 
     @Post('password/update/confirm')
@@ -121,8 +143,8 @@ export class FeatureUserController {
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
     @ApiOperation({
-        description: 'Cria um código de 6 dígitos e manda para o email cadastrado do usuário que iniciou a requisição.',
-        summary: 'Inicia a requisição de alteração de senha.',
+        description: 'Altera a senha do usuário que iniciou a requisição.',
+        summary: 'Método para usuário logado. Finaliza a requisição de alteração de senha.',
     })
     @ApiOkResponseDtoData({
         type: null,
@@ -135,7 +157,7 @@ export class FeatureUserController {
     async confirmUpdatePasswordRequest(@Req() req: Request, @Body() dto: ConfirmPasswordUpdateRequestDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
 
-        return await this.featureUserService.confirmUpdatePasswordRequest(Number(userId), dto);
+        return await this.featureUserService.confirmUpdatePasswordRequest(userId, dto);
     }
 
     @Put('')
@@ -161,7 +183,34 @@ export class FeatureUserController {
     async update(@Req() req: Request, @Body() body: UpdateUserDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
 
-        return await this.featureUserService.update(Number(userId), body);
+        return await this.featureUserService.update(userId, body);
+    }
+
+    @Put('id/:id')
+    @UseInterceptors(new EncryptInterceptor())
+    @ApiOperation({
+        summary: 'teste update user.',
+    })
+    @ApiParam({
+        name: 'id',
+        description: 'Id do usuário.',
+        required: true,
+        allowEmptyValue: false,
+    })
+    @ApiBodyEncripted({
+        type: UpdateUserDto,
+        required: true,
+        description: 'Usuário a ser atualizado.',
+    })
+    @ApiOkResponseDtoData({
+        type: UserResponseDto,
+        description: 'Usuário atualizado.',
+    })
+    @SerializeOptions({
+        type: UserResponseDto,
+    })
+    async testUpdate(@Param('id') id: string, @Body() body: UpdateUserDto) {
+        return await this.featureUserService.update(id, body);
     }
 
     @Get('caubr/check-professional-status/cpf/:cpf')

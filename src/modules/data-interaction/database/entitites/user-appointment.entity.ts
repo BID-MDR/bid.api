@@ -6,19 +6,14 @@ import { UserAppointmentTypeEnum } from '../enums/user-appointment-type.enum';
 @Entity({ name: 'user-appointment' })
 export class UserAppointmentEntity extends BaseEntity {
     @Column({
-        type: 'date',
+        type: 'datetime',
     })
-    date: string;
+    from: Date;
 
     @Column({
-        type: 'time',
+        type: 'datetime',
     })
-    timeFrom: string;
-
-    @Column({
-        type: 'time',
-    })
-    timeTo: string;
+    to: Date;
 
     @Column({
         type: 'enum',

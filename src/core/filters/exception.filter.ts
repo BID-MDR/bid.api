@@ -27,6 +27,10 @@ export class ServerExceptionFilter implements ExceptionFilter {
 
         Logger.error(message, `${request.method} ${request.url}`);
 
+        if (process.env.NODE_ENV === 'development') {
+            console.error(exception);
+        }
+
         switchInheritance(exception)
             .ofType(TypeORMError)
             .do(() => {

@@ -18,7 +18,19 @@ export class UserRatingEntity extends BaseEntity {
         type: 'tinyint',
         unsigned: true,
     })
-    rating: number;
+    profesisonalInterationRating: number;
+
+    @Column({
+        type: 'tinyint',
+        unsigned: true,
+    })
+    programRating: number;
+
+    @Column({
+        type: 'tinyint',
+        unsigned: true,
+    })
+    platformRating: number;
 
     @Column({
         type: 'enum',

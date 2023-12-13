@@ -3,7 +3,7 @@ import { BaseService } from 'src/core/services/base.service';
 import { CreateUserDto } from 'src/modules/data-interaction/database/dtos/user/create-user.dto';
 import { UpdateUserDto } from 'src/modules/data-interaction/database/dtos/user/update-user.dto';
 import { UserEntity } from 'src/modules/data-interaction/database/entitites/user.entity';
-import { UserRepository } from 'src/modules/data-interaction/database/repositories/user.repository';
+import { UserRepository } from 'src/modules/data-interaction/database/repositories/user/user.repository';
 import { CaubFacade } from 'src/modules/data-interaction/facade/apis/gov/caubr/caub.facade';
 import { ProfessionalCouncilRegistrationResponseDto } from './dtos/professional-council-resgistration-reponse.dto';
 import * as bcrypt from 'bcrypt';
@@ -15,17 +15,31 @@ import { UserOtpRequestEntity } from 'src/modules/data-interaction/database/enti
 import { EmailFacade } from 'src/modules/data-interaction/facade/apis/email/email.facade';
 import { ConfirmPasswordUpdateRequestDto } from './dtos/confirm-password-update.request.dto';
 import { UserOtpStatusEnum } from 'src/modules/data-interaction/database/enums/user-otp.enum';
+import { UserAppointmentRepository } from 'src/modules/data-interaction/database/repositories/user/user-appointment.repository';
+import { UserAppointmentEntity } from 'src/modules/data-interaction/database/entitites/user-appointment.entity';
+import { UserBeneficiaryInfoRepository } from 'src/modules/data-interaction/database/repositories/user/user-beneficiary-info.repository';
+import { UserBeneficiaryInfoEntity } from 'src/modules/data-interaction/database/entitites/user-beneficiary-info.entity';
+import { UserProfessionalInfoEntity } from 'src/modules/data-interaction/database/entitites/user-professional-info.entity';
+import { UserProfessionalInfoRepository } from 'src/modules/data-interaction/database/repositories/user/user-professional-info.repository';
+import { UseRestingDayRepository } from 'src/modules/data-interaction/database/repositories/user/user-resting-day.repository';
+import { AddressEntity } from 'src/modules/data-interaction/database/entitites/address.entity';
+import { AddressRepository } from 'src/modules/data-interaction/database/repositories/address.repository';
 
 @Injectable()
 export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, UpdateUserDto> {
     constructor(
-        private repository: UserRepository,
+        private userRepository: UserRepository,
+        private userAppointmentRepository: UserAppointmentRepository,
+        private userBeneficiaryInfoRepository: UserBeneficiaryInfoRepository,
+        private userProfessionalInfoRepository: UserProfessionalInfoRepository,
+        private userRestingdayRepository: UseRestingDayRepository,
+        private addressRepository: AddressRepository,
         private readonly caubFacade: CaubFacade,
         private readonly confeaFacade: ConfeaFacade,
         private readonly emailFacade: EmailFacade,
         private readonly configService: ConfigService,
     ) {
-        super(repository);
+        super(userRepository);
     }
 
     async checkProfessionalUserCaubRegistration(cpf: string): Promise<ProfessionalCouncilRegistrationResponseDto> {
@@ -36,17 +50,98 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         return this.confeaFacade.getProfessionalRegistrationStatusFromConfea(cpf);
     }
 
-    async findUserWithAgendaById(id: number) {
-        return this.repository.findUserWithAgendaById(id);
-    }
-
     async create(data: CreateUserDto): Promise<UserEntity> {
         data.password = await this.hashStringData(data.password);
 
         return await super.create(data);
     }
 
-    async updatePasswordRequest(userId: number) {
+    async update(id: string, data: UpdateUserDto): Promise<UserEntity> {
+        const user = await this.findById(id);
+
+        if (data.newAppointments || data.updateAppointments) {
+            let appointments = new Array<UserAppointmentEntity>();
+            if (data.newAppointments) {
+                if (
+                    await this.userAppointmentRepository.areDatesWithinAnyAppointment(
+                        data.newAppointments.map((a) => a.from).concat(data.newAppointments.map((a) => a.to)),
+                    )
+                ) {
+                    throw new BadRequestException('Data já está ocupada.');
+                }
+                appointments.push(...(await this.userAppointmentRepository.createMany(data.newAppointments)));
+            }
+            if (data.updateAppointments) {
+                if (
+                    await this.userAppointmentRepository.areDatesWithinAnyAppointment(
+                        data.updateAppointments.map((a) => a.from).concat(data.newAppointments.map((a) => a.to)),
+                    )
+                ) {
+                    throw new BadRequestException('Data já está ocupada.');
+                }
+                await Promise.all(
+                    data.updateAppointments.map(async (appointment) => {
+                        appointments.push(await this.userAppointmentRepository.update(appointment.id, appointment));
+                    }),
+                );
+            }
+            user.appointments = appointments;
+        }
+
+        if (data.beneficiaryUserInfo) {
+            let beneficiaryUserInfo: UserBeneficiaryInfoEntity;
+
+            beneficiaryUserInfo = await this.userBeneficiaryInfoRepository.update(
+                data.beneficiaryUserInfo.id,
+                data.beneficiaryUserInfo,
+            );
+
+            user.beneficiaryUserInfo = beneficiaryUserInfo;
+        }
+
+        if (data.professionalUserInfo) {
+            let professionalUserInfo: UserProfessionalInfoEntity;
+
+            const oldRestingDays = await this.userRestingdayRepository.findAllByUserProfessionalInfoId(
+                data.professionalUserInfo.id,
+            );
+            for (const iterator of oldRestingDays) {
+                await this.userRestingdayRepository.hardDelete(iterator.id);
+            }
+            const newRestingDays = await this.userRestingdayRepository.createMany(
+                data.professionalUserInfo.restingDays,
+            );
+
+            professionalUserInfo = await this.userProfessionalInfoRepository.update(
+                data.professionalUserInfo.id,
+                data.professionalUserInfo,
+            );
+            professionalUserInfo.restingDays = newRestingDays;
+
+            user.professionalUserInfo = professionalUserInfo;
+        }
+
+        if (data.addresses) {
+            let addresses = new Array<AddressEntity>();
+            await Promise.all(
+                data.addresses.map(async (address) => {
+                    addresses.push(await this.addressRepository.update(address.id, address));
+                }),
+            );
+            user.addresses = addresses;
+        }
+
+        await user.save();
+
+        delete data.newAppointments;
+        delete data.updateAppointments;
+        delete data.beneficiaryUserInfo;
+        delete data.professionalUserInfo;
+        delete data.addresses;
+        return await super.update(id, data);
+    }
+
+    async updatePasswordRequest(userId: string) {
         totp.options = {
             digits: 6,
             step: 300,
@@ -62,7 +157,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         await this.emailFacade.sendPasswordResetCodeEmail(token, user.email);
     }
 
-    async verifyToken(userId: number, token: string) {
+    async verifyToken(userId: string, token: string) {
         const user = await this.findById(userId);
 
         if (!user.otpRequest?.token) {
@@ -81,7 +176,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         }
     }
 
-    async confirmUpdatePasswordRequest(userId: number, dto: ConfirmPasswordUpdateRequestDto) {
+    async confirmUpdatePasswordRequest(userId: string, dto: ConfirmPasswordUpdateRequestDto) {
         const user = await this.findById(userId);
 
         if (!user.otpRequest?.token) {

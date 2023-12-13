@@ -6,6 +6,8 @@ import { RaceEnum } from '../../enums/race.enum';
 import { AddressResponseDto } from '../address/response-address.dto';
 import { PortifolioTypeEnum } from '../../enums/portifolio-type.enum';
 import { UserTypeEnum } from '../../enums/user-type.enum';
+import { BaseResponseDto } from 'src/core/dtos/crud/base-response.dto';
+import { UserAppointmentTypeEnum } from '../../enums/user-appointment-type.enum';
 
 class ProfessionalUserInfoResponseDto {
     @ApiProperty({ enum: PortifolioTypeEnum })
@@ -30,13 +32,27 @@ class ProfessionalUserInfoResponseDto {
     laborValue: number;
 }
 
-export class BeneficiaryUserInfoResponseDto {
+class BeneficiaryUserInfoResponseDto {
     @ApiProperty()
     allowProfileListing: boolean;
 }
 
+class UserAppointmentDto {
+    @ApiProperty()
+    date: Date;
+
+    @ApiProperty()
+    timeFrom: string;
+
+    @ApiProperty()
+    timeTo: string;
+
+    @ApiProperty({ enum: UserAppointmentTypeEnum })
+    type: UserAppointmentTypeEnum;
+}
+
 @Exclude()
-export class UserResponseDto {
+export class UserResponseDto extends BaseResponseDto {
     @ApiProperty()
     @Expose()
     name: string;
@@ -105,7 +121,7 @@ export class UserResponseDto {
     @Transform(({ value }) => value ?? undefined)
     beneficiaryUserInfo: BeneficiaryUserInfoResponseDto;
 
-    @ApiProperty({ type: Date, isArray: true })
+    @ApiProperty({ type: UserAppointmentDto, isArray: true })
     @Expose()
-    agenda: Date[];
+    appointments: UserAppointmentDto[];
 }

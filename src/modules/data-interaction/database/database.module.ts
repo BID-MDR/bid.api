@@ -18,10 +18,16 @@ import { WorkRequestRoomToWorkEntity } from './entitites/work-request-room-to-wo
 import { WorkRequestRoomTypeQuantityEntity } from './entitites/work-request-room-type-quantity.entity';
 import { WorkRequestWelfareProgramEntity } from './entitites/work-request-welfare-program.entity';
 import { WorkRequestEntity } from './entitites/work-request.entity';
-import { UserRepository } from './repositories/user.repository';
+import { UserRepository } from './repositories/user/user.repository';
 import { UserRestingDayEntity } from './entitites/user-resting-day.entity';
 import { UserAppointmentEntity } from './entitites/user-appointment.entity';
 import { UserOtpRequestEntity } from './entitites/user-otp-request.entity';
+import { UserAppointmentRepository } from './repositories/user/user-appointment.repository';
+import { UserRatingRepository } from './repositories/user/user-rating.repository';
+import { UserBeneficiaryInfoRepository } from './repositories/user/user-beneficiary-info.repository';
+import { UseRestingDayRepository } from './repositories/user/user-resting-day.repository';
+import { UserProfessionalInfoRepository } from './repositories/user/user-professional-info.repository';
+import { AddressRepository } from './repositories/address.repository';
 
 const ENTITIES = [
     UserEntity,
@@ -46,7 +52,15 @@ const ENTITIES = [
     ContractEntity,
     AddressEntity,
 ];
-const REPOSITORIES = [UserRepository];
+const REPOSITORIES = [
+    UserRepository,
+    UserAppointmentRepository,
+    UserRatingRepository,
+    UserBeneficiaryInfoRepository,
+    UseRestingDayRepository,
+    UserProfessionalInfoRepository,
+    AddressRepository,
+];
 
 @Module({
     imports: [TypeOrmModule.forFeature(ENTITIES)],
