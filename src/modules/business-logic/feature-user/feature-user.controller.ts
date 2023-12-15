@@ -51,28 +51,6 @@ export class FeatureUserController {
         return await this.featureUserService.findById(userId);
     }
 
-    @Get('id/:id')
-    @ApiOperation({
-        summary: 'Teste get de usuario por id',
-    })
-    @ApiOkResponseDtoData({
-        type: UserResponseDto,
-    })
-    @ApiParam({
-        name: 'id',
-        description: 'Id do usuário.',
-        required: true,
-        allowEmptyValue: false,
-    })
-    @SerializeOptions({
-        type: UserResponseDto,
-    })
-    async getTest(@Param('id') id: string) {
-        const data = await this.featureUserService.findById(id);
-        console.log(JSON.stringify(data));
-        return data;
-    }
-
     @Post('')
     @UseInterceptors(new EncryptInterceptor())
     @ApiOperation({
@@ -184,33 +162,6 @@ export class FeatureUserController {
         const userId = (req.user as JwtPayloadInterface).userId;
 
         return await this.featureUserService.update(userId, body);
-    }
-
-    @Put('id/:id')
-    @UseInterceptors(new EncryptInterceptor())
-    @ApiOperation({
-        summary: 'teste update user.',
-    })
-    @ApiParam({
-        name: 'id',
-        description: 'Id do usuário.',
-        required: true,
-        allowEmptyValue: false,
-    })
-    @ApiBodyEncripted({
-        type: UpdateUserDto,
-        required: true,
-        description: 'Usuário a ser atualizado.',
-    })
-    @ApiOkResponseDtoData({
-        type: UserResponseDto,
-        description: 'Usuário atualizado.',
-    })
-    @SerializeOptions({
-        type: UserResponseDto,
-    })
-    async testUpdate(@Param('id') id: string, @Body() body: UpdateUserDto) {
-        return await this.featureUserService.update(id, body);
     }
 
     @Get('caubr/check-professional-status/cpf/:cpf')

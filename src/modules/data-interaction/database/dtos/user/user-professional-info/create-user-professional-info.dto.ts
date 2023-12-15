@@ -39,7 +39,7 @@ export class CreateUserProfessionalInfoDto {
     @ValidateIf((o) => !o.confeaRegistrationNumber)
     cauRegistrationNumber: string;
 
-    @ApiProperty()
+    @ApiProperty({ type: String, example: '100.00' })
     @IsCurrency({
         allow_decimal: true,
         digits_after_decimal: [1, 2],
@@ -47,7 +47,6 @@ export class CreateUserProfessionalInfoDto {
         allow_negatives: false,
         symbol: 'R$',
     })
-    @Min(0)
     laborValue: number;
 
     @ApiProperty({ type: CreateUserRestingDayDto, isArray: true })

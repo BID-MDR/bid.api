@@ -19,13 +19,17 @@ export class UserAppointmentRepository extends BaseRepository<
     async areDatesWithinAnyAppointment(specificDates: Date[]): Promise<boolean> {
         const query = this.repository.createQueryBuilder('appointment');
 
-        specificDates.forEach((date, index) => {
+        for (let index = 0; index < specificDates.length; index++) {
             if (index === 0) {
-                query.where(':specificDate BETWEEN appointment.from AND appointment.to', { specificDate: date });
+                query
+                    .where(`:date BETWEEN appointment.from AND appointment.to`)
+                    .setParameter('date', new Date(specificDates[index]));
             } else {
-                query.orWhere(':specificDate BETWEEN appointment.from AND appointment.to', { specificDate: date });
+                query.orWhere(':specificDate BETWEEN appointment.from AND appointment.to', {
+                    specificDate: new Date(specificDates[index]),
+                });
             }
-        });
+        }
 
         const count = await query.getCount();
         return count > 0;

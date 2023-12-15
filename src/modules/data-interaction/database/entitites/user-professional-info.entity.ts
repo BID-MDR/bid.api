@@ -60,13 +60,13 @@ export class UserProfessionalInfoEntity extends BaseEntity {
 
     @Column({
         type: 'varchar',
-        length: 4,
+        length: 5,
     })
     worksFrom: string;
 
     @Column({
         type: 'varchar',
-        length: 4,
+        length: 5,
     })
     worksTo: string;
 

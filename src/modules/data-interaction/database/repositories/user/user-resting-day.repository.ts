@@ -12,12 +12,9 @@ export class UseRestingDayRepository extends BaseRepository<UserRestingDayEntity
     }
 
     async findAllByUserProfessionalInfoId(userProfessionalInfoId: string): Promise<UserRestingDayEntity[]> {
-        return await this.repository.find({
-            where: {
-                userProfessionalInfo: {
-                    id: userProfessionalInfoId,
-                },
-            },
-        });
+        return await this.repository
+            .createQueryBuilder('userRestingDay')
+            .where('userRestingDay.userProfessionalInfoId = :userProfessionalInfoId', { userProfessionalInfoId })
+            .getMany();
     }
 }

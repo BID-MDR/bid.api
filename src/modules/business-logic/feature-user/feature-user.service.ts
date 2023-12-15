@@ -24,6 +24,7 @@ import { UserProfessionalInfoRepository } from 'src/modules/data-interaction/dat
 import { UseRestingDayRepository } from 'src/modules/data-interaction/database/repositories/user/user-resting-day.repository';
 import { AddressEntity } from 'src/modules/data-interaction/database/entitites/address.entity';
 import { AddressRepository } from 'src/modules/data-interaction/database/repositories/address.repository';
+import { commonPropertyTransfer } from 'src/core/utils/common-property-transfer.util';
 
 @Injectable()
 export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -69,12 +70,16 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
                 ) {
                     throw new BadRequestException('Data já está ocupada.');
                 }
-                appointments.push(...(await this.userAppointmentRepository.createMany(data.newAppointments)));
+                for (const iterator of await this.userAppointmentRepository.createMany(data.newAppointments)) {
+                    iterator.user = user;
+                    await iterator.save();
+                    appointments.push(iterator);
+                }
             }
             if (data.updateAppointments) {
                 if (
                     await this.userAppointmentRepository.areDatesWithinAnyAppointment(
-                        data.updateAppointments.map((a) => a.from).concat(data.newAppointments.map((a) => a.to)),
+                        data.updateAppointments.map((a) => a.from).concat(data.updateAppointments.map((a) => a.to)),
                     )
                 ) {
                     throw new BadRequestException('Data já está ocupada.');
@@ -89,36 +94,29 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         }
 
         if (data.beneficiaryUserInfo) {
-            let beneficiaryUserInfo: UserBeneficiaryInfoEntity;
-
-            beneficiaryUserInfo = await this.userBeneficiaryInfoRepository.update(
-                data.beneficiaryUserInfo.id,
-                data.beneficiaryUserInfo,
-            );
-
-            user.beneficiaryUserInfo = beneficiaryUserInfo;
+            await this.userBeneficiaryInfoRepository.update(data.beneficiaryUserInfo.id, data.beneficiaryUserInfo);
         }
 
         if (data.professionalUserInfo) {
-            let professionalUserInfo: UserProfessionalInfoEntity;
+            user.professionalUserInfo = commonPropertyTransfer(data.professionalUserInfo, user.professionalUserInfo);
+            if (data.professionalUserInfo.restingDays) {
+                const oldRestingDays = await this.userRestingdayRepository.findAllByUserProfessionalInfoId(
+                    data.professionalUserInfo.id,
+                );
+                for (const iterator of oldRestingDays) {
+                    await this.userRestingdayRepository.hardDelete(iterator.id);
+                }
+                const newRestingDays = await this.userRestingdayRepository.createMany(
+                    data.professionalUserInfo.restingDays,
+                );
+                for (const iterator of newRestingDays) {
+                    iterator.userProfessionalInfo = user.professionalUserInfo;
+                    await iterator.save();
+                }
 
-            const oldRestingDays = await this.userRestingdayRepository.findAllByUserProfessionalInfoId(
-                data.professionalUserInfo.id,
-            );
-            for (const iterator of oldRestingDays) {
-                await this.userRestingdayRepository.hardDelete(iterator.id);
+                delete data.professionalUserInfo.restingDays;
             }
-            const newRestingDays = await this.userRestingdayRepository.createMany(
-                data.professionalUserInfo.restingDays,
-            );
-
-            professionalUserInfo = await this.userProfessionalInfoRepository.update(
-                data.professionalUserInfo.id,
-                data.professionalUserInfo,
-            );
-            professionalUserInfo.restingDays = newRestingDays;
-
-            user.professionalUserInfo = professionalUserInfo;
+            await this.userProfessionalInfoRepository.update(data.professionalUserInfo.id, data.professionalUserInfo);
         }
 
         if (data.addresses) {
@@ -130,8 +128,6 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
             );
             user.addresses = addresses;
         }
-
-        await user.save();
 
         delete data.newAppointments;
         delete data.updateAppointments;
@@ -151,6 +147,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         const user = await this.findById(userId);
         const otpRequest = new UserOtpRequestEntity();
         otpRequest.token = await this.hashStringData(token);
+        await otpRequest.save();
         user.otpRequest = otpRequest;
         await user.save();
 
@@ -163,11 +160,27 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         if (!user.otpRequest?.token) {
             throw new BadRequestException('Nenhum pedido de recuperação de senha foi feito para este usuário.');
         }
+        totp.options = {
+            digits: 6,
+            step: 300,
+            window: 1,
+        };
 
         try {
-            return { valid: totp.check(token, this.configService.get(EnviromentVariablesEnum.OTP_TOKEN)) };
+            const valid = totp.check(token, this.configService.get(EnviromentVariablesEnum.OTP_TOKEN));
+            if (valid) {
+                user.otpRequest.status = UserOtpStatusEnum.VERIFIED;
+                await user.otpRequest.save();
+            } else if (user.otpRequest.createdAt.getTime() + 300_000 < Date.now()) {
+                await user.otpRequest.remove();
+                user.otpRequest = null;
+                await user.save();
+                throw new BadRequestException('Token expirado.');
+            }
+            return { valid };
         } catch (error) {
             if (user.otpRequest.createdAt.getTime() + 300_000 < Date.now()) {
+                await user.otpRequest.remove();
                 user.otpRequest = null;
                 await user.save();
                 throw new BadRequestException('Token expirado.');
@@ -183,7 +196,10 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
             throw new BadRequestException('Nenhum pedido de recuperação de senha foi feito para este usuário.');
         }
 
-        if (user.otpRequest.createdAt.getTime() + 300_000 < Date.now()) {
+        if (
+            user.otpRequest.createdAt.getTime() + 300_000 < Date.now() &&
+            user.otpRequest.status === UserOtpStatusEnum.PENDING
+        ) {
             throw new BadRequestException('Token expirado.');
         }
 
@@ -192,6 +208,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         }
 
         user.password = await this.hashStringData(dto.password);
+        await user.otpRequest.remove();
         user.otpRequest = null;
         await user.save();
     }

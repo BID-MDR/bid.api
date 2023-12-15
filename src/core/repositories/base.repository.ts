@@ -4,7 +4,7 @@ import { BaseEntity } from '../entities/base.entity';
 export abstract class BaseRepository<
     T extends BaseEntity,
     CreateDto extends DeepPartial<T>,
-    UpdateDto extends DeepPartial<T>,
+    UpdateDto extends DeepPartial<T> & { id?: string },
 > {
     private __repository: Repository<T>;
 
@@ -43,6 +43,7 @@ export abstract class BaseRepository<
     }
 
     async update(id: string, data: UpdateDto): Promise<T> {
+        delete data.id;
         await this.__repository.update(id, data as any);
         return this.findById(id);
     }

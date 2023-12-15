@@ -9,7 +9,12 @@ export class TechnicalVisitEntity extends BaseEntity {
     @Column({
         type: 'datetime',
     })
-    when: Date;
+    from: Date;
+
+    @Column({
+        type: 'datetime',
+    })
+    to: Date;
 
     @ManyToOne(() => UserEntity, (user) => user.technicalVisitsAsProfessional)
     professional: UserEntity;

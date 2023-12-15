@@ -7,7 +7,7 @@ import { UserOtpStatusEnum } from '../enums/user-otp.enum';
 export class UserOtpRequestEntity extends BaseEntity {
     @Column({
         type: 'varchar',
-        length: 6,
+        length: 200,
     })
     token: string;
 
