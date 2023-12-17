@@ -1,30 +1,23 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { RoomSolutionEnum } from '../enums/room-solution.enum';
-import { RoomTypeEnum } from '../enums/room-type.enum';
-import { CostEstimationEntity } from './cost-estimation.entity';
-import { ConstructionRoomMediaEntity } from './construction-room-media.entity';
 import { ConstructionEntity } from './construction.entity';
+import { CostEstimationEntity } from './cost-estimation.entity';
+import { RoomEntity } from './room.entity';
+import { UserGeneratedMediaEntity } from './user-generated-media.entity';
 
 @Entity({ name: 'room-solution' })
 export class RoomSolutionEntity extends BaseEntity {
-    @Column({
-        type: 'enum',
-        enum: RoomTypeEnum,
+    @ManyToOne(() => RoomEntity, (room) => room.roomSolutions, {
+        eager: true,
     })
-    roomType: RoomTypeEnum;
-
-    @Column({
-        type: 'varchar',
-        length: 70,
-    })
-    roomName: string;
+    room: RoomEntity;
 
     @Column({
         type: 'enum',
         enum: RoomSolutionEnum,
     })
-    roomSolution: RoomSolutionEnum;
+    solution: RoomSolutionEnum;
 
     @Column({
         type: 'decimal',
@@ -33,12 +26,12 @@ export class RoomSolutionEntity extends BaseEntity {
     })
     cost: number;
 
-    @OneToMany(() => ConstructionRoomMediaEntity, (constructionRoomMedia) => constructionRoomMedia.roomSolution, {
+    @OneToMany(() => UserGeneratedMediaEntity, (userGeneratedMediaEntity) => userGeneratedMediaEntity.roomSolution, {
         cascade: true,
         eager: true,
         nullable: true,
     })
-    pictures: ConstructionRoomMediaEntity[];
+    picturesAndVideos: UserGeneratedMediaEntity[];
 
     @ManyToOne(() => CostEstimationEntity, (costEstimation) => costEstimation.roomsSolutions)
     costEstimation: CostEstimationEntity;

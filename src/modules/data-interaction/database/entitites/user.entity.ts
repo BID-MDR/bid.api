@@ -119,6 +119,16 @@ export class UserEntity extends BaseEntity {
     })
     technicalVisitsAsProfessional: TechnicalVisitEntity[];
 
+    @OneToMany(() => TechnicalVisitEntity, (technicalVisit) => technicalVisit.cancelledBy, {
+        eager: true,
+    })
+    technicalVisitsCancelled: TechnicalVisitEntity[];
+
+    @OneToMany(() => TechnicalVisitEntity, (technicalVisit) => technicalVisit.rescheduledBy, {
+        eager: true,
+    })
+    technicalVisitsRescheduled: TechnicalVisitEntity[];
+
     @OneToMany(() => UserAppointmentEntity, (appointment) => appointment.user, {
         eager: true,
         cascade: true,

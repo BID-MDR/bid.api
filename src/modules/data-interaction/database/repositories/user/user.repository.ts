@@ -11,13 +11,4 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
     constructor(@InjectRepository(UserEntity) private repository: Repository<UserEntity>) {
         super(repository);
     }
-
-    // async findUserWithAgendaById(id: string) {
-    //     // select all database fields from user and join with appointments
-    //     return await this.repository
-    //         .createQueryBuilder('user')
-    //         .leftJoinAndSelect('user.appointments', 'appointments')
-    //         .where('user.id = :id', { id })
-    //         .getOne();
-    // }
 }

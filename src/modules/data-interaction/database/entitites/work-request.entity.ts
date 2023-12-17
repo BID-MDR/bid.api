@@ -3,8 +3,8 @@ import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { PropertyTypeEnum } from '../enums/property-type.enum';
 import { CostEstimationEntity } from './cost-estimation.entity';
 import { TechnicalVisitEntity } from './technical-visit.entity';
+import { UserGeneratedMediaEntity } from './user-generated-media.entity';
 import { UserEntity } from './user.entity';
-import { WorkRequestMediaEntity } from './work-request-media.entity';
 import { WorkRequestPrecarityEntity } from './work-request-precarity.entity';
 import { WorkRequestPrevailingConstructionMaterialEntity } from './work-request-prevailing-construction-materials.entity';
 import { WorkRequestRoomToWorkEntity } from './work-request-room-to-work.entity';
@@ -43,6 +43,12 @@ export class WorkRequestEntity extends BaseEntity {
     })
     propertyType: PropertyTypeEnum;
 
+    @Column({
+        type: 'tinyint',
+        unsigned: true,
+    })
+    floorCount: number;
+
     @OneToMany(
         () => WorkRequestPrevailingConstructionMaterialEntity,
         (prevailingConstructionMaterial) => prevailingConstructionMaterial.workRequest,
@@ -77,11 +83,11 @@ export class WorkRequestEntity extends BaseEntity {
     })
     aditionalInformation: string;
 
-    @OneToMany(() => WorkRequestMediaEntity, (workRequestMedia) => workRequestMedia.workRequest, {
+    @OneToMany(() => UserGeneratedMediaEntity, (userGeneratedMediaEntity) => userGeneratedMediaEntity.workRequest, {
         cascade: true,
         eager: true,
     })
-    picturesAndVideos: WorkRequestMediaEntity[];
+    picturesAndVideos: UserGeneratedMediaEntity[];
 
     @OneToMany(() => TechnicalVisitEntity, (technicalVisit) => technicalVisit.workRequest, {
         eager: true,

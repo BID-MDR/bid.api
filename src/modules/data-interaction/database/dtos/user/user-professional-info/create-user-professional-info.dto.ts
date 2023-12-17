@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
     IsCurrency,
+    IsDefined,
     IsEnum,
     IsMilitaryTime,
     IsNumberString,
@@ -52,6 +53,7 @@ export class CreateUserProfessionalInfoDto {
     @ApiProperty({ type: CreateUserRestingDayDto, isArray: true })
     @ValidateNested({ each: true })
     @Type(() => CreateUserRestingDayDto)
+    @IsDefined()
     restingDays: CreateUserRestingDayDto[];
 
     @ApiProperty({ description: 'Horário militar', example: '08:00' })

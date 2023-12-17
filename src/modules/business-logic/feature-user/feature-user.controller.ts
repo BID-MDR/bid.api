@@ -51,6 +51,30 @@ export class FeatureUserController {
         return await this.featureUserService.findById(userId);
     }
 
+    @Get('id/:id')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOperation({
+        description: 'Retorna o usuário e sua agenda, caso exista.',
+        summary: 'Retorna o usuário pelo ID.',
+    })
+    @ApiParam({
+        name: 'id',
+        description: 'ID do usuário.',
+        required: true,
+        allowEmptyValue: false,
+    })
+    @ApiOkResponseDtoData({
+        type: UserResponseDto,
+        description: 'Usuário logado que iniciou a requisição.',
+    })
+    @SerializeOptions({
+        type: UserResponseDto,
+    })
+    async getById(@Param('id') userId: string) {
+        return await this.featureUserService.findById(userId);
+    }
+
     @Post('')
     @UseInterceptors(new EncryptInterceptor())
     @ApiOperation({
