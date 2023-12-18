@@ -25,12 +25,12 @@ export class UpdateWorkRequestDto extends OmitType(PartialType(CreateWorkRequest
     @ApiProperty({ type: UpdateWorkRequestPrecarityDto, isArray: true })
     @ValidateNested({ each: true })
     @Type(() => UpdateWorkRequestPrecarityDto)
-    precaritysToBeSolved: UpdateWorkRequestPrecarityDto;
+    precaritysToBeSolved: UpdateWorkRequestPrecarityDto[];
 
     @ApiProperty({ type: UpdateWorkRequestRoomToWorkDto, isArray: true })
     @ValidateNested({ each: true })
     @Type(() => UpdateWorkRequestRoomToWorkDto)
-    roomsToBeWorked: UpdateWorkRequestRoomToWorkDto;
+    roomsToBeWorked: UpdateWorkRequestRoomToWorkDto[];
 
     @ApiProperty({ type: UpdateWorkRequestRoomTypeQuantityDto, isArray: true })
     @ValidateNested({ each: true })

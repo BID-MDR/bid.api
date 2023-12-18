@@ -22,12 +22,21 @@ import { WorkRequestRoomTypeQuantityEntity } from './entitites/work-request-room
 import { WorkRequestWelfareProgramEntity } from './entitites/work-request-welfare-program.entity';
 import { WorkRequestEntity } from './entitites/work-request.entity';
 import { AddressRepository } from './repositories/address.repository';
+import { RoomRepository } from './repositories/room/room.repository';
 import { UserAppointmentRepository } from './repositories/user/user-appointment.repository';
 import { UserBeneficiaryInfoRepository } from './repositories/user/user-beneficiary-info.repository';
+import { UserGeneratedMediaRepository } from './repositories/user/user-generated-media.repository';
 import { UserProfessionalInfoRepository } from './repositories/user/user-professional-info.repository';
 import { UserRatingRepository } from './repositories/user/user-rating.repository';
 import { UseRestingDayRepository } from './repositories/user/user-resting-day.repository';
 import { UserRepository } from './repositories/user/user.repository';
+import { WorkRequestPrecarityRepository } from './repositories/work-request/work-request-precarity.repository';
+import { WorkRequestPrevailingContructionMaterialsRepository } from './repositories/work-request/work-request-prevailing-construction-material.repository';
+import { WorkRequestRoomToWorkRepository } from './repositories/work-request/work-request-room-to-work.repository';
+import { WorkRequestRoomTypeQuantityRepository } from './repositories/work-request/work-request-room-type-quantity.repository';
+import { WorkRequestWelfareProgramRepository } from './repositories/work-request/work-request-welfare-program.repository';
+import { WorkRequestRepository } from './repositories/work-request/work-request.repository';
+import { TechnicalVisitRepository } from './repositories/technical-visit.repository';
 
 const ENTITIES = [
     UserEntity,
@@ -59,6 +68,15 @@ const REPOSITORIES = [
     UserBeneficiaryInfoRepository,
     UseRestingDayRepository,
     UserProfessionalInfoRepository,
+    UserGeneratedMediaRepository,
+    WorkRequestRepository,
+    WorkRequestPrecarityRepository,
+    WorkRequestPrevailingContructionMaterialsRepository,
+    WorkRequestRoomToWorkRepository,
+    WorkRequestRoomTypeQuantityRepository,
+    WorkRequestWelfareProgramRepository,
+    RoomRepository,
+    TechnicalVisitRepository,
     AddressRepository,
 ];
 

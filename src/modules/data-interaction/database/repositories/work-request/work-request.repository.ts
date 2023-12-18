@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseRepository } from 'src/core/repositories/base.repository';
 import { Repository } from 'typeorm';
+import { CreateWorkRequestDto } from '../../dtos/work-request/create-work-request.dto';
+import { UpdateWorkRequestDto } from '../../dtos/work-request/update-work-request.dto';
 import { WorkRequestEntity } from '../../entitites/work-request.entity';
 
 @Injectable()

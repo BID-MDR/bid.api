@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude, Expose } from "class-transformer";
 import { TechnicalVisitStatusEnum } from "../../enums/technical-visit-status.enum";
-import { WorkRequestResponseDto } from "../work-request/reponse-work-request.dto";
+import { WorkRequestResponseDto } from "../work-request/response-work-request.dto";
 
 @Exclude()
 class UserEntityDto {
