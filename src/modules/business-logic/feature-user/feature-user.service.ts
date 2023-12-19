@@ -126,7 +126,6 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
                     addresses.push(await this.addressRepository.update(address.id, address));
                 }),
             );
-            user.addresses = addresses;
         }
 
         delete data.newAppointments;

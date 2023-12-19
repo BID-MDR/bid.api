@@ -17,4 +17,8 @@ export class WorkRequestPrecarityRepository extends BaseRepository<
     ) {
         super(repository);
     }
+
+    async deleteAllFromWorkRequest(id: string) {
+        await this.repository.query(`delete from work-request-precarity where workRequestId = '${id}'`);
+    }
 }

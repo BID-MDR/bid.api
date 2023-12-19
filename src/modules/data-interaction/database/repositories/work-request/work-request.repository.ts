@@ -15,4 +15,12 @@ export class WorkRequestRepository extends BaseRepository<
     constructor(@InjectRepository(WorkRequestEntity) private repository: Repository<WorkRequestEntity>) {
         super(repository);
     }
+
+    async findByUserId(userId: string) {
+        return await this.repository.query(`
+            SELECT *
+            FROM work_request
+            WHERE userId = '${userId}'
+        `);
+    }
 }

@@ -13,6 +13,7 @@ import { CreateWorkRequestRoomTypeQuantityDto } from './work-request-room-type-q
 import { CreateWorkRequestRoomToWorkDto } from './work-request-room-to-work/create-work-request-room-to-work.dto';
 import { CreateWorkRequestPrecarityDto } from './work-request-precarity/create-work-request-precarity.dto';
 import { CreateUserGeneratedMediaDto } from '../user/user-generated-media/create-user-generated-media.dto';
+import { CreateAddressDto } from '../address/create-address.dto';
 
 export class CreateWorkRequestDto {
     @ApiProperty()
@@ -59,6 +60,11 @@ export class CreateWorkRequestDto {
     @ValidateNested({ each: true })
     @Type(() => CreateWorkRequestPrecarityDto)
     precaritysToBeSolved: CreateWorkRequestPrecarityDto[];
+
+    @ApiProperty({ type: CreateAddressDto })
+    @ValidateNested()
+    @Type(() => CreateAddressDto)
+    address: CreateAddressDto;
 
     @ApiProperty()
     @Length(3, 100)

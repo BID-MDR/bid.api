@@ -10,6 +10,7 @@ import { WorkRequestPrevailingConstructionMaterialEntity } from './work-request-
 import { WorkRequestRoomToWorkEntity } from './work-request-room-to-work.entity';
 import { WorkRequestRoomTypeQuantityEntity } from './work-request-room-type-quantity.entity';
 import { WorkRequestWelfareProgramEntity } from './work-request-welfare-program.entity';
+import { AddressEntity } from './address.entity';
 
 @Entity({ name: 'work-request' })
 export class WorkRequestEntity extends BaseEntity {
@@ -30,6 +31,13 @@ export class WorkRequestEntity extends BaseEntity {
         length: 70,
     })
     responsiblePersonName: string;
+
+    @OneToOne(() => AddressEntity, (address) => address.workRequest, {
+        cascade: true,
+        eager: true,
+    })
+    @JoinColumn()
+    address: AddressEntity;
 
     @OneToMany(() => WorkRequestWelfareProgramEntity, (welfareProgram) => welfareProgram.workRequest, {
         cascade: true,
