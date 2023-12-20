@@ -1,7 +1,8 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
-import { Column, Entity, ManyToOne, OneToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { WorkRequestEntity } from './work-request.entity';
+import { TechnicalVisitEntity } from './technical-visit.entity';
 
 @Entity({ name: 'address' })
 export class AddressEntity extends BaseEntity {
@@ -64,4 +65,7 @@ export class AddressEntity extends BaseEntity {
 
     @OneToOne(() => WorkRequestEntity, (workRequest) => workRequest.address)
     workRequest: WorkRequestEntity;
+
+    @OneToMany(() => TechnicalVisitEntity, (technicalVisit) => technicalVisit.address)
+    techinicalVisits: TechnicalVisitEntity[];
 }

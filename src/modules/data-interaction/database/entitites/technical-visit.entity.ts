@@ -3,6 +3,7 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 import { TechnicalVisitStatusEnum } from '../enums/technical-visit-status.enum';
 import { UserEntity } from './user.entity';
 import { WorkRequestEntity } from './work-request.entity';
+import { AddressEntity } from './address.entity';
 
 @Entity({ name: 'technical-visit' })
 export class TechnicalVisitEntity extends BaseEntity {
@@ -37,6 +38,11 @@ export class TechnicalVisitEntity extends BaseEntity {
 
     @ManyToOne(() => WorkRequestEntity, (workRequest) => workRequest.technicalVisits)
     workRequest: WorkRequestEntity;
+
+    @ManyToOne(() => AddressEntity, (address) => address.techinicalVisits, {
+        eager: true,
+    })
+    address: AddressEntity;
 
     @Column({
         type: 'enum',

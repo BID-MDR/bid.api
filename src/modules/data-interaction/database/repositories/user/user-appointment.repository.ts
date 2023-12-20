@@ -16,6 +16,14 @@ export class UserAppointmentRepository extends BaseRepository<
         super(repository);
     }
 
+    async listByUserId(userId: string) {
+        return await this.repository
+            .createQueryBuilder('appointment')
+            .where('appointment.professionalId = :userId', { userId })
+            .orWhere('appointment.beneficiaryId = :userId', { userId })
+            .getMany();
+    }
+
     async areDatesWithinAnyAppointment(specificDates: Date[]): Promise<boolean> {
         const query = this.repository.createQueryBuilder('appointment');
 
