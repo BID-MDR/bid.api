@@ -20,7 +20,7 @@ export class CreateWorkRequestDto {
     @Length(3, 100)
     description: string;
 
-    @ApiProperty()
+    @ApiProperty({ example: 1 })
     @IsPositive()
     numberOfResidents: number;
 
@@ -37,7 +37,7 @@ export class CreateWorkRequestDto {
     @IsEnum(PropertyTypeEnum)
     propertyType: PropertyTypeEnum;
 
-    @ApiProperty()
+    @ApiProperty({ example: 1 })
     @IsPositive()
     floorCount: number;
 

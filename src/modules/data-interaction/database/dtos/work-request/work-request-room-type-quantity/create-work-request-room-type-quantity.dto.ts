@@ -9,7 +9,7 @@ export class CreateWorkRequestRoomTypeQuantityDto {
     @Type(() => CreateRoomDto)
     room: CreateRoomDto;
 
-    @ApiProperty()
+    @ApiProperty({ example: 1 })
     @IsPositive()
     quantity: number;
 }
