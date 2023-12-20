@@ -37,6 +37,8 @@ import { WorkRequestRoomTypeQuantityRepository } from './repositories/work-reque
 import { WorkRequestWelfareProgramRepository } from './repositories/work-request/work-request-welfare-program.repository';
 import { WorkRequestRepository } from './repositories/work-request/work-request.repository';
 import { TechnicalVisitRepository } from './repositories/technical-visit.repository';
+import { RenovationProjectEntity } from './entitites/renovation-project.entity';
+import { ConstructionProfessionalEntity } from './entitites/construction-professional.entity';
 
 const ENTITIES = [
     UserEntity,
@@ -57,9 +59,11 @@ const ENTITIES = [
     WorkRequestPrecarityEntity,
     AddressEntity,
     ConstructionEntity,
+    ConstructionProfessionalEntity,
     CostEstimationEntity,
     ContractEntity,
     TechnicalVisitEntity,
+    RenovationProjectEntity,
 ];
 const REPOSITORIES = [
     UserRepository,

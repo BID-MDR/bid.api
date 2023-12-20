@@ -3,12 +3,13 @@ import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { ConstructionStatusEnum } from '../enums/construction-status.enum';
 import { ContractEntity } from './contract.entity';
 import { RoomSolutionEntity } from './room-solution.entity';
+import { RenovationProjectEntity } from './renovation-project.entity';
 
 @Entity({ name: 'construction' })
 export class ConstructionEntity extends BaseEntity {
-    @OneToOne(() => ContractEntity)
+    @OneToOne(() => RenovationProjectEntity)
     @JoinColumn()
-    contract: ContractEntity;
+    renovationProject: RenovationProjectEntity;
 
     @OneToMany(() => RoomSolutionEntity, (roomSolution) => roomSolution.construction)
     rooms: RoomSolutionEntity[];
