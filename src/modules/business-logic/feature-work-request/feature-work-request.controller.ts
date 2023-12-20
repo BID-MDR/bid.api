@@ -10,9 +10,8 @@ import {
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-import { ApiBodyEncripted } from 'src/core/decorators/swagger/api-body-encripted.decorator';
 import { ApiOkResponseDtoData } from 'src/core/decorators/swagger/api-ok-response-dto.decorator';
 import { JwtAccessTokenGuard } from 'src/core/guards/jwt-access-token.guard';
 import { EncryptInterceptor } from 'src/core/interceptors/encrypt.interceptor';
@@ -77,7 +76,7 @@ export class FeatureWorkRequestController {
         description: 'Cria um pedido de obra.',
         summary: 'Cria um pedido de obra.',
     })
-    @ApiBodyEncripted({
+    @ApiBody({
         type: CreateWorkRequestDto,
         required: true,
         description: 'Pedido de obra a ser criado.',
@@ -101,7 +100,7 @@ export class FeatureWorkRequestController {
         description: 'Enpoint único para Atualizar um pedido de obra.',
         summary: 'Atualiza um pedido de obra.',
     })
-    @ApiBodyEncripted({
+    @ApiBody({
         type: UpdateWorkRequestDto,
         required: true,
         description: 'Pedido de obra a ser atualizado.',

@@ -10,17 +10,16 @@ import {
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-import { ApiBodyEncripted } from 'src/core/decorators/swagger/api-body-encripted.decorator';
 import { ApiOkResponseDtoData } from 'src/core/decorators/swagger/api-ok-response-dto.decorator';
 import { JwtAccessTokenGuard } from 'src/core/guards/jwt-access-token.guard';
 import { EncryptInterceptor } from 'src/core/interceptors/encrypt.interceptor';
 import { JwtPayloadInterface } from 'src/core/interfaces/jwt-payload.interface';
-import { FeatureTechnicalVisitService } from './feature-technical-visit.service';
-import { TechnicalVisitResponseDto } from 'src/modules/data-interaction/database/dtos/technical-visit/reponse-technical-visit.dto';
 import { CreateTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/create-technical-visit.dto';
+import { TechnicalVisitResponseDto } from 'src/modules/data-interaction/database/dtos/technical-visit/reponse-technical-visit.dto';
 import { UpdateTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/update-technical-visit.dto';
+import { FeatureTechnicalVisitService } from './feature-technical-visit.service';
 
 @Controller('technical-visit')
 @ApiTags('Technical Visit/Visita Técnica')
@@ -76,7 +75,7 @@ export class FeatureTechnicalVisitController {
         description: 'Cria uma visita técnica.',
         summary: 'Cria uma visita técnica.',
     })
-    @ApiBodyEncripted({
+    @ApiBody({
         type: CreateTechnicalVisitDto,
         required: true,
         description: 'Visita técnica a ser criada.',
@@ -100,7 +99,7 @@ export class FeatureTechnicalVisitController {
         description: 'Enpoint único para Atualizar uma visita técnica.',
         summary: 'Atualiza uma visita técnica.',
     })
-    @ApiBodyEncripted({
+    @ApiBody({
         type: UpdateTechnicalVisitDto,
         required: true,
         description: 'Visita técnica a ser atualizada.',
