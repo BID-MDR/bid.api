@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CaubSubsystem } from "./caub.subsystem";
 
 @Injectable()
 export class GovbrFacade {
     constructor(private readonly govbrSubsystem: GovbrSubsystem) {}
 
-    async login() {
-        return this.govbrSubsystem.getProfessionalRegistrationStatusFromCaub(cpf);
+    async login(code: string, codeVerifier: string) {
+        return this.govbrSubsystem.login(code, codeVerifier);
     }
 }
