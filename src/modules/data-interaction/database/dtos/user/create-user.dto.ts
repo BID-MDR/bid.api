@@ -21,6 +21,7 @@ import { UserTypeEnum } from '../../enums/user-type.enum';
 import { CreateAddressDto } from '../address/create-address.dto';
 import { CreateUserBeneficiaryInfoDto } from './user-beneficiary-info/create-user-beneficiary-info.dto';
 import { CreateUserProfessionalInfoDto } from './user-professional-info/create-user-professional-info.dto';
+import { IsCPF } from 'brazilian-class-validator';
 
 export class CreateUserDto {
     @ApiProperty()
@@ -38,6 +39,10 @@ export class CreateUserDto {
     @ApiProperty({ example: 'test@email.com' })
     @IsEmail()
     email: string;
+
+    @ApiProperty({ example: '12345678901' })
+    @IsCPF()
+    cpf: string;
 
     @ApiProperty({ type: CreateAddressDto, isArray: true })
     @ValidateNested({ each: true })

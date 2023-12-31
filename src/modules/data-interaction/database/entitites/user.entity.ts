@@ -30,6 +30,12 @@ export class UserEntity extends BaseEntity {
 
     @Column({
         type: 'varchar',
+        length: 11,
+    })
+    cpf: string;
+
+    @Column({
+        type: 'varchar',
         length: 15,
     })
     phone: string;

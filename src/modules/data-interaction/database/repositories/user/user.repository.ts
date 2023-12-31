@@ -11,4 +11,8 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
     constructor(@InjectRepository(UserEntity) private repository: Repository<UserEntity>) {
         super(repository);
     }
+
+    async findByCpf(cpf: string) {
+        return this.repository.findOne({ where: { cpf } });
+    }
 }

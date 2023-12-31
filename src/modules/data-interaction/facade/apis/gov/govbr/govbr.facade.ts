@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { GovbrSubsystem } from './govbr.subsystem';
 
 @Injectable()
 export class GovbrFacade {
@@ -6,5 +7,9 @@ export class GovbrFacade {
 
     async login(code: string, codeVerifier: string) {
         return this.govbrSubsystem.login(code, codeVerifier);
+    }
+
+    async getJwk() {
+        return this.govbrSubsystem.getJwk();
     }
 }

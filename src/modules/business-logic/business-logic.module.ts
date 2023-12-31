@@ -5,8 +5,9 @@ import { FeatureTechnicalVisitModule } from './feature-technical-visit/feature-t
 import { FeatureCostEstimationModule } from './feature-cost-estimation/feature-cost-estimation.module';
 import { FeatureContractModule } from './feature-contract/feature-contract.module';
 import { FeatureConstructionModule } from './feature-construction/feature-construction.module';
+import { FeatureAuthModule } from './feature-auth/feature-auth.module';
 
 @Module({
-    imports: [FeatureUserModule, FeatureWorkRequestModule, FeatureTechnicalVisitModule, FeatureCostEstimationModule, FeatureContractModule, FeatureConstructionModule],
+    imports: [FeatureUserModule, FeatureWorkRequestModule, FeatureTechnicalVisitModule, FeatureCostEstimationModule, FeatureContractModule, FeatureConstructionModule, FeatureAuthModule],
 })
 export class BusinessLogicModule {}

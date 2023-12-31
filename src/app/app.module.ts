@@ -1,16 +1,17 @@
-import { Module } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
-import { AppController } from './app.controller';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { CoreModule } from 'src/core/core.module';
+import { EnviromentVariablesEnum } from 'src/core/enums/environment-variables.enum';
+import { ServerExceptionFilter } from 'src/core/filters/exception.filter';
 import { BusinessLogicModule } from 'src/modules/business-logic/business-logic.module';
 import { DataInteractionModule } from 'src/modules/data-interaction/data-interaction.module';
-import { ServerExceptionFilter } from 'src/core/filters/exception.filter';
-import { CoreModule } from 'src/core/core.module';
 import { FacadeModule } from 'src/modules/data-interaction/facade/facade.module';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { EnviromentVariablesEnum } from 'src/core/enums/environment-variables.enum';
+import { AppController } from './app.controller';
 
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -22,6 +23,7 @@ dotenv.config();
             isGlobal: true,
             cache: true,
         }),
+        EventEmitterModule.forRoot(),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
             useFactory: (configService: ConfigService): TypeOrmModuleOptions => ({

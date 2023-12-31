@@ -1,5 +1,6 @@
 export enum EnviromentVariablesEnum {
     PORT = 'PORT',
+    API_URL = 'API_URL',
     ENABLE_CORS = 'ENABLE_CORS',
     ENABLE_DOCS = 'ENABLE_DOCS',
     PAYLOAD_ENCRYPT_KEY = 'PAYLOAD_ENCRYPT_KEY',

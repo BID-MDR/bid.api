@@ -14,6 +14,7 @@ export class UpdateUserDto extends OmitType(PartialType(CreateUserDto), [
     'beneficiaryUserInfo',
     'professionalUserInfo',
     'addresses',
+    'cpf'
 ]) {
     @ApiProperty({ type: CreateUserAppointmentDto, isArray: true })
     @ValidateNested({ each: true })
