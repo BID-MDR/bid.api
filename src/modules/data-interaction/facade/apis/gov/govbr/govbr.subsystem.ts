@@ -11,13 +11,24 @@ export class GovbrSubsystem {
     async login(code: string, codeVerifier: string) {
         await firstValueFrom(
             this.httpService.post(
-                `https://sso.staging.acesso.gov.br/token?grant_type=authorization_code&code=${code}&redirect_uri=${decodeURIComponent(
+                `https://sso.staging.acesso.gov.br/token?grant_type=authorization_code&code=${code}&redirect_uri=${encodeURIComponent(
                     this.configService.get(EnviromentVariablesEnum.API_URL) +
                         this.configService.get(EnviromentVariablesEnum.SERVER_PATH_PREFIX) +
                         '/v' +
                         this.configService.get(EnviromentVariablesEnum.APP_VERSION) +
                         '/auth/govbr/callback',
-                )}&code_verifier=${codeVerifier})`,
+                )}&code_verifier=${codeVerifier}`,
+                undefined,
+                {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        Authorization: `Basic ${Buffer.from(
+                            this.configService.get(EnviromentVariablesEnum.GOVBR_CLIENT_ID) +
+                                ':' +
+                                this.configService.get(EnviromentVariablesEnum.GOVBR_CLIENT_SECRET),
+                        ).toString('base64')}`,
+                    },
+                },
             ),
         );
     }

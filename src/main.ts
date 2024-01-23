@@ -37,11 +37,9 @@ async function bootstrap() {
     app.useGlobalInterceptors(new ApiReponseInterceptor(app.get(Reflector)));
 
     if (configService.get(EnviromentVariablesEnum.ENABLE_CORS) === 'true') {
-        const origins = [/localhost:[0-9]{1,5}/g];
-
         const corsOptions: CorsOptions = {
-            origin: origins,
-            methods: 'POST,GET,PUT,PATCH,DELETE,OPTIONS',
+            origin: configService.get<string>(EnviromentVariablesEnum.ALLOWED_ORIGINS).split(','),
+            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
             preflightContinue: false,
             optionsSuccessStatus: 204,
             credentials: false,
