@@ -1,14 +1,14 @@
-import { BadRequestException, Logger, ValidationPipe, VersioningType } from '@nestjs/common';
+import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';
 
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationError, useContainer } from 'class-validator';
 import * as bodyParser from 'body-parser';
+import { useContainer } from 'class-validator';
 import 'reflect-metadata';
-import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { EnviromentVariablesEnum } from './core/enums/environment-variables.enum';
 import { ApiReponseInterceptor } from './core/interceptors/api-response.interceptor';
 import { ParseToClassPipe } from './core/pipes/class-trasnformer.pipe';
