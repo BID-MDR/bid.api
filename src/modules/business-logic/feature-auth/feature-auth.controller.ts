@@ -36,7 +36,7 @@ export class FeatureAuthController {
         return await this.featureAuthService.signin(body);
     }
 
-    // Este endpoint recebe os tokens do govbr e finaliza a chama do login único govbr.
+    // Este endpoint recebe os tokens do govbr e finaliza a chamada do login único govbr.
     @Post('govbr/callback')
     @ApiExcludeEndpoint()
     async govbrTokens(@Body() body: GovbrTokenPayloadDto) {
