@@ -9,17 +9,6 @@ export class EncryptInterceptor implements NestInterceptor {
         const payloadKey = process.env[EnviromentVariablesEnum.PAYLOAD_ENCRYPT_KEY] || '';
         const payload = context.switchToHttp().getRequest().body.payload;
 
-        if (process.env[EnviromentVariablesEnum.ENABLE_DOCS] === 'true') {
-            if (
-                context
-                    .switchToHttp()
-                    .getRequest()
-                    .headers.origin.match(new RegExp(`http://localhost:${process.env['PORT']}/v[\\S]+/docs`, 'g'))
-            ) {
-                return next.handle();
-            }
-        }
-
         if (process.env[EnviromentVariablesEnum.NODE_ENV] !== 'production') {
             return next.handle();
         }
