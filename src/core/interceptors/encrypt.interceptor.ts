@@ -21,9 +21,7 @@ export class EncryptInterceptor implements NestInterceptor {
         }
 
         if (process.env[EnviromentVariablesEnum.NODE_ENV] !== 'production') {
-            if (context.switchToHttp().getRequest().headers.origin.match(new RegExp(`http://localhost`, 'g'))) {
-                return next.handle();
-            }
+            return next.handle();
         }
 
         if (!payload) throw new HttpException('Payload é obrigatório!', HttpStatus.BAD_REQUEST);
