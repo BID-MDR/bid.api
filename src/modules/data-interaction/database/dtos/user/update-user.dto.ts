@@ -13,7 +13,7 @@ export class UpdateUserDto extends OmitType(PartialType(CreateUserDto), [
     'password',
     'beneficiaryUserInfo',
     'professionalUserInfo',
-    'addresses',
+    'address',
     'cpf'
 ]) {
     @ApiProperty({ type: CreateUserAppointmentDto, isArray: true })
@@ -42,8 +42,8 @@ export class UpdateUserDto extends OmitType(PartialType(CreateUserDto), [
     @IsDefined()
     professionalUserInfo: UpdateUserProfessionalInfoDto;
 
-    @ApiProperty({ type: UpdateAddressDto, isArray: true })
-    @ValidateNested({ each: true })
+    @ApiProperty({ type: UpdateAddressDto })
+    @ValidateNested()
     @Type(() => UpdateAddressDto)
-    addresses: UpdateAddressDto[];
+    address: UpdateAddressDto;
 }

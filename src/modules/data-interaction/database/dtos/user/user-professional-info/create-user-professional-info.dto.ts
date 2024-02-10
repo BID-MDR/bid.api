@@ -8,11 +8,11 @@ import {
     IsNumberString,
     IsPositive,
     IsUrl,
-    Min,
     ValidateIf,
     ValidateNested,
 } from 'class-validator';
 import { PortifolioTypeEnum } from '../../../enums/portifolio-type.enum';
+import { CreateAddressDto } from '../../address/create-address.dto';
 import { CreateUserRestingDayDto } from '../user-resting-day/create-user-resting-day.dto';
 
 export class CreateUserProfessionalInfoDto {
@@ -40,16 +40,6 @@ export class CreateUserProfessionalInfoDto {
     @ValidateIf((o) => !o.confeaRegistrationNumber)
     cauRegistrationNumber: string;
 
-    @ApiProperty({ type: String, example: '100.00' })
-    @IsCurrency({
-        allow_decimal: true,
-        digits_after_decimal: [1, 2],
-        require_symbol: false,
-        allow_negatives: false,
-        symbol: 'R$',
-    })
-    laborValue: number;
-
     @ApiProperty({ type: CreateUserRestingDayDto, isArray: true })
     @ValidateNested({ each: true })
     @Type(() => CreateUserRestingDayDto)
@@ -64,7 +54,8 @@ export class CreateUserProfessionalInfoDto {
     @IsMilitaryTime()
     worksTo: string;
 
-    @ApiProperty({ description: 'KM', example: 1000 })
-    @IsPositive()
-    maximumDistanceToWorks: number;
+    @ApiProperty({ type: CreateAddressDto, isArray: true })
+    @ValidateNested({ each: true })
+    @Type(() => CreateAddressDto)
+    addresses: CreateAddressDto[];
 }

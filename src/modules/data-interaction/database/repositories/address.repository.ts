@@ -11,4 +11,11 @@ export class AddressRepository extends BaseRepository<AddressEntity, CreateAddre
     constructor(@InjectRepository(AddressEntity) private repository: Repository<AddressEntity>) {
         super(repository);
     }
+
+    async findAllByUserProfessionalInfoId(userProfessionalInfoId: string): Promise<AddressEntity[]> {
+        return await this.repository
+            .createQueryBuilder('address')
+            .where('address.userProfessionalInfoId = :userProfessionalInfoId', { userProfessionalInfoId })
+            .getMany();
+    }
 }

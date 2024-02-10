@@ -3,6 +3,7 @@ import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { PortifolioTypeEnum } from '../enums/portifolio-type.enum';
 import { UserEntity } from './user.entity';
 import { UserRestingDayEntity } from './user-resting-day.entity';
+import { AddressEntity } from './address.entity';
 
 @Entity({ name: 'user-professional-info' })
 export class UserProfessionalInfoEntity extends BaseEntity {
@@ -45,13 +46,6 @@ export class UserProfessionalInfoEntity extends BaseEntity {
     })
     materialPurchaseAndDeliveryAvailability: boolean;
 
-    @Column({
-        type: 'decimal',
-        precision: 10,
-        scale: 2,
-    })
-    laborValue: number;
-
     @OneToMany(() => UserRestingDayEntity, (restingDay) => restingDay.userProfessionalInfo, {
         cascade: true,
         eager: true,
@@ -70,12 +64,9 @@ export class UserProfessionalInfoEntity extends BaseEntity {
     })
     worksTo: string;
 
-    @Column({
-        type: 'smallint',
-        unsigned: true,
-    })
-    maximumDistanceToWorks: number;
-
     @OneToOne(() => UserEntity, (user) => user.professionalUserInfo)
     user: UserEntity;
+
+    @OneToMany(() => AddressEntity, (address) => address.userProfessionalInfo, { cascade: true, eager: true })
+    addresses: AddressEntity[];
 }

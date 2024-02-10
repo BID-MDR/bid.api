@@ -1,30 +1,28 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import * as bcrypt from 'bcrypt';
+import { totp } from 'otplib';
+import { EnviromentVariablesEnum } from 'src/core/enums/environment-variables.enum';
 import { BaseService } from 'src/core/services/base.service';
+import { commonPropertyTransfer } from 'src/core/utils/common-property-transfer.util';
 import { CreateUserDto } from 'src/modules/data-interaction/database/dtos/user/create-user.dto';
 import { UpdateUserDto } from 'src/modules/data-interaction/database/dtos/user/update-user.dto';
-import { UserEntity } from 'src/modules/data-interaction/database/entitites/user.entity';
-import { UserRepository } from 'src/modules/data-interaction/database/repositories/user/user.repository';
-import { CaubFacade } from 'src/modules/data-interaction/facade/apis/gov/caubr/caub.facade';
-import { ProfessionalCouncilRegistrationResponseDto } from './dtos/professional-council-resgistration-reponse.dto';
-import * as bcrypt from 'bcrypt';
-import { ConfeaFacade } from 'src/modules/data-interaction/facade/apis/gov/confea/confea.facade';
-import { totp } from 'otplib';
-import { ConfigService } from '@nestjs/config';
-import { EnviromentVariablesEnum } from 'src/core/enums/environment-variables.enum';
-import { UserOtpRequestEntity } from 'src/modules/data-interaction/database/entitites/user-otp-request.entity';
-import { EmailFacade } from 'src/modules/data-interaction/facade/apis/email/email.facade';
-import { ConfirmPasswordUpdateRequestDto } from './dtos/confirm-password-update.request.dto';
-import { UserOtpStatusEnum } from 'src/modules/data-interaction/database/enums/user-otp.enum';
-import { UserAppointmentRepository } from 'src/modules/data-interaction/database/repositories/user/user-appointment.repository';
+import { AddressEntity } from 'src/modules/data-interaction/database/entitites/address.entity';
 import { UserAppointmentEntity } from 'src/modules/data-interaction/database/entitites/user-appointment.entity';
+import { UserOtpRequestEntity } from 'src/modules/data-interaction/database/entitites/user-otp-request.entity';
+import { UserEntity } from 'src/modules/data-interaction/database/entitites/user.entity';
+import { UserOtpStatusEnum } from 'src/modules/data-interaction/database/enums/user-otp.enum';
+import { AddressRepository } from 'src/modules/data-interaction/database/repositories/address.repository';
+import { UserAppointmentRepository } from 'src/modules/data-interaction/database/repositories/user/user-appointment.repository';
 import { UserBeneficiaryInfoRepository } from 'src/modules/data-interaction/database/repositories/user/user-beneficiary-info.repository';
-import { UserBeneficiaryInfoEntity } from 'src/modules/data-interaction/database/entitites/user-beneficiary-info.entity';
-import { UserProfessionalInfoEntity } from 'src/modules/data-interaction/database/entitites/user-professional-info.entity';
 import { UserProfessionalInfoRepository } from 'src/modules/data-interaction/database/repositories/user/user-professional-info.repository';
 import { UseRestingDayRepository } from 'src/modules/data-interaction/database/repositories/user/user-resting-day.repository';
-import { AddressEntity } from 'src/modules/data-interaction/database/entitites/address.entity';
-import { AddressRepository } from 'src/modules/data-interaction/database/repositories/address.repository';
-import { commonPropertyTransfer } from 'src/core/utils/common-property-transfer.util';
+import { UserRepository } from 'src/modules/data-interaction/database/repositories/user/user.repository';
+import { EmailFacade } from 'src/modules/data-interaction/facade/apis/email/email.facade';
+import { CaubFacade } from 'src/modules/data-interaction/facade/apis/gov/caubr/caub.facade';
+import { ConfeaFacade } from 'src/modules/data-interaction/facade/apis/gov/confea/confea.facade';
+import { ConfirmPasswordUpdateRequestDto } from './dtos/confirm-password-update.request.dto';
+import { ProfessionalCouncilRegistrationResponseDto } from './dtos/professional-council-resgistration-reponse.dto';
 
 @Injectable()
 export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -116,23 +114,33 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
 
                 delete data.professionalUserInfo.restingDays;
             }
+            if (data.professionalUserInfo.addresses) {
+                const oldAddresses = await this.addressRepository.findAllByUserProfessionalInfoId(
+                    data.professionalUserInfo.id,
+                );
+                for (const iterator of oldAddresses) {
+                    await this.addressRepository.hardDelete(iterator.id);
+                }
+                const newAddresses = await this.addressRepository.createMany(data.professionalUserInfo.addresses);
+                for (const iterator of newAddresses) {
+                    iterator.userProfessionalInfo = user.professionalUserInfo;
+                    await iterator.save();
+                }
+
+                delete data.professionalUserInfo.addresses;
+            }
             await this.userProfessionalInfoRepository.update(data.professionalUserInfo.id, data.professionalUserInfo);
         }
 
-        if (data.addresses) {
-            let addresses = new Array<AddressEntity>();
-            await Promise.all(
-                data.addresses.map(async (address) => {
-                    addresses.push(await this.addressRepository.update(address.id, address));
-                }),
-            );
+        if (data.address) {
+            await this.addressRepository.update(data.address.id, data.address);
         }
 
         delete data.newAppointments;
         delete data.updateAppointments;
         delete data.beneficiaryUserInfo;
         delete data.professionalUserInfo;
-        delete data.addresses;
+        delete data.address;
         return await super.update(id, data);
     }
 

@@ -46,8 +46,9 @@ export class UserEntity extends BaseEntity {
     })
     email: string;
 
-    @OneToMany(() => AddressEntity, (address) => address.user, { cascade: true, eager: true })
-    addresses: AddressEntity[];
+    @OneToOne(() => AddressEntity, (address) => address.user, { cascade: true, eager: true })
+    @JoinColumn()
+    address: AddressEntity;
 
     @Column({
         type: 'int',

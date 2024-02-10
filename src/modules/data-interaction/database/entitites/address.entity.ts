@@ -1,8 +1,9 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
 import { Column, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
+import { TechnicalVisitEntity } from './technical-visit.entity';
+import { UserProfessionalInfoEntity } from './user-professional-info.entity';
 import { UserEntity } from './user.entity';
 import { WorkRequestEntity } from './work-request.entity';
-import { TechnicalVisitEntity } from './technical-visit.entity';
 
 @Entity({ name: 'address' })
 export class AddressEntity extends BaseEntity {
@@ -11,6 +12,13 @@ export class AddressEntity extends BaseEntity {
         length: 2,
     })
     state: string;
+
+    @Column({
+        type: 'varchar',
+        length: 100,
+        nullable: true,
+    })
+    nickname: string;
 
     @Column({
         type: 'varchar',
@@ -60,8 +68,18 @@ export class AddressEntity extends BaseEntity {
     })
     longitude: string;
 
-    @ManyToOne(() => UserEntity, (user) => user.addresses)
+    @Column({
+        type: 'smallint',
+        unsigned: true,
+        nullable: true,
+    })
+    maximumDistanceToWorks: number;
+
+    @OneToOne(() => UserEntity, (user) => user.address)
     user: UserEntity;
+
+    @ManyToOne(() => UserProfessionalInfoEntity, (userProfessionalInfoEntity) => userProfessionalInfoEntity.addresses)
+    userProfessionalInfo: UserProfessionalInfoEntity;
 
     @OneToOne(() => WorkRequestEntity, (workRequest) => workRequest.address)
     workRequest: WorkRequestEntity;

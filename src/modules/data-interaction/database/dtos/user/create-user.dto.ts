@@ -44,10 +44,10 @@ export class CreateUserDto {
     @IsCPF()
     cpf: string;
 
-    @ApiProperty({ type: CreateAddressDto, isArray: true })
-    @ValidateNested({ each: true })
+    @ApiProperty({ type: CreateAddressDto })
+    @ValidateNested()
     @Type(() => CreateAddressDto)
-    addresses: CreateAddressDto[];
+    address: CreateAddressDto;
 
     @ApiProperty({ example: 18 })
     @Min(18)
