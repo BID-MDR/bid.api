@@ -23,6 +23,7 @@ import { CaubFacade } from 'src/modules/data-interaction/facade/apis/gov/caubr/c
 import { ConfeaFacade } from 'src/modules/data-interaction/facade/apis/gov/confea/confea.facade';
 import { ConfirmPasswordUpdateRequestDto } from './dtos/confirm-password-update.request.dto';
 import { ProfessionalCouncilRegistrationResponseDto } from './dtos/professional-council-resgistration-reponse.dto';
+import { StorageFacade } from 'src/modules/data-interaction/facade/apis/storage/storage.facade';
 
 @Injectable()
 export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -36,6 +37,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         private readonly caubFacade: CaubFacade,
         private readonly confeaFacade: ConfeaFacade,
         private readonly emailFacade: EmailFacade,
+        private readonly storageFacade: StorageFacade,
         private readonly configService: ConfigService,
     ) {
         super(userRepository);
@@ -51,6 +53,13 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
 
     async create(data: CreateUserDto): Promise<UserEntity> {
         data.password = await this.hashStringData(data.password);
+        if (typeof data.profilePicture !== 'string') {
+            data.profilePicture = await this.storageFacade.uploadMedia(
+                data.uploadedProfilePicture.mimeType,
+                data.uploadedProfilePicture.fileName,
+                data.uploadedProfilePicture.data,
+            );
+        }
 
         return await super.create(data);
     }

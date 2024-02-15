@@ -12,6 +12,7 @@ import { UserBeneficiaryInfoEntity } from './user-beneficiary-info.entity';
 import { UserProfessionalInfoEntity } from './user-professional-info.entity';
 import { UserAppointmentEntity } from './user-appointment.entity';
 import { UserOtpRequestEntity } from './user-otp-request.entity';
+import { UserBirthGenderEnum } from '../enums/user-birth-gender.enum';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -52,13 +53,15 @@ export class UserEntity extends BaseEntity {
 
     @Column({
         type: 'int',
+        nullable: true,
     })
     age: number;
 
     @Column({
-        type: 'char',
+        type: 'enum',
+        enum: UserBirthGenderEnum,
     })
-    birthGender: string;
+    birthGender: UserBirthGenderEnum;
 
     @Column({
         type: 'enum',
@@ -66,12 +69,6 @@ export class UserEntity extends BaseEntity {
         default: LevelOfEducationEnum.FUNDAMENTAL_INCOMPLETO,
     })
     levelOfEducation: LevelOfEducationEnum;
-
-    @Column({
-        type: 'smallint',
-        unsigned: true,
-    })
-    gradYear: number;
 
     @Column({
         type: 'enum',
@@ -85,6 +82,7 @@ export class UserEntity extends BaseEntity {
         unsigned: true,
         precision: 10,
         scale: 2,
+        nullable: true,
     })
     monthlyFamilyIncome: number;
 

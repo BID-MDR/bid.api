@@ -4,6 +4,7 @@ import { PortifolioTypeEnum } from '../enums/portifolio-type.enum';
 import { UserEntity } from './user.entity';
 import { UserRestingDayEntity } from './user-resting-day.entity';
 import { AddressEntity } from './address.entity';
+import { LevelOfEducationEnum } from '../enums/level-of-education.enum';
 
 @Entity({ name: 'user-professional-info' })
 export class UserProfessionalInfoEntity extends BaseEntity {
@@ -16,9 +17,27 @@ export class UserProfessionalInfoEntity extends BaseEntity {
 
     @Column({
         type: 'varchar',
+        length: 500,
+    })
+    about: string;
+
+    @Column({
+        type: 'varchar',
         length: 100,
     })
     portifolioLink: string;
+
+    @Column({
+        type: 'smallint',
+        unsigned: true,
+    })
+    gradYear: number;
+
+    @Column({
+        type: 'smallint',
+        unsigned: true,
+    })
+    gradMonth: number;
 
     @Column({
         type: 'varchar',

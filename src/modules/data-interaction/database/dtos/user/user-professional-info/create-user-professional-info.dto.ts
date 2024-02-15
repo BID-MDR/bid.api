@@ -8,6 +8,7 @@ import {
     IsNumberString,
     IsPositive,
     IsUrl,
+    Length,
     ValidateIf,
     ValidateNested,
 } from 'class-validator';
@@ -29,6 +30,18 @@ export class CreateUserProfessionalInfoDto {
         allow_underscores: true,
     })
     portifolioLink: string;
+
+    @ApiProperty({ description: 'Maximo de 500 chars' })
+    @Length(1, 500)
+    about: string;
+
+    @ApiProperty()
+    @IsPositive()
+    gradYear: number;
+
+    @ApiProperty()
+    @IsPositive()
+    gradMonth: number;
 
     @ApiProperty({ required: false })
     @IsNumberString()
