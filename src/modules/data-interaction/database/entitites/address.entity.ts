@@ -35,6 +35,7 @@ export class AddressEntity extends BaseEntity {
     @Column({
         type: 'varchar',
         length: 50,
+        nullable: true,
     })
     complement: string;
 
@@ -46,7 +47,7 @@ export class AddressEntity extends BaseEntity {
 
     @Column({
         type: 'varchar',
-        length: 6,
+        length: 10,
     })
     number: string;
 

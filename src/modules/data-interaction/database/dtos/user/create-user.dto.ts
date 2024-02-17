@@ -65,11 +65,6 @@ export class CreateUserDto {
     @IsEnum(LevelOfEducationEnum)
     levelOfEducation: LevelOfEducationEnum;
 
-    @ApiProperty({ minimum: 1900, maximum: new Date().getFullYear() })
-    @Min(1900)
-    @Max(new Date().getFullYear())
-    gradYear: number;
-
     @ApiProperty({ enum: MaritalStatusEnum })
     @IsEnum(MaritalStatusEnum)
     maritalStatus: MaritalStatusEnum;

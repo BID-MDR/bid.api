@@ -9,6 +9,8 @@ import {
     IsPositive,
     IsUrl,
     Length,
+    Max,
+    Min,
     ValidateIf,
     ValidateNested,
 } from 'class-validator';
@@ -35,8 +37,9 @@ export class CreateUserProfessionalInfoDto {
     @Length(1, 500)
     about: string;
 
-    @ApiProperty()
-    @IsPositive()
+    @ApiProperty({ minimum: 1900, maximum: new Date().getFullYear() })
+    @Min(1900)
+    @Max(new Date().getFullYear()+1)
     gradYear: number;
 
     @ApiProperty()

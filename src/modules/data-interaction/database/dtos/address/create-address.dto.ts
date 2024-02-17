@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsCEP } from 'brazilian-class-validator';
-import { IsLatitude, IsLongitude, IsOptional, IsPositive, Length } from 'class-validator';
+import { IsLatitude, IsLongitude, IsNumberString, IsOptional, IsPositive, Length } from 'class-validator';
 
 export class CreateAddressDto {
     @ApiProperty({ example: 'SP' })
@@ -22,6 +22,7 @@ export class CreateAddressDto {
 
     @ApiProperty()
     @Length(1, 50)
+    @IsOptional()
     complement: string;
 
     @ApiProperty()
@@ -30,6 +31,7 @@ export class CreateAddressDto {
 
     @ApiProperty()
     @Length(1, 10)
+    @IsNumberString()
     number: string;
 
     @ApiProperty()
