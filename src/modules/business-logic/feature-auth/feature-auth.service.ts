@@ -8,6 +8,7 @@ import { GovbrTokenPayloadDto } from './dtos/govbr-token-payload.dto';
 import { SigninRequestDto } from './dtos/signin-request.dto';
 import { SigninResponseDto } from './dtos/signin-response.dto';
 import { JwtPayloadInterface } from 'src/core/interfaces/jwt-payload.interface';
+import { UserEntity } from 'src/modules/data-interaction/database/entitites/user.entity';
 
 @Injectable()
 export class FeatureAuthService {
@@ -46,6 +47,15 @@ export class FeatureAuthService {
             });
         }
 
+        return new SigninResponseDto(
+            await this.jwtService.signAsync({
+                userId: user.id,
+            } as JwtPayloadInterface),
+            true,
+        );
+    }
+
+    async signinFromCreateUser(user: UserEntity): Promise<SigninResponseDto> {
         return new SigninResponseDto(
             await this.jwtService.signAsync({
                 userId: user.id,

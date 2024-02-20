@@ -9,5 +9,6 @@ import { CoreModule } from 'src/core/core.module';
     imports: [GovbrModule, DatabaseModule, CoreModule],
     controllers: [FeatureAuthController],
     providers: [FeatureAuthService],
+    exports: [FeatureAuthService],
 })
 export class FeatureAuthModule {}

@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
-    IsCurrency,
     IsDefined,
     IsEnum,
     IsMilitaryTime,
@@ -12,7 +11,7 @@ import {
     Max,
     Min,
     ValidateIf,
-    ValidateNested,
+    ValidateNested
 } from 'class-validator';
 import { PortifolioTypeEnum } from '../../../enums/portifolio-type.enum';
 import { CreateAddressDto } from '../../address/create-address.dto';

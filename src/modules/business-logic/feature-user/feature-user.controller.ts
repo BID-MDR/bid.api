@@ -26,11 +26,13 @@ import { ProfessionalCouncilRegistrationRequestDto } from './dtos/professional-c
 import { TokenVerifyParamsDto } from './dtos/token-verify-params.dto';
 import { TokenVerifyReponseDto } from './dtos/token-verify-reponse.dto';
 import { FeatureUserService } from './feature-user.service';
+import { FeatureAuthService } from '../feature-auth/feature-auth.service';
+import { SigninResponseDto } from '../feature-auth/dtos/signin-response.dto';
 
 @Controller('user')
 @ApiTags('User/Usuário')
 export class FeatureUserController {
-    constructor(private featureUserService: FeatureUserService) {}
+    constructor(private featureUserService: FeatureUserService, private featureAuthService: FeatureAuthService) {}
 
     @Get('')
     @ApiBearerAuth()
@@ -87,14 +89,15 @@ export class FeatureUserController {
         description: 'Usuário a ser criado.',
     })
     @ApiOkResponseDtoData({
-        type: UserResponseDto,
-        description: 'Usuário criado.',
+        type: SigninResponseDto,
+        description: 'Token de acesso.',
     })
     @SerializeOptions({
-        type: UserResponseDto,
+        type: SigninResponseDto,
     })
     async create(@Body() body: CreateUserDto) {
-        return await this.featureUserService.create(body);
+        const user = await this.featureUserService.create(body);
+        return await this.featureAuthService.signinFromCreateUser(user);
     }
 
     @Post('password/update/request')
