@@ -2,34 +2,38 @@ import { DeepPartial } from 'typeorm';
 import { BaseEntity } from '../entities/base.entity';
 import { BaseRepository } from '../repositories/base.repository';
 
-export abstract class BaseService<
-    T extends BaseEntity,
-    CreateDto extends DeepPartial<T>,
-    UpdatedDto extends DeepPartial<T>,
-> {
-    constructor(private readonly repository: BaseRepository<T, CreateDto, UpdatedDto>) {}
+export abstract class BaseService<T extends BaseEntity, CreateDto extends DeepPartial<T>, UpdatedDto extends DeepPartial<T> & { id?: string }> {
+    private __repository: BaseRepository<T, CreateDto, UpdatedDto>;
 
-    async findAll(): Promise<T[]> {
-        return this.repository.findAll();
+    constructor(repository: BaseRepository<T, CreateDto, UpdatedDto>) {
+        this.__repository = repository;
     }
 
-    async findById(id: number): Promise<T> {
-        return this.repository.findById(id);
+    async findAll(): Promise<T[]> {
+        return await this.__repository.findAll();
+    }
+
+    async findById(id: string): Promise<T> {
+        return await this.__repository.findById(id);
     }
 
     async count(): Promise<number> {
-        return this.repository.count();
+        return await this.__repository.count();
     }
 
     async create(data: CreateDto): Promise<T> {
-        return this.repository.create(data);
+        return await this.__repository.create(data);
     }
 
-    async update(id: number, data: UpdatedDto): Promise<T> {
-        return this.repository.update(id, data);
+    async createMany(data: CreateDto[]): Promise<T[]> {
+        return await this.__repository.createMany(data);
     }
 
-    async hardDelete(id: number): Promise<void> {
-        return this.repository.hardDelete(id);
+    async update(id: string, data: UpdatedDto): Promise<T> {
+        return await this.__repository.update(id, data);
+    }
+
+    async hardDelete(id: string): Promise<void> {
+        return await this.__repository.hardDelete(id);
     }
 }

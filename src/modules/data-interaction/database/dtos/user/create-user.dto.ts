@@ -1,40 +1,29 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsCPF } from 'brazilian-class-validator';
+import { Type } from 'class-transformer';
 import {
-    IsBoolean,
+    IsCurrency,
+    IsDefined,
     IsEmail,
     IsEnum,
     IsNumberString,
     IsOptional,
     IsPhoneNumber,
-    IsPositive,
-    IsUrl,
     Length,
     Max,
     Min,
-    ValidateNested,
+    ValidateIf,
+    ValidateNested
 } from 'class-validator';
 import { LevelOfEducationEnum } from '../../enums/level-of-education.enum';
 import { MaritalStatusEnum } from '../../enums/marital-status.enum';
 import { RaceEnum } from '../../enums/race.enum';
+import { UserBirthGenderEnum } from '../../enums/user-birth-gender.enum';
 import { UserTypeEnum } from '../../enums/user-type.enum';
 import { CreateAddressDto } from '../address/create-address.dto';
-import { PortifolioTypeEnum } from '../../enums/portifolio-type.enum';
-
-class BeneficiaryUserInfoDto {
-    @ApiProperty()
-    @IsBoolean()
-    allowProfileListing: boolean;
-}
-
-class ProfessionalUserInfoDto {
-    @ApiProperty({ enum: PortifolioTypeEnum })
-    @IsEnum(PortifolioTypeEnum)
-    portifolioType: PortifolioTypeEnum;
-
-    @ApiProperty()
-    @IsUrl()
-    portifolioLink: string;
-}
+import { MediaUploadDto } from '../media/media-upload.dto';
+import { CreateUserBeneficiaryInfoDto } from './user-beneficiary-info/create-user-beneficiary-info.dto';
+import { CreateUserProfessionalInfoDto } from './user-professional-info/create-user-professional-info.dto';
 
 export class CreateUserDto {
     @ApiProperty()
@@ -45,65 +34,78 @@ export class CreateUserDto {
     @IsEnum(UserTypeEnum)
     type: UserTypeEnum;
 
-    @ApiProperty()
+    @ApiProperty({ example: '+5511999999999' })
     @IsPhoneNumber('BR')
     phone: string;
 
-    @ApiProperty()
+    @ApiProperty({ example: 'test@email.com' })
     @IsEmail()
     email: string;
 
-    @ApiProperty({ type: CreateAddressDto, isArray: true })
-    @ValidateNested({ each: true })
-    addresses: CreateAddressDto[];
+    @ApiProperty({ example: '12345678901' })
+    @IsCPF()
+    cpf: string;
 
-    @ApiProperty()
-    @Min(1)
+    @ApiProperty({ type: CreateAddressDto })
+    @ValidateNested()
+    @Type(() => CreateAddressDto)
+    address: CreateAddressDto;
+
+    @ApiProperty({ example: 18 })
+    @Min(18)
     @Max(120)
+    @IsOptional()
     age: number;
 
-    @ApiProperty({ enum: ['M', 'F', 'O'] })
-    @IsEnum(['M', 'F', 'O'])
-    birthGender: string;
+    @ApiProperty({ enum: UserBirthGenderEnum })
+    @IsEnum(UserBirthGenderEnum)
+    birthGender: UserBirthGenderEnum;
 
     @ApiProperty({ enum: LevelOfEducationEnum })
     @IsEnum(LevelOfEducationEnum)
     levelOfEducation: LevelOfEducationEnum;
 
-    @ApiProperty({ minimum: 1900, maximum: new Date().getFullYear() })
-    @Min(1900)
-    @Max(new Date().getFullYear())
-    gradYear: number;
-
     @ApiProperty({ enum: MaritalStatusEnum })
     @IsEnum(MaritalStatusEnum)
     maritalStatus: MaritalStatusEnum;
 
-    @ApiProperty()
-    @Max(999_999_999)
-    @IsPositive()
+    @ApiProperty({ type: String, example: '1000.00' })
+    @IsCurrency({
+        allow_decimal: true,
+        digits_after_decimal: [1, 2],
+        require_symbol: false,
+        allow_negatives: false,
+    })
+    @IsOptional()
     monthlyFamilyIncome: number;
 
     @ApiProperty({ enum: RaceEnum })
     @IsEnum(RaceEnum)
     race: RaceEnum;
 
-    @ApiProperty()
-    @IsUrl({})
-    profilePicture: string;
+    @ApiProperty({ type: MediaUploadDto })
+    @ValidateNested()
+    @Type(() => MediaUploadDto)
+    uploadedProfilePicture: MediaUploadDto;
 
-    @ApiProperty()
+    @ApiProperty({ example: '1234' })
     @IsNumberString()
     @Length(4, 4)
     password: string;
 
-    @ApiProperty({ type: BeneficiaryUserInfoDto, required: false })
+    @ApiProperty({ type: CreateUserBeneficiaryInfoDto, required: false })
     @ValidateNested({ each: true })
-    @IsOptional()
-    beneficiaryUserInfo: BeneficiaryUserInfoDto;
+    @Type(() => CreateUserBeneficiaryInfoDto)
+    @ValidateIf((o) => o.type === UserTypeEnum.BENEFICIARIO)
+    @IsDefined()
+    beneficiaryUserInfo: CreateUserBeneficiaryInfoDto;
 
-    @ApiProperty({ type: ProfessionalUserInfoDto, required: false })
+    @ApiProperty({ type: CreateUserProfessionalInfoDto, required: false })
     @ValidateNested({ each: true })
-    @IsOptional()
-    professionalUserInfo: ProfessionalUserInfoDto;
+    @Type(() => CreateUserProfessionalInfoDto)
+    @ValidateIf((o) => o.type === UserTypeEnum.PROFISSIONAL)
+    @IsDefined()
+    professionalUserInfo: CreateUserProfessionalInfoDto;
+
+    profilePicture: string;
 }

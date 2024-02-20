@@ -5,11 +5,14 @@ import { MaritalStatusEnum } from '../enums/marital-status.enum';
 import { RaceEnum } from '../enums/race.enum';
 import { UserTypeEnum } from '../enums/user-type.enum';
 import { AddressEntity } from './address.entity';
-import { BeneficiaryUserInfoEntity } from './beneficiary-user-info.entity';
 import { CostEstimationEntity } from './cost-estimation.entity';
-import { ProfessionalUserInfoEntity } from './professional-user-info.entity';
 import { TechnicalVisitEntity } from './technical-visit.entity';
 import { WorkRequestEntity } from './work-request.entity';
+import { UserBeneficiaryInfoEntity } from './user-beneficiary-info.entity';
+import { UserProfessionalInfoEntity } from './user-professional-info.entity';
+import { UserAppointmentEntity } from './user-appointment.entity';
+import { UserOtpRequestEntity } from './user-otp-request.entity';
+import { UserBirthGenderEnum } from '../enums/user-birth-gender.enum';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -28,6 +31,12 @@ export class UserEntity extends BaseEntity {
 
     @Column({
         type: 'varchar',
+        length: 11,
+    })
+    cpf: string;
+
+    @Column({
+        type: 'varchar',
         length: 15,
     })
     phone: string;
@@ -38,18 +47,21 @@ export class UserEntity extends BaseEntity {
     })
     email: string;
 
-    @OneToMany(() => AddressEntity, (address) => address.user, { cascade: true, eager: true })
-    addresses: AddressEntity[];
+    @OneToOne(() => AddressEntity, (address) => address.user, { cascade: true, eager: true })
+    @JoinColumn()
+    address: AddressEntity;
 
     @Column({
         type: 'int',
+        nullable: true,
     })
     age: number;
 
     @Column({
-        type: 'char',
+        type: 'enum',
+        enum: UserBirthGenderEnum,
     })
-    birthGender: string;
+    birthGender: UserBirthGenderEnum;
 
     @Column({
         type: 'enum',
@@ -57,12 +69,6 @@ export class UserEntity extends BaseEntity {
         default: LevelOfEducationEnum.FUNDAMENTAL_INCOMPLETO,
     })
     levelOfEducation: LevelOfEducationEnum;
-
-    @Column({
-        type: 'smallint',
-        unsigned: true,
-    })
-    gradYear: number;
 
     @Column({
         type: 'enum',
@@ -76,6 +82,7 @@ export class UserEntity extends BaseEntity {
         unsigned: true,
         precision: 10,
         scale: 2,
+        nullable: true,
     })
     monthlyFamilyIncome: number;
 
@@ -98,26 +105,40 @@ export class UserEntity extends BaseEntity {
     })
     password: string;
 
-    @OneToOne(() => BeneficiaryUserInfoEntity, (beneficiaryUserInfo) => beneficiaryUserInfo.user, {
+    @OneToOne(() => UserBeneficiaryInfoEntity, (beneficiaryUserInfo) => beneficiaryUserInfo.user, {
         cascade: true,
         eager: true,
-        nullable: true,
     })
     @JoinColumn()
-    beneficiaryUserInfo: BeneficiaryUserInfoEntity;
+    beneficiaryUserInfo: UserBeneficiaryInfoEntity;
 
-    @OneToOne(() => ProfessionalUserInfoEntity, (professionalUserInfo) => professionalUserInfo.user, {
+    @OneToOne(() => UserProfessionalInfoEntity, (professionalUserInfo) => professionalUserInfo.user, {
         cascade: true,
         eager: true,
-        nullable: true,
     })
     @JoinColumn()
-    professionalUserInfo: ProfessionalUserInfoEntity;
+    professionalUserInfo: UserProfessionalInfoEntity;
 
     @OneToMany(() => TechnicalVisitEntity, (technicalVisit) => technicalVisit.professional, {
         eager: true,
     })
     technicalVisitsAsProfessional: TechnicalVisitEntity[];
+
+    @OneToMany(() => TechnicalVisitEntity, (technicalVisit) => technicalVisit.cancelledBy, {
+        eager: true,
+    })
+    technicalVisitsCancelled: TechnicalVisitEntity[];
+
+    @OneToMany(() => TechnicalVisitEntity, (technicalVisit) => technicalVisit.rescheduledBy, {
+        eager: true,
+    })
+    technicalVisitsRescheduled: TechnicalVisitEntity[];
+
+    @OneToMany(() => UserAppointmentEntity, (appointment) => appointment.user, {
+        eager: true,
+        cascade: true,
+    })
+    appointments: UserAppointmentEntity[];
 
     @OneToMany(() => TechnicalVisitEntity, (technicalVisit) => technicalVisit.beneficiary, {
         eager: true,
@@ -131,4 +152,12 @@ export class UserEntity extends BaseEntity {
 
     @OneToOne(() => WorkRequestEntity, (workRequest) => workRequest.beneficiary)
     workRequest: WorkRequestEntity;
+
+    @OneToOne(() => UserOtpRequestEntity, (otpRequest) => otpRequest.user, {
+        eager: true,
+        cascade: true,
+        nullable: true,
+    })
+    @JoinColumn()
+    otpRequest: UserOtpRequestEntity;
 }

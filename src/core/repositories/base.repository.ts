@@ -4,37 +4,55 @@ import { BaseEntity } from '../entities/base.entity';
 export abstract class BaseRepository<
     T extends BaseEntity,
     CreateDto extends DeepPartial<T>,
-    UpdateDto extends DeepPartial<T>,
+    UpdateDto extends DeepPartial<T> & { id?: string },
 > {
-    constructor(private readonly repository: Repository<T>) {}
+    private __repository: Repository<T>;
 
-    async findAll(): Promise<T[]> {
-        return this.repository.find();
+    constructor(repository: Repository<T>) {
+        this.__repository = repository;
     }
 
-    async findById(id: number): Promise<T> {
-        return this.repository.findOne(id as any);
+    async findAll(): Promise<T[]> {
+        return await this.__repository.find({
+            loadEagerRelations: true,
+        });
+    }
+
+    async findById(id: string): Promise<T> {
+        return await this.__repository.findOne({
+            where: {
+                id: id as any,
+            },
+            loadEagerRelations: true,
+        });
     }
 
     async count(): Promise<number> {
-        return this.repository.count();
+        return await this.__repository.count();
     }
 
     async create(data: CreateDto): Promise<T> {
-        const entity = this.repository.create(data);
-        return this.repository.save(entity)[0];
+        const entity = this.__repository.create(data);
+        const registeredData = await this.__repository.save(entity);
+        return await this.findById(registeredData.id);
     }
 
-    async update(id: number, data: UpdateDto): Promise<T> {
-        await this.repository.update(id, data as any);
+    async createMany(data: CreateDto[]): Promise<T[]> {
+        const entities = this.__repository.create(data);
+        return await this.__repository.save(entities);
+    }
+
+    async update(id: string, data: UpdateDto): Promise<T> {
+        delete data.id;
+        await this.__repository.update(id, data as any);
         return this.findById(id);
     }
 
-    async hardDelete(id: number): Promise<void> {
-        await this.repository.delete(id);
+    async hardDelete(id: string): Promise<void> {
+        await this.__repository.delete(id);
     }
 
-    async softDelete(id: number): Promise<void> {
-        await this.repository.softDelete(id);
+    async softDelete(id: string): Promise<void> {
+        await this.__repository.softDelete(id);
     }
 }

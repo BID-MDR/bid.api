@@ -3,13 +3,14 @@ import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { PropertyTypeEnum } from '../enums/property-type.enum';
 import { CostEstimationEntity } from './cost-estimation.entity';
 import { TechnicalVisitEntity } from './technical-visit.entity';
+import { UserGeneratedMediaEntity } from './user-generated-media.entity';
 import { UserEntity } from './user.entity';
-import { WorkRequestMediaEntity } from './work-request-media.entity';
 import { WorkRequestPrecarityEntity } from './work-request-precarity.entity';
 import { WorkRequestPrevailingConstructionMaterialEntity } from './work-request-prevailing-construction-materials.entity';
 import { WorkRequestRoomToWorkEntity } from './work-request-room-to-work.entity';
 import { WorkRequestRoomTypeQuantityEntity } from './work-request-room-type-quantity.entity';
 import { WorkRequestWelfareProgramEntity } from './work-request-welfare-program.entity';
+import { AddressEntity } from './address.entity';
 
 @Entity({ name: 'work-request' })
 export class WorkRequestEntity extends BaseEntity {
@@ -31,6 +32,13 @@ export class WorkRequestEntity extends BaseEntity {
     })
     responsiblePersonName: string;
 
+    @OneToOne(() => AddressEntity, (address) => address.workRequest, {
+        cascade: true,
+        eager: true,
+    })
+    @JoinColumn()
+    address: AddressEntity;
+
     @OneToMany(() => WorkRequestWelfareProgramEntity, (welfareProgram) => welfareProgram.workRequest, {
         cascade: true,
         eager: true,
@@ -42,6 +50,12 @@ export class WorkRequestEntity extends BaseEntity {
         enum: PropertyTypeEnum,
     })
     propertyType: PropertyTypeEnum;
+
+    @Column({
+        type: 'tinyint',
+        unsigned: true,
+    })
+    floorCount: number;
 
     @OneToMany(
         () => WorkRequestPrevailingConstructionMaterialEntity,
@@ -77,11 +91,11 @@ export class WorkRequestEntity extends BaseEntity {
     })
     aditionalInformation: string;
 
-    @OneToMany(() => WorkRequestMediaEntity, (workRequestMedia) => workRequestMedia.workRequest, {
+    @OneToMany(() => UserGeneratedMediaEntity, (userGeneratedMediaEntity) => userGeneratedMediaEntity.workRequest, {
         cascade: true,
         eager: true,
     })
-    picturesAndVideos: WorkRequestMediaEntity[];
+    picturesAndVideos: UserGeneratedMediaEntity[];
 
     @OneToMany(() => TechnicalVisitEntity, (technicalVisit) => technicalVisit.workRequest, {
         eager: true,

@@ -3,12 +3,12 @@ import { NestFactory, Reflector } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';
 
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { useContainer } from 'class-validator';
 import * as bodyParser from 'body-parser';
+import { useContainer } from 'class-validator';
 import 'reflect-metadata';
-import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { EnviromentVariablesEnum } from './core/enums/environment-variables.enum';
 import { ApiReponseInterceptor } from './core/interceptors/api-response.interceptor';
 import { ParseToClassPipe } from './core/pipes/class-trasnformer.pipe';
@@ -37,11 +37,9 @@ async function bootstrap() {
     app.useGlobalInterceptors(new ApiReponseInterceptor(app.get(Reflector)));
 
     if (configService.get(EnviromentVariablesEnum.ENABLE_CORS) === 'true') {
-        const origins = [/localhost:[0-9]{1,5}/g];
-
         const corsOptions: CorsOptions = {
-            origin: origins,
-            methods: 'POST,GET,PUT,PATCH,DELETE,OPTIONS',
+            origin: configService.get<string>(EnviromentVariablesEnum.ALLOWED_ORIGINS).split(','),
+            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
             preflightContinue: false,
             optionsSuccessStatus: 204,
             credentials: false,
@@ -63,12 +61,7 @@ async function bootstrap() {
 
     if (configService.get(EnviromentVariablesEnum.ENABLE_DOCS) === 'true') {
         const swaggerOptions = new DocumentBuilder()
-            .setTitle(
-                appName +
-                    ` - ${configService
-                        .get(EnviromentVariablesEnum.NODE_ENV)
-                        ?.toUpperCase()}`,
-            )
+            .setTitle(appName + ` - ${configService.get(EnviromentVariablesEnum.NODE_ENV)?.toUpperCase()}`)
             .setVersion(appVersion)
             .addBearerAuth({
                 type: 'http',
@@ -77,13 +70,8 @@ async function bootstrap() {
             })
             .build();
 
-        if (
-            configService.get(EnviromentVariablesEnum.NODE_ENV) !==
-            'development'
-        ) {
-            app.setGlobalPrefix(
-                configService.get(EnviromentVariablesEnum.SERVER_PATH_PREFIX),
-            );
+        if (configService.get(EnviromentVariablesEnum.NODE_ENV) !== 'development') {
+            app.setGlobalPrefix(configService.get(EnviromentVariablesEnum.SERVER_PATH_PREFIX));
         }
 
         const document = SwaggerModule.createDocument(app, swaggerOptions, {
@@ -99,7 +87,11 @@ async function bootstrap() {
 
     const port = configService.get(EnviromentVariablesEnum.PORT) || 3000;
     await app.listen(port);
-    Logger.log(`🚀 Application is running on: http://localhost:${port}`);
+    Logger.log(
+        `🚀 Application is running on: http://localhost:${port} - ${configService
+            .get(EnviromentVariablesEnum.NODE_ENV)
+            .toUpperCase()} MODE`,
+    );
 }
 
 bootstrap();

@@ -1,0 +1,11 @@
+import { Module } from '@nestjs/common';
+import { DatabaseModule } from 'src/modules/data-interaction/database/database.module';
+import { FeatureTechnicalVisitController } from './feature-technical-visit.controller';
+import { FeatureTechnicalVisitService } from './feature-technical-visit.service';
+
+@Module({
+    imports: [DatabaseModule],
+    controllers: [FeatureTechnicalVisitController],
+    providers: [FeatureTechnicalVisitService],
+})
+export class FeatureTechnicalVisitModule {}

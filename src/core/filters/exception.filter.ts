@@ -1,55 +1,73 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     ArgumentsHost,
+    BadRequestException,
     Catch,
     ExceptionFilter,
     HttpException,
+    HttpStatus,
+    Logger,
 } from '@nestjs/common';
-import { isAxiosError } from 'axios';
 import { Request, Response } from 'express';
-import { EnviromentVariablesEnum } from '../enums/environment-variables.enum';
+import { CannotCreateEntityIdMapError, EntityNotFoundError, QueryFailedError, TypeORMError } from 'typeorm';
+import { ErrorApiResponseInterface } from '../interfaces/error-api-response.interface';
 import { ApiResponseDto } from '../dtos/api-respose.dto';
+import { ValidationError, isArray } from 'class-validator';
+import { switchInheritance } from '../dsl/switch-inheritance.dsl';
 
 @Catch()
 export class ServerExceptionFilter implements ExceptionFilter {
-    catch(exception: HttpException | Error, host: ArgumentsHost) {
+    catch(exception: unknown | Error, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
         const request = ctx.getRequest<Request>();
-        const status = 'status' in exception ? exception.getStatus() : 500;
-        const message = this.formulateExceptionMessage(exception);
+        let message = (exception as any).message;
+        let code = 'HttpException';
+        let status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-        if (
-            process.env[EnviromentVariablesEnum.NODE_ENV] === 'development' ||
-            process.env[EnviromentVariablesEnum.NODE_ENV] === 'homologation'
-        ) {
+        Logger.error(message, `${request.method} ${request.url}`);
+
+        if (process.env.NODE_ENV === 'development') {
             console.error(exception);
         }
 
-        response.status(status).json(
-            new ApiResponseDto(false, null, [
-                {
-                    statusCode: status,
-                    timestamp: new Date().toISOString(),
-                    path: request.url,
-                    message: message,
-                },
-            ]),
-        );
+        switchInheritance(exception)
+            .ofType(TypeORMError)
+            .do(() => {
+                status = HttpStatus.UNPROCESSABLE_ENTITY;
+                message = (exception as TypeORMError).message;
+                code = (exception as any).code;
+            })
+            .ofType(HttpException)
+            .do(() => {
+                status = (exception as HttpException).getStatus();
+                message = (exception as HttpException).getResponse()['message'];
+                code = (exception as HttpException).message;
+            });
+
+        response
+            .status(status)
+            .json(new ApiResponseDto(false, null, [this.GlobalResponseError(status, message, code, request)]));
     }
 
-    private formulateExceptionMessage(exception: any) {
-        if (exception instanceof HttpException) {
-            const exceptionResponse = exception.getResponse() as any;
-            return exceptionResponse?.message ?? exceptionResponse;
-        }
-        if (exception instanceof Error) {
-            return exception.name + exception.message;
-        }
-        if (isAxiosError(exception)) {
-            return (
-                exception.response?.data ?? exception.name + exception.message
-            );
-        }
-    }
+    GlobalResponseError: (
+        statusCode: number,
+        message: string,
+        code: string,
+        request: Request,
+    ) => ErrorApiResponseInterface = (
+        statusCode: number,
+        message: string,
+        code: string,
+        request: Request,
+    ): ErrorApiResponseInterface => {
+        return {
+            statusCode: statusCode,
+            message,
+            code,
+            timestamp: new Date().toISOString(),
+            path: request.url,
+            method: request.method,
+        };
+    };
 }

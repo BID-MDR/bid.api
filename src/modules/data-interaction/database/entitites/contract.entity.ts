@@ -1,8 +1,8 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
-import { CostEstimationEntity } from './cost-estimation.entity';
 import { ContractStatusEnum } from '../enums/contract-status.enum';
-import { ConstructionEntity } from './construction.entity';
+import { CostEstimationEntity } from './cost-estimation.entity';
+import { RenovationProjectEntity } from './renovation-project.entity';
 
 @Entity({ name: 'contract' })
 export class ContractEntity extends BaseEntity {
@@ -47,4 +47,7 @@ export class ContractEntity extends BaseEntity {
         nullable: true,
     })
     beneficiarySignedContractAt: Date;
+
+    @OneToOne(() => RenovationProjectEntity, (renovationProject) => renovationProject.contract)
+    renovationProject: RenovationProjectEntity;
 }
