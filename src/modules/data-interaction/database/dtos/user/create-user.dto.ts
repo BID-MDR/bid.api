@@ -3,6 +3,7 @@ import { IsCPF } from 'brazilian-class-validator';
 import { Type } from 'class-transformer';
 import {
     IsCurrency,
+    IsDateString,
     IsDefined,
     IsEmail,
     IsEnum,
@@ -13,7 +14,7 @@ import {
     Max,
     Min,
     ValidateIf,
-    ValidateNested
+    ValidateNested,
 } from 'class-validator';
 import { LevelOfEducationEnum } from '../../enums/level-of-education.enum';
 import { MaritalStatusEnum } from '../../enums/marital-status.enum';
@@ -24,6 +25,8 @@ import { CreateAddressDto } from '../address/create-address.dto';
 import { MediaUploadDto } from '../media/media-upload.dto';
 import { CreateUserBeneficiaryInfoDto } from './user-beneficiary-info/create-user-beneficiary-info.dto';
 import { CreateUserProfessionalInfoDto } from './user-professional-info/create-user-professional-info.dto';
+import { UserGenderIdentityEnum } from '../../enums/user-gender-identity.enum';
+import { UserMonthlyFamilyIncomeEnum } from '../../enums/user-monthly-family-income.enum';
 
 export class CreateUserDto {
     @ApiProperty()
@@ -61,6 +64,20 @@ export class CreateUserDto {
     @IsEnum(UserBirthGenderEnum)
     birthGender: UserBirthGenderEnum;
 
+    @ApiProperty({ example: '1999-12-31' })
+    @IsDefined()
+    @IsDateString()
+    birthDate: string;
+
+    @ApiProperty({ enum: UserGenderIdentityEnum })
+    @IsEnum(UserGenderIdentityEnum)
+    genderIdentity: UserGenderIdentityEnum;
+
+    @ApiProperty({ example: 'Boeing AH-64 Apache' })
+    @Length(1, 100)
+    @IsOptional()
+    customGenderIdentity: string;
+
     @ApiProperty({ enum: LevelOfEducationEnum })
     @IsEnum(LevelOfEducationEnum)
     levelOfEducation: LevelOfEducationEnum;
@@ -69,15 +86,10 @@ export class CreateUserDto {
     @IsEnum(MaritalStatusEnum)
     maritalStatus: MaritalStatusEnum;
 
-    @ApiProperty({ type: String, example: '1000.00' })
-    @IsCurrency({
-        allow_decimal: true,
-        digits_after_decimal: [1, 2],
-        require_symbol: false,
-        allow_negatives: false,
-    })
+    @ApiProperty({ enum: UserMonthlyFamilyIncomeEnum })
+    @IsEnum(UserMonthlyFamilyIncomeEnum)
     @IsOptional()
-    monthlyFamilyIncome: number;
+    monthlyFamilyIncome: UserMonthlyFamilyIncomeEnum;
 
     @ApiProperty({ enum: RaceEnum })
     @IsEnum(RaceEnum)
