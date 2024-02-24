@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from '../../dtos/user/create-user.dto';
 import { UpdateUserDto } from '../../dtos/user/update-user.dto';
 import { UserEntity } from '../../entitites/user.entity';
+import { UserTypeEnum } from '../../enums/user-type.enum';
 
 @Injectable()
 export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -14,5 +15,27 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
 
     async findByCpf(cpf: string) {
         return this.repository.findOne({ where: { cpf } });
+    }
+
+    async getFirstBeneficiary() {
+        return this.repository.findOne({
+            order: {
+                createdAt: 'ASC',
+            },
+            where: {
+                type: UserTypeEnum.BENEFICIARIO,
+            },
+        });
+    }
+    
+    async getFirstProfessional() {
+        return this.repository.findOne({
+            order: {
+                createdAt: 'ASC',
+            },
+            where: {
+                type: UserTypeEnum.PROFISSIONAL,
+            },
+        });
     }
 }

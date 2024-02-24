@@ -6,6 +6,8 @@ import { GovbrTokenPayloadDto } from './dtos/govbr-token-payload.dto';
 import { SigninRequestDto } from './dtos/signin-request.dto';
 import { SigninResponseDto } from './dtos/signin-response.dto';
 import { FeatureAuthService } from './feature-auth.service';
+import { DevOnlyRoute } from 'src/core/decorators/nestjs/dev-only.decorator';
+import { GovbrCodeChallengeResponseDto } from './dtos/govbr-code-challenge-response.dto';
 
 @Controller('auth')
 @ApiTags('Authentication/Autenticação')
@@ -36,10 +38,56 @@ export class FeatureAuthController {
         return await this.featureAuthService.signin(body);
     }
 
+    @DevOnlyRoute()
+    @Post('signin/beneficiary')
+    @UseInterceptors(new EncryptInterceptor())
+    @ApiOperation({
+        summary: 'Retorna o login de um beneficiário da base. O primeiro.',
+    })
+    @ApiOkResponseDtoData({
+        type: SigninResponseDto,
+    })
+    @SerializeOptions({
+        type: SigninResponseDto,
+    })
+    async signinDevBeneficiary() {
+        return await this.featureAuthService.signinDevBeneficiary();
+    }
+
+    @DevOnlyRoute()
+    @Post('signin/professional')
+    @UseInterceptors(new EncryptInterceptor())
+    @ApiOperation({
+        summary: 'Retorna o login de um profissional da base. O primeiro.',
+    })
+    @ApiOkResponseDtoData({
+        type: SigninResponseDto,
+    })
+    @SerializeOptions({
+        type: SigninResponseDto,
+    })
+    async signinDevProfessional() {
+        return await this.featureAuthService.signinDevProfessional();
+    }
+
     // Este endpoint recebe os tokens do govbr e finaliza a chamada do login único govbr.
     @Post('govbr/callback')
     @ApiExcludeEndpoint()
     async govbrTokens(@Body() body: GovbrTokenPayloadDto) {
         await this.featureAuthService.processGovbrJwt(body);
+    }
+
+    @Post('govbr/sso')
+    @ApiOperation({
+        summary: 'Gera um code_challenge para o login único govbr.',
+    })
+    @ApiOkResponseDtoData({
+        type: GovbrCodeChallengeResponseDto,
+    })
+    @SerializeOptions({
+        type: GovbrCodeChallengeResponseDto,
+    })
+    async generateSsoGovbr() {
+        return await this.featureAuthService.generateSsoGovbr();
     }
 }

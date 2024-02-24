@@ -60,7 +60,7 @@ export class UserEntity extends BaseEntity {
     age: number;
 
     @Column({
-        type: 'date',
+        type: 'datetime',
         nullable: true,
     })
     birthDate: Date;

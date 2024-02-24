@@ -9,6 +9,8 @@ import { SigninRequestDto } from './dtos/signin-request.dto';
 import { SigninResponseDto } from './dtos/signin-response.dto';
 import { JwtPayloadInterface } from 'src/core/interfaces/jwt-payload.interface';
 import { UserEntity } from 'src/modules/data-interaction/database/entitites/user.entity';
+import { GovbrSsoRepository } from 'src/modules/data-interaction/database/repositories/govbr-sso.repository';
+import { randomBytes, createHash } from 'node:crypto';
 
 @Injectable()
 export class FeatureAuthService {
@@ -17,7 +19,47 @@ export class FeatureAuthService {
         private userRepository: UserRepository,
         private jwtService: JwtService,
         private eventEmitter: EventEmitter2,
+        private govbrSsoRepository: GovbrSsoRepository,
     ) {}
+
+    async generateSsoGovbr() {
+        const codeVerifier = randomBytes(32)
+            .toString('base64')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=/g, '');
+
+        return await this.govbrSsoRepository.create({
+            codeVerifier,
+            codeChallenge: encodeURI(createHash('sha256').update(codeVerifier).digest('base64')),
+        });
+    }
+
+    async signinDevBeneficiary() {
+        const user = await this.userRepository.getFirstBeneficiary();
+
+        if (!user) throw new NotFoundException();
+
+        return new SigninResponseDto(
+            await this.jwtService.signAsync({
+                userId: user.id,
+            } as JwtPayloadInterface),
+            true,
+        );
+    }
+
+    async signinDevProfessional() {
+        const user = await this.userRepository.getFirstProfessional();
+
+        if (!user) throw new NotFoundException();
+
+        return new SigninResponseDto(
+            await this.jwtService.signAsync({
+                userId: user.id,
+            } as JwtPayloadInterface),
+            true,
+        );
+    }
 
     async signin(dto: SigninRequestDto): Promise<SigninResponseDto> {
         await this.govbrFacade.login(dto.code, dto.codeVerifier);
