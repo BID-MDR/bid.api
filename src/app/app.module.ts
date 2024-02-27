@@ -12,7 +12,9 @@ import { FacadeModule } from 'src/modules/data-interaction/facade/facade.module'
 import { AppController } from './app.controller';
 
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import * as dotenv from 'dotenv';
+import { join } from 'path';
 
 dotenv.config();
 
@@ -22,6 +24,11 @@ dotenv.config();
         ConfigModule.forRoot({
             isGlobal: true,
             cache: true,
+        }),
+        ServeStaticModule.forRoot({
+            rootPath: join(__dirname, '..', 'client'),
+            renderPath: '/govbr/sso',
+            exclude: ['/api/(.*)'],
         }),
         EventEmitterModule.forRoot(),
         TypeOrmModule.forRootAsync({

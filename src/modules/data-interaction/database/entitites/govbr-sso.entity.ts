@@ -14,4 +14,11 @@ export class GovbrSsoEntity extends BaseEntity {
         length: 200,
     })
     codeChallenge: string;
+
+    @Column({
+        type: 'varchar',
+        length: 500,
+        nullable: true
+    })
+    token: string;
 }

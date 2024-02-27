@@ -11,5 +11,5 @@ export class GovbrCodeChallengeResponseDto {
 
     @ApiProperty()
     @Expose()
-    codeVerifier: string;
+    codeChallenge: string;
 }

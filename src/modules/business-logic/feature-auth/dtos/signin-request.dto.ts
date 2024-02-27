@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsNotEmpty } from "class-validator";
+import { IsString, IsNotEmpty, IsUUID } from "class-validator";
 
 export class SigninRequestDto {
     @ApiProperty({
@@ -11,10 +11,10 @@ export class SigninRequestDto {
     code: string;
 
     @ApiProperty({
-        description: 'Código de verificação do login único govbr.',
-        example: '1234567890',
+        description: 'state usado para controlar a autenticação.',
+        example: 'UUID',
     })
-    @IsString()
+    @IsUUID()
     @IsNotEmpty()
-    codeVerifier: string;
+    state: string;
 }

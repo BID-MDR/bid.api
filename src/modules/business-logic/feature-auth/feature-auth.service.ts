@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { JwtService } from '@nestjs/jwt';
 import jwkToPem from 'jwk-to-pem';
@@ -11,6 +11,9 @@ import { JwtPayloadInterface } from 'src/core/interfaces/jwt-payload.interface';
 import { UserEntity } from 'src/modules/data-interaction/database/entitites/user.entity';
 import { GovbrSsoRepository } from 'src/modules/data-interaction/database/repositories/govbr-sso.repository';
 import { randomBytes, createHash } from 'node:crypto';
+import CryptoUtil from 'src/core/utils/crypto.util';
+import { ConfigService } from '@nestjs/config';
+import { EnviromentVariablesEnum } from 'src/core/enums/environment-variables.enum';
 
 @Injectable()
 export class FeatureAuthService {
@@ -20,6 +23,7 @@ export class FeatureAuthService {
         private jwtService: JwtService,
         private eventEmitter: EventEmitter2,
         private govbrSsoRepository: GovbrSsoRepository,
+        private configService: ConfigService,
     ) {}
 
     async generateSsoGovbr() {
@@ -61,8 +65,14 @@ export class FeatureAuthService {
         );
     }
 
-    async signin(dto: SigninRequestDto): Promise<SigninResponseDto> {
-        await this.govbrFacade.login(dto.code, dto.codeVerifier);
+    async signin(dto: SigninRequestDto) {
+        const ssoAttempt = await this.govbrSsoRepository.findById(dto.state);
+
+        if (!ssoAttempt) {
+            throw new BadRequestException('State inválidado pelo backend.');
+        }
+
+        await this.govbrFacade.login(dto.code, ssoAttempt.codeVerifier);
         const tokens: GovbrTokenPayloadDto = await new Promise((resolve, reject) => {
             const listener = (data: GovbrTokenPayloadDto) => {
                 clearTimeout(timer);
@@ -89,12 +99,15 @@ export class FeatureAuthService {
             });
         }
 
-        return new SigninResponseDto(
-            await this.jwtService.signAsync({
-                userId: user.id,
-            } as JwtPayloadInterface),
-            true,
-        );
+        const token = await this.jwtService.signAsync({
+            userId: user.id,
+        } as JwtPayloadInterface);
+
+        await this.govbrSsoRepository.update(ssoAttempt.id, {
+            token: CryptoUtil.encrypt(this.configService.get(EnviromentVariablesEnum.OTP_TOKEN), token),
+        });
+
+        return ssoAttempt.id;
     }
 
     async signinFromCreateUser(user: UserEntity): Promise<SigninResponseDto> {

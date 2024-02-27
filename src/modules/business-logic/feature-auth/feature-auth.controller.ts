@@ -1,4 +1,4 @@
-import { Body, Controller, Post, SerializeOptions, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Post, Res, SerializeOptions, UseInterceptors } from '@nestjs/common';
 import { ApiBody, ApiExcludeEndpoint, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiOkResponseDtoData } from 'src/core/decorators/swagger/api-ok-response-dto.decorator';
 import { EncryptInterceptor } from 'src/core/interceptors/encrypt.interceptor';
@@ -8,6 +8,7 @@ import { SigninResponseDto } from './dtos/signin-response.dto';
 import { FeatureAuthService } from './feature-auth.service';
 import { DevOnlyRoute } from 'src/core/decorators/nestjs/dev-only.decorator';
 import { GovbrCodeChallengeResponseDto } from './dtos/govbr-code-challenge-response.dto';
+import { Response } from 'express';
 
 @Controller('auth')
 @ApiTags('Authentication/Autenticação')
@@ -34,8 +35,9 @@ export class FeatureAuthController {
     @SerializeOptions({
         type: SigninResponseDto,
     })
-    async signin(@Body() body: SigninRequestDto) {
-        return await this.featureAuthService.signin(body);
+    async signin(@Body() body: SigninRequestDto, @Res() res: Response) {
+        const tokenId = await this.featureAuthService.signin(body);
+        res.redirect(`http://localhost:4200?token=${tokenId}`);
     }
 
     @DevOnlyRoute()
@@ -70,7 +72,7 @@ export class FeatureAuthController {
         return await this.featureAuthService.signinDevProfessional();
     }
 
-    // Este endpoint recebe os tokens do govbr e finaliza a chamada do login único govbr.
+    // Este endpoint recebe os tokens do govbr e dá andamento a chamada do login único govbr (signin deste controller).
     @Post('govbr/callback')
     @ApiExcludeEndpoint()
     async govbrTokens(@Body() body: GovbrTokenPayloadDto) {
