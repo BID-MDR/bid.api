@@ -26,18 +26,13 @@ export class FeatureAuthController {
         type: SigninRequestDto,
         required: true,
     })
-    @ApiOkResponseDtoData({
-        type: SigninResponseDto,
-    })
     @ApiNotFoundResponse({
         description: 'Usuário não cadastrado.',
     })
-    @SerializeOptions({
-        type: SigninResponseDto,
-    })
     async signin(@Body() body: SigninRequestDto, @Res() res: Response) {
-        const tokenId = await this.featureAuthService.signin(body);
-        res.redirect(`http://localhost:4200?token=${tokenId}`);
+        await this.featureAuthService.govbrAuthorize(body);
+
+        // res.redirect('/auth/signin/success');
     }
 
     @DevOnlyRoute()
@@ -70,13 +65,6 @@ export class FeatureAuthController {
     })
     async signinDevProfessional() {
         return await this.featureAuthService.signinDevProfessional();
-    }
-
-    // Este endpoint recebe os tokens do govbr e dá andamento a chamada do login único govbr (signin deste controller).
-    @Post('govbr/callback')
-    @ApiExcludeEndpoint()
-    async govbrTokens(@Body() body: GovbrTokenPayloadDto) {
-        await this.featureAuthService.processGovbrJwt(body);
     }
 
     @Post('govbr/sso')

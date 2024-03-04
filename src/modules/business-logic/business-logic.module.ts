@@ -8,6 +8,14 @@ import { FeatureConstructionModule } from './feature-construction/feature-constr
 import { FeatureAuthModule } from './feature-auth/feature-auth.module';
 
 @Module({
-    imports: [FeatureUserModule, FeatureWorkRequestModule, FeatureTechnicalVisitModule, FeatureCostEstimationModule, FeatureContractModule, FeatureConstructionModule, FeatureAuthModule],
+    imports: [
+        FeatureUserModule,
+        FeatureWorkRequestModule,
+        FeatureTechnicalVisitModule,
+        FeatureCostEstimationModule,
+        FeatureContractModule,
+        FeatureConstructionModule,
+        FeatureAuthModule,
+    ],
 })
 export class BusinessLogicModule {}
