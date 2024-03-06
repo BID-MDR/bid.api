@@ -41,6 +41,7 @@ import { WorkRequestRoomTypeQuantityRepository } from './repositories/work-reque
 import { WorkRequestWelfareProgramRepository } from './repositories/work-request/work-request-welfare-program.repository';
 import { WorkRequestRepository } from './repositories/work-request/work-request.repository';
 import { GovbrSsoRepository } from './repositories/govbr-sso.repository';
+import { GovbrSsoInfoToRegisterEntity } from './entitites/govbr-sso-info-to-register.entity';
 
 const ENTITIES = [
     UserEntity,
@@ -67,6 +68,7 @@ const ENTITIES = [
     TechnicalVisitEntity,
     RenovationProjectEntity,
     GovbrSsoEntity,
+    GovbrSsoInfoToRegisterEntity,
 ];
 const REPOSITORIES = [
     UserRepository,

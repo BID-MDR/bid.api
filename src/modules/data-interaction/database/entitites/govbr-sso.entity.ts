@@ -1,7 +1,8 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { GovbrSsoInfoToRegisterEntity } from './govbr-sso-info-to-register.entity';
 
-@Entity({ name: 'govbrsso' })
+@Entity({ name: 'govbr-sso' })
 export class GovbrSsoEntity extends BaseEntity {
     @Column({
         type: 'varchar',
@@ -18,7 +19,21 @@ export class GovbrSsoEntity extends BaseEntity {
     @Column({
         type: 'varchar',
         length: 500,
-        nullable: true
+        nullable: true,
     })
     token: string;
+
+    @Column({
+        type: 'boolean',
+        default: false,
+    })
+    registered: boolean;
+
+    @OneToOne(() => GovbrSsoInfoToRegisterEntity, (infoToRegister) => infoToRegister.govbrSso, {
+        cascade: true,
+        onDelete: 'CASCADE',
+        eager: true,
+    })
+    @JoinColumn()
+    infoToRegister: GovbrSsoInfoToRegisterEntity;
 }

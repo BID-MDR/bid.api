@@ -1,14 +1,12 @@
-import { Body, Controller, Post, Res, SerializeOptions, UseInterceptors } from '@nestjs/common';
-import { ApiBody, ApiExcludeEndpoint, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Post, SerializeOptions, UseInterceptors } from '@nestjs/common';
+import { ApiBody, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { DevOnlyRoute } from 'src/core/decorators/nestjs/dev-only.decorator';
 import { ApiOkResponseDtoData } from 'src/core/decorators/swagger/api-ok-response-dto.decorator';
 import { EncryptInterceptor } from 'src/core/interceptors/encrypt.interceptor';
-import { GovbrTokenPayloadDto } from './dtos/govbr-token-payload.dto';
+import { GovbrCodeChallengeResponseDto } from './dtos/govbr-code-challenge-response.dto';
 import { SigninRequestDto } from './dtos/signin-request.dto';
 import { SigninResponseDto } from './dtos/signin-response.dto';
 import { FeatureAuthService } from './feature-auth.service';
-import { DevOnlyRoute } from 'src/core/decorators/nestjs/dev-only.decorator';
-import { GovbrCodeChallengeResponseDto } from './dtos/govbr-code-challenge-response.dto';
-import { Response } from 'express';
 
 @Controller('auth')
 @ApiTags('Authentication/Autenticação')
@@ -29,10 +27,14 @@ export class FeatureAuthController {
     @ApiNotFoundResponse({
         description: 'Usuário não cadastrado.',
     })
-    async signin(@Body() body: SigninRequestDto, @Res() res: Response) {
-        await this.featureAuthService.govbrAuthorize(body);
-
-        // res.redirect('/auth/signin/success');
+    @ApiOkResponseDtoData({
+        type: String,
+    })
+    @SerializeOptions({
+        type: String,
+    })
+    async signin(@Body() body: SigninRequestDto) {
+        return await this.featureAuthService.govbrAuthorize(body);
     }
 
     @DevOnlyRoute()

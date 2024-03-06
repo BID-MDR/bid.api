@@ -13,6 +13,7 @@ import { GovbrFacade } from 'src/modules/data-interaction/facade/apis/gov/govbr/
 import { GovbrTokenPayloadDto } from './dtos/govbr-token-payload.dto';
 import { SigninRequestDto } from './dtos/signin-request.dto';
 import { SigninResponseDto } from './dtos/signin-response.dto';
+import { GovbrSsoInfoToRegisterEntity } from 'src/modules/data-interaction/database/entitites/govbr-sso-info-to-register.entity';
 
 @Injectable()
 export class FeatureAuthService {
@@ -84,12 +85,14 @@ export class FeatureAuthService {
         const user = await this.userRepository.findByCpf(decodedJwt.sub);
 
         if (!user) {
-            return new SigninResponseDto(null, false, {
-                cpf: decodedJwt.sub,
-                email: decodedJwt.email,
-                name: decodedJwt.name,
-                phone: decodedJwt.phone_number,
-            });
+            ssoAttempt.infoToRegister = new GovbrSsoInfoToRegisterEntity(
+                decodedJwt.name,
+                decodedJwt.sub,
+                decodedJwt.email,
+                decodedJwt.phone_number,
+            );
+            await ssoAttempt.save();
+            return ssoAttempt.id;
         }
 
         const token = await this.jwtService.signAsync({
@@ -98,6 +101,7 @@ export class FeatureAuthService {
 
         await this.govbrSsoRepository.update(ssoAttempt.id, {
             token: CryptoUtil.encrypt(this.configService.get(EnviromentVariablesEnum.OTP_TOKEN), token),
+            registered: true,
         });
 
         return ssoAttempt.id;
