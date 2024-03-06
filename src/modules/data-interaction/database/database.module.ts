@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddressEntity } from './entitites/address.entity';
+import { ConstructionProfessionalEntity } from './entitites/construction-professional.entity';
 import { ConstructionEntity } from './entitites/construction.entity';
 import { ContractEntity } from './entitites/contract.entity';
 import { CostEstimationEntity } from './entitites/cost-estimation.entity';
+import { GovbrSsoEntity } from './entitites/govbr-sso.entity';
+import { RenovationProjectEntity } from './entitites/renovation-project.entity';
 import { RoomSolutionEntity } from './entitites/room-solution.entity';
 import { RoomEntity } from './entitites/room.entity';
 import { TechnicalVisitEntity } from './entitites/technical-visit.entity';
@@ -23,6 +26,7 @@ import { WorkRequestWelfareProgramEntity } from './entitites/work-request-welfar
 import { WorkRequestEntity } from './entitites/work-request.entity';
 import { AddressRepository } from './repositories/address.repository';
 import { RoomRepository } from './repositories/room/room.repository';
+import { TechnicalVisitRepository } from './repositories/technical-visit.repository';
 import { UserAppointmentRepository } from './repositories/user/user-appointment.repository';
 import { UserBeneficiaryInfoRepository } from './repositories/user/user-beneficiary-info.repository';
 import { UserGeneratedMediaRepository } from './repositories/user/user-generated-media.repository';
@@ -36,9 +40,8 @@ import { WorkRequestRoomToWorkRepository } from './repositories/work-request/wor
 import { WorkRequestRoomTypeQuantityRepository } from './repositories/work-request/work-request-room-type-quantity.repository';
 import { WorkRequestWelfareProgramRepository } from './repositories/work-request/work-request-welfare-program.repository';
 import { WorkRequestRepository } from './repositories/work-request/work-request.repository';
-import { TechnicalVisitRepository } from './repositories/technical-visit.repository';
-import { RenovationProjectEntity } from './entitites/renovation-project.entity';
-import { ConstructionProfessionalEntity } from './entitites/construction-professional.entity';
+import { GovbrSsoRepository } from './repositories/govbr-sso.repository';
+import { GovbrSsoInfoToRegisterEntity } from './entitites/govbr-sso-info-to-register.entity';
 
 const ENTITIES = [
     UserEntity,
@@ -64,6 +67,8 @@ const ENTITIES = [
     ContractEntity,
     TechnicalVisitEntity,
     RenovationProjectEntity,
+    GovbrSsoEntity,
+    GovbrSsoInfoToRegisterEntity,
 ];
 const REPOSITORIES = [
     UserRepository,
@@ -82,6 +87,7 @@ const REPOSITORIES = [
     RoomRepository,
     TechnicalVisitRepository,
     AddressRepository,
+    GovbrSsoRepository,
 ];
 
 @Module({

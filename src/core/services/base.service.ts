@@ -2,7 +2,11 @@ import { DeepPartial } from 'typeorm';
 import { BaseEntity } from '../entities/base.entity';
 import { BaseRepository } from '../repositories/base.repository';
 
-export abstract class BaseService<T extends BaseEntity, CreateDto extends DeepPartial<T>, UpdatedDto extends DeepPartial<T> & { id?: string }> {
+export abstract class BaseService<
+    T extends BaseEntity,
+    CreateDto extends DeepPartial<T>,
+    UpdatedDto extends DeepPartial<T> & { id?: string },
+> {
     private __repository: BaseRepository<T, CreateDto, UpdatedDto>;
 
     constructor(repository: BaseRepository<T, CreateDto, UpdatedDto>) {

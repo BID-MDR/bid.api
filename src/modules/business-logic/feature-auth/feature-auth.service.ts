@@ -1,14 +1,19 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { JwtService } from '@nestjs/jwt';
 import jwkToPem from 'jwk-to-pem';
+import { EnviromentVariablesEnum } from 'src/core/enums/environment-variables.enum';
+import { JwtPayloadInterface } from 'src/core/interfaces/jwt-payload.interface';
+import CryptoUtil from 'src/core/utils/crypto.util';
+import { UserEntity } from 'src/modules/data-interaction/database/entitites/user.entity';
+import { GovbrSsoRepository } from 'src/modules/data-interaction/database/repositories/govbr-sso.repository';
 import { UserRepository } from 'src/modules/data-interaction/database/repositories/user/user.repository';
 import { GovbrFacade } from 'src/modules/data-interaction/facade/apis/gov/govbr/govbr.facade';
 import { GovbrTokenPayloadDto } from './dtos/govbr-token-payload.dto';
 import { SigninRequestDto } from './dtos/signin-request.dto';
 import { SigninResponseDto } from './dtos/signin-response.dto';
-import { JwtPayloadInterface } from 'src/core/interfaces/jwt-payload.interface';
-import { UserEntity } from 'src/modules/data-interaction/database/entitites/user.entity';
+import { GovbrSsoInfoToRegisterEntity } from 'src/modules/data-interaction/database/entitites/govbr-sso-info-to-register.entity';
 
 @Injectable()
 export class FeatureAuthService {
@@ -16,36 +21,24 @@ export class FeatureAuthService {
         private govbrFacade: GovbrFacade,
         private userRepository: UserRepository,
         private jwtService: JwtService,
-        private eventEmitter: EventEmitter2,
+        private govbrSsoRepository: GovbrSsoRepository,
+        private configService: ConfigService,
     ) {}
 
-    async signin(dto: SigninRequestDto): Promise<SigninResponseDto> {
-        await this.govbrFacade.login(dto.code, dto.codeVerifier);
-        const tokens: GovbrTokenPayloadDto = await new Promise((resolve, reject) => {
-            const listener = (data: GovbrTokenPayloadDto) => {
-                clearTimeout(timer);
-                this.eventEmitter.removeListener('govbrTokens', listener);
-                resolve(data);
-            };
+    async generateSsoGovbr() {
+        const pkce_lib = await import('pkce-challenge');
+        const pkce = await pkce_lib.default();
 
-            this.eventEmitter.on('govbrTokens', listener);
-
-            const timer = setTimeout(() => {
-                this.eventEmitter.removeListener('govbrTokens', listener);
-                reject(new HttpException('Sem resposta do Govbr.', HttpStatus.REQUEST_TIMEOUT));
-            }, 10_000);
+        return await this.govbrSsoRepository.create({
+            codeVerifier: pkce.code_verifier,
+            codeChallenge: pkce.code_challenge,
         });
-        const decodedJwt = this.jwtService.decode(tokens.id_token);
-        const user = await this.userRepository.findByCpf(decodedJwt.sub);
+    }
 
-        if (!user) {
-            return new SigninResponseDto(null, false, {
-                cpf: decodedJwt.sub,
-                email: decodedJwt.email,
-                name: decodedJwt.name,
-                phone: decodedJwt.phone_number,
-            });
-        }
+    async signinDevBeneficiary() {
+        const user = await this.userRepository.getFirstBeneficiary();
+
+        if (!user) throw new NotFoundException();
 
         return new SigninResponseDto(
             await this.jwtService.signAsync({
@@ -54,6 +47,67 @@ export class FeatureAuthService {
             true,
         );
     }
+
+    async signinDevProfessional() {
+        const user = await this.userRepository.getFirstProfessional();
+
+        if (!user) throw new NotFoundException();
+
+        return new SigninResponseDto(
+            await this.jwtService.signAsync({
+                userId: user.id,
+            } as JwtPayloadInterface),
+            true,
+        );
+    }
+
+    async govbrAuthorize(dto: SigninRequestDto) {
+        const ssoAttempt = await this.govbrSsoRepository.findById(dto.state);
+
+        if (!ssoAttempt) {
+            throw new BadRequestException('State invalidado pelo backend.');
+        }
+
+        const govbrData = await this.govbrFacade.login(dto.code, ssoAttempt.codeVerifier);
+
+        const jwk = await this.govbrFacade.getJwk();
+
+        // await this.jwtService.verifyAsync(govbrData.access_token, {
+        //     publicKey: jwkToPem(jwk),
+        //     algorithms: ['RS256'],
+        // });
+        // await this.jwtService.verifyAsync(govbrData.id_token, {
+        //     publicKey: jwkToPem(jwk),
+        //     algorithms: ['RS256'],
+        // });
+
+        const decodedJwt = this.jwtService.decode(govbrData.id_token);
+        const user = await this.userRepository.findByCpf(decodedJwt.sub);
+
+        if (!user) {
+            ssoAttempt.infoToRegister = new GovbrSsoInfoToRegisterEntity(
+                decodedJwt.name,
+                decodedJwt.sub,
+                decodedJwt.email,
+                decodedJwt.phone_number,
+            );
+            await ssoAttempt.save();
+            return ssoAttempt.id;
+        }
+
+        const token = await this.jwtService.signAsync({
+            userId: user.id,
+        } as JwtPayloadInterface);
+
+        await this.govbrSsoRepository.update(ssoAttempt.id, {
+            token: CryptoUtil.encrypt(this.configService.get(EnviromentVariablesEnum.OTP_TOKEN), token),
+            registered: true,
+        });
+
+        return ssoAttempt.id;
+    }
+
+    async govbrGetTokens(dto: GovbrTokenPayloadDto) {}
 
     async signinFromCreateUser(user: UserEntity): Promise<SigninResponseDto> {
         return new SigninResponseDto(
@@ -62,16 +116,5 @@ export class FeatureAuthService {
             } as JwtPayloadInterface),
             true,
         );
-    }
-
-    async processGovbrJwt(dto: GovbrTokenPayloadDto) {
-        const jwk = await this.govbrFacade.getJwk();
-        await this.jwtService.verifyAsync(dto.access_token, {
-            publicKey: jwkToPem(jwk),
-        });
-        await this.jwtService.verifyAsync(dto.id_token, {
-            publicKey: jwkToPem(jwk),
-        });
-        this.eventEmitter.emit('govbrTokens', dto);
     }
 }

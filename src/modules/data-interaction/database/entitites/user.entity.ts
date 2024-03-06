@@ -13,6 +13,8 @@ import { UserProfessionalInfoEntity } from './user-professional-info.entity';
 import { UserAppointmentEntity } from './user-appointment.entity';
 import { UserOtpRequestEntity } from './user-otp-request.entity';
 import { UserBirthGenderEnum } from '../enums/user-birth-gender.enum';
+import { UserGenderIdentityEnum } from '../enums/user-gender-identity.enum';
+import { UserMonthlyFamilyIncomeEnum } from '../enums/user-monthly-family-income.enum';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -58,10 +60,29 @@ export class UserEntity extends BaseEntity {
     age: number;
 
     @Column({
+        type: 'datetime',
+        nullable: true,
+    })
+    birthDate: Date;
+
+    @Column({
         type: 'enum',
         enum: UserBirthGenderEnum,
     })
     birthGender: UserBirthGenderEnum;
+
+    @Column({
+        type: 'enum',
+        enum: UserGenderIdentityEnum,
+    })
+    genderIdentity: UserGenderIdentityEnum;
+
+    @Column({
+        type: 'varchar',
+        length: 100,
+        nullable: true,
+    })
+    customGenderIdentity: string;
 
     @Column({
         type: 'enum',
@@ -78,13 +99,11 @@ export class UserEntity extends BaseEntity {
     maritalStatus: MaritalStatusEnum;
 
     @Column({
-        type: 'decimal',
-        unsigned: true,
-        precision: 10,
-        scale: 2,
+        enum: UserMonthlyFamilyIncomeEnum,
+        type: 'enum',
         nullable: true,
     })
-    monthlyFamilyIncome: number;
+    monthlyFamilyIncome: UserMonthlyFamilyIncomeEnum;
 
     @Column({
         type: 'enum',

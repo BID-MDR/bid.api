@@ -1,19 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-    ArgumentsHost,
-    BadRequestException,
-    Catch,
-    ExceptionFilter,
-    HttpException,
-    HttpStatus,
-    Logger,
-} from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { CannotCreateEntityIdMapError, EntityNotFoundError, QueryFailedError, TypeORMError } from 'typeorm';
-import { ErrorApiResponseInterface } from '../interfaces/error-api-response.interface';
-import { ApiResponseDto } from '../dtos/api-respose.dto';
-import { ValidationError, isArray } from 'class-validator';
+import { TypeORMError } from 'typeorm';
 import { switchInheritance } from '../dsl/switch-inheritance.dsl';
+import { ApiResponseDto } from '../dtos/api-respose.dto';
+import { ErrorApiResponseInterface } from '../interfaces/error-api-response.interface';
 
 @Catch()
 export class ServerExceptionFilter implements ExceptionFilter {

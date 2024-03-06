@@ -1,8 +1,9 @@
 import { Body, Controller, Post, SerializeOptions, UseInterceptors } from '@nestjs/common';
-import { ApiBody, ApiExcludeEndpoint, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { DevOnlyRoute } from 'src/core/decorators/nestjs/dev-only.decorator';
 import { ApiOkResponseDtoData } from 'src/core/decorators/swagger/api-ok-response-dto.decorator';
 import { EncryptInterceptor } from 'src/core/interceptors/encrypt.interceptor';
-import { GovbrTokenPayloadDto } from './dtos/govbr-token-payload.dto';
+import { GovbrCodeChallengeResponseDto } from './dtos/govbr-code-challenge-response.dto';
 import { SigninRequestDto } from './dtos/signin-request.dto';
 import { SigninResponseDto } from './dtos/signin-response.dto';
 import { FeatureAuthService } from './feature-auth.service';
@@ -23,23 +24,62 @@ export class FeatureAuthController {
         type: SigninRequestDto,
         required: true,
     })
-    @ApiOkResponseDtoData({
-        type: SigninResponseDto,
-    })
     @ApiNotFoundResponse({
         description: 'Usuário não cadastrado.',
+    })
+    @ApiOkResponseDtoData({
+        type: String,
+    })
+    @SerializeOptions({
+        type: String,
+    })
+    async signin(@Body() body: SigninRequestDto) {
+        return await this.featureAuthService.govbrAuthorize(body);
+    }
+
+    @DevOnlyRoute()
+    @Post('signin/beneficiary')
+    @UseInterceptors(new EncryptInterceptor())
+    @ApiOperation({
+        summary: 'Retorna o login de um beneficiário da base. O primeiro.',
+    })
+    @ApiOkResponseDtoData({
+        type: SigninResponseDto,
     })
     @SerializeOptions({
         type: SigninResponseDto,
     })
-    async signin(@Body() body: SigninRequestDto) {
-        return await this.featureAuthService.signin(body);
+    async signinDevBeneficiary() {
+        return await this.featureAuthService.signinDevBeneficiary();
     }
 
-    // Este endpoint recebe os tokens do govbr e finaliza a chamada do login único govbr.
-    @Post('govbr/callback')
-    @ApiExcludeEndpoint()
-    async govbrTokens(@Body() body: GovbrTokenPayloadDto) {
-        await this.featureAuthService.processGovbrJwt(body);
+    @DevOnlyRoute()
+    @Post('signin/professional')
+    @UseInterceptors(new EncryptInterceptor())
+    @ApiOperation({
+        summary: 'Retorna o login de um profissional da base. O primeiro.',
+    })
+    @ApiOkResponseDtoData({
+        type: SigninResponseDto,
+    })
+    @SerializeOptions({
+        type: SigninResponseDto,
+    })
+    async signinDevProfessional() {
+        return await this.featureAuthService.signinDevProfessional();
+    }
+
+    @Post('govbr/sso')
+    @ApiOperation({
+        summary: 'Gera um code_challenge para o login único govbr.',
+    })
+    @ApiOkResponseDtoData({
+        type: GovbrCodeChallengeResponseDto,
+    })
+    @SerializeOptions({
+        type: GovbrCodeChallengeResponseDto,
+    })
+    async generateSsoGovbr() {
+        return await this.featureAuthService.generateSsoGovbr();
     }
 }
