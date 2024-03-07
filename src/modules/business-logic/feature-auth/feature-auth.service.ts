@@ -1,11 +1,10 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { JwtService } from '@nestjs/jwt';
-import jwkToPem from 'jwk-to-pem';
 import { EnviromentVariablesEnum } from 'src/core/enums/environment-variables.enum';
 import { JwtPayloadInterface } from 'src/core/interfaces/jwt-payload.interface';
 import CryptoUtil from 'src/core/utils/crypto.util';
+import { GovbrSsoInfoToRegisterEntity } from 'src/modules/data-interaction/database/entitites/govbr-sso-info-to-register.entity';
 import { UserEntity } from 'src/modules/data-interaction/database/entitites/user.entity';
 import { GovbrSsoRepository } from 'src/modules/data-interaction/database/repositories/govbr-sso.repository';
 import { UserRepository } from 'src/modules/data-interaction/database/repositories/user/user.repository';
@@ -13,7 +12,6 @@ import { GovbrFacade } from 'src/modules/data-interaction/facade/apis/gov/govbr/
 import { GovbrTokenPayloadDto } from './dtos/govbr-token-payload.dto';
 import { SigninRequestDto } from './dtos/signin-request.dto';
 import { SigninResponseDto } from './dtos/signin-response.dto';
-import { GovbrSsoInfoToRegisterEntity } from 'src/modules/data-interaction/database/entitites/govbr-sso-info-to-register.entity';
 
 @Injectable()
 export class FeatureAuthService {
@@ -35,30 +33,18 @@ export class FeatureAuthService {
         });
     }
 
-    async signinDevBeneficiary() {
-        const user = await this.userRepository.getFirstBeneficiary();
+    async getSsoId(id: string) {
+        const ssoAttempt = await this.govbrSsoRepository.findById(id);
 
-        if (!user) throw new NotFoundException();
+        if (!ssoAttempt) {
+            throw new NotFoundException('Tentativa de SSO não encontrada.');
+        }
 
-        return new SigninResponseDto(
-            await this.jwtService.signAsync({
-                userId: user.id,
-            } as JwtPayloadInterface),
-            true,
-        );
-    }
+        const returnData = new SigninResponseDto(ssoAttempt.token, ssoAttempt.registered, ssoAttempt.infoToRegister);
 
-    async signinDevProfessional() {
-        const user = await this.userRepository.getFirstProfessional();
+        // await this.govbrSsoRepository.hardDelete(id);
 
-        if (!user) throw new NotFoundException();
-
-        return new SigninResponseDto(
-            await this.jwtService.signAsync({
-                userId: user.id,
-            } as JwtPayloadInterface),
-            true,
-        );
+        return returnData;
     }
 
     async govbrAuthorize(dto: SigninRequestDto) {
@@ -97,6 +83,7 @@ export class FeatureAuthService {
 
         const token = await this.jwtService.signAsync({
             userId: user.id,
+            userType: user.type,
         } as JwtPayloadInterface);
 
         await this.govbrSsoRepository.update(ssoAttempt.id, {
@@ -113,6 +100,7 @@ export class FeatureAuthService {
         return new SigninResponseDto(
             await this.jwtService.signAsync({
                 userId: user.id,
+                userType: user.type,
             } as JwtPayloadInterface),
             true,
         );

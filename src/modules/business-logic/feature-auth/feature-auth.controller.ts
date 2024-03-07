@@ -1,17 +1,38 @@
-import { Body, Controller, Post, SerializeOptions, UseInterceptors } from '@nestjs/common';
-import { ApiBody, ApiNotFoundResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DevOnlyRoute } from 'src/core/decorators/nestjs/dev-only.decorator';
+import { Body, Controller, Get, Param, Post, SerializeOptions, UseInterceptors } from '@nestjs/common';
+import { ApiBody, ApiNotFoundResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ApiOkResponseDtoData } from 'src/core/decorators/swagger/api-ok-response-dto.decorator';
 import { EncryptInterceptor } from 'src/core/interceptors/encrypt.interceptor';
 import { GovbrCodeChallengeResponseDto } from './dtos/govbr-code-challenge-response.dto';
 import { SigninRequestDto } from './dtos/signin-request.dto';
 import { SigninResponseDto } from './dtos/signin-response.dto';
 import { FeatureAuthService } from './feature-auth.service';
+import { GetSsoRequestDto } from './dtos/get-sso-request.dto';
 
 @Controller('auth')
 @ApiTags('Authentication/Autenticação')
 export class FeatureAuthController {
     constructor(private featureAuthService: FeatureAuthService) {}
+
+    @Get('sso/id/:id')
+    @ApiOperation({
+        description: 'Pelo id retorna um jwt e demais informações.',
+        summary: 'Retorna os dados de uma tentativa de sso.',
+    })
+    @ApiParam({
+        name: 'id',
+        type: String,
+        required: true,
+        allowEmptyValue: false,
+    })
+    @ApiOkResponseDtoData({
+        type: SigninResponseDto,
+    })
+    @SerializeOptions({
+        type: SigninResponseDto,
+    })
+    async getSsoId(@Param() dto: GetSsoRequestDto) {
+        return await this.featureAuthService.getSsoId(dto.id);
+    }
 
     @Post('signin')
     @UseInterceptors(new EncryptInterceptor())
@@ -35,38 +56,6 @@ export class FeatureAuthController {
     })
     async signin(@Body() body: SigninRequestDto) {
         return await this.featureAuthService.govbrAuthorize(body);
-    }
-
-    @DevOnlyRoute()
-    @Post('signin/beneficiary')
-    @UseInterceptors(new EncryptInterceptor())
-    @ApiOperation({
-        summary: 'Retorna o login de um beneficiário da base. O primeiro.',
-    })
-    @ApiOkResponseDtoData({
-        type: SigninResponseDto,
-    })
-    @SerializeOptions({
-        type: SigninResponseDto,
-    })
-    async signinDevBeneficiary() {
-        return await this.featureAuthService.signinDevBeneficiary();
-    }
-
-    @DevOnlyRoute()
-    @Post('signin/professional')
-    @UseInterceptors(new EncryptInterceptor())
-    @ApiOperation({
-        summary: 'Retorna o login de um profissional da base. O primeiro.',
-    })
-    @ApiOkResponseDtoData({
-        type: SigninResponseDto,
-    })
-    @SerializeOptions({
-        type: SigninResponseDto,
-    })
-    async signinDevProfessional() {
-        return await this.featureAuthService.signinDevProfessional();
     }
 
     @Post('govbr/sso')
