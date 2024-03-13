@@ -164,7 +164,53 @@ export class FeatureUserController {
 
         return await this.featureUserService.confirmUpdatePasswordRequest(userId, dto);
     }
+@Get('dashboard/beneficiary/id/:id')
+    @ApiOperation({
+        description: 'Retorna os dados necessarios do usuario para o perfil beneficiario dashboard',
+        summary: 'Retorna dados do usuario beneficiario e joins.',
+    })
+    @ApiParam({
+        name: 'id',
+        description: 'ID do usuário.',
+        required: true,
+        allowEmptyValue: false,
+    })
+    @ApiOkResponseDtoData({
+        type: UserResponseDto,
+        description: 'Usuário logado que iniciou a requisição.',
+    })
+    @SerializeOptions({
+        type: UserResponseDto,
+    })
+    async getDashboardDataBeneficiary(@Param('id') userId: string) {
+        // Example of performing a join to fetch additional data from other tables
+        const userData = await this.featureUserService.getDashboardDataWithJoinBeneficiary(userId);
+        return userData;
+    }
 
+    @Get('dashboard/professional/id/:id')
+    @ApiOperation({
+        description: 'Retorna os dados necessarios do usuario para o perfil beneficiario dashboard',
+        summary: 'Retorna dados do usuario beneficiario e joins.',
+    })
+    @ApiParam({
+        name: 'id',
+        description: 'ID do usuário.',
+        required: true,
+        allowEmptyValue: false,
+    })
+    @ApiOkResponseDtoData({
+        type: UserResponseDto,
+        description: 'Usuário logado que iniciou a requisição.',
+    })
+    @SerializeOptions({
+        type: UserResponseDto,
+    })
+    async getDashboardDataProfessional(@Param('id') userId: string) {
+        // Example of performing a join to fetch additional data from other tables
+        const userData = await this.featureUserService.getDashboardDataWithJoinProfessional(userId);
+        return userData;
+    }
     @Put('')
     @UseGuards(JwtAccessTokenGuard)
     @ApiBearerAuth()

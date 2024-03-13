@@ -232,4 +232,12 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
     private async hashStringData(stringData: string): Promise<string> {
         return bcrypt.hash(stringData, 13);
     }
+    async getDashboardDataWithJoinBeneficiary(userId: string) {
+        // Example of performing a join to fetch additional data from other tables
+        return await this.userRepository.getDashboardDataWithJoinBeneficiary(userId);
+    }
+    async getDashboardDataWithJoinProfessional(userId: string) {
+        // Example of performing a join to fetch additional data from other tables
+        return await this.userRepository.getDashboardDataWithJoinProfessional(userId);
+    }
 }
