@@ -38,4 +38,18 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
             },
         });
     }
+    async getDashboardDataWithJoinBeneficiary(userId: string) {
+        return await this.repository
+            .createQueryBuilder('user')
+            .innerJoinAndSelect('user.beneficiaryUserInfo', 'user-beneficiary-info')
+            .leftJoinAndSelect('user.technicalVisitsAsBeneficiary', 'technical-visit')
+            .getOne();
+    }
+    async getDashboardDataWithJoinProfessional(userId: string) {
+        return await this.repository
+            .createQueryBuilder('user')
+            .innerJoinAndSelect('user.UserProfessionalInfoEntity', 'user-professional-info')
+            .leftJoinAndSelect('user.technicalVisitsAsProfessional', 'technical-visit')
+            .getOne();
+    }
 }
