@@ -164,6 +164,29 @@ export class FeatureUserController {
 
         return await this.featureUserService.confirmUpdatePasswordRequest(userId, dto);
     }
+@Get('dashboard/beneficiary/id/:id')
+    @ApiOperation({
+        description: 'Retorna os dados necessarios do usuario para o perfil beneficiario dashboard',
+        summary: 'Retorna dados do usuario beneficiario e joins.',
+    })
+    @ApiParam({
+        name: 'id',
+        description: 'ID do usuário.',
+        required: true,
+        allowEmptyValue: false,
+    })
+    @ApiOkResponseDtoData({
+        type: UserResponseDto,
+        description: 'Usuário logado que iniciou a requisição.',
+    })
+    @SerializeOptions({
+        type: UserResponseDto,
+    })
+    async getDashboardDataBeneficiary(@Param('id') userId: string) {
+        // Example of performing a join to fetch additional data from other tables
+        const userData = await this.featureUserService.getDashboardDataWithJoinBeneficiary(userId);
+        return userData;
+    }
 
     @Put()
     @UseGuards(JwtAccessTokenGuard)
@@ -246,11 +269,50 @@ export class FeatureUserController {
     async checkProfessionalUserConfeaRegistration(@Param() reqParams: ProfessionalCouncilRegistrationRequestDto) {
         return await this.featureUserService.checkProfessionalUserConfeaRegistration(reqParams.cpf);
     }
+        @Get('profile/beneficiary/work-request/:id')
+    @ApiParam({
+        name: 'id',
+        description: 'ID do usuário.',
+        required: true,
+        allowEmptyValue: false,
+    })
+    @ApiOperation({
+        description: 'Pega dados do usuario logado relacionados a work-request para serem mostrados',
+        summary: 'Retorna dados da carteira vinculados com o usuarios para perfil beneficiario',
+    })
+    @ApiOkResponseDtoData({
+        type: UserResponseDto,
+        description:
+            'Retorna dados para serem exibidos na pagina perfil.',
+    })
+    @SerializeOptions({
+        type: UserResponseDto,
+    })
+    async profileBalanceGetBeneficiary(@Param() reqParams: UserResponseDto) {
+        return await this.featureUserService.profileBalanceGetBeneficiary(reqParams.id);
+    }
 
-
-    @Get('list')
-    async list() {
-        return await this.featureUserService.list();
+    @Get('profile/professional/work-request/:id')
+    @ApiParam({
+        name: 'id',
+        description: 'ID do usuário.',
+        required: true,
+        allowEmptyValue: false,
+    })
+    @ApiOperation({
+        description: 'Pega dados do usuario logado relacionados a work-request para serem mostrados',
+        summary: 'Retorna dados da carteira vinculados com o usuarios para perfil professional',
+    })
+    @ApiOkResponseDtoData({
+        type: UserResponseDto,
+        description:
+            'Retorna dados para serem exibidos na pagina perfil.',
+    })
+    @SerializeOptions({
+        type: UserResponseDto,
+    })
+    async profileBalanceGetProfessional(@Param() reqParams: UserResponseDto) {
+        return await this.featureUserService.profileBalanceGetProfessional(reqParams.id);
     }
 
     @Get('by-cpf/:cpf')
