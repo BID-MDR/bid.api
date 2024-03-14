@@ -240,4 +240,12 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         // Example of performing a join to fetch additional data from other tables
         return await this.userRepository.getDashboardDataWithJoinProfessional(userId);
     }
+    async profileBalanceGetBeneficiary(userId: string) {
+        // Example of performing a join to fetch additional data from other tables
+        return await this.userRepository.profileBalanceGetBeneficiary(userId);
+    }
+    async profileBalanceGetProfessional(userId: string) {
+        // Example of performing a join to fetch additional data from other tables
+        return await this.userRepository.profileBalanceGetProfessional(userId);
+    }
 }
