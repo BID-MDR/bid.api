@@ -52,4 +52,22 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
             .leftJoinAndSelect('user.technicalVisitsAsProfessional', 'technical-visit')
             .getOne();
     }
+    async profileBalanceGetBeneficiary(userId: string) {
+        return await this.repository.query(`
+        SELECT *
+        FROM work_request
+        INNER JOIN user ON work_request.beneficiaryId = user.id
+        INNER JOIN user ON user-beneficiary-info.id = user.id
+        WHERE beneficiaryId = '${userId}'
+        `);
+    }
+    async profileBalanceGetProfessional(userId: string) {
+        return await this.repository.query(`
+        SELECT *
+        FROM work_request
+        INNER JOIN user ON work_request.beneficiaryId = user.id
+        INNER JOIN user ON user-professional-info.id = user.id
+        WHERE beneficiaryId = '${userId}'
+        `);
+    }
 }
