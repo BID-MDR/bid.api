@@ -24,6 +24,9 @@ import { ConfeaFacade } from 'src/modules/data-interaction/facade/apis/gov/confe
 import { ConfirmPasswordUpdateRequestDto } from './dtos/confirm-password-update.request.dto';
 import { ProfessionalCouncilRegistrationResponseDto } from './dtos/professional-council-resgistration-reponse.dto';
 import { StorageFacade } from 'src/modules/data-interaction/facade/apis/storage/storage.facade';
+import { WorkRequestWelfareProgramRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request-welfare-program.repository';
+import { WorkRequestRoomTypeQuantityRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request-room-type-quantity.repository';
+import { WorkRequestRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request.repository';
 
 @Injectable()
 export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -33,6 +36,8 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         private userBeneficiaryInfoRepository: UserBeneficiaryInfoRepository,
         private userProfessionalInfoRepository: UserProfessionalInfoRepository,
         private userRestingdayRepository: UseRestingDayRepository,
+        private workRequestWelfareProgramRepository: WorkRequestWelfareProgramRepository,
+        private workRequestRepository: WorkRequestRepository,
         private addressRepository: AddressRepository,
         private readonly caubFacade: CaubFacade,
         private readonly confeaFacade: ConfeaFacade,
@@ -64,9 +69,30 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         return await super.create(data);
     }
 
+    async updateById(id: string, data: any) {
+
+        const user = await this.userRepository.findById(id)
+        // console.log(`vim aqui`)a
+        if ( data.IUser.paramToBeUpdated === 'personal_info') {
+            const { address, ...rest } = data.IUser
+            return await this.userRepository.update(id, rest)
+        } else if (data.IUser.paramToBeUpdated === 'address') {
+
+            const { address, ...rest } = data.IUser
+           return await this.addressRepository.update(user.address.id, data.IUser.address)
+        } else {
+           const workRequest = await this.workRequestRepository.create(data.IUser.workRequest)
+           data.IUser.address = user.address
+           const {id, ...rest} = workRequest
+           data.IUser.workRequest = rest
+           data.IUser.workRequest.address = user.address
+            //await this.userRepository.update(user.id, data.IUser)
+        }
+        
+    }
+
     async update(id: string, data: UpdateUserDto): Promise<UserEntity> {
         const user = await this.findById(id);
-
         if (data.newAppointments || data.updateAppointments) {
             let appointments = new Array<UserAppointmentEntity>();
             if (data.newAppointments) {
@@ -153,6 +179,8 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         return await super.update(id, data);
     }
 
+  
+
     async updatePasswordRequest(userId: string) {
         totp.options = {
             digits: 6,
@@ -227,6 +255,13 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         await user.otpRequest.remove();
         user.otpRequest = null;
         await user.save();
+    }
+    async list() {
+        return await this.userRepository.list();
+    }
+
+    async getByCpf(cpf: string) {
+        return await this.userRepository.findByCpf(cpf);
     }
 
     private async hashStringData(stringData: string): Promise<string> {

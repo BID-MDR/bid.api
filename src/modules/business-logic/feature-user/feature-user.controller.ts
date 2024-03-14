@@ -165,7 +165,7 @@ export class FeatureUserController {
         return await this.featureUserService.confirmUpdatePasswordRequest(userId, dto);
     }
 
-    @Put('')
+    @Put()
     @UseGuards(JwtAccessTokenGuard)
     @ApiBearerAuth()
     @UseInterceptors(new EncryptInterceptor())
@@ -189,6 +189,15 @@ export class FeatureUserController {
         const userId = (req.user as JwtPayloadInterface).userId;
 
         return await this.featureUserService.update(userId, body);
+    }
+
+    @Put('by-id/:id')
+    // @UseGuards(JwtAccessTokenGuard)
+    // @ApiBearerAuth()
+    // @UseInterceptors(new EncryptInterceptor())
+    async updateById(@Param('id') id: string, @Body() body: any) {
+
+        return await this.featureUserService.updateById(id, body);
     }
 
     @Get('caubr/check-professional-status/cpf/:cpf')
@@ -236,5 +245,16 @@ export class FeatureUserController {
     })
     async checkProfessionalUserConfeaRegistration(@Param() reqParams: ProfessionalCouncilRegistrationRequestDto) {
         return await this.featureUserService.checkProfessionalUserConfeaRegistration(reqParams.cpf);
+    }
+
+
+    @Get('list')
+    async list() {
+        return await this.featureUserService.list();
+    }
+
+    @Get('by-cpf/:cpf')
+    async getByCpf(@Param('cpf') cpf: string) {
+        return await this.featureUserService.getByCpf(cpf);
     }
 }
