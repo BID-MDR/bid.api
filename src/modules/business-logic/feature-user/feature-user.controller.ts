@@ -188,30 +188,7 @@ export class FeatureUserController {
         return userData;
     }
 
-    @Get('dashboard/professional/id/:id')
-    @ApiOperation({
-        description: 'Retorna os dados necessarios do usuario para o perfil beneficiario dashboard',
-        summary: 'Retorna dados do usuario beneficiario e joins.',
-    })
-    @ApiParam({
-        name: 'id',
-        description: 'ID do usuário.',
-        required: true,
-        allowEmptyValue: false,
-    })
-    @ApiOkResponseDtoData({
-        type: UserResponseDto,
-        description: 'Usuário logado que iniciou a requisição.',
-    })
-    @SerializeOptions({
-        type: UserResponseDto,
-    })
-    async getDashboardDataProfessional(@Param('id') userId: string) {
-        // Example of performing a join to fetch additional data from other tables
-        const userData = await this.featureUserService.getDashboardDataWithJoinProfessional(userId);
-        return userData;
-    }
-    @Put('')
+    @Put()
     @UseGuards(JwtAccessTokenGuard)
     @ApiBearerAuth()
     @UseInterceptors(new EncryptInterceptor())
@@ -235,6 +212,15 @@ export class FeatureUserController {
         const userId = (req.user as JwtPayloadInterface).userId;
 
         return await this.featureUserService.update(userId, body);
+    }
+
+    @Put('by-id/:id')
+    // @UseGuards(JwtAccessTokenGuard)
+    // @ApiBearerAuth()
+    // @UseInterceptors(new EncryptInterceptor())
+    async updateById(@Param('id') id: string, @Body() body: any) {
+
+        return await this.featureUserService.updateById(id, body);
     }
 
     @Get('caubr/check-professional-status/cpf/:cpf')
@@ -327,5 +313,10 @@ export class FeatureUserController {
     })
     async profileBalanceGetProfessional(@Param() reqParams: UserResponseDto) {
         return await this.featureUserService.profileBalanceGetProfessional(reqParams.id);
+    }
+
+    @Get('by-cpf/:cpf')
+    async getByCpf(@Param('cpf') cpf: string) {
+        return await this.featureUserService.getByCpf(cpf);
     }
 }

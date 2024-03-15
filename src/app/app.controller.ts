@@ -21,7 +21,7 @@ export class AppController {
                 )}/docs`,
             );
         } else {
-            res.status(404).send('API Documentation is disabled');
+            res.status(404).send('API Documentation is disabled')
         }
     }
 }
