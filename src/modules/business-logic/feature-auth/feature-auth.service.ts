@@ -86,10 +86,10 @@ export class FeatureAuthService {
             userType: user.type,
         } as JwtPayloadInterface);
 
-        /* await this.govbrSsoRepository.update(ssoAttempt.id, {
-            token: CryptoUtil.encrypt(this.configService.get(EnviromentVariablesEnum.OTP_TOKEN), token),
+        await this.govbrSsoRepository.update(ssoAttempt.id, {
+            token: token,
             registered: true,
-        }); */
+        });
 
         return ssoAttempt.id;
     }
