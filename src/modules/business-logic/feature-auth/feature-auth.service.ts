@@ -39,10 +39,11 @@ export class FeatureAuthService {
         if (!ssoAttempt) {
             throw new NotFoundException('Tentativa de SSO não encontrada.');
         }
+        const token = CryptoUtil.decrypt(this.configService.get(EnviromentVariablesEnum.OTP_TOKEN), ssoAttempt.token);
 
-        const returnData = new SigninResponseDto(ssoAttempt.token, ssoAttempt.registered, ssoAttempt.infoToRegister);
+        const returnData = new SigninResponseDto(token, ssoAttempt.registered, ssoAttempt.infoToRegister);
 
-        // await this.govbrSsoRepository.hardDelete(id);
+        await this.govbrSsoRepository.hardDelete(id);
 
         return returnData;
     }
@@ -87,7 +88,7 @@ export class FeatureAuthService {
         } as JwtPayloadInterface);
 
         await this.govbrSsoRepository.update(ssoAttempt.id, {
-            token: token,
+            token: CryptoUtil.encrypt(this.configService.get(EnviromentVariablesEnum.OTP_TOKEN), token),
             registered: true,
         });
 
