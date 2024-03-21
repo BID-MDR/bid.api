@@ -8,7 +8,7 @@ import { WorkRequestEntity } from './work-request.entity';
 export class WorkRequestWelfareProgramEntity extends BaseEntity {
     @Column({
         type: 'enum',
-        enum: RoomTypeEnum,
+        enum: WelfareProgramEnum,
     })
     welfareProgram: WelfareProgramEnum;
 
