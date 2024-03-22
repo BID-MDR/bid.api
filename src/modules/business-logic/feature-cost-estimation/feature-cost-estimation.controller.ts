@@ -49,18 +49,18 @@ export class FeatureCostEstimationModule {
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
     @ApiOperation({
-        description: 'Retorna a visita técnica.',
-        summary: 'Retorna a visita técnica pelo ID.',
+        description: 'Retorna a estimativa de custo.',
+        summary: 'Retorna a estimativa de custo ID.',
     })
     @ApiParam({
         name: 'id',
-        description: 'ID da visita técnica.',
+        description: 'ID da estimativa de custo.',
         required: true,
         allowEmptyValue: false,
     })
     @ApiOkResponseDtoData({
         type: CostEstimationResponseDto,
-        description: 'Visita técnica.',
+        description: 'Estimativa Custo.',
     })
     @SerializeOptions({
         type: CostEstimationResponseDto,
@@ -72,48 +72,22 @@ export class FeatureCostEstimationModule {
     @Post('')
     @UseInterceptors(new EncryptInterceptor())
     @ApiOperation({
-        description: 'Cria uma visita técnica.',
-        summary: 'Cria uma visita técnica.',
+        description: 'Cria uma estimativa de custo.',
+        summary: 'Cria uma estimativa de custo.',
     })
     @ApiBody({
         type: CreateCostEstimationDto,
         required: true,
-        description: 'Visita técnica a ser criada.',
+        description: 'Estimativa de custo a ser criada.',
     })
     @ApiOkResponseDtoData({
         type: CostEstimationResponseDto,
-        description: 'Visita técnica criada.',
+        description: 'Estimativa de custo criada.',
     })
     @SerializeOptions({
         type: CostEstimationResponseDto,
     })
     async create(@Body() body: CreateCostEstimationDto) {
         return await this.featureCostEstimationService.create(body);
-    }
-
-    @Put('')
-    @UseGuards(JwtAccessTokenGuard)
-    @ApiBearerAuth()
-    @UseInterceptors(new EncryptInterceptor())
-    @ApiOperation({
-        description: 'Enpoint único para Atualizar uma visita técnica.',
-        summary: 'Atualiza uma visita técnica.',
-    })
-    @ApiBody({
-        type: UpdateCostEstimationDto,
-        required: true,
-        description: 'Visita técnica a ser atualizada.',
-    })
-    @ApiOkResponseDtoData({
-        type: CostEstimationResponseDto,
-        description: 'Visita técnica atualizada.',
-    })
-    @SerializeOptions({
-        type: CostEstimationResponseDto,
-    })
-    async update(@Req() req: Request, @Body() body: UpdateCostEstimationDto) {
-        const userId = (req.user as JwtPayloadInterface).userId;
-
-        return await this.featureCostEstimationService.update(userId, body);
     }
 }

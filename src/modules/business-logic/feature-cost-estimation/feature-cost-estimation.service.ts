@@ -20,6 +20,22 @@ export class FeatureCostEstimationService extends BaseService<
     }
 
     async listByUserId(userId: string) {
-        return await this.userAppointmentRepository.listByUserId(userId);
+        // Implement logic to fetch cost estimations by user ID
+        return await this.costEstimationRepository.findByUserId(userId);
+    }
+    async findById(id: string) {
+        // Implement logic to find cost estimation by ID
+        return await this.costEstimationRepository.findById(id);
+    }
+
+    async create(costEstimation: CreateCostEstimationDto): Promise<CostEstimationEntity> {
+        // Implement logic to create a new cost estimation
+        return await super.create(costEstimation);
+    }
+
+    async update(id: string, costEstimation: UpdateCostEstimationDto): Promise<CostEstimationEntity> {
+        // Implement logic to update an existing cost estimation
+        // Here, you might want to add some checks to ensure that the user is authorized to update the cost estimation
+        return await super.update(id, costEstimation);
     }
 }
