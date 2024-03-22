@@ -7,12 +7,27 @@ import { UpdateCostEstimationDto } from '../dtos/cost-estimation/update-cost-est
 import { CostEstimationEntity } from '../entitites/cost-estimation.entity';
 
 @Injectable()
-export class CostEstimationRepository extends BaseRepository<
-    CostEstimationEntity,
-    CreateCostEstimationDto,
-    UpdateCostEstimationDto
-> {
+export class CostEstimationRepository extends BaseRepository<CostEstimationEntity,CreateCostEstimationDto,UpdateCostEstimationDto> {
+
     constructor(@InjectRepository(CostEstimationEntity) private repository: Repository<CostEstimationEntity>) {
         super(repository);
     }
+
+    async findByUserId(userId: string): Promise<CostEstimationEntity[]> {
+        return await this.repository.createQueryBuilder('cost-estimation')
+            .leftJoin('cost-estimation.workRequestId', 'work-request')
+            .leftJoin('cost-estimation.professionalId', 'user')
+            .where('work-request.beneficiaryId = :id', { userId })
+            .getMany();
+    }
+
+    async findById(id: string): Promise<CostEstimationEntity | undefined> {
+
+        return await this.repository.createQueryBuilder('cost-estimation')
+            .leftJoin('cost-estimation.workRequestId', 'work-request')
+            .leftJoin('cost-estimation.professionalId', 'user')
+            .where('cost-estimation.id = :id', { id })
+            .getOne();
+    }
 }
+
