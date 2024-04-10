@@ -6,6 +6,8 @@ import { UpdateConstructionDto } from 'src/modules/data-interaction/database/dto
 import { ConstructionEntity } from 'src/modules/data-interaction/database/entitites/construction.entity';
 import { ConstructionRepository } from 'src/modules/data-interaction/database/repositories/construction.repository';
 
+import { CostEstimationRepository } from 'src/modules/data-interaction/database/repositories/cost-estimation.repository';
+
 @Injectable()
 export class FeatureConstructionService extends BaseService<
     ConstructionEntity,
@@ -33,6 +35,11 @@ export class FeatureConstructionService extends BaseService<
     }
 
     async update(id: string, construction: UpdateConstructionDto): Promise<ConstructionEntity> {
+        // Implement logic to update an existing cost estimation
+        // Here, you might want to add some checks to ensure that the user is authorized to update the cost estimation
+        return await super.update(id, construction);
+    }
+    async updateContractStatus(id: string, construction: UpdateConstructionDto): Promise<ConstructionEntity> {
         // Implement logic to update an existing cost estimation
         // Here, you might want to add some checks to ensure that the user is authorized to update the cost estimation
         return await super.update(id, construction);

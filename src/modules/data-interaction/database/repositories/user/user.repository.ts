@@ -31,7 +31,7 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
             },
         });
     }
-    
+
     async getFirstProfessional() {
         return this.repository.findOne({
             order: {

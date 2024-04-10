@@ -46,6 +46,11 @@ export class RenovationProjectEntity extends BaseEntity {
     })
     renovationWorkWorkSchedule: string;
 
+    @Column({
+        type: 'varchar',
+        length: 200,
+    })
+    contractId: string;
     @OneToMany(
         () => ConstructionProfessionalEntity,
         (constructionProfessional) => constructionProfessional.renovationProject,
