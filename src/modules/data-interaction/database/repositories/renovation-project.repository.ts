@@ -35,5 +35,8 @@ export class RenovationProjectRepository extends BaseRepository<RenovationProjec
             .where('renovation-project.id = :id', { id })
             .getOne();
     }
+    async findByContractId(contractId: string) {
+        return this.repository.findOne({ where: { contractId } });
+    }
 }
 

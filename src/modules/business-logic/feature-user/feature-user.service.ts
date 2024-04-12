@@ -88,7 +88,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
            data.IUser.workRequest.address = user.address
             //await this.userRepository.update(user.id, data.IUser)
         }
-        
+
     }
 
     async update(id: string, data: UpdateUserDto): Promise<UserEntity> {
@@ -179,7 +179,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         return await super.update(id, data);
     }
 
-  
+
 
     async updatePasswordRequest(userId: string) {
         totp.options = {
