@@ -42,6 +42,7 @@ import { WorkRequestWelfareProgramRepository } from './repositories/work-request
 import { WorkRequestRepository } from './repositories/work-request/work-request.repository';
 import { GovbrSsoRepository } from './repositories/govbr-sso.repository';
 import { GovbrSsoInfoToRegisterEntity } from './entitites/govbr-sso-info-to-register.entity';
+import { ConstructionRepository } from './repositories/construction.repository';
 
 const ENTITIES = [
     UserEntity,
@@ -88,6 +89,7 @@ const REPOSITORIES = [
     TechnicalVisitRepository,
     AddressRepository,
     GovbrSsoRepository,
+    ConstructionRepository
 ];
 
 @Module({

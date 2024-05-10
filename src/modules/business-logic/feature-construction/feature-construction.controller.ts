@@ -23,7 +23,7 @@ import { FeatureConstructionService } from './feature-construction.service';
 
 @Controller('construction')
 @ApiTags('Construção')
-export class FeatureConstructionModule {
+export class FeatureConstructionController {
     constructor(private featureConstructionService: FeatureConstructionService) {}
     @Get('')
     @ApiBearerAuth()
