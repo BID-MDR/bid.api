@@ -38,4 +38,11 @@ export class RoomSolutionEntity extends BaseEntity {
 
     @ManyToOne(() => ConstructionEntity, (construction) => construction.rooms)
     construction: ConstructionEntity;
+
+    @Column({
+        type: 'decimal',
+        precision: 10,
+        scale: 2,
+    })
+    reference: number;
 }
