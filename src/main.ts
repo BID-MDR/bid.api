@@ -1,59 +1,97 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import * as fs from 'fs';
-import * as bodyParser from 'body-parser';
+import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
+import { NestFactory, Reflector } from '@nestjs/core';
+
+import { AppModule } from './app/app.module';
+
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { ConfigService } from '@nestjs/config';
-import { Logger } from '@nestjs/common';
-import BooleanUtil from './shared/utils/boolean.util';
-import { EnviromentVariablesEnum } from './shared/enums/enviroment.variables.enum';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as bodyParser from 'body-parser';
+import { useContainer } from 'class-validator';
+import 'reflect-metadata';
+import { EnviromentVariablesEnum } from './core/enums/environment-variables.enum';
+import { ApiReponseInterceptor } from './core/interceptors/api-response.interceptor';
+import { ParseToClassPipe } from './core/pipes/class-trasnformer.pipe';
 
 async function bootstrap() {
+    const app = await NestFactory.create(AppModule);
 
-  const keyFileExists = fs.existsSync('./../secrets/checkin.api.key.pem');
-  const certFileExists = fs.existsSync('./../secrets/checkin.api.crt.pem');
-  const httpsOptions = keyFileExists && certFileExists
-    ? {
-      key: fs.readFileSync('./../secrets/checkin.api.key.pem'),
-      cert: fs.readFileSync('./../secrets/checkin.api.crt.pem'),
+    const configService = app.get(ConfigService);
+    const logger = new Logger('main');
+
+    app.use(bodyParser.json({ limit: '50mb' }));
+    app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
+    useContainer(app.select(AppModule), { fallbackOnErrors: true });
+
+    app.useGlobalPipes(
+        new ParseToClassPipe(),
+        new ValidationPipe({
+            forbidUnknownValues: true,
+            skipMissingProperties: false,
+            skipUndefinedProperties: false,
+            skipNullProperties: false,
+            forbidNonWhitelisted: true,
+        }),
+    );
+    app.useGlobalInterceptors(new ApiReponseInterceptor(app.get(Reflector)));
+
+    if (configService.get(EnviromentVariablesEnum.ENABLE_CORS) === 'true') {
+        const corsOptions: CorsOptions = {
+            origin: configService.get<string>(EnviromentVariablesEnum.ALLOWED_ORIGINS).split(','),
+            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+            preflightContinue: false,
+            optionsSuccessStatus: 204,
+            credentials: false,
+            allowedHeaders: 'Content-Type,Accept,Authorization',
+        };
+        app.enableCors(corsOptions);
+
+        logger.debug('CORS ENABLED');
     }
-    : null;
 
+    const appVersion = configService.get(EnviromentVariablesEnum.APP_VERSION);
 
-  const app = await NestFactory.create(AppModule, { httpsOptions });
+    app.enableVersioning({
+        type: VersioningType.URI,
+        defaultVersion: appVersion,
+    });
 
-  app.use(bodyParser.json({ limit: '50mb' }));
-  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+    const appName = 'BID - API';
 
-  const configService = app.get(ConfigService);
-  const logger = new Logger('main');
+    if (configService.get(EnviromentVariablesEnum.ENABLE_DOCS) === 'true') {
+        const swaggerOptions = new DocumentBuilder()
+            .setTitle(appName + ` - ${configService.get(EnviromentVariablesEnum.NODE_ENV)?.toUpperCase()}`)
+            .setVersion(appVersion)
+            .addBearerAuth({
+                type: 'http',
+                scheme: 'bearer',
+                bearerFormat: 'JWT',
+            })
+            .build();
 
-  if (BooleanUtil.getBoolean(configService.get(EnviromentVariablesEnum.ENABLE_CORS))) {
-    const corsOptions = {
-      origin: '*',
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-      preflightContinue: false,
-      optionsSuccessStatus: 204,
-      credentials: true,
-      allowedHeaders: 'Content-Type, Accept, Authorization'
-    };
-    app.enableCors(corsOptions);
-  }
+        if (configService.get(EnviromentVariablesEnum.NODE_ENV) !== 'development') {
+            app.setGlobalPrefix(configService.get(EnviromentVariablesEnum.SERVER_PATH_PREFIX));
+        }
 
-  const swaggerOptions = new DocumentBuilder()
-    .setTitle('BID API')
-    .setVersion('0.0.1')
-    .addBearerAuth(
-      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-    )
-    .build();
+        const document = SwaggerModule.createDocument(app, swaggerOptions, {
+            ignoreGlobalPrefix: false,
+        });
 
-  const document = SwaggerModule.createDocument(app, swaggerOptions);
-  SwaggerModule.setup('docs', app, document);
+        SwaggerModule.setup('v' + appVersion + '/docs', app, document, {
+            useGlobalPrefix: true,
+        });
 
-  const port = configService.get(EnviromentVariablesEnum.PORT) || 3000;
-  await app.listen(port);
-  logger.log(`BID API started at port ${port}`);
+        logger.debug('DOCS ENABLED');
+    }
 
+    const port = configService.get(EnviromentVariablesEnum.PORT) || 3000;
+    await app.listen(port);
+    Logger.log(
+        `🚀 Application is running on: http://localhost:${port} - ${configService
+            .get(EnviromentVariablesEnum.NODE_ENV)
+            .toUpperCase()} MODE`,
+    );
 }
+
 bootstrap();
