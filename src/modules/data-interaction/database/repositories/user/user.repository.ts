@@ -47,13 +47,15 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
             .createQueryBuilder('user')
             .innerJoinAndSelect('user.beneficiaryUserInfo', 'user-beneficiary-info')
             .leftJoinAndSelect('user.technicalVisitsAsBeneficiary', 'technical-visit')
+            .where('user.id = :userId', { userId })
             .getOne();
     }
     async getDashboardDataWithJoinProfessional(userId: string) {
         return await this.repository
             .createQueryBuilder('user')
-            .innerJoinAndSelect('user.UserProfessionalInfoEntity', 'user-professional-info')
+            .innerJoinAndSelect('user.userProfessionalInfo', 'user-professional-info')
             .leftJoinAndSelect('user.technicalVisitsAsProfessional', 'technical-visit')
+            .where('user.id = :userId', { userId })
             .getOne();
     }
     async profileBalanceGetBeneficiary(userId: string) {
