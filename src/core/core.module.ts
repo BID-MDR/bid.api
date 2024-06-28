@@ -6,6 +6,7 @@ import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EnviromentVariablesEnum } from './enums/environment-variables.enum';
 import { AppGateway } from './websocket/websocket';
+import { FeatureNotificationModule } from 'src/modules/business-logic/feature-notification/feature-notification.module';
 @Module({
     imports: [
         PassportModule.register({ defaultStrategy: 'jwt' }),
@@ -21,6 +22,7 @@ import { AppGateway } from './websocket/websocket';
             },
             inject: [ConfigService],
         }),
+        FeatureNotificationModule,
     ],
     providers: [ExistsInDBConstraint, JwtAccessTokenStrategy,AppGateway],
     exports: [ExistsInDBConstraint, JwtModule],

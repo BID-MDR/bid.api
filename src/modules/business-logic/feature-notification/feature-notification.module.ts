@@ -7,5 +7,6 @@ import { FeatureNotificationService } from './feature-notification.service';
     imports: [DatabaseModule],
     controllers: [FeatureNotificationController],
     providers: [FeatureNotificationService],
+    exports: [FeatureNotificationService],
 })
 export class FeatureNotificationModule {}

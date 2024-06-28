@@ -1,19 +1,28 @@
-import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer } from '@nestjs/websockets';
+import { WebSocketGateway, WebSocketServer, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { FeatureNotificationService } from 'src/modules/business-logic/feature-notification/feature-notification.service';
 
 @WebSocketGateway()
-export class AppGateway {
-  @WebSocketServer()
-  server: Server;
-  constructor(private featureNotificationService: FeatureNotificationService) {}
+export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer() server: Server;
 
-  @SubscribeMessage('message')
-  handleMessage(@MessageBody() message: string): void {
-    this.server.emit('message', message);
+  constructor(private notificationService: FeatureNotificationService) {}
+
+  afterInit(server: Server) {
+    console.log('WebSocket initialized');
   }
-    async sendNotification(notification: any) {
-        const notifications = await this.featureNotificationService.findAll();
-        this.server.emit('notification', notifications);
-    }
+
+  handleConnection(client: any, ...args: any[]) {
+    console.log('Client connected');
+    this.sendNotifications();
+  }
+
+  handleDisconnect(client: any) {
+    console.log('Client disconnected');
+  }
+
+  async sendNotifications() {
+    const notifications = await this.notificationService.findAll();
+    this.server.emit('notification', notifications);
+  }
 }

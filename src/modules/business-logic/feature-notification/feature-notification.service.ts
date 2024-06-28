@@ -13,10 +13,10 @@ export class FeatureNotificationService extends BaseService<
     UpdateNotificationDto
 > {
     constructor(
-        private technicalVisitRepository: NotificationRepository,
+        private notificationRepository: NotificationRepository,
         private readonly userAppointmentRepository: UserAppointmentRepository,
     ) {
-        super(technicalVisitRepository);
+        super(notificationRepository);
     }
 
     async listByUserId(userId: string) {
