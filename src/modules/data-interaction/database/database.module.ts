@@ -42,7 +42,8 @@ import { WorkRequestWelfareProgramRepository } from './repositories/work-request
 import { WorkRequestRepository } from './repositories/work-request/work-request.repository';
 import { GovbrSsoRepository } from './repositories/govbr-sso.repository';
 import { GovbrSsoInfoToRegisterEntity } from './entitites/govbr-sso-info-to-register.entity';
-
+import { NotificationEntity } from './entitites/notification.entity';
+import { NotificationRepository } from './repositories/notification.repository';
 const ENTITIES = [
     UserEntity,
     UserRatingEntity,
@@ -69,6 +70,7 @@ const ENTITIES = [
     RenovationProjectEntity,
     GovbrSsoEntity,
     GovbrSsoInfoToRegisterEntity,
+    NotificationEntity,
 ];
 const REPOSITORIES = [
     UserRepository,
@@ -88,6 +90,7 @@ const REPOSITORIES = [
     TechnicalVisitRepository,
     AddressRepository,
     GovbrSsoRepository,
+    NotificationRepository
 ];
 
 @Module({

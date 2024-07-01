@@ -15,6 +15,7 @@ import { UserOtpRequestEntity } from './user-otp-request.entity';
 import { UserBirthGenderEnum } from '../enums/user-birth-gender.enum';
 import { UserGenderIdentityEnum } from '../enums/user-gender-identity.enum';
 import { UserMonthlyFamilyIncomeEnum } from '../enums/user-monthly-family-income.enum';
+import { NotificationEntity } from './notification.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -177,6 +178,11 @@ export class UserEntity extends BaseEntity {
         cascade: true,
         nullable: true,
     })
+
+    @OneToMany(() => NotificationEntity, (notificationEntity) => notificationEntity.user, {
+        eager: true,
+    })
+    notificationUser: NotificationEntity[];
     @JoinColumn()
     otpRequest: UserOtpRequestEntity;
 }
