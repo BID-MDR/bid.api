@@ -44,4 +44,9 @@ export class FeatureConstructionService extends BaseService<
         // Here, you might want to add some checks to ensure that the user is authorized to update the cost estimation
         return await super.update(id, construction);
     }
+
+    async complete(id: string, construction: CreateConstructionDto): Promise<ConstructionEntity> {
+        // Implement logic to create a new cost estimation
+        return await super.update(id, construction);
+    }
 }
