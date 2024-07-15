@@ -34,7 +34,7 @@ async function bootstrap() {
             forbidNonWhitelisted: true,
         }),
     );
-    app.useGlobalInterceptors(new ApiReponseInterceptor(app.get(Reflector)));
+    // app.useGlobalInterceptors(new ApiReponseInterceptor(app.get(Reflector)));
 
     if (configService.get(EnviromentVariablesEnum.ENABLE_CORS) === 'true') {
         const corsOptions: CorsOptions = {
