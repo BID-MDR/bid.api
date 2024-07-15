@@ -18,7 +18,7 @@ export class ConstructionRepository extends BaseRepository<
 
     async findByUserId(userId: string): Promise<ConstructionEntity[]> {
         return await this.repository.createQueryBuilder('construction')
-            .leftJoin('construction.renovationProjectId', 'renovation-project')
+            // .leftJoin('construction.renovationProjectId', 'renovation-project')
             .leftJoin('construction.id', 'room-solution')
             .leftJoin('room-solution.id', 'construction-room-media')
             .leftJoin('renovation-project.contractId', 'contract')
@@ -33,7 +33,7 @@ export class ConstructionRepository extends BaseRepository<
     async findById(id: string): Promise<ConstructionEntity | undefined> {
 
         return await this.repository.createQueryBuilder('construction')
-            .leftJoin('construction.renovationProjectId', 'renovation-project')
+            // .leftJoin('construction.renovationProjectId', 'renovation-project')
             .leftJoin('construction.id', 'room-solution')
             .leftJoin('room-solution.id', 'construction-room-media')
             .leftJoin('renovation-project.contractId', 'contract')

@@ -7,6 +7,7 @@ import { SigninRequestDto } from './dtos/signin-request.dto';
 import { SigninResponseDto } from './dtos/signin-response.dto';
 import { FeatureAuthService } from './feature-auth.service';
 import { GetSsoRequestDto } from './dtos/get-sso-request.dto';
+import { ResponseDto } from 'src/core/dtos/response.dto';
 
 @Controller('auth')
 @ApiTags('Authentication/Autenticação')
@@ -31,7 +32,9 @@ export class FeatureAuthController {
         type: SigninResponseDto,
     })
     async getSsoId(@Param() dto: GetSsoRequestDto) {
-        return await this.featureAuthService.getSsoId(dto.id);
+        const result =  await this.featureAuthService.getSsoId(dto.id);
+        return new ResponseDto(true, result, null);
+
     }
 
     @Post('signin')
@@ -55,10 +58,13 @@ export class FeatureAuthController {
         type: String,
     })
     async signin(@Body() body: SigninRequestDto) {
-        return await this.featureAuthService.govbrAuthorize(body);
+        const result =  await this.featureAuthService.govbrAuthorize(body);
+
+        return new ResponseDto(true, result, null);
+        
     }
 
-    @Post('govbr/sso')
+    @Get('govbr/sso')
     @ApiOperation({
         summary: 'Gera um code_challenge para o login único govbr.',
     })
@@ -69,6 +75,8 @@ export class FeatureAuthController {
         type: GovbrCodeChallengeResponseDto,
     })
     async generateSsoGovbr() {
-        return await this.featureAuthService.generateSsoGovbr();
+        const result = await this.featureAuthService.generateSsoGovbr();
+
+        return new ResponseDto(true, result, null);
     }
 }

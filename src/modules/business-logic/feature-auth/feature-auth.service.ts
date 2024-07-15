@@ -49,6 +49,7 @@ export class FeatureAuthService {
     }
 
     async govbrAuthorize(dto: SigninRequestDto) {
+        console.log(dto);
         const ssoAttempt = await this.govbrSsoRepository.findById(dto.state);
 
         if (!ssoAttempt) {

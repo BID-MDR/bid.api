@@ -61,8 +61,8 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
     async profileBalanceGetBeneficiary(userId: string) {
         return await this.repository.query(`
         SELECT *
-        FROM work_request
-        INNER JOIN user ON work_request.beneficiaryId = user.id
+        FROM work-request
+        INNER JOIN user ON work-request.beneficiaryId = user.id
         INNER JOIN user ON user-beneficiary-info.id = user.id
         WHERE beneficiaryId = '${userId}'
         `);
@@ -70,8 +70,8 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
     async profileBalanceGetProfessional(userId: string) {
         return await this.repository.query(`
         SELECT *
-        FROM work_request
-        INNER JOIN user ON work_request.beneficiaryId = user.id
+        FROM work-request
+        INNER JOIN user ON work-request.beneficiaryId = user.id
         INNER JOIN user ON user-professional-info.id = user.id
         WHERE beneficiaryId = '${userId}'
         `);

@@ -19,7 +19,7 @@ export class WorkRequestRepository extends BaseRepository<
     async findByUserId(userId: string) {
         return await this.repository.query(`
             SELECT *
-            FROM work_request
+            FROM work-request
             WHERE userId = '${userId}'
         `);
     }
