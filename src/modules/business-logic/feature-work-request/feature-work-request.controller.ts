@@ -46,6 +46,21 @@ export class FeatureWorkRequestController {
         return await this.featureWorkRequestService.findByUserId(userId);
     }
 
+    @Get('profissional/find')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async getAll(@Req() req: Request) {
+        return await this.featureWorkRequestService.findAllNotAtribute();
+    }
+
+
+    @Put(':work_id/:professional_id')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async updateStatus(@Param('work_id') work_id: string, @Param('professional_id') professional_id : string ) {
+        return await this.featureWorkRequestService.updateStatus(work_id,professional_id);
+    }
+
     @Get('id/:id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)

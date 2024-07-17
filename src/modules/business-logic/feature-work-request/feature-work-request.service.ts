@@ -39,6 +39,10 @@ export class FeatureWorkRequestService extends BaseService<
         return await this.workRequestRepository.findByUserId(userId);
     }
 
+    async findAllNotAtribute(){
+        return await this.workRequestRepository.findAll();
+    }
+
     async register(userId: string, data: CreateWorkRequestDto) {
         data.beneficiary = await this.userRepository.getById(userId);
         for (const iterator of data.picturesAndVideos) {
@@ -146,5 +150,9 @@ export class FeatureWorkRequestService extends BaseService<
         delete data.picturesAndVideos;
         delete data.prevalingConstructionMaterials;
         return await super.update(workRequest.id, data);
+    }
+
+    async updateStatus(work_id: string, professional_id: string){
+        return await this.workRequestRepository.updateStatus(work_id,professional_id);
     }
 }
