@@ -65,8 +65,6 @@ export class CreateUserDto {
     birthGender: UserBirthGenderEnum;
 
     @ApiProperty({ example: '1999-12-31' })
-    @IsDefined()
-    @IsDateString()
     birthDate: string;
 
     @ApiProperty({ enum: UserGenderIdentityEnum })
@@ -74,7 +72,7 @@ export class CreateUserDto {
     genderIdentity: UserGenderIdentityEnum;
 
     @ApiProperty({ example: 'Boeing AH-64 Apache' })
-    @Length(1, 100)
+    @Length(0, 100)
     @IsOptional()
     customGenderIdentity: string;
 
