@@ -14,6 +14,7 @@ import { CreateWorkRequestRoomToWorkDto } from './work-request-room-to-work/crea
 import { CreateWorkRequestPrecarityDto } from './work-request-precarity/create-work-request-precarity.dto';
 import { CreateUserGeneratedMediaDto } from '../user/user-generated-media/create-user-generated-media.dto';
 import { CreateAddressDto } from '../address/create-address.dto';
+import { UserEntity } from '../../entitites/user.entity';
 
 export class CreateWorkRequestDto {
     @ApiProperty()
@@ -74,4 +75,6 @@ export class CreateWorkRequestDto {
     @ValidateNested({ each: true })
     @Type(() => CreateUserGeneratedMediaDto)
     picturesAndVideos: CreateUserGeneratedMediaDto[];
+
+    beneficiary: UserEntity
 }

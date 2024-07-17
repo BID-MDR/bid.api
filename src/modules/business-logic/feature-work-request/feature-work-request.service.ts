@@ -12,6 +12,7 @@ import { WorkRequestRoomTypeQuantityRepository } from 'src/modules/data-interact
 import { WorkRequestRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request.repository';
 import { StorageFacade } from './../../data-interaction/facade/apis/storage/storage.facade';
 import { WorkRequestWelfareProgramRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request-welfare-program.repository';
+import { UserRepository } from 'src/modules/data-interaction/database/repositories/user/user.repository';
 
 @Injectable()
 export class FeatureWorkRequestService extends BaseService<
@@ -29,6 +30,7 @@ export class FeatureWorkRequestService extends BaseService<
         private readonly workRequestRoomTypeQuantityRepository: WorkRequestRoomTypeQuantityRepository,
         private readonly workRequestWelfareProgramRepository: WorkRequestWelfareProgramRepository,
         private readonly storageFacade: StorageFacade,
+        private readonly userRepository: UserRepository
     ) {
         super(workRequestRepository);
     }
@@ -37,7 +39,8 @@ export class FeatureWorkRequestService extends BaseService<
         return await this.workRequestRepository.findByUserId(userId);
     }
 
-    async create(data: CreateWorkRequestDto) {
+    async register(userId: string, data: CreateWorkRequestDto) {
+        data.beneficiary = await this.userRepository.getById(userId);
         for (const iterator of data.picturesAndVideos) {
             const link = await this.storageFacade.uploadMedia(iterator.mimeType, Date.now().toString(), iterator.url);
             iterator.url = link;

@@ -72,6 +72,8 @@ export class FeatureWorkRequestController {
 
     @Post('')
     @UseInterceptors(new EncryptInterceptor())
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiBearerAuth()
     @ApiOperation({
         description: 'Cria um pedido de obra.',
         summary: 'Cria um pedido de obra.',
@@ -88,8 +90,9 @@ export class FeatureWorkRequestController {
     @SerializeOptions({
         type: WorkRequestResponseDto,
     })
-    async create(@Body() body: CreateWorkRequestDto) {
-        return await this.featureWorkRequestService.create(body);
+    async create(@Req() req: Request,@Body() body: CreateWorkRequestDto) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.featureWorkRequestService.register(userId, body);
     }
 
     @Put('')

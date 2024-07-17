@@ -16,7 +16,7 @@ import { FeatureNotificationModule } from 'src/modules/business-logic/feature-no
                 return {
                     secret: configService.get(EnviromentVariablesEnum.JWT_PAYLOAD_KEY),
                     signOptions: {
-                        expiresIn: '15m',
+                        expiresIn: '8h',
                     },
                 };
             },
