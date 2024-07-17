@@ -11,6 +11,8 @@ import { WorkRequestRoomToWorkEntity } from './work-request-room-to-work.entity'
 import { WorkRequestRoomTypeQuantityEntity } from './work-request-room-type-quantity.entity';
 import { WorkRequestWelfareProgramEntity } from './work-request-welfare-program.entity';
 import { AddressEntity } from './address.entity';
+import { WorkRequestTypeEnum } from '../enums/work-request-type.enum';
+import { UserProfessionalInfoEntity } from './user-professional-info.entity';
 
 @Entity({ name: 'work-request' })
 export class WorkRequestEntity extends BaseEntity {
@@ -91,6 +93,14 @@ export class WorkRequestEntity extends BaseEntity {
     })
     aditionalInformation: string;
 
+    @Column({
+        type: 'enum',
+        enum: WorkRequestTypeEnum,
+        
+    })
+    status: WorkRequestTypeEnum;
+
+
     @OneToMany(() => UserGeneratedMediaEntity, (userGeneratedMediaEntity) => userGeneratedMediaEntity.workRequest, {
         cascade: true,
         eager: true,
@@ -112,4 +122,10 @@ export class WorkRequestEntity extends BaseEntity {
     })
     @JoinColumn()
     beneficiary: UserEntity;
+
+    @OneToOne(() => UserProfessionalInfoEntity, (user) => user.id, {
+        eager: true,
+    })
+    @JoinColumn()
+    professional: UserProfessionalInfoEntity;
 }

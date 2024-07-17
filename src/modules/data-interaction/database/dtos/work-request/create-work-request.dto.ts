@@ -15,6 +15,7 @@ import { CreateWorkRequestPrecarityDto } from './work-request-precarity/create-w
 import { CreateUserGeneratedMediaDto } from '../user/user-generated-media/create-user-generated-media.dto';
 import { CreateAddressDto } from '../address/create-address.dto';
 import { UserEntity } from '../../entitites/user.entity';
+import { WorkRequestTypeEnum } from '../../enums/work-request-type.enum';
 
 export class CreateWorkRequestDto {
     @ApiProperty()
@@ -77,4 +78,8 @@ export class CreateWorkRequestDto {
     picturesAndVideos: CreateUserGeneratedMediaDto[];
 
     beneficiary: UserEntity
+
+    @ApiProperty({ enum: WorkRequestTypeEnum })
+    @IsEnum(WorkRequestTypeEnum)
+    status: WorkRequestTypeEnum;
 }
