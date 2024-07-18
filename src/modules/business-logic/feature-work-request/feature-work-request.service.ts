@@ -39,6 +39,10 @@ export class FeatureWorkRequestService extends BaseService<
         return await this.workRequestRepository.findByUserId(userId);
     }
 
+   async getByBeneficiaryId(beneficiaryId: string) {
+    return await this.workRequestRepository.findByBeneficiaryId(beneficiaryId);
+   }
+
     async findAllNotAtribute(){
         return await this.workRequestRepository.findAll();
     }
