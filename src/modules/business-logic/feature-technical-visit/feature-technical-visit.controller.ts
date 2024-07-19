@@ -2,6 +2,9 @@ import {
     Body,
     Controller,
     Get,
+    HttpException,
+    HttpStatus,
+    Logger,
     Param,
     Post,
     Put,
@@ -20,10 +23,13 @@ import { CreateTechnicalVisitDto } from 'src/modules/data-interaction/database/d
 import { TechnicalVisitResponseDto } from 'src/modules/data-interaction/database/dtos/technical-visit/reponse-technical-visit.dto';
 import { UpdateTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/update-technical-visit.dto';
 import { FeatureTechnicalVisitService } from './feature-technical-visit.service';
+import { ResponseDto } from 'src/core/dtos/response.dto';
 
 @Controller('technical-visit')
 @ApiTags('Technical Visit/Visita Técnica')
 export class FeatureTechnicalVisitController {
+    private readonly _logger = new Logger(FeatureTechnicalVisitController.name);
+
     constructor(private featureTechnicalVisitService: FeatureTechnicalVisitService) {}
 
     @Get('')
@@ -88,7 +94,17 @@ export class FeatureTechnicalVisitController {
         type: TechnicalVisitResponseDto,
     })
     async create(@Body() body: CreateTechnicalVisitDto) {
-        return await this.featureTechnicalVisitService.create(body);
+        try {
+            const result = await this.featureTechnicalVisitService.schedule(body);
+            return new ResponseDto(true, result, null);
+        } catch (error) {
+            this._logger.error(error.message);
+
+            throw new HttpException(
+                new ResponseDto(false, null, [error.message]),
+                HttpStatus.BAD_REQUEST,
+            );
+        }
     }
 
     @Put('')

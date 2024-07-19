@@ -5,6 +5,8 @@ import { CreateTechnicalVisitDto } from 'src/modules/data-interaction/database/d
 import { UpdateTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/update-technical-visit.dto';
 import { TechnicalVisitEntity } from 'src/modules/data-interaction/database/entitites/technical-visit.entity';
 import { TechnicalVisitRepository } from 'src/modules/data-interaction/database/repositories/technical-visit.repository';
+import { UserRepository } from 'src/modules/data-interaction/database/repositories/user/user.repository';
+import { WorkRequestRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request.repository';
 
 @Injectable()
 export class FeatureTechnicalVisitService extends BaseService<
@@ -15,12 +17,25 @@ export class FeatureTechnicalVisitService extends BaseService<
     constructor(
         private technicalVisitRepository: TechnicalVisitRepository,
         private readonly userAppointmentRepository: UserAppointmentRepository,
+        private readonly userRepository: UserRepository,
+        private readonly workRequestRepository: WorkRequestRepository
     ) {
         super(technicalVisitRepository);
     }
 
     async listByUserId(userId: string) {
         return await this.userAppointmentRepository.listByUserId(userId);
+    }
+
+    async schedule(dto: CreateTechnicalVisitDto) {
+        const beneficiary = await this.userRepository.getById(dto.beneficiaryId);
+        dto.beneficiary = beneficiary;
+        const professional = await this.userRepository.getById(dto.professionalId);
+        dto.professional= professional;
+        const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
+        dto.workRequest = workRequest;
+
+        return await this.technicalVisitRepository.create(dto)
     }
 
     // async findByUserId(userId: string) {
