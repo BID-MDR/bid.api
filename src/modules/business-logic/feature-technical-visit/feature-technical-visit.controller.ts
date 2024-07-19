@@ -30,7 +30,7 @@ import { ResponseDto } from 'src/core/dtos/response.dto';
 export class FeatureTechnicalVisitController {
     private readonly _logger = new Logger(FeatureTechnicalVisitController.name);
 
-    constructor(private featureTechnicalVisitService: FeatureTechnicalVisitService) {}
+    constructor(private featureTechnicalVisitService: FeatureTechnicalVisitService) { }
 
     @Get('')
     @ApiBearerAuth()
@@ -47,8 +47,18 @@ export class FeatureTechnicalVisitController {
         type: TechnicalVisitResponseDto,
     })
     async listLogged(@Req() req: Request) {
-        const userId = (req.user as JwtPayloadInterface).userId;
-        return await this.featureTechnicalVisitService.listByUserId(userId);
+        try {
+            const userId = (req.user as JwtPayloadInterface).userId;
+            const result = await this.featureTechnicalVisitService.getByProfessional(userId);
+            return new ResponseDto(true, result, null);
+        } catch (error) {
+            this._logger.error(error.message);
+
+            throw new HttpException(
+                new ResponseDto(false, null, [error.message]),
+                HttpStatus.BAD_REQUEST,
+            );
+        }
     }
 
     @Get('id/:id')
