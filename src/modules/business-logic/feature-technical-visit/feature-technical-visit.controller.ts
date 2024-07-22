@@ -120,7 +120,6 @@ export class FeatureTechnicalVisitController {
     @Put('')
     @UseGuards(JwtAccessTokenGuard)
     @ApiBearerAuth()
-    @UseInterceptors(new EncryptInterceptor())
     @ApiOperation({
         description: 'Enpoint único para Atualizar uma visita técnica.',
         summary: 'Atualiza uma visita técnica.',
