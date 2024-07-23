@@ -23,8 +23,8 @@ export class FeatureTechnicalVisitService extends BaseService<
         super(technicalVisitRepository);
     }
 
-    async listByUserId(userId: string) {
-        return await this.userAppointmentRepository.listByUserId(userId);
+    async getByProfessional(professionalId: string) {
+        return await this.technicalVisitRepository.getByProfessional(professionalId);
     }
 
     async schedule(dto: CreateTechnicalVisitDto) {
