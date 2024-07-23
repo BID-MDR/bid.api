@@ -31,6 +31,7 @@ export class FeatureAuthService {
             codeVerifier: pkce.code_verifier,
             codeChallenge: pkce.code_challenge,
         });
+ 
     }
 
     async getSsoId(id: string) {
