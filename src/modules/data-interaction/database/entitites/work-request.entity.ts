@@ -126,6 +126,6 @@ export class WorkRequestEntity extends BaseEntity {
     @OneToOne(() => UserProfessionalInfoEntity, (user) => user.id, {
         eager: true,
     })
-    @JoinColumn()
+    @JoinColumn({ name: 'professionalId' })
     professional: UserProfessionalInfoEntity;
 }

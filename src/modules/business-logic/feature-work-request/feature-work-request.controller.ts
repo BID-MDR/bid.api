@@ -2,6 +2,9 @@ import {
     Body,
     Controller,
     Get,
+    HttpException,
+    HttpStatus,
+    Logger,
     Param,
     Post,
     Put,
@@ -20,11 +23,14 @@ import { CreateWorkRequestDto } from 'src/modules/data-interaction/database/dtos
 import { WorkRequestResponseDto } from 'src/modules/data-interaction/database/dtos/work-request/response-work-request.dto';
 import { UpdateWorkRequestDto } from 'src/modules/data-interaction/database/dtos/work-request/update-work-request.dto';
 import { FeatureWorkRequestService } from './feature-work-request.service';
+import { ResponseDto } from 'src/core/dtos/response.dto';
 
 @Controller('work-request')
 @ApiTags('Work Request/Pedido de Obra')
 export class FeatureWorkRequestController {
-    constructor(private featureWorkRequestService: FeatureWorkRequestService) {}
+    private readonly _logger = new Logger(FeatureWorkRequestController.name);
+
+    constructor(private featureWorkRequestService: FeatureWorkRequestService) { }
 
     @Get('')
     @ApiBearerAuth()
@@ -49,16 +55,45 @@ export class FeatureWorkRequestController {
     @Get('profissional/find')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
-    async getAll(@Req() req: Request) {
-        return await this.featureWorkRequestService.findAllNotAtribute();
+    async getAll() {
+        try {
+            const result = await this.featureWorkRequestService.findAllNotAtribute();
+            return new ResponseDto(true, result, null);
+        } catch (error) {
+            this._logger.error(error.message);
+
+            throw new HttpException(
+                new ResponseDto(false, null, [error.message]),
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+    }
+
+    @Get('beneficiary-id/:id')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async getByBeneficiaryId(
+        @Param('id') id: string
+    ) {
+        try {
+            const result = await this.featureWorkRequestService.getByBeneficiaryId(id);
+            return new ResponseDto(true, result, null);
+        } catch (error) {
+            this._logger.error(error.message);
+
+            throw new HttpException(
+                new ResponseDto(false, null, [error.message]),
+                HttpStatus.BAD_REQUEST,
+            );
+        }
     }
 
 
     @Put(':work_id/:professional_id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
-    async updateStatus(@Param('work_id') work_id: string, @Param('professional_id') professional_id : string ) {
-        return await this.featureWorkRequestService.updateStatus(work_id,professional_id);
+    async updateStatus(@Param('work_id') work_id: string, @Param('professional_id') professional_id: string) {
+        return await this.featureWorkRequestService.updateStatus(work_id, professional_id);
     }
 
     @Get('id/:id')
@@ -82,7 +117,17 @@ export class FeatureWorkRequestController {
         type: WorkRequestResponseDto,
     })
     async getById(@Param('id') userId: string) {
-        return await this.featureWorkRequestService.findById(userId);
+        try {
+            const result = await this.featureWorkRequestService.findById(userId);
+            return new ResponseDto(true, result, null);
+        } catch (error) {
+            this._logger.error(error.message);
+
+            throw new HttpException(
+                new ResponseDto(false, null, [error.message]),
+                HttpStatus.BAD_REQUEST,
+            );
+        }
     }
 
     @Post('')
@@ -105,7 +150,7 @@ export class FeatureWorkRequestController {
     @SerializeOptions({
         type: WorkRequestResponseDto,
     })
-    async create(@Req() req: Request,@Body() body: CreateWorkRequestDto) {
+    async create(@Req() req: Request, @Body() body: CreateWorkRequestDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
         return await this.featureWorkRequestService.register(userId, body);
     }

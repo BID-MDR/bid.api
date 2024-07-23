@@ -2,6 +2,9 @@ import {
     Body,
     Controller,
     Get,
+    HttpException,
+    HttpStatus,
+    Logger,
     Param,
     Post,
     Put,
@@ -34,6 +37,10 @@ import { ResponseDto } from 'src/core/dtos/response.dto';
 @Controller('user')
 @ApiTags('User/Usuário')
 export class FeatureUserController {
+
+    private readonly _logger = new Logger(FeatureUserController.name);
+
+
     constructor(private featureUserService: FeatureUserService, private featureAuthService: FeatureAuthService) {}
 
     @Get('')
@@ -51,8 +58,18 @@ export class FeatureUserController {
         type: UserResponseDto,
     })
     async getLogged(@Req() req: Request) {
-        const userId = (req.user as JwtPayloadInterface).userId;
-        return await this.featureUserService.findById(userId);
+        try {
+            const userId = (req.user as JwtPayloadInterface).userId;
+            const result = await this.featureUserService.findById(userId);
+            return new ResponseDto(true, result, null);
+        } catch (error) {
+            this._logger.error(error.message);
+
+            throw new HttpException(
+                new ResponseDto(false, null, [error.message]),
+                HttpStatus.BAD_REQUEST,
+            );
+        }
     }
 
     @Get('id/:id')

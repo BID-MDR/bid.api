@@ -26,16 +26,28 @@ export class WorkRequestRepository extends BaseRepository<
     }
 
 
-    async findAll(){
-        return await this.repository.query("SELECT * FROM `work-request` WHERE status = 'NAO_ATRIBUIDO'")
+    async findAll() {
+        return await this.repository.find({
+            where: {
+                status: WorkRequestTypeEnum.NAO_ATRIBUIDO
+            }
+        })
+    }
+
+    async findByBeneficiaryId(beneficiaryId) {
+        return await this.repository.findOne({
+            where: {
+                beneficiary: { id: beneficiaryId }
+            }
+        })
     }
 
 
-    async updateStatus(work_id, professional_id){
+    async updateStatus(work_id, professional_id) {
         return await this.repository.createQueryBuilder("work-request")
-        .update("work-request")
-        .set({status: WorkRequestTypeEnum.ATRIBUIDO, professional: professional_id})
-        .where("id = :id", {id:work_id})
-        .execute()
+            .update("work-request")
+            .set({ status: WorkRequestTypeEnum.ATRIBUIDO, professional: professional_id })
+            .where("id = :id", { id: work_id })
+            .execute()
     }
 }
