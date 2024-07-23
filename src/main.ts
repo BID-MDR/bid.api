@@ -1,5 +1,5 @@
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';
 
@@ -10,7 +10,6 @@ import * as bodyParser from 'body-parser';
 import { useContainer } from 'class-validator';
 import 'reflect-metadata';
 import { EnviromentVariablesEnum } from './core/enums/environment-variables.enum';
-import { ApiReponseInterceptor } from './core/interceptors/api-response.interceptor';
 import { ParseToClassPipe } from './core/pipes/class-trasnformer.pipe';
 
 async function bootstrap() {
