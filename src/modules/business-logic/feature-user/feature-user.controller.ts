@@ -31,6 +31,7 @@ import { TokenVerifyReponseDto } from './dtos/token-verify-reponse.dto';
 import { FeatureUserService } from './feature-user.service';
 import { FeatureAuthService } from '../feature-auth/feature-auth.service';
 import { SigninResponseDto } from '../feature-auth/dtos/signin-response.dto';
+import { UpdateUserProgramTypeDto } from 'src/modules/data-interaction/database/dtos/user/update-user-program-type.dto';
 import { ResponseDto } from 'src/core/dtos/response.dto';
 
 @Controller('user')
@@ -72,8 +73,8 @@ export class FeatureUserController {
     }
 
     @Get('id/:id')
-    @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard)
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAccessTokenGuard)
     @ApiOperation({
         description: 'Retorna o usuário e sua agenda, caso exista.',
         summary: 'Retorna o usuário pelo ID.',
@@ -82,7 +83,7 @@ export class FeatureUserController {
         name: 'id',
         description: 'ID do usuário.',
         required: true,
-        allowEmptyValue: false,
+        allowEmptyValue: false
     })
     @ApiOkResponseDtoData({
         type: UserResponseDto,
@@ -92,17 +93,8 @@ export class FeatureUserController {
         type: UserResponseDto,
     })
     async getById(@Param('id') userId: string) {
-        try {
-            const result = await this.featureUserService.findById(userId);
-            return new ResponseDto(true, result, null);
-        } catch (error) {
-            this._logger.error(error.message);
-
-            throw new HttpException(
-                new ResponseDto(false, null, [error.message]),
-                HttpStatus.BAD_REQUEST,
-            );
-        }
+        const us =  await this.featureUserService.findById(userId);
+        return new ResponseDto(true, us, false)
     }
 
     @Post('')
@@ -271,6 +263,15 @@ export class FeatureUserController {
     async updateById(@Param('id') id: string, @Body() body: any) {
 
         return await this.featureUserService.updateById(id, body);
+    }
+
+    @Put('update-user-program-type/:id')
+    // @UseGuards(JwtAccessTokenGuard)
+    // @ApiBearerAuth()
+    // @UseInterceptors(new EncryptInterceptor())
+    async updateUserProgramType(@Param('id') id: string, @Body() body: UpdateUserProgramTypeDto) {
+
+        return await this.featureUserService.updateUserProgramTypeDto(id, body);
     }
 
     @Get('caubr/check-professional-status/cpf/:cpf')

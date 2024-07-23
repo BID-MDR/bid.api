@@ -6,6 +6,7 @@ import { CreateUserDto } from '../../dtos/user/create-user.dto';
 import { UpdateUserDto } from '../../dtos/user/update-user.dto';
 import { UserEntity } from '../../entitites/user.entity';
 import { UserTypeEnum } from '../../enums/user-type.enum';
+import { UserProgramTypeEnum } from '../../enums/user-program-type.enum';
 
 @Injectable()
 export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -19,6 +20,10 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
 
     async getById(_id: string) {
         return this.repository.findOne({ where: { id: _id } });
+    }
+
+    async updateUserProgramType(_id: string, programType:UserProgramTypeEnum ) {
+        return this.repository.update(_id, { programType });
     }
 
     async list() {
