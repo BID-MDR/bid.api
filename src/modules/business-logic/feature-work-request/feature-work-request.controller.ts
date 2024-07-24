@@ -155,6 +155,71 @@ export class FeatureWorkRequestController {
         return await this.featureWorkRequestService.register(userId, body);
     }
 
+    @Post('regmel')
+    @UseInterceptors(new EncryptInterceptor())
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiBearerAuth()
+    @ApiOperation({
+        description: 'Cria um pedido de obra regmel.',
+        summary: 'Cria um pedido de obra regmel.',
+    })
+    @ApiBody({
+        type: CreateWorkRequestDto,
+        required: true,
+        description: 'Pedido de obra regmel a ser criado.',
+    })
+    @ApiOkResponseDtoData({
+        type: WorkRequestResponseDto,
+        description: 'Pedido de obra regmel criado.',
+    })
+    @SerializeOptions({
+        type: WorkRequestResponseDto,
+    })
+    async createRegmel(@Req() req: Request, @Body() body: CreateWorkRequestDto) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.featureWorkRequestService.registerRequestRegmel(userId, body);
+    }
+
+    @Get('beneficiario-regmel')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOperation({
+        description: 'Retorna a lista de pedido de obra para beneficiário regmel.',
+        summary: 'Retorna a lista de pedido de obra.',
+    })
+    @ApiOkResponseDtoData({
+        type: WorkRequestResponseDto,
+        description: 'Lista de pedido de obra.',
+    })
+    @SerializeOptions({
+        type: WorkRequestResponseDto,
+    })
+    async getBeneficiaryRegmel(@Req() req: Request) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.featureWorkRequestService.getByBeneficiaryId(userId);
+    }
+
+    @Get('profissional-regmel')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOperation({
+        description: 'Retorna a lista de pedido de obra para profissional regmel.',
+        summary: 'Retorna a lista de pedido de obra.',
+    })
+    @ApiOkResponseDtoData({
+        type: WorkRequestResponseDto,
+        description: 'Lista de pedido de obra.',
+    })
+    @SerializeOptions({
+        type: WorkRequestResponseDto,
+    })
+    async getProfessionalRegmel(@Req() req: Request) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.featureWorkRequestService.getByProfessionalId(userId
+        );
+    }
+
+
     @Put('')
     @UseGuards(JwtAccessTokenGuard)
     @ApiBearerAuth()
