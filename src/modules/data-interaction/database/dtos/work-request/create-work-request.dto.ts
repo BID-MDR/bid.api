@@ -2,7 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
     IsEnum,
+    IsOptional,
     IsPositive,
+    IsString,
     Length,
     ValidateNested
 } from 'class-validator';
@@ -16,6 +18,7 @@ import { CreateUserGeneratedMediaDto } from '../user/user-generated-media/create
 import { CreateAddressDto } from '../address/create-address.dto';
 import { UserEntity } from '../../entitites/user.entity';
 import { WorkRequestTypeEnum } from '../../enums/work-request-type.enum';
+import { UserProgramTypeEnum } from '../../enums/user-program-type.enum';
 
 export class CreateWorkRequestDto {
     @ApiProperty()
@@ -82,4 +85,11 @@ export class CreateWorkRequestDto {
     @ApiProperty({ enum: WorkRequestTypeEnum })
     @IsEnum(WorkRequestTypeEnum)
     status: WorkRequestTypeEnum;
+
+    @ApiProperty()
+    @IsOptional()
+    @IsString()
+    document: string;
+
+    programType: UserProgramTypeEnum;
 }

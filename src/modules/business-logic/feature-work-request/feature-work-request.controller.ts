@@ -155,6 +155,31 @@ export class FeatureWorkRequestController {
         return await this.featureWorkRequestService.register(userId, body);
     }
 
+    @Post('regmel')
+    @UseInterceptors(new EncryptInterceptor())
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiBearerAuth()
+    @ApiOperation({
+        description: 'Cria um pedido de obra regmel.',
+        summary: 'Cria um pedido de obra regmel.',
+    })
+    @ApiBody({
+        type: CreateWorkRequestDto,
+        required: true,
+        description: 'Pedido de obra regmel a ser criado.',
+    })
+    @ApiOkResponseDtoData({
+        type: WorkRequestResponseDto,
+        description: 'Pedido de obra regmel criado.',
+    })
+    @SerializeOptions({
+        type: WorkRequestResponseDto,
+    })
+    async createRegmel(@Req() req: Request, @Body() body: CreateWorkRequestDto) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.featureWorkRequestService.registerRequestRegmel(userId, body);
+    }
+
     @Put('')
     @UseGuards(JwtAccessTokenGuard)
     @ApiBearerAuth()
