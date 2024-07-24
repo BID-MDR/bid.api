@@ -19,6 +19,7 @@ import { CreateAddressDto } from '../address/create-address.dto';
 import { UserEntity } from '../../entitites/user.entity';
 import { WorkRequestTypeEnum } from '../../enums/work-request-type.enum';
 import { UserProgramTypeEnum } from '../../enums/user-program-type.enum';
+import { UserProfessionalInfoEntity } from '../../entitites/user-professional-info.entity';
 
 export class CreateWorkRequestDto {
     @ApiProperty()
@@ -91,5 +92,7 @@ export class CreateWorkRequestDto {
     @IsString()
     document: string;
 
-    programType: UserProgramTypeEnum;
+    programType?: UserProgramTypeEnum;
+
+    professional?: UserProfessionalInfoEntity;
 }

@@ -178,8 +178,8 @@ export class UserEntity extends BaseEntity {
     })
     costEstimationsAsProfessional: CostEstimationEntity[];
 
-    @OneToOne(() => WorkRequestEntity, (workRequest) => workRequest.beneficiary)
-    workRequest: WorkRequestEntity;
+    @OneToMany(() => WorkRequestEntity, (workRequest) => workRequest.beneficiary)
+    workRequest: WorkRequestEntity[];
 
     @OneToOne(() => UserOtpRequestEntity, (otpRequest) => otpRequest.user, {
         eager: true,

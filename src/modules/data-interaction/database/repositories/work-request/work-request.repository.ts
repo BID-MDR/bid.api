@@ -50,4 +50,12 @@ export class WorkRequestRepository extends BaseRepository<
             .where("id = :id", { id: work_id })
             .execute()
     }
+
+    async getByProfessionalId(professionalId: string) {
+        return await this.repository.find({
+            where: {
+                professional: { id: professionalId }
+            }
+        })
+    }
 }

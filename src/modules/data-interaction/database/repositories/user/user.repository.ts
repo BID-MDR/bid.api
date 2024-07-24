@@ -30,6 +30,10 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
         return this.repository.find();
     }
 
+    async getByCpf(cpf: string) {
+        return this.repository.findOne({ where: { cpf } });
+    }
+
     async getFirstBeneficiary() {
         return this.repository.findOne({
             order: {

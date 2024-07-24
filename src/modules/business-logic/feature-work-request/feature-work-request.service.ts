@@ -61,8 +61,15 @@ export class FeatureWorkRequestService extends BaseService<
     }
 
     async registerRequestRegmel(userId: string, data: CreateWorkRequestDto) {
-        data.beneficiary = await this.userRepository.getById(userId);
-        if (data.beneficiary.programType !== UserProgramTypeEnum.REGMEL || data.beneficiary.type !== UserTypeEnum.PROFISSIONAL) {
+        if (!data.document) {
+            throw new BadRequestException('Documento do beneficiário é obrigatório');
+        }
+
+        const professional = await this.userRepository.getById(userId);
+        if (
+            professional.programType !== UserProgramTypeEnum.REGMEL ||
+            professional.type !== UserTypeEnum.PROFISSIONAL
+        ) {
             throw new BadRequestException('Usuário não é do tipo REGMEL');
         }
 
@@ -70,6 +77,14 @@ export class FeatureWorkRequestService extends BaseService<
             const link = await this.AwsSubsystem.uploadMedia(iterator.mimeType, Date.now().toString(), iterator.url);
             iterator.url = link;
         }
+
+        const beneficiary = await this.userRepository.getByCpf(data.document);
+
+        if (beneficiary) {
+            data.beneficiary = beneficiary;
+        }
+
+        data.professional = professional.professionalUserInfo;
 
         data.programType = UserProgramTypeEnum.REGMEL;
 
@@ -179,4 +194,10 @@ export class FeatureWorkRequestService extends BaseService<
     async updateStatus(work_id: string, professional_id: string) {
         return await this.workRequestRepository.updateStatus(work_id, professional_id);
     }
+
+    async getByProfessionalId(userId:string){
+        const user = await this.userRepository.getById(userId);
+        return this.workRequestRepository.getByProfessionalId(user.professionalUserInfo.id);
+    }
+    
 }

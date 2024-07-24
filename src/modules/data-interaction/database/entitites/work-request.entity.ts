@@ -1,5 +1,5 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { PropertyTypeEnum } from '../enums/property-type.enum';
 import { CostEstimationEntity } from './cost-estimation.entity';
 import { TechnicalVisitEntity } from './technical-visit.entity';
@@ -130,13 +130,12 @@ export class WorkRequestEntity extends BaseEntity {
     })
     costEstimations: CostEstimationEntity[];
 
-    @OneToOne(() => UserEntity, (user) => user.workRequest, {
+    @ManyToOne(() => UserEntity, (user) => user.workRequest, {
         eager: true,
     })
-    @JoinColumn()
     beneficiary: UserEntity;
 
-    @OneToOne(() => UserProfessionalInfoEntity, (user) => user.id, {
+    @ManyToOne(() => UserProfessionalInfoEntity, (user) => user.id, {
         eager: true,
     })
     @JoinColumn({ name: 'professionalId' })
