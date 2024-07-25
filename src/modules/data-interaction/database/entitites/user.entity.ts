@@ -17,6 +17,7 @@ import { UserGenderIdentityEnum } from '../enums/user-gender-identity.enum';
 import { UserMonthlyFamilyIncomeEnum } from '../enums/user-monthly-family-income.enum';
 import { NotificationEntity } from './notification.entity';
 import { UserProgramTypeEnum } from '../enums/user-program-type.enum';
+import { DemandEntity } from './demand.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -193,4 +194,7 @@ export class UserEntity extends BaseEntity {
     notificationUser: NotificationEntity[];
     @JoinColumn()
     otpRequest: UserOtpRequestEntity;
+
+    @OneToMany(() => DemandEntity, demand => demand.beneficiary)
+    demands: DemandEntity[];
 }
