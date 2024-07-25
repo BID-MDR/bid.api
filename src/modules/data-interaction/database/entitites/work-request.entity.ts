@@ -135,9 +135,9 @@ export class WorkRequestEntity extends BaseEntity {
     })
     beneficiary: UserEntity;
 
-    @ManyToOne(() => UserProfessionalInfoEntity, (user) => user.id, {
+    @ManyToOne(() => UserEntity, (user) => user.id, {
         eager: true,
     })
     @JoinColumn({ name: 'professionalId' })
-    professional: UserProfessionalInfoEntity;
+    professional: UserEntity;
 }
