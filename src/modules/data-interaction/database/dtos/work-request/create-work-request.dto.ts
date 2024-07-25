@@ -94,5 +94,5 @@ export class CreateWorkRequestDto {
 
     programType?: UserProgramTypeEnum;
 
-    professional?: UserProfessionalInfoEntity;
+    professional?: UserEntity;
 }

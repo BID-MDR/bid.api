@@ -30,7 +30,7 @@ import { ResponseDto } from 'src/core/dtos/response.dto';
 export class FeatureWorkRequestController {
     private readonly _logger = new Logger(FeatureWorkRequestController.name);
 
-    constructor(private featureWorkRequestService: FeatureWorkRequestService) { }
+    constructor(private featureWorkRequestService: FeatureWorkRequestService) {}
 
     @Get('')
     @ApiBearerAuth()
@@ -62,32 +62,23 @@ export class FeatureWorkRequestController {
         } catch (error) {
             this._logger.error(error.message);
 
-            throw new HttpException(
-                new ResponseDto(false, null, [error.message]),
-                HttpStatus.BAD_REQUEST,
-            );
+            throw new HttpException(new ResponseDto(false, null, [error.message]), HttpStatus.BAD_REQUEST);
         }
     }
 
     @Get('beneficiary-id/:id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
-    async getByBeneficiaryId(
-        @Param('id') id: string
-    ) {
+    async getByBeneficiaryId(@Param('id') id: string) {
         try {
             const result = await this.featureWorkRequestService.getByBeneficiaryId(id);
             return new ResponseDto(true, result, null);
         } catch (error) {
             this._logger.error(error.message);
 
-            throw new HttpException(
-                new ResponseDto(false, null, [error.message]),
-                HttpStatus.BAD_REQUEST,
-            );
+            throw new HttpException(new ResponseDto(false, null, [error.message]), HttpStatus.BAD_REQUEST);
         }
     }
-
 
     @Put(':work_id/:professional_id')
     @ApiBearerAuth()
@@ -123,10 +114,7 @@ export class FeatureWorkRequestController {
         } catch (error) {
             this._logger.error(error.message);
 
-            throw new HttpException(
-                new ResponseDto(false, null, [error.message]),
-                HttpStatus.BAD_REQUEST,
-            );
+            throw new HttpException(new ResponseDto(false, null, [error.message]), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -152,7 +140,8 @@ export class FeatureWorkRequestController {
     })
     async create(@Req() req: Request, @Body() body: CreateWorkRequestDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
-        return await this.featureWorkRequestService.register(userId, body);
+        const result = await this.featureWorkRequestService.register(userId, body);
+        return new ResponseDto(true, result, null);
     }
 
     @Post('regmel')
@@ -177,7 +166,8 @@ export class FeatureWorkRequestController {
     })
     async createRegmel(@Req() req: Request, @Body() body: CreateWorkRequestDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
-        return await this.featureWorkRequestService.registerRequestRegmel(userId, body);
+        const result = await this.featureWorkRequestService.registerRequestRegmel(userId, body);
+        return new ResponseDto(true, result, null);
     }
 
     @Get('beneficiario-regmel')
@@ -195,18 +185,9 @@ export class FeatureWorkRequestController {
         type: WorkRequestResponseDto,
     })
     async getBeneficiaryRegmel(@Req() req: Request) {
-        try {
-            const userId = (req.user as JwtPayloadInterface).userId;
-            const result = await this.featureWorkRequestService.getByBeneficiaryId(userId);
-            return new ResponseDto(true, result, null);
-        } catch (error) {
-            this._logger.error(error.message);
-
-            throw new HttpException(
-                new ResponseDto(false, null, [error.message]),
-                HttpStatus.BAD_REQUEST,
-            );
-        }
+        const userId = (req.user as JwtPayloadInterface).userId;
+        const result = await this.featureWorkRequestService.getByBeneficiaryId(userId);
+        return new ResponseDto(true, result, null);
     }
 
     @Get('profissional-regmel')
@@ -225,10 +206,9 @@ export class FeatureWorkRequestController {
     })
     async getProfessionalRegmel(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
-        return await this.featureWorkRequestService.getByProfessionalId(userId
-        );
+        const result = await this.featureWorkRequestService.getByProfessionalId(userId);
+        return new ResponseDto(true, result, null);
     }
-
 
     @Put('')
     @UseGuards(JwtAccessTokenGuard)
@@ -253,6 +233,7 @@ export class FeatureWorkRequestController {
     async update(@Req() req: Request, @Body() body: UpdateWorkRequestDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
 
-        return await this.featureWorkRequestService.update(userId, body);
+        const result = await this.featureWorkRequestService.update(userId, body);
+        return new ResponseDto(true, result, null);
     }
 }

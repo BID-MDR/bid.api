@@ -84,7 +84,7 @@ export class FeatureWorkRequestService extends BaseService<
             data.beneficiary = beneficiary;
         }
 
-        data.professional = professional.professionalUserInfo;
+        data.professional = professional;
 
         data.programType = UserProgramTypeEnum.REGMEL;
 
@@ -196,8 +196,7 @@ export class FeatureWorkRequestService extends BaseService<
     }
 
     async getByProfessionalId(userId:string){
-        const user = await this.userRepository.getById(userId);
-        return this.workRequestRepository.getByProfessionalId(user.professionalUserInfo.id);
+        return this.workRequestRepository.getByProfessionalId(userId);
     }
     
 }
