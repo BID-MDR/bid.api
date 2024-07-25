@@ -195,8 +195,18 @@ export class FeatureWorkRequestController {
         type: WorkRequestResponseDto,
     })
     async getBeneficiaryRegmel(@Req() req: Request) {
-        const userId = (req.user as JwtPayloadInterface).userId;
-        return await this.featureWorkRequestService.getByBeneficiaryId(userId);
+        try {
+            const userId = (req.user as JwtPayloadInterface).userId;
+            const result = await this.featureWorkRequestService.getByBeneficiaryId(userId);
+            return new ResponseDto(true, result, null);
+        } catch (error) {
+            this._logger.error(error.message);
+
+            throw new HttpException(
+                new ResponseDto(false, null, [error.message]),
+                HttpStatus.BAD_REQUEST,
+            );
+        }
     }
 
     @Get('profissional-regmel')

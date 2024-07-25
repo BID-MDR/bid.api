@@ -35,7 +35,7 @@ export class WorkRequestRepository extends BaseRepository<
     }
 
     async findByBeneficiaryId(beneficiaryId) {
-        return await this.repository.findOne({
+        return await this.repository.find({
             where: {
                 beneficiary: { id: beneficiaryId }
             }
