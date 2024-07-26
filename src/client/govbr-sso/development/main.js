@@ -40415,7 +40415,7 @@ var VERSION4 = new Version("17.2.2");
 
 // src/app/environment/environment.dev.ts
 var environment = {
-  apiUrl: "http://localhost:4001/v1/",
+  apiUrl: "http://localhost:4001/",
   appUrl: "http://localhost:4200/",
   encryptKey: "8[v(<~*JJN!@1n^?=nwqI8ofFE96npT5",
   domain: "bidapp.com://"

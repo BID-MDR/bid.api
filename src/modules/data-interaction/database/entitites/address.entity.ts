@@ -3,7 +3,6 @@ import { Column, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { TechnicalVisitEntity } from './technical-visit.entity';
 import { UserProfessionalInfoEntity } from './user-professional-info.entity';
 import { UserEntity } from './user.entity';
-import { WorkRequestEntity } from './work-request.entity';
 
 @Entity({ name: 'address' })
 export class AddressEntity extends BaseEntity {
@@ -81,10 +80,4 @@ export class AddressEntity extends BaseEntity {
 
     @ManyToOne(() => UserProfessionalInfoEntity, (userProfessionalInfoEntity) => userProfessionalInfoEntity.addresses)
     userProfessionalInfo: UserProfessionalInfoEntity;
-
-    @OneToOne(() => WorkRequestEntity, (workRequest) => workRequest.address)
-    workRequest: WorkRequestEntity;
-
-    @OneToMany(() => TechnicalVisitEntity, (technicalVisit) => technicalVisit.address)
-    techinicalVisits: TechnicalVisitEntity[];
 }

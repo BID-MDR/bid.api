@@ -6,8 +6,8 @@ import { EnviromentVariablesEnum } from 'src/core/enums/environment-variables.en
 import { BaseService } from 'src/core/services/base.service';
 import { commonPropertyTransfer } from 'src/core/utils/common-property-transfer.util';
 import { CreateUserDto } from 'src/modules/data-interaction/database/dtos/user/create-user.dto';
+import { UpdateUserProgramTypeDto } from 'src/modules/data-interaction/database/dtos/user/update-user-program-type.dto';
 import { UpdateUserDto } from 'src/modules/data-interaction/database/dtos/user/update-user.dto';
-import { AddressEntity } from 'src/modules/data-interaction/database/entitites/address.entity';
 import { UserAppointmentEntity } from 'src/modules/data-interaction/database/entitites/user-appointment.entity';
 import { UserOtpRequestEntity } from 'src/modules/data-interaction/database/entitites/user-otp-request.entity';
 import { UserEntity } from 'src/modules/data-interaction/database/entitites/user.entity';
@@ -21,13 +21,9 @@ import { UserRepository } from 'src/modules/data-interaction/database/repositori
 import { EmailFacade } from 'src/modules/data-interaction/facade/apis/email/email.facade';
 import { CaubFacade } from 'src/modules/data-interaction/facade/apis/gov/caubr/caub.facade';
 import { ConfeaFacade } from 'src/modules/data-interaction/facade/apis/gov/confea/confea.facade';
+import { StorageFacade } from 'src/modules/data-interaction/facade/apis/storage/storage.facade';
 import { ConfirmPasswordUpdateRequestDto } from './dtos/confirm-password-update.request.dto';
 import { ProfessionalCouncilRegistrationResponseDto } from './dtos/professional-council-resgistration-reponse.dto';
-import { StorageFacade } from 'src/modules/data-interaction/facade/apis/storage/storage.facade';
-import { WorkRequestWelfareProgramRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request-welfare-program.repository';
-import { WorkRequestRoomTypeQuantityRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request-room-type-quantity.repository';
-import { WorkRequestRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request.repository';
-import { UpdateUserProgramTypeDto } from 'src/modules/data-interaction/database/dtos/user/update-user-program-type.dto';
 
 @Injectable()
 export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -37,8 +33,6 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         private userBeneficiaryInfoRepository: UserBeneficiaryInfoRepository,
         private userProfessionalInfoRepository: UserProfessionalInfoRepository,
         private userRestingdayRepository: UseRestingDayRepository,
-        private workRequestWelfareProgramRepository: WorkRequestWelfareProgramRepository,
-        private workRequestRepository: WorkRequestRepository,
         private addressRepository: AddressRepository,
         private readonly caubFacade: CaubFacade,
         private readonly confeaFacade: ConfeaFacade,
@@ -81,11 +75,11 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
             const { address, ...rest } = data.IUser
            return await this.addressRepository.update(user.address.id, data.IUser.address)
         } else {
-           const workRequest = await this.workRequestRepository.create(data.IUser.workRequest)
-           data.IUser.address = user.address
-           const {id, ...rest} = workRequest
-           data.IUser.workRequest = rest
-           data.IUser.workRequest.address = user.address
+        //    const workRequest = await this.workRequestRepository.create(data.IUser.workRequest)
+        //    data.IUser.address = user.address
+        //    const {id, ...rest} = workRequest
+        //    data.IUser.workRequest = rest
+        //    data.IUser.workRequest.address = user.address
             //await this.userRepository.update(user.id, data.IUser)
         }
 
@@ -279,12 +273,5 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         // Example of performing a join to fetch additional data from other tables
         return await this.userRepository.getDashboardDataWithJoinProfessional(userId);
     }
-    async profileBalanceGetBeneficiary(userId: string) {
-        // Example of performing a join to fetch additional data from other tables
-        return await this.userRepository.profileBalanceGetBeneficiary(userId);
-    }
-    async profileBalanceGetProfessional(userId: string) {
-        // Example of performing a join to fetch additional data from other tables
-        return await this.userRepository.profileBalanceGetProfessional(userId);
-    }
+
 }
