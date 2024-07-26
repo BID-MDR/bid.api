@@ -38,6 +38,10 @@ import { FeatureAuthService } from "../feature-auth/feature-auth.service";
 import { SigninResponseDto } from "../feature-auth/dtos/signin-response.dto";
 import { UpdateUserProgramTypeDto } from "src/modules/data-interaction/database/dtos/user/update-user-program-type.dto";
 import { ResponseDto } from "src/core/dtos/response.dto";
+import { CreateAddressDto } from "src/modules/data-interaction/database/dtos/address/create-address.dto";
+import { UpdateAddressDto } from "src/modules/data-interaction/database/dtos/address/update-address.dto";
+import { CreateUserGeneratedMediaDto } from "src/modules/data-interaction/database/dtos/user/user-generated-media/create-user-generated-media.dto";
+import { MediaUploadDto } from "src/modules/data-interaction/database/dtos/media/media-upload.dto";
 
 @Controller("user")
 @ApiTags("User/Usuário")
@@ -47,7 +51,7 @@ export class FeatureUserController {
     constructor(
         private featureUserService: FeatureUserService,
         private featureAuthService: FeatureAuthService,
-    ) {}
+    ) { }
 
     @Get("")
     @ApiBearerAuth()
@@ -283,6 +287,35 @@ export class FeatureUserController {
         return await this.featureUserService.update(userId, body);
     }
 
+    @Put('personal-info')
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiBearerAuth()
+    @UseInterceptors(new EncryptInterceptor())
+    async updatePersonalInfo(@Req() req: Request, @Body() body: UpdateUserDto) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        const result = await this.featureUserService.update(userId, body);
+        return new ResponseDto(true, result, null);
+    }
+
+    @Put('picture-profile')
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiBearerAuth()
+    @UseInterceptors(new EncryptInterceptor())
+    async pictureProfile(@Req() req: Request, @Body() body: MediaUploadDto) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        const result = await this.featureUserService.updateProfilePicture(userId, body);
+        return new ResponseDto(true, result, null);
+    }
+
+    @Put('address')
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiBearerAuth()
+    @UseInterceptors(new EncryptInterceptor())
+    async updateAdrress(@Body() body: UpdateAddressDto) {
+        const result = await this.featureUserService.updateAddress(body);
+        return new ResponseDto(true, result, null);
+    }
+
     @Put("by-id/:id")
     // @UseGuards(JwtAccessTokenGuard)
     // @ApiBearerAuth()
@@ -357,6 +390,8 @@ export class FeatureUserController {
             reqParams.cpf,
         );
     }
+
+
 
     // @Get("profile/beneficiary/work-request/:id")
     // @ApiParam({

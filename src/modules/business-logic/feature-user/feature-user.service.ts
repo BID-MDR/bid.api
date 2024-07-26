@@ -24,6 +24,10 @@ import { ConfeaFacade } from 'src/modules/data-interaction/facade/apis/gov/confe
 import { StorageFacade } from 'src/modules/data-interaction/facade/apis/storage/storage.facade';
 import { ConfirmPasswordUpdateRequestDto } from './dtos/confirm-password-update.request.dto';
 import { ProfessionalCouncilRegistrationResponseDto } from './dtos/professional-council-resgistration-reponse.dto';
+import { CreateAddressDto } from 'src/modules/data-interaction/database/dtos/address/create-address.dto';
+import { UpdateAddressDto } from 'src/modules/data-interaction/database/dtos/address/update-address.dto';
+import { CreateUserGeneratedMediaDto } from 'src/modules/data-interaction/database/dtos/user/user-generated-media/create-user-generated-media.dto';
+import { MediaUploadDto } from 'src/modules/data-interaction/database/dtos/media/media-upload.dto';
 
 @Injectable()
 export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -67,26 +71,26 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
     async updateById(id: string, data: any) {
 
         const user = await this.userRepository.findById(id)
-        if ( data.IUser.paramToBeUpdated === 'personal_info') {
+        if (data.IUser.paramToBeUpdated === 'personal_info') {
             const { address, ...rest } = data.IUser
             return await this.userRepository.update(id, rest)
         } else if (data.IUser.paramToBeUpdated === 'address') {
 
             const { address, ...rest } = data.IUser
-           return await this.addressRepository.update(user.address.id, data.IUser.address)
+            return await this.addressRepository.update(user.address.id, data.IUser.address)
         } else {
-        //    const workRequest = await this.workRequestRepository.create(data.IUser.workRequest)
-        //    data.IUser.address = user.address
-        //    const {id, ...rest} = workRequest
-        //    data.IUser.workRequest = rest
-        //    data.IUser.workRequest.address = user.address
+            //    const workRequest = await this.workRequestRepository.create(data.IUser.workRequest)
+            //    data.IUser.address = user.address
+            //    const {id, ...rest} = workRequest
+            //    data.IUser.workRequest = rest
+            //    data.IUser.workRequest.address = user.address
             //await this.userRepository.update(user.id, data.IUser)
         }
 
     }
 
     async updateUserProgramTypeDto(id: string, dto: UpdateUserProgramTypeDto) {
-            return await this.userRepository.updateUserProgramType(id, dto.programType)
+        return await this.userRepository.updateUserProgramType(id, dto.programType)
     }
 
     async update(id: string, data: UpdateUserDto): Promise<UserEntity> {
@@ -178,6 +182,24 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
     }
 
 
+    async updateAddress(dto: UpdateAddressDto) {
+        const update = await this.addressRepository.update(dto.id, dto)
+        return update
+    }
+
+    async updateProfilePicture(userId: string, dto: MediaUploadDto) {
+        let user = await this.userRepository.getById(userId) as any;
+        const media = await this.storageFacade.uploadMedia(
+            dto.mimeType,
+            dto.fileName,
+            dto.data,
+        );
+
+        const result = await this.userRepository.updateProfilePicture(userId, media)
+
+        return result
+
+    }
 
     async updatePasswordRequest(userId: string) {
         totp.options = {

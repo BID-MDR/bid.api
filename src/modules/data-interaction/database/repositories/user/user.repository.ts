@@ -22,7 +22,7 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
         return this.repository.findOne({ where: { id: _id } });
     }
 
-    async updateUserProgramType(_id: string, programType:UserProgramTypeEnum ) {
+    async updateUserProgramType(_id: string, programType: UserProgramTypeEnum) {
         return this.repository.update(_id, { programType });
     }
 
@@ -54,6 +54,12 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
                 type: UserTypeEnum.PROFISSIONAL,
             },
         });
+    }
+
+    async updateProfilePicture(userId: string, pictureProfile: string) {
+        return this.repository.update({
+            id: userId
+        }, { profilePicture: pictureProfile });
     }
     async getDashboardDataWithJoinBeneficiary(userId: string) {
         return await this.repository
