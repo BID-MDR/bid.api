@@ -1,6 +1,5 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
-import { Column, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
-import { TechnicalVisitEntity } from './technical-visit.entity';
+import { Column, Entity, ManyToOne, OneToOne } from 'typeorm';
 import { UserProfessionalInfoEntity } from './user-professional-info.entity';
 import { UserEntity } from './user.entity';
 
