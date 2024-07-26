@@ -18,10 +18,11 @@ export class FeatureRoomService extends BaseService<
         super(RoomRepository);
     }
 
-    async listByUserId(userId: string) {
-        // Implement logic to fetch cost estimations by user ID
-        return await this.RoomRepository.findByUserId(userId);
-    }
+    // async listByUserId(userId: string) {
+    //     // Implement logic to fetch cost estimations by user ID
+    //     return await this.RoomRepository.findByUserId(userId);
+    // }
+    
     async findById(id: string) {
         // Implement logic to find cost estimation by ID
         return await this.RoomRepository.findById(id);

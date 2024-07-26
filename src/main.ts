@@ -11,6 +11,7 @@ import { useContainer } from 'class-validator';
 import 'reflect-metadata';
 import { EnviromentVariablesEnum } from './core/enums/environment-variables.enum';
 import { ParseToClassPipe } from './core/pipes/class-trasnformer.pipe';
+import { ResponseInterceptor } from './core/interceptors/api-response.interceptor';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -33,11 +34,12 @@ async function bootstrap() {
             forbidNonWhitelisted: true,
         }),
     );
-    // app.useGlobalInterceptors(new ApiReponseInterceptor(app.get(Reflector)));
+    
+    app.useGlobalInterceptors(new ResponseInterceptor())
 
     if (configService.get(EnviromentVariablesEnum.ENABLE_CORS) === 'true') {
         const corsOptions: CorsOptions = {
-            origin: configService.get<string>(EnviromentVariablesEnum.ALLOWED_ORIGINS).split(','),
+            origin: "*",
             methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
             preflightContinue: false,
             optionsSuccessStatus: 204,
@@ -50,11 +52,6 @@ async function bootstrap() {
     }
 
     const appVersion = configService.get(EnviromentVariablesEnum.APP_VERSION);
-
-    app.enableVersioning({
-        type: VersioningType.URI,
-        defaultVersion: appVersion,
-    });
 
     const appName = 'BID - API';
 
@@ -77,7 +74,7 @@ async function bootstrap() {
             ignoreGlobalPrefix: false,
         });
 
-        SwaggerModule.setup('v' + appVersion + '/docs', app, document, {
+        SwaggerModule.setup('/docs', app, document, {
             useGlobalPrefix: true,
         });
 

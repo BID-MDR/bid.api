@@ -1,7 +1,7 @@
-export class ResponseDto {
+export class ResponseDto<T> {
     constructor(
-        public success: boolean,
-        public data: any,
-        public errors: any,
-    ) { }
-}
+      public success: boolean,
+      public data: T,
+      public errors: any,
+    ) {}
+  }

@@ -1,12 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddressEntity } from './entitites/address.entity';
-import { ConstructionProfessionalEntity } from './entitites/construction-professional.entity';
-import { ConstructionEntity } from './entitites/construction.entity';
-import { ContractEntity } from './entitites/contract.entity';
-import { CostEstimationEntity } from './entitites/cost-estimation.entity';
 import { GovbrSsoEntity } from './entitites/govbr-sso.entity';
-import { RenovationProjectEntity } from './entitites/renovation-project.entity';
 import { RoomSolutionEntity } from './entitites/room-solution.entity';
 import { RoomEntity } from './entitites/room.entity';
 import { TechnicalVisitEntity } from './entitites/technical-visit.entity';
@@ -18,12 +13,6 @@ import { UserProfessionalInfoEntity } from './entitites/user-professional-info.e
 import { UserRatingEntity } from './entitites/user-rating.entity';
 import { UserRestingDayEntity } from './entitites/user-resting-day.entity';
 import { UserEntity } from './entitites/user.entity';
-import { WorkRequestPrecarityEntity } from './entitites/work-request-precarity.entity';
-import { WorkRequestPrevailingConstructionMaterialEntity } from './entitites/work-request-prevailing-construction-materials.entity';
-import { WorkRequestRoomToWorkEntity } from './entitites/work-request-room-to-work.entity';
-import { WorkRequestRoomTypeQuantityEntity } from './entitites/work-request-room-type-quantity.entity';
-import { WorkRequestWelfareProgramEntity } from './entitites/work-request-welfare-program.entity';
-import { WorkRequestEntity } from './entitites/work-request.entity';
 import { AddressRepository } from './repositories/address.repository';
 import { RoomRepository } from './repositories/room/room.repository';
 import { TechnicalVisitRepository } from './repositories/technical-visit.repository';
@@ -34,15 +23,8 @@ import { UserProfessionalInfoRepository } from './repositories/user/user-profess
 import { UserRatingRepository } from './repositories/user/user-rating.repository';
 import { UseRestingDayRepository } from './repositories/user/user-resting-day.repository';
 import { UserRepository } from './repositories/user/user.repository';
-import { WorkRequestPrecarityRepository } from './repositories/work-request/work-request-precarity.repository';
-import { WorkRequestPrevailingContructionMaterialsRepository } from './repositories/work-request/work-request-prevailing-construction-material.repository';
-import { WorkRequestRoomToWorkRepository } from './repositories/work-request/work-request-room-to-work.repository';
-import { WorkRequestRoomTypeQuantityRepository } from './repositories/work-request/work-request-room-type-quantity.repository';
-import { WorkRequestWelfareProgramRepository } from './repositories/work-request/work-request-welfare-program.repository';
-import { WorkRequestRepository } from './repositories/work-request/work-request.repository';
 import { GovbrSsoRepository } from './repositories/govbr-sso.repository';
 import { GovbrSsoInfoToRegisterEntity } from './entitites/govbr-sso-info-to-register.entity';
-import { ConstructionRepository } from './repositories/construction.repository';
 
 import { NotificationEntity } from './entitites/notification.entity';
 import { NotificationRepository } from './repositories/notification.repository';
@@ -57,19 +39,8 @@ const ENTITIES = [
     UserGeneratedMediaEntity,
     RoomEntity,
     RoomSolutionEntity,
-    WorkRequestRoomToWorkEntity,
-    WorkRequestRoomTypeQuantityEntity,
-    WorkRequestEntity,
-    WorkRequestPrevailingConstructionMaterialEntity,
-    WorkRequestWelfareProgramEntity,
-    WorkRequestPrecarityEntity,
     AddressEntity,
-    ConstructionEntity,
-    ConstructionProfessionalEntity,
-    CostEstimationEntity,
-    ContractEntity,
     TechnicalVisitEntity,
-    RenovationProjectEntity,
     GovbrSsoEntity,
     GovbrSsoInfoToRegisterEntity,
     NotificationEntity,
@@ -82,17 +53,10 @@ const REPOSITORIES = [
     UseRestingDayRepository,
     UserProfessionalInfoRepository,
     UserGeneratedMediaRepository,
-    WorkRequestRepository,
-    WorkRequestPrecarityRepository,
-    WorkRequestPrevailingContructionMaterialsRepository,
-    WorkRequestRoomToWorkRepository,
-    WorkRequestRoomTypeQuantityRepository,
-    WorkRequestWelfareProgramRepository,
     RoomRepository,
     TechnicalVisitRepository,
     AddressRepository,
     GovbrSsoRepository,
-    ConstructionRepository,
     NotificationRepository
 ];
 
