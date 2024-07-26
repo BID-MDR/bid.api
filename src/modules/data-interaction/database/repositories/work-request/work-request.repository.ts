@@ -35,7 +35,7 @@ export class WorkRequestRepository extends BaseRepository<
     }
 
     async findByBeneficiaryId(beneficiaryId) {
-        return await this.repository.findOne({
+        return await this.repository.find({
             where: {
                 beneficiary: { id: beneficiaryId }
             }
@@ -49,5 +49,13 @@ export class WorkRequestRepository extends BaseRepository<
             .set({ status: WorkRequestTypeEnum.ATRIBUIDO, professional: professional_id })
             .where("id = :id", { id: work_id })
             .execute()
+    }
+
+    async getByProfessionalId(professionalId: string) {
+        return await this.repository.find({
+            where: {
+                professional: { id: professionalId }
+            }
+        })
     }
 }

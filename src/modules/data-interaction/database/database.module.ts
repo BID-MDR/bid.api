@@ -46,6 +46,8 @@ import { ConstructionRepository } from './repositories/construction.repository';
 
 import { NotificationEntity } from './entitites/notification.entity';
 import { NotificationRepository } from './repositories/notification.repository';
+import { DemandEntity } from './entitites/demand.entity';
+import { DemandRepository } from './repositories/user/demand.repository';
 const ENTITIES = [
     UserEntity,
     UserRatingEntity,
@@ -73,6 +75,7 @@ const ENTITIES = [
     GovbrSsoEntity,
     GovbrSsoInfoToRegisterEntity,
     NotificationEntity,
+    DemandEntity
 ];
 const REPOSITORIES = [
     UserRepository,
@@ -93,7 +96,8 @@ const REPOSITORIES = [
     AddressRepository,
     GovbrSsoRepository,
     ConstructionRepository,
-    NotificationRepository
+    NotificationRepository,
+    DemandRepository
 ];
 
 @Module({

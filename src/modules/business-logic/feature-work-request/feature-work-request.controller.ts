@@ -30,7 +30,7 @@ import { ResponseDto } from 'src/core/dtos/response.dto';
 export class FeatureWorkRequestController {
     private readonly _logger = new Logger(FeatureWorkRequestController.name);
 
-    constructor(private featureWorkRequestService: FeatureWorkRequestService) { }
+    constructor(private featureWorkRequestService: FeatureWorkRequestService) {}
 
     @Get('')
     @ApiBearerAuth()
@@ -62,32 +62,23 @@ export class FeatureWorkRequestController {
         } catch (error) {
             this._logger.error(error.message);
 
-            throw new HttpException(
-                new ResponseDto(false, null, [error.message]),
-                HttpStatus.BAD_REQUEST,
-            );
+            throw new HttpException(new ResponseDto(false, null, [error.message]), HttpStatus.BAD_REQUEST);
         }
     }
 
     @Get('beneficiary-id/:id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
-    async getByBeneficiaryId(
-        @Param('id') id: string
-    ) {
+    async getByBeneficiaryId(@Param('id') id: string) {
         try {
             const result = await this.featureWorkRequestService.getByBeneficiaryId(id);
             return new ResponseDto(true, result, null);
         } catch (error) {
             this._logger.error(error.message);
 
-            throw new HttpException(
-                new ResponseDto(false, null, [error.message]),
-                HttpStatus.BAD_REQUEST,
-            );
+            throw new HttpException(new ResponseDto(false, null, [error.message]), HttpStatus.BAD_REQUEST);
         }
     }
-
 
     @Put(':work_id/:professional_id')
     @ApiBearerAuth()
@@ -123,10 +114,7 @@ export class FeatureWorkRequestController {
         } catch (error) {
             this._logger.error(error.message);
 
-            throw new HttpException(
-                new ResponseDto(false, null, [error.message]),
-                HttpStatus.BAD_REQUEST,
-            );
+            throw new HttpException(new ResponseDto(false, null, [error.message]), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -152,7 +140,74 @@ export class FeatureWorkRequestController {
     })
     async create(@Req() req: Request, @Body() body: CreateWorkRequestDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
-        return await this.featureWorkRequestService.register(userId, body);
+        const result = await this.featureWorkRequestService.register(userId, body);
+        return new ResponseDto(true, result, null);
+    }
+
+    @Post('regmel')
+    @UseInterceptors(new EncryptInterceptor())
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiBearerAuth()
+    @ApiOperation({
+        description: 'Cria um pedido de obra regmel.',
+        summary: 'Cria um pedido de obra regmel.',
+    })
+    @ApiBody({
+        type: CreateWorkRequestDto,
+        required: true,
+        description: 'Pedido de obra regmel a ser criado.',
+    })
+    @ApiOkResponseDtoData({
+        type: WorkRequestResponseDto,
+        description: 'Pedido de obra regmel criado.',
+    })
+    @SerializeOptions({
+        type: WorkRequestResponseDto,
+    })
+    async createRegmel(@Req() req: Request, @Body() body: CreateWorkRequestDto) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        const result = await this.featureWorkRequestService.registerRequestRegmel(userId, body);
+        return new ResponseDto(true, result, null);
+    }
+
+    @Get('beneficiario-regmel')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOperation({
+        description: 'Retorna a lista de pedido de obra para beneficiário regmel.',
+        summary: 'Retorna a lista de pedido de obra.',
+    })
+    @ApiOkResponseDtoData({
+        type: WorkRequestResponseDto,
+        description: 'Lista de pedido de obra.',
+    })
+    @SerializeOptions({
+        type: WorkRequestResponseDto,
+    })
+    async getBeneficiaryRegmel(@Req() req: Request) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        const result = await this.featureWorkRequestService.getByBeneficiaryId(userId);
+        return new ResponseDto(true, result, null);
+    }
+
+    @Get('profissional-regmel')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOperation({
+        description: 'Retorna a lista de pedido de obra para profissional regmel.',
+        summary: 'Retorna a lista de pedido de obra.',
+    })
+    @ApiOkResponseDtoData({
+        type: WorkRequestResponseDto,
+        description: 'Lista de pedido de obra.',
+    })
+    @SerializeOptions({
+        type: WorkRequestResponseDto,
+    })
+    async getProfessionalRegmel(@Req() req: Request) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        const result = await this.featureWorkRequestService.getByProfessionalId(userId);
+        return new ResponseDto(true, result, null);
     }
 
     @Put('')
@@ -178,6 +233,7 @@ export class FeatureWorkRequestController {
     async update(@Req() req: Request, @Body() body: UpdateWorkRequestDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
 
-        return await this.featureWorkRequestService.update(userId, body);
+        const result = await this.featureWorkRequestService.update(userId, body);
+        return new ResponseDto(true, result, null);
     }
 }
