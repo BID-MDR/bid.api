@@ -1,5 +1,5 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { UserEntity } from './user.entity';
 
 @Entity({ name: 'demands' })
