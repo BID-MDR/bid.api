@@ -199,4 +199,7 @@ export class UserEntity extends BaseEntity {
 
     @OneToMany(() => DemandEntity, demand => demand.beneficiary)
     demands: DemandEntity[];
+
+    @OneToMany(() => DemandEntity, demand => demand.professional)
+    demandsAsProfessional: DemandEntity[];
 }

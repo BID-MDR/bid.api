@@ -1,4 +1,0 @@
-export enum ConstructionRoomTypeEnum {
-    ANTES_CONSTRUCAO = 'ANTES_CONSTRUCAO',
-    DEPOIS_CONSTRUCAO = 'DEPOIS_CONSTRUCAO',
-}
