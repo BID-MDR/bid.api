@@ -30,6 +30,7 @@ import { NotificationEntity } from './entitites/notification.entity';
 import { NotificationRepository } from './repositories/notification.repository';
 import { DemandEntity } from './entitites/demand.entity';
 import { DemandRepository } from './repositories/user/demand.repository';
+import { WorkRequestEntity } from './entitites/work-request.entity';
 
 const ENTITIES = [
     UserEntity,
@@ -47,7 +48,8 @@ const ENTITIES = [
     GovbrSsoEntity,
     GovbrSsoInfoToRegisterEntity,
     NotificationEntity,
-    DemandEntity
+    DemandEntity,
+    WorkRequestEntity
 ];
 const REPOSITORIES = [
     UserRepository,
