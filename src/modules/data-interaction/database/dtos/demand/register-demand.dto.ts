@@ -1,15 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Length } from 'class-validator';
+import { IsNotEmpty, Length } from 'class-validator';
 import { UserEntity } from '../../entitites/user.entity';
 
 export class DemandRegisterRequestDto {
     @ApiProperty()
+    @IsNotEmpty()
     @Length(3, 100)
     document: string;
 
     @ApiProperty()
     @Length(2, 100)
     state: string;
+
     @ApiProperty()
     @Length(3, 100)
     city: string;
@@ -43,4 +45,6 @@ export class DemandRegisterRequestDto {
     longitude: string;
 
     beneficiary: UserEntity
+
+    professional: UserEntity;
 }

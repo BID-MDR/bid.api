@@ -8,59 +8,66 @@ import {
     Post,
     Req,
     SerializeOptions,
-    UseGuards
-} from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
-import { ApiOkResponseDtoData } from 'src/core/decorators/swagger/api-ok-response-dto.decorator';
-import { JwtAccessTokenGuard } from 'src/core/guards/jwt-access-token.guard';
-import { JwtPayloadInterface } from 'src/core/interfaces/jwt-payload.interface';
+    UseGuards,
+} from "@nestjs/common";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { Request } from "express";
+import { ApiOkResponseDtoData } from "src/core/decorators/swagger/api-ok-response-dto.decorator";
+import { JwtAccessTokenGuard } from "src/core/guards/jwt-access-token.guard";
+import { JwtPayloadInterface } from "src/core/interfaces/jwt-payload.interface";
+import { DemandRegisterRequestDto } from "src/modules/data-interaction/database/dtos/demand/register-demand.dto";
+import { DemandService } from "./demand.service";
 
-import { ResponseDto } from 'src/core/dtos/response.dto';
-import { DemandRegisterRequestDto } from 'src/modules/data-interaction/database/dtos/demand/register-demand.dto';
-import { DemandService } from './demand.service';
-
-@Controller('demand')
-@ApiTags('Demand/Pedido de demanda')
+@Controller("demand")
+@ApiTags("Demand/Pedido de demanda")
 export class DemandController {
     private readonly _logger = new Logger(DemandController.name);
 
     constructor(private demandService: DemandService) {}
 
-    @Get('')
+    @Get("")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
     @ApiOkResponseDtoData({
         type: DemandRegisterRequestDto,
-        description: 'Pedido de obra.',
+        description: "Pedido de obra.",
     })
     @SerializeOptions({
         type: DemandRegisterRequestDto,
     })
     async getLogged(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
-         const demandList =  await this.demandService.listByUser(userId);
-        return new ResponseDto(true, demandList, false)
+        const demandList = await this.demandService.listByUser(userId);
+        return demandList;
     }
 
-    @Post('')
+    @Get("id/:id")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
     @ApiOkResponseDtoData({
         type: DemandRegisterRequestDto,
-        description: 'Pedido de demanda.',
+        description: "Pedido de demanda.",
     })
-    async register(@Req() req: Request , @Body() dto: DemandRegisterRequestDto) {
+    async getById(@Param("id") id: string) {
+        return await this.demandService.findById(id);
+    }
+
+    @Post("")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOkResponseDtoData({
+        type: DemandRegisterRequestDto,
+        description: "Pedido de demanda.",
+    })
+    async register(@Req() req: Request, @Body() dto: DemandRegisterRequestDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
         return await this.demandService.register(userId, dto);
     }
 
-    @Delete('delete-by-id/:id')
+    @Delete("delete-by-id/:id")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
-    async delete(@Param('id') id: string) {
+    async delete(@Param("id") id: string) {
         return await this.demandService.delete(id);
     }
-
-
 }

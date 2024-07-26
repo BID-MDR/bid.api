@@ -206,4 +206,6 @@ export class UserEntity extends BaseEntity {
 
     @OneToMany(() => MessageEntity, (message) => message.receiver)
     receivedMessages: MessageEntity[];
+    @OneToMany(() => DemandEntity, demand => demand.professional)
+    demandsAsProfessional: DemandEntity[];
 }

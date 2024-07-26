@@ -1,4 +1,4 @@
-import {  Injectable } from '@nestjs/common';
+import {  BadRequestException, Injectable } from '@nestjs/common';
 import { BaseService } from 'src/core/services/base.service';
 import { UserRepository } from 'src/modules/data-interaction/database/repositories/user/user.repository';
 import { DemandEntity } from 'src/modules/data-interaction/database/entitites/demand.entity';
@@ -29,7 +29,18 @@ export class DemandService extends BaseService<
     }
 
     async register(userId: string, data: DemandRegisterRequestDto) {
-        data.beneficiary = await this.userRepository.getById(userId);
+        data.professional = await this.userRepository.getById(userId);
+
+        if(!data.professional) {
+            throw new BadRequestException("Professional não encontrado.");
+        }
+
+        data.beneficiary = await this.userRepository.getByCpf(data.document);
+
+        if(!data.beneficiary) {
+            throw new BadRequestException("Beneficiário não encontrado.");
+        }
+
         return await super.create(data);
     }
 
