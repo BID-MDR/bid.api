@@ -1,6 +1,7 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToOne } from 'typeorm';
 import { UserEntity } from './user.entity';
+import { WorkRequest } from './work-request.entity';
 
 @Entity({ name: 'demands' })
 export class DemandEntity extends BaseEntity {
@@ -70,5 +71,12 @@ export class DemandEntity extends BaseEntity {
         eager: true,
     })
     beneficiary: UserEntity;
+
+    @OneToOne(() =>WorkRequest, workRequest => workRequest.demand, {
+        cascade: true,
+        eager: true,
+        nullable: true,
+    })
+    workRequest: WorkRequest;
 
 }

@@ -65,18 +65,9 @@ export class FeatureUserController {
         type: UserResponseDto,
     })
     async getLogged(@Req() req: Request) {
-        try {
-            const userId = (req.user as JwtPayloadInterface).userId;
-            const result = await this.featureUserService.findById(userId);
-            return new ResponseDto(true, result, null);
-        } catch (error) {
-            this._logger.error(error.message);
-
-            throw new HttpException(
-                new ResponseDto(false, null, [error.message]),
-                HttpStatus.BAD_REQUEST,
-            );
-        }
+        const userId = (req.user as JwtPayloadInterface).userId;
+        const result = await this.featureUserService.findById(userId);
+        return new ResponseDto(true, result, null);
     }
 
     @Get("id/:id")

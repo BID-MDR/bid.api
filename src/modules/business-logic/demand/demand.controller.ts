@@ -3,27 +3,22 @@ import {
     Controller,
     Delete,
     Get,
-    HttpException,
-    HttpStatus,
     Logger,
     Param,
     Post,
-    Put,
     Req,
     SerializeOptions,
-    UseGuards,
-    UseInterceptors,
+    UseGuards
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { ApiOkResponseDtoData } from 'src/core/decorators/swagger/api-ok-response-dto.decorator';
 import { JwtAccessTokenGuard } from 'src/core/guards/jwt-access-token.guard';
 import { JwtPayloadInterface } from 'src/core/interfaces/jwt-payload.interface';
-import { WorkRequestResponseDto } from 'src/modules/data-interaction/database/dtos/work-request/response-work-request.dto';
 
-import { DemandService } from './demand.service';
-import { DemandRegisterRequestDto } from 'src/modules/data-interaction/database/dtos/demand/register-demand.dto';
 import { ResponseDto } from 'src/core/dtos/response.dto';
+import { DemandRegisterRequestDto } from 'src/modules/data-interaction/database/dtos/demand/register-demand.dto';
+import { DemandService } from './demand.service';
 
 @Controller('demand')
 @ApiTags('Demand/Pedido de demanda')
