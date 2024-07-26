@@ -16,6 +16,7 @@ import { UserMonthlyFamilyIncomeEnum } from "../enums/user-monthly-family-income
 import { NotificationEntity } from "./notification.entity";
 import { UserProgramTypeEnum } from "../enums/user-program-type.enum";
 import { DemandEntity } from "./demand.entity";
+import { MessageEntity } from "./message.entity";
 
 @Entity({ name: "user" })
 export class UserEntity extends BaseEntity {
@@ -200,6 +201,11 @@ export class UserEntity extends BaseEntity {
     @OneToMany(() => DemandEntity, demand => demand.beneficiary)
     demands: DemandEntity[];
 
+    @OneToMany(() => MessageEntity, (message) => message.sender)
+    sentMessages: MessageEntity[];
+
+    @OneToMany(() => MessageEntity, (message) => message.receiver)
+    receivedMessages: MessageEntity[];
     @OneToMany(() => DemandEntity, demand => demand.professional)
     demandsAsProfessional: DemandEntity[];
 }

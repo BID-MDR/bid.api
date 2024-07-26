@@ -31,6 +31,8 @@ import { NotificationRepository } from './repositories/notification.repository';
 import { DemandEntity } from './entitites/demand.entity';
 import { DemandRepository } from './repositories/user/demand.repository';
 import { WorkRequestEntity } from './entitites/work-request.entity';
+import { MessageEntity } from './entitites/message.entity';
+import { MessageRepository } from './repositories/user/message.repository';
 import { WorkRequestWelfareEntity } from './entitites/work-request-welfare.entity';
 import { WorkRequestRepository } from './repositories/work-request/work-request.repository';
 import { WorkRequestWelfateRepository } from './repositories/work-request/work-request-welfare.repository';
@@ -53,6 +55,7 @@ const ENTITIES = [
     NotificationEntity,
     DemandEntity,
     WorkRequestEntity,
+    MessageEntity,
     WorkRequestWelfareEntity
 ];
 const REPOSITORIES = [
@@ -69,6 +72,7 @@ const REPOSITORIES = [
     GovbrSsoRepository,
     NotificationRepository,
     DemandRepository,
+    MessageRepository,
     WorkRequestRepository,
     WorkRequestWelfateRepository
 ];
