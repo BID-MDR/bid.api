@@ -31,6 +31,8 @@ import { NotificationRepository } from './repositories/notification.repository';
 import { DemandEntity } from './entitites/demand.entity';
 import { DemandRepository } from './repositories/user/demand.repository';
 import { WorkRequestEntity } from './entitites/work-request.entity';
+import { MessageEntity } from './entitites/message.entity';
+import { MessageRepository } from './repositories/user/message.repository';
 
 const ENTITIES = [
     UserEntity,
@@ -49,7 +51,8 @@ const ENTITIES = [
     GovbrSsoInfoToRegisterEntity,
     NotificationEntity,
     DemandEntity,
-    WorkRequestEntity
+    WorkRequestEntity,
+    MessageEntity
 ];
 const REPOSITORIES = [
     UserRepository,
@@ -64,7 +67,8 @@ const REPOSITORIES = [
     AddressRepository,
     GovbrSsoRepository,
     NotificationRepository,
-    DemandRepository
+    DemandRepository,
+    MessageRepository
 ];
 
 @Module({
