@@ -4,13 +4,15 @@ import { FeatureTechnicalVisitModule } from './feature-technical-visit/feature-t
 import { FeatureAuthModule } from './feature-auth/feature-auth.module';
 import { FeatureNotificationModule } from './feature-notification/feature-notification.module';
 import { DemandModuleModule } from './demand/demand.module';
+import { WorkRequestModule } from './work-request/work-request.module';
 @Module({
     imports: [
         FeatureUserModule,
         FeatureTechnicalVisitModule,
         FeatureAuthModule,
         FeatureNotificationModule,
-        DemandModuleModule
+        DemandModuleModule,
+        WorkRequestModule
     ],
 })
 export class BusinessLogicModule {}

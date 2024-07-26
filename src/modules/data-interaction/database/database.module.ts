@@ -31,6 +31,9 @@ import { NotificationRepository } from './repositories/notification.repository';
 import { DemandEntity } from './entitites/demand.entity';
 import { DemandRepository } from './repositories/user/demand.repository';
 import { WorkRequestEntity } from './entitites/work-request.entity';
+import { WorkRequestWelfareEntity } from './entitites/work-request-welfare.entity';
+import { WorkRequestRepository } from './repositories/work-request/work-request.repository';
+import { WorkRequestWelfateRepository } from './repositories/work-request/work-request-welfare.repository';
 
 const ENTITIES = [
     UserEntity,
@@ -49,7 +52,8 @@ const ENTITIES = [
     GovbrSsoInfoToRegisterEntity,
     NotificationEntity,
     DemandEntity,
-    WorkRequestEntity
+    WorkRequestEntity,
+    WorkRequestWelfareEntity
 ];
 const REPOSITORIES = [
     UserRepository,
@@ -64,12 +68,14 @@ const REPOSITORIES = [
     AddressRepository,
     GovbrSsoRepository,
     NotificationRepository,
-    DemandRepository
+    DemandRepository,
+    WorkRequestRepository,
+    WorkRequestWelfateRepository
 ];
 
 @Module({
     imports: [TypeOrmModule.forFeature(ENTITIES)],
-    providers: [...REPOSITORIES],
-    exports: [...REPOSITORIES],
+    providers: REPOSITORIES,
+    exports: REPOSITORIES,
 })
 export class DatabaseModule {}

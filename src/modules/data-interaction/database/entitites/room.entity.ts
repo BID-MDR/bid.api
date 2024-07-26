@@ -1,7 +1,8 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
-import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { RoomTypeEnum } from '../enums/room-type.enum';
 import { RoomSolutionEntity } from './room-solution.entity';
+import { WorkRequestEntity } from './work-request.entity';
 
 @Entity({ name: 'room' })
 export class RoomEntity extends BaseEntity {
@@ -21,5 +22,7 @@ export class RoomEntity extends BaseEntity {
     roomSolutions: RoomSolutionEntity[];
 
     //demanda work
+    @ManyToOne(()=> WorkRequestEntity, (workRequest) => workRequest.room)
+    workRequest: WorkRequestEntity;
 
 }
