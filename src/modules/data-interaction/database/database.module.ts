@@ -28,6 +28,9 @@ import { GovbrSsoInfoToRegisterEntity } from './entitites/govbr-sso-info-to-regi
 
 import { NotificationEntity } from './entitites/notification.entity';
 import { NotificationRepository } from './repositories/notification.repository';
+import { DemandEntity } from './entitites/demand.entity';
+import { DemandRepository } from './repositories/user/demand.repository';
+
 const ENTITIES = [
     UserEntity,
     UserRatingEntity,
@@ -44,6 +47,7 @@ const ENTITIES = [
     GovbrSsoEntity,
     GovbrSsoInfoToRegisterEntity,
     NotificationEntity,
+    DemandEntity
 ];
 const REPOSITORIES = [
     UserRepository,
@@ -57,7 +61,8 @@ const REPOSITORIES = [
     TechnicalVisitRepository,
     AddressRepository,
     GovbrSsoRepository,
-    NotificationRepository
+    NotificationRepository,
+    DemandRepository
 ];
 
 @Module({
