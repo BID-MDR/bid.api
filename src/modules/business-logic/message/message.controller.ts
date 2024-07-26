@@ -31,7 +31,7 @@ export class MessageController {
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
     async getLogged(@Req() req: Request , @Param('id') id:string ) {
-        const userId = (req.user as JwtPayloadInterface).userId;
+        const userId = (req.user as JwtPayloadInterface).userId
          const messageList =  await this.messageService.listConversation(userId, id);
         return new ResponseDto(true, messageList, false)
     }
