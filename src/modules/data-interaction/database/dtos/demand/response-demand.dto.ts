@@ -48,6 +48,10 @@ export class ResponseDemandDto extends BaseResponseDto {
     @Expose()
     longitude: string;
 
+    @ApiProperty()
+    @Expose()
+    status:string
+
     @ApiProperty({ type: () => UserResponseDto })
     @Expose()
     @Type(() => UserResponseDto)
