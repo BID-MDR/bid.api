@@ -7,6 +7,7 @@ import {
     Param,
     Post,
     Put,
+    SerializeOptions,
     UseInterceptors,
 } from "@nestjs/common";
 import { ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
@@ -31,7 +32,9 @@ export class WorkRequestController {
         type: ResponseWorkRequestDto,
         description: "Lista de vistorias.",
     })
-    @UseInterceptors(ClassSerializerInterceptor)
+    @SerializeOptions({
+        type: ResponseWorkRequestDto,
+    })
     async list() {
         return await this.service.list();
     }
@@ -45,7 +48,9 @@ export class WorkRequestController {
         type: ResponseWorkRequestDto,
         description: "Vistoria por ID.",
     })
-    @UseInterceptors(ClassSerializerInterceptor)
+    @SerializeOptions({
+        type: ResponseWorkRequestDto,
+    })
     async getById(@Param('id') id: string) {
         return await this.service.findById(id);
     }
@@ -64,7 +69,6 @@ export class WorkRequestController {
         required: true,
         description: "Construção a ser criado.",
     })
-    @UseInterceptors(ClassSerializerInterceptor)
     async create(@Body() dto: CreateWorkRequestDto) {
         return await this.service.register(dto);
     }
@@ -83,7 +87,9 @@ export class WorkRequestController {
         required: true,
         description: "Construção a ser atualizado.",
     })
-    @UseInterceptors(ClassSerializerInterceptor)
+    @SerializeOptions({
+        type: ResponseWorkRequestDto,
+    })
     async update(@Param('id') id: string, @Body() dto: UpdateWorkRequestDto) {
         return await this.service.update(id, dto);
     }

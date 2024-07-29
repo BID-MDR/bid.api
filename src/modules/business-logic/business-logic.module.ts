@@ -6,6 +6,7 @@ import { FeatureNotificationModule } from './feature-notification/feature-notifi
 import { DemandModuleModule } from './demand/demand.module';
 import { MessageModule } from './message/message.module';
 import { WorkRequestModule } from './work-request/work-request.module';
+import { FeatureRoomModule } from './feature-room/feature-room.module';
 @Module({
     imports: [
         FeatureUserModule,
@@ -14,7 +15,8 @@ import { WorkRequestModule } from './work-request/work-request.module';
         FeatureNotificationModule,
         DemandModuleModule,
         MessageModule,
-        WorkRequestModule
+        WorkRequestModule,
+        FeatureRoomModule
     ],
 })
 export class BusinessLogicModule {}
