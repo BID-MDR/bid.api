@@ -33,9 +33,6 @@ export class DemandController {
         type: ResponseDemandDto,
         description: "Pedido de obra.",
     })
-    @SerializeOptions({
-        type: ResponseDemandDto,
-    })
     async getLogged(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
         return await this.demandService.listByUser(userId);
