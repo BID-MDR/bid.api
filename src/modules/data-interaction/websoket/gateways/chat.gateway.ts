@@ -44,6 +44,7 @@ export class ChatGateway implements OnGatewayConnection {
     handleConnection(client: Socket) {
         this.chatService.authenticateUser(client);
     }
+    
     @SubscribeMessage(ChatGatewayEventsEnum.SEND_MESSAGE)
     async onNewMessage(
       @ConnectedSocket() client: Socket,
