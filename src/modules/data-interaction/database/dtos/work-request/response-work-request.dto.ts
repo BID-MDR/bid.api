@@ -41,6 +41,10 @@ export class ResponseWorkRequestDto extends BaseResponseDto {
     @Type(() => String)
     prevailingConstructionMaterials: string;
 
+    @ApiProperty()
+    @Expose()
+    status: string;
+
     @ApiProperty({ type: RoomResponseDto, isArray: true })
     @Type(() => RoomResponseDto)
     @Expose()
