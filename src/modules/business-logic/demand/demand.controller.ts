@@ -49,6 +49,13 @@ export class DemandController {
         return await this.demandService.findById(id);
     }
 
+    @Get("get-by-workRequestId/:id")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async getByWorkRequesId(@Param("id") id: string) {
+        return await this.demandService.getByWorkRequestId(id);
+    }
+
     @Post("")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
