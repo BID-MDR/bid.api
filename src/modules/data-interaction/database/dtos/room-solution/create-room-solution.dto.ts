@@ -4,6 +4,11 @@ import { RoomEntity } from '../../entitites/room.entity';
 import { RoomSolutionEnum } from '../../enums/room-solution.enum';
 
 export class CreateRoomSolutionDto {
+
+    constructor(partial: Partial<CreateRoomSolutionDto>) {
+        Object.assign(this, partial);
+    }
+
     @ApiProperty()
     @IsUUID()
     roomId: string;

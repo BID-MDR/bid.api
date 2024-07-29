@@ -12,8 +12,8 @@ export class RoomSolutionRepository extends BaseRepository<RoomSolutionEntity, C
     }
 
 
-    async register(data: CreateRoomSolutionDto){
-        
+    async findAllRoomWithoutSolution(){
+       return await this.repository.query(`SELECT r.* FROM room r LEFT JOIN room_solution rs ON r.id = rs.roomId WHERE rs.roomId IS NULL;`);
     }
 
     async updateRoomSolutions(roomSolutionUpdates: { id: string, data: CreateRoomSolutionDto }[]): Promise<void> {

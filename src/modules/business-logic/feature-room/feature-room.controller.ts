@@ -16,6 +16,7 @@ import { CreateRoomDto } from 'src/modules/data-interaction/database/dtos/room/c
 import { RoomResponseDto } from 'src/modules/data-interaction/database/dtos/room/reponse-room.dto';
 import { FeatureRoomService } from './feature-room.service';
 import { CreateRoomSolutionDto } from 'src/modules/data-interaction/database/dtos/room-solution/create-room-solution.dto';
+import { RequestRoomSolutionDto } from 'src/modules/data-interaction/database/dtos/room-solution/request.dto';
 
 @Controller('room')
 @ApiTags('Quarto')
@@ -41,6 +42,13 @@ export class FeatureRoomController {
     //     const userId = (req.user as JwtPayloadInterface).userId;
     //     return await this.featureRoomService.listByUserId(userId);
     // }
+
+    @Get('')
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAccessTokenGuard)
+    async list() {
+        return await this.featureRoomService.selectAll();
+    }
 
     @Get('id/:id')
     @ApiBearerAuth()
@@ -108,5 +116,12 @@ export class FeatureRoomController {
     })
     async createRoomSolution(@Body() body: CreateRoomSolutionDto) {
         return await this.featureRoomService.createRoomSolution(body);
+    }
+
+    @Post('room-solution/wait-intervention')
+    @UseInterceptors(new EncryptInterceptor())
+    async waitIntervention(@Body() body: RequestRoomSolutionDto){
+
+       return await this.featureRoomService.register(body)
     }
 }
