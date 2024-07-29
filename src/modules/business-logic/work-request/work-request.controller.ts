@@ -34,7 +34,6 @@ export class WorkRequestController {
     })
     @SerializeOptions({
         type: ResponseWorkRequestDto,
-        ignoreDecorators: true,
     })
     async list() {
         return await this.service.list();

@@ -42,7 +42,6 @@ export class DemandController {
     async getLogged(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
         return await this.demandService.listByUser(userId);
-        // return plainToInstance(ResponseDemandDto, result);
     }
 
     @Get("id/:id")
