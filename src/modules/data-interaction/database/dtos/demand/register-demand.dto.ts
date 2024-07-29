@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, Length } from 'class-validator';
+import { IsNotEmpty, IsOptional, Length } from 'class-validator';
 import { UserEntity } from '../../entitites/user.entity';
 
 export class DemandRegisterRequestDto {
@@ -21,6 +21,7 @@ export class DemandRegisterRequestDto {
     zipcode: string;
 
     @ApiProperty()
+    @IsOptional()
     @Length(3, 100)
     complement: string;
 
@@ -29,7 +30,7 @@ export class DemandRegisterRequestDto {
     neighborhood: string;
 
     @ApiProperty()
-    @Length(3, 100)
+    @Length(1, 100)
     number: string;
 
     @ApiProperty()

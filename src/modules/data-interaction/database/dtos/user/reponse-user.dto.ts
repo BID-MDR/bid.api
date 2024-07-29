@@ -69,6 +69,10 @@ export class UserResponseDto extends BaseResponseDto {
     @Expose()
     email: string;
 
+    @ApiProperty()
+    @Expose()
+    cpf: string;
+
     @ApiProperty({ type: AddressResponseDto, isArray: true })
     @Expose()
     addresses: AddressResponseDto[];
