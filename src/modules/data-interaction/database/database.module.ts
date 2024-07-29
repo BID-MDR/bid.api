@@ -36,6 +36,7 @@ import { MessageRepository } from './repositories/user/message.repository';
 import { WorkRequestWelfareEntity } from './entitites/work-request-welfare.entity';
 import { WorkRequestRepository } from './repositories/work-request/work-request.repository';
 import { WorkRequestWelfateRepository } from './repositories/work-request/work-request-welfare.repository';
+import { ChatRoomEntity } from './entitites/chat-room.entity';
 
 const ENTITIES = [
     UserEntity,
@@ -56,7 +57,8 @@ const ENTITIES = [
     DemandEntity,
     WorkRequestEntity,
     MessageEntity,
-    WorkRequestWelfareEntity
+    WorkRequestWelfareEntity,
+    ChatRoomEntity
 ];
 const REPOSITORIES = [
     UserRepository,
