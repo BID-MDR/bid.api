@@ -7,18 +7,12 @@ export class CreateRoomSolutionDto {
     @ApiProperty()
     @IsUUID()
     roomId: string;
+
+    @ApiProperty()
     room: RoomEntity;
 
     @ApiProperty({ enum: RoomSolutionEnum })
     @IsEnum(RoomSolutionEnum)
     solution: RoomSolutionEnum;
 
-    @ApiProperty({ type: String })
-    @IsCurrency({
-        allow_decimal: true,
-        digits_after_decimal: [1, 2],
-        require_symbol: false,
-        allow_negatives: false,
-    })
-    cost: number;
 }
