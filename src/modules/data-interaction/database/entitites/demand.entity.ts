@@ -3,6 +3,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from "typeorm";
 import { UserEntity } from "./user.entity";
 import { WorkRequestEntity } from "./work-request.entity";
 import { TechnicalVisitEntity } from "./technical-visit.entity";
+import { DemandStatusEnum } from "../enums/demand-status.enum";
 
 @Entity({ name: "demands" })
 export class DemandEntity extends BaseEntity {
@@ -66,6 +67,13 @@ export class DemandEntity extends BaseEntity {
         length: 30,
     })
     longitude: string;
+
+    @Column({
+        type:'enum',
+        enum:Object.values(DemandStatusEnum),
+        default:DemandStatusEnum.RASCUNHO
+    })
+    status:DemandStatusEnum;
 
     @ManyToOne(() => UserEntity, (user) => user.demands, {
         eager: true,
