@@ -63,6 +63,10 @@ export class FeatureRoomService extends BaseService<
         return await this.roomSolutionRepository.findAllRoomWithoutSolution();
     }
 
+    async selectAllWithIntervention(id: string){
+        return await this.roomSolutionRepository.findAllRoomWithSolution(id);
+    }
+
 
 
     async register(body: RequestRoomSolutionDto){
