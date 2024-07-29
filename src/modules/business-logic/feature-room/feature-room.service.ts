@@ -8,6 +8,8 @@ import { RoomRepository } from 'src/modules/data-interaction/database/repositori
 import { RoomSolutionRepository } from 'src/modules/data-interaction/database/repositories/room/room-solution.repository';
 import { CreateRoomSolutionDto } from 'src/modules/data-interaction/database/dtos/room-solution/create-room-solution.dto';
 import { RoomSolutionEntity } from 'src/modules/data-interaction/database/entitites/room-solution.entity';
+import { RequestRoomSolutionDto } from 'src/modules/data-interaction/database/dtos/room-solution/request.dto';
+import { WorkRequestRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request.repository';
 
 @Injectable()
 export class FeatureRoomService extends BaseService<
@@ -17,7 +19,8 @@ export class FeatureRoomService extends BaseService<
 > {
     constructor(
         private RoomRepository: RoomRepository,
-        private roomSolutionRepository: RoomSolutionRepository
+        private roomSolutionRepository: RoomSolutionRepository,
+        private workRequestRepository: WorkRequestRepository
 
     ) {
         super(RoomRepository);
@@ -52,6 +55,42 @@ export class FeatureRoomService extends BaseService<
             return await this.roomSolutionRepository.create(data);
         }else{
             throw new BadRequestException('Room não encontrado');
+        }
+    }
+
+
+    async selectAll(){
+        return await this.roomSolutionRepository.findAllRoomWithoutSolution();
+    }
+
+
+
+    async register(body: RequestRoomSolutionDto){
+        
+        if(body.workRequestId){
+            body.workRequest = await this.workRequestRepository.findById(body.workRequestId);
+        }
+
+        if(body.roomId){
+           
+            const RoomEntity =  await this.RoomRepository.findById(body.roomId)
+
+            body.solution.forEach( async(element) => {
+                let room =  new CreateRoomSolutionDto({ room: RoomEntity, solution: element});
+                return await this.roomSolutionRepository.create(room);
+                
+            });
+        }
+
+        if(body.room){
+            var result = await super.create({...body.room, workRequest: body.workRequest});
+            if(result.id){
+                body.solution.forEach( async(element) => {
+                    let room =  new CreateRoomSolutionDto({ room: result, solution: element});
+                    return await this.roomSolutionRepository.create(room);
+                    
+                });
+            }
         }
     }
 }
