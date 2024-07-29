@@ -28,6 +28,7 @@ export class DemandRepository extends BaseRepository<
             .createQueryBuilder("demand")
             .innerJoinAndSelect("demand.beneficiary", "beneficiary")
             .innerJoinAndSelect("demand.professional", "professional")
+            .innerJoinAndSelect("demand.workRequest", "workRequest")
             .orWhere("beneficiary.id = :userId", { userId: user.id })
             .orWhere("professional.id = :userId", { userId: user.id })
             .getMany();
