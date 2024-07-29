@@ -50,6 +50,13 @@ export class FeatureRoomController {
         return await this.featureRoomService.selectAll();
     }
 
+    @Get(':id')
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAccessTokenGuard)
+    async listByWorkRequest(@Param('id') id: string) {
+        return await this.featureRoomService.selectAllWithIntervention(id);
+    }
+
     @Get('id/:id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
