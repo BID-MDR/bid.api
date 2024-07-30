@@ -23,6 +23,10 @@ export class DemandService extends BaseService<
         return await this.demandRepository.listByUser(userId);
     }
 
+    async getByWorkRequestId(workRequestId) {
+        return await this.demandRepository.getByWorkRequestId(workRequestId);
+    }
+
     async list() {
     
         return await this.demandRepository.list();

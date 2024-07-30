@@ -33,9 +33,6 @@ export class DemandController {
         type: ResponseDemandDto,
         description: "Pedido de obra.",
     })
-    @SerializeOptions({
-        type: ResponseDemandDto,
-    })
     async getLogged(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
         return await this.demandService.listByUser(userId);
@@ -50,6 +47,13 @@ export class DemandController {
     })
     async getById(@Param("id") id: string) {
         return await this.demandService.findById(id);
+    }
+
+    @Get("get-by-workRequestId/:id")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async getByWorkRequesId(@Param("id") id: string) {
+        return await this.demandService.getByWorkRequestId(id);
     }
 
     @Post("")
