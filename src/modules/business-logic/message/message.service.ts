@@ -1,10 +1,9 @@
-import {  Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { BaseService } from 'src/core/services/base.service';
-import { UserRepository } from 'src/modules/data-interaction/database/repositories/user/user.repository';
-import { DemandRegisterRequestDto } from 'src/modules/data-interaction/database/dtos/demand/register-demand.dto';
-import { MessageEntity } from 'src/modules/data-interaction/database/entitites/message.entity';
 import { MessageRegisterRequestDto } from 'src/modules/data-interaction/database/dtos/message/register-message.dto';
+import { MessageEntity } from 'src/modules/data-interaction/database/entitites/message.entity';
 import { MessageRepository } from 'src/modules/data-interaction/database/repositories/user/message.repository';
+import { UserRepository } from 'src/modules/data-interaction/database/repositories/user/user.repository';
 
 @Injectable()
 export class MessageService extends BaseService<
