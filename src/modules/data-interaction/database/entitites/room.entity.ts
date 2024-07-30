@@ -18,7 +18,10 @@ export class RoomEntity extends BaseEntity {
     })
     type: RoomTypeEnum;
 
-    @OneToMany(() => RoomSolutionEntity, (roomSolution) => roomSolution.room)
+    @OneToMany(() => RoomSolutionEntity, (roomSolution) => roomSolution.room , {
+        cascade: true,
+        eager: true,
+    })
     roomSolutions: RoomSolutionEntity[];
 
     //demanda work

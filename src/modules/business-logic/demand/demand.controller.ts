@@ -43,8 +43,8 @@ export class DemandController {
     }
 
     @Get("id/:id")
-    @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard)
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAccessTokenGuard)
     @ApiOkResponseDtoData({
         type: DemandRegisterRequestDto,
         description: "Pedido de demanda.",
