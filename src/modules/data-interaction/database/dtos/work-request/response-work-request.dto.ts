@@ -23,6 +23,10 @@ export class ResponseWorkRequestDto extends BaseResponseDto {
 
     @ApiProperty()
     @Expose()
+    responsiblePersonName: string;
+    
+    @ApiProperty()
+    @Expose()
     @Type(() => String)
     kinship: string;
 
@@ -40,6 +44,10 @@ export class ResponseWorkRequestDto extends BaseResponseDto {
     @Expose()
     @Type(() => String)
     prevailingConstructionMaterials: string;
+
+    @ApiProperty()
+    @Expose()
+    status: string;
 
     @ApiProperty({ type: RoomResponseDto, isArray: true })
     @Type(() => RoomResponseDto)
