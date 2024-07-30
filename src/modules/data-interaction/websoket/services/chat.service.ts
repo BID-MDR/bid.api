@@ -12,7 +12,6 @@ export class ChatService {
 
     async authenticateUser(socket: Socket) {
         try {
-            console.log('aqui')
             const jwtKeyWithoutPrefix = (socket.handshake.auth.Authorization as string).split(' ')[1];
             this.jwtService.verify(
                 jwtKeyWithoutPrefix,

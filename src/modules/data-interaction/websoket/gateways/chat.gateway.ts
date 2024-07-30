@@ -57,12 +57,14 @@ export class ChatGateway implements OnGatewayConnection {
       if (body.content) {
         await this.messageService.register(body.client1, body.client2, body);
       }
-  
+    
       const result = await this.messageService.listConversation(body.client1, body.client2);
-  
+      const roomIdentifier = body.client1.toString() + body.client2.toString();
+    
+      client.join(roomIdentifier);
       this.server.emit(
         ChatGatewayEventsEnum.RESPONSE_MESSAGE_IDENTIFIER,
-        new ResponseDto(true, result, null),
+        new ResponseDto(true, result, [])
       );
     }
   
@@ -71,7 +73,6 @@ export class ChatGateway implements OnGatewayConnection {
       @ConnectedSocket() client: Socket,
       @MessageBody() dto: MessageListWebsocketDto,
     ) {
-      console.log('aaaaaaaaaa')
       const result = await this.messageService.listConversation(dto.client1, dto.client2);
   
       this.server.emit(
@@ -88,12 +89,28 @@ export class ChatGateway implements OnGatewayConnection {
       @ConnectedSocket() client: Socket,
       @MessageBody() dto: MessageListIdentifierWebsocketDto,
     ) {
-      console.log('1234', dto.identifier)
-      const result = await this.messageService.listConversationByIdentifier(dto.identifier);
-      this.server.to(dto.identifier)
+      const result = await this.messageService.listConversation(dto.client1, dto.client2);
+      client.join(dto.identifier);
+      this.server
+      .to(dto.identifier)
       .emit(
         ChatGatewayEventsEnum.RESPONSE_MESSAGE_IDENTIFIER,
         new ResponseDto(true, result, []),
       );
+    }
+
+    @SubscribeMessage(ChatGatewayEventsEnum.REQUEST_JOIN_ROOM_IDENTIFIER)
+    async joinRoom(
+      @ConnectedSocket() client: Socket,
+      @MessageBody() dto: MessageListIdentifierWebsocketDto,
+    ) {
+      const convseration = await this.messageService.listConversationByIdentifier(dto.identifier);
+      client.join(dto.identifier);
+      this.server
+        .to(dto.identifier)
+        .emit(
+          ChatGatewayEventsEnum.RESPONSE_MESSAGE_IDENTIFIER,
+          new ResponseDto(true, convseration, null),
+        );
     }
 }

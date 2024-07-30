@@ -8,4 +8,7 @@ export class MessageListIdentifierWebsocketDto {
     @Length(3, 100)
     identifier: string;
 
+    client1?:string
+    client2?: string
+
 }

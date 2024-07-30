@@ -1,6 +1,5 @@
 import {
     Body,
-    ClassSerializerInterceptor,
     Controller,
     Get,
     Logger,
@@ -8,14 +7,15 @@ import {
     Post,
     Put,
     SerializeOptions,
-    UseInterceptors,
+    UseGuards
 } from "@nestjs/common";
-import { ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
-import { WorkRequestService } from "./work-request.service";
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ApiOkResponseDtoData } from "../../../core/decorators/swagger/api-ok-response-dto.decorator";
-import { ResponseWorkRequestDto } from "../../data-interaction/database/dtos/work-request/response-work-request.dto";
 import { CreateWorkRequestDto } from "../../data-interaction/database/dtos/work-request/create-work-request.dto";
+import { ResponseWorkRequestDto } from "../../data-interaction/database/dtos/work-request/response-work-request.dto";
 import { UpdateWorkRequestDto } from "../../data-interaction/database/dtos/work-request/update-work-request.dto";
+import { WorkRequestService } from "./work-request.service";
+import { JwtAccessTokenGuard } from "../../../core/guards/jwt-access-token.guard";
 
 @Controller("work-request")
 @ApiTags("Work Request/Vistoria")
@@ -24,6 +24,8 @@ export class WorkRequestController {
     constructor(private service: WorkRequestService) {}
 
     @Get("")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
     @ApiOperation({
         description: "Lista de vistorias.",
         summary: "Listar vistorias.",
@@ -40,6 +42,8 @@ export class WorkRequestController {
     }
 
     @Get("id/:id")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
     @ApiOperation({
         description: "Vistoria por ID.",
         summary: "Vistoria por ID.",
@@ -56,6 +60,8 @@ export class WorkRequestController {
     }
 
     @Post("")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
     @ApiOperation({
         description: "Registrar vistoria.",
         summary: "Registrar vistoria.",
@@ -74,6 +80,8 @@ export class WorkRequestController {
     }
 
     @Put("id/:id")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
     @ApiOperation({
         description: "Atualizar vistoria.",
         summary: "Atualizar vistoria.",

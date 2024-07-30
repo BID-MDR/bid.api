@@ -31,7 +31,11 @@ export class DemandController {
     @UseGuards(JwtAccessTokenGuard)
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
+        isArray: true,
         description: "Pedido de obra.",
+    })
+    @SerializeOptions({
+        type: ResponseDemandDto,
     })
     async getLogged(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
@@ -45,8 +49,21 @@ export class DemandController {
         type: DemandRegisterRequestDto,
         description: "Pedido de demanda.",
     })
+    @SerializeOptions({
+        type: ResponseDemandDto,
+    })
     async getById(@Param("id") id: string) {
         return await this.demandService.findById(id);
+    }
+
+    @Get("get-by-workRequestId/:id")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @SerializeOptions({
+        type: ResponseDemandDto,
+    })
+    async getByWorkRequesId(@Param("id") id: string) {
+        return await this.demandService.getByWorkRequestId(id);
     }
 
     @Post("")
@@ -55,6 +72,9 @@ export class DemandController {
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
         description: "Pedido de demanda.",
+    })
+    @SerializeOptions({
+        type: ResponseDemandDto,
     })
     async register(@Req() req: Request, @Body() dto: DemandRegisterRequestDto) {
         const userId = (req.user as JwtPayloadInterface).userId;

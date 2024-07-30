@@ -11,8 +11,8 @@ export class MessageEntity extends BaseEntity {
     @ManyToOne(() => UserEntity, (user) => user.receivedMessages, { eager: true })
     receiver: UserEntity;
 
-    @ManyToOne(() => ChatRoomEntity, (chatRoom) => chatRoom.messages, { eager: true })
-    chatRoom: ChatRoomEntity;
+    // @ManyToOne(() => ChatRoomEntity, (chatRoom) => chatRoom.messages, { eager: true })
+    // chatRoom: ChatRoomEntity;
 
     @Column({
         type: "text",

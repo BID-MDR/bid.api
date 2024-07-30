@@ -9,6 +9,6 @@ export class ChatRoomEntity extends BaseEntity {
     })
     name: string;
 
-    @OneToMany(() => MessageEntity, (message) => message.chatRoom)
-    messages: MessageEntity[];
+    // @OneToMany(() => MessageEntity, (message) => message.chatRoom)
+    // messages: MessageEntity[];
 }

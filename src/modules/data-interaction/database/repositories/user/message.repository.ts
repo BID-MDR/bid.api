@@ -17,8 +17,8 @@ export class MessageRepository extends BaseRepository<MessageEntity, MessageRegi
     }
 
     async listConversationByIdentifier(identifier: string): Promise<MessageEntity[]> {
-        // Log para verificar o identifier recebido
-        console.log(`Filtering messages by identifier: ${identifier}`);
+        // // Log para verificar o identifier recebido
+        // console.log(`Filtering messages by identifier: ${identifier}`);
         
         
         const messages = await this.repository.find({
@@ -39,6 +39,27 @@ export class MessageRepository extends BaseRepository<MessageEntity, MessageRegi
             .orderBy('message.sentAt', 'ASC')
             .getMany();
     }
+
+    async listAllMsgByUser(user: UserEntity): Promise<MessageEntity[]> {
+        
+        return await this.repository.createQueryBuilder('message')
+        .innerJoinAndSelect('message.sender', 'sender')
+        .innerJoinAndSelect('message.receiver', 'receiver')
+        .where('sender.id = :userId OR receiver.id = :userId', { userId: user.id })
+        .orderBy('message.sentAt', 'DESC')
+        .getMany();
+    }
+    // async listAllMsgByUser(user1: UserEntity): Promise<MessageEntity[]> {
+    //     return await this.repository.createQueryBuilder('message')
+    //         .innerJoinAndSelect('message.sender', 'sender')
+    //         .innerJoinAndSelect('message.receiver', 'receiver')
+    //         .where(
+    //             '(sender.id = :user1Id AND receiver.id = :user1Id) OR (sender.id = :user1Id AND receiver.id = :user1Id)',
+    //             { user1Id: user1.id }
+    //         )
+    //         .orderBy('message.sentAt', 'ASC')
+    //         .getMany();
+    // }
     async list() {
         return this.repository.find();
     }

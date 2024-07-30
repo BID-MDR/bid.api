@@ -9,6 +9,7 @@ import { WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChatGatewayEventsEnum } from 'src/modules/data-interaction/database/enums/chat-gateway.enum';
 import { ResponseDto } from 'src/core/dtos/response.dto';
+import { UserWithLastMessage } from 'src/core/interfaces/userWithLastMessage.interface';
 
 @Injectable()
 export class MessageService extends BaseService<
@@ -31,10 +32,33 @@ export class MessageService extends BaseService<
     }
 
     async listConversationByIdentifier(identifier: string) {
-        console.log('no service', identifier)
         const msgList =  await this.messageRepository.listConversationByIdentifier(identifier);
-        console.log(msgList.length)
         return msgList
+    }
+    
+    async listAllMsgByUser(userId: string): Promise<UserWithLastMessage[]> {
+        const user = await this.userRepository.getById(userId);
+        const msgList = await this.messageRepository.listAllMsgByUser(user);
+        
+        const userMessagesMap: { [key: string]: UserWithLastMessage } = {};
+    
+        msgList.forEach(msg => {
+            [msg.sender, msg.receiver].forEach(participant => {
+                if (participant.id !== user.id) {
+                    if (!userMessagesMap[participant.id] || userMessagesMap[participant.id].lastMessageTime < msg.sentAt) {
+                        userMessagesMap[participant.id] = {
+                            user: participant,
+                            lastMessage: msg.content,
+                            lastMessageTime: msg.sentAt,
+                        };
+                    }
+                }
+            });
+        });
+    
+        const usersInvolved = Object.values(userMessagesMap);
+        
+        return usersInvolved;
     }
 
     async register(user1: string, user2:string,data: MessageRegisterRequestDto) {
@@ -44,12 +68,6 @@ export class MessageService extends BaseService<
         data.identifier = data.sender.id.toString() + data.receiver.id.toString()
         const newMsg =  await super.create(data);
         return newMsg
-        // this.server
-        // .to(newMsg.identifier)
-        // .emit(
-        //     ChatGatewayEventsEnum.REQUEST_MESSAGE,
-        //   new ResponseDto(true, newMsg, null),
-        // );
     }
 
     async delete(messageId: string, userId: string) {
