@@ -16,16 +16,20 @@ import { MessageService } from 'src/modules/business-logic/message/message.servi
 import { MessageListWebsocketDto } from '../../database/dtos/message/message-list-websockt.dto';
 import { MessageWebsocketRegisterRequestDto } from '../../database/dtos/message/message-register-websocket';
 import { MessageRegisterRequestDto } from '../../database/dtos/message/register-message.dto';
+import { MessageListIdentifierWebsocketDto } from '../../database/dtos/message/message-list-identifier-websocket.dto';
 
 @WebSocketGateway({
-    path: '/socket/chat',
     cors: {
-        origin: '*',
-        allowedHeaders: 'Authorization',
-        credentials: true,
+      origin: '*',
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
+      credentials: false,
+      allowedHeaders: 'Content-Type, Accept, Authorization',
     },
+    path: '/socket/chat',
 })
-@UseGuards(SocketGuard)
+ @UseGuards(SocketGuard)
 export class ChatGateway implements OnGatewayConnection {
     @WebSocketServer()
     server: Server;
@@ -57,7 +61,7 @@ export class ChatGateway implements OnGatewayConnection {
       const result = await this.messageService.listConversation(body.client1, body.client2);
   
       this.server.emit(
-        ChatGatewayEventsEnum.RESPONSE_MESSAGE,
+        ChatGatewayEventsEnum.RESPONSE_MESSAGE_IDENTIFIER,
         new ResponseDto(true, result, null),
       );
     }
@@ -67,10 +71,28 @@ export class ChatGateway implements OnGatewayConnection {
       @ConnectedSocket() client: Socket,
       @MessageBody() dto: MessageListWebsocketDto,
     ) {
+      console.log('aaaaaaaaaa')
       const result = await this.messageService.listConversation(dto.client1, dto.client2);
   
       this.server.emit(
         ChatGatewayEventsEnum.RESPONSE_MESSAGE,
+        new ResponseDto(true, result, []),
+      );
+    }
+
+    
+
+      
+    @SubscribeMessage(ChatGatewayEventsEnum.RESPONSE_MESSAGE_IDENTIFIER)
+    async requestListMessagesByIdentifier(
+      @ConnectedSocket() client: Socket,
+      @MessageBody() dto: MessageListIdentifierWebsocketDto,
+    ) {
+      console.log('1234', dto.identifier)
+      const result = await this.messageService.listConversationByIdentifier(dto.identifier);
+      this.server.to(dto.identifier)
+      .emit(
+        ChatGatewayEventsEnum.RESPONSE_MESSAGE_IDENTIFIER,
         new ResponseDto(true, result, []),
       );
     }

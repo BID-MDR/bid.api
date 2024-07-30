@@ -30,17 +30,26 @@ export class MessageService extends BaseService<
         return await this.messageRepository.listByConversation(userEntity1, userEntity2);
     }
 
+    async listConversationByIdentifier(identifier: string) {
+        console.log('no service', identifier)
+        const msgList =  await this.messageRepository.listConversationByIdentifier(identifier);
+        console.log(msgList.length)
+        return msgList
+    }
+
     async register(user1: string, user2:string,data: MessageRegisterRequestDto) {
+      
         data.sender = await this.userRepository.getById(user1);
         data.receiver = await this.userRepository.getById(user2);
-        data.identifier = data.sender.id + data.receiver.id
+        data.identifier = data.sender.id.toString() + data.receiver.id.toString()
         const newMsg =  await super.create(data);
-        this.server
-        .to(newMsg.identifier)
-        .emit(
-            ChatGatewayEventsEnum.REQUEST_MESSAGE,
-          new ResponseDto(true, newMsg, null),
-        );
+        return newMsg
+        // this.server
+        // .to(newMsg.identifier)
+        // .emit(
+        //     ChatGatewayEventsEnum.REQUEST_MESSAGE,
+        //   new ResponseDto(true, newMsg, null),
+        // );
     }
 
     async delete(messageId: string, userId: string) {

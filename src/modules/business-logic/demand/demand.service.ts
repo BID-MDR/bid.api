@@ -19,8 +19,8 @@ export class DemandService extends BaseService<
     }
 
     async listByUser(userId: string) {
-        const user = await this.userRepository.getById(userId);
-        return await this.demandRepository.listByUser(user);
+        // const user = await this.userRepository.getById(userId);
+        return await this.demandRepository.listByUser(userId);
     }
 
     async list() {

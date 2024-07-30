@@ -17,13 +17,6 @@ export class RoomSolutionEntity extends BaseEntity {
     })
     solution: RoomSolutionEnum;
 
-    @Column({
-        type: 'decimal',
-        precision: 10,
-        scale: 2,
-    })
-    cost: number;
-
     @OneToMany(() => UserGeneratedMediaEntity, (userGeneratedMediaEntity) => userGeneratedMediaEntity.roomSolution, {
         cascade: true,
         eager: true,

@@ -5,6 +5,7 @@ import { UpdateWorkRequestDto } from "../../data-interaction/database/dtos/work-
 import { WorkRequestEntity } from "../../data-interaction/database/entitites/work-request.entity";
 import { WorkRequestRepository } from "../../data-interaction/database/repositories/work-request/work-request.repository";
 import { DemandRepository } from "../../data-interaction/database/repositories/user/demand.repository";
+import { DemandStatusEnum } from "../../data-interaction/database/enums/demand-status.enum";
 
 @Injectable()
 export class WorkRequestService extends BaseService<
@@ -33,6 +34,7 @@ export class WorkRequestService extends BaseService<
         const result = await super.create(data);
 
         demand.workRequest = result;
+        demand.status = DemandStatusEnum.CADASTRADO_VISTORIA;
 
         await demand.save();
 

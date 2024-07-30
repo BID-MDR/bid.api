@@ -16,6 +16,21 @@ export class MessageRepository extends BaseRepository<MessageEntity, MessageRegi
         return this.repository.findOne({ where: { id: _id } });
     }
 
+    async listConversationByIdentifier(identifier: string): Promise<MessageEntity[]> {
+        // Log para verificar o identifier recebido
+        console.log(`Filtering messages by identifier: ${identifier}`);
+        
+        
+        const messages = await this.repository.find({
+            where: { identifier },
+            order: { sentAt: 'DESC' } // Ordena por data de envio, mais recente primeiro
+        });
+        
+  
+        console.log('Filtered messages:', messages.length);
+        return messages;
+    }
+
     async listByConversation(user1: UserEntity, user2: UserEntity): Promise<MessageEntity[]> {
         return await this.repository.createQueryBuilder('message')
             .innerJoinAndSelect('message.sender', 'sender')

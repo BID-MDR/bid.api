@@ -7,6 +7,7 @@ import { PropertyTypeEnum } from "../enums/property-type.enum";
 import { DemandEntity } from "./demand.entity";
 import { RoomEntity } from "./room.entity";
 import { WorkRequestWelfareEntity } from "./work-request-welfare.entity";
+import { TechnicalVisitStatusEnum } from "../enums/technical-visit-status.enum";
 
 @Entity({ name: "work_request" })
 export class WorkRequestEntity extends BaseEntity {
@@ -65,4 +66,11 @@ export class WorkRequestEntity extends BaseEntity {
         { cascade: true, eager: true },
     )
     welfare: WorkRequestWelfareEntity[];
+
+    @Column({
+        type: 'enum',
+        enum: TechnicalVisitStatusEnum,
+        default: TechnicalVisitStatusEnum.PENDENTE,
+    })
+    status: TechnicalVisitStatusEnum;
 }

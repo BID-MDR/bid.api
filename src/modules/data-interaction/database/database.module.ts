@@ -37,6 +37,7 @@ import { WorkRequestWelfareEntity } from './entitites/work-request-welfare.entit
 import { WorkRequestRepository } from './repositories/work-request/work-request.repository';
 import { WorkRequestWelfateRepository } from './repositories/work-request/work-request-welfare.repository';
 import { ChatRoomEntity } from './entitites/chat-room.entity';
+import { RoomSolutionRepository } from './repositories/room/room-solution.repository';
 
 const ENTITIES = [
     UserEntity,
@@ -69,6 +70,7 @@ const REPOSITORIES = [
     UserProfessionalInfoRepository,
     UserGeneratedMediaRepository,
     RoomRepository,
+    RoomSolutionRepository,
     TechnicalVisitRepository,
     AddressRepository,
     GovbrSsoRepository,

@@ -42,10 +42,12 @@ export class ResponseWorkRequestDto extends BaseResponseDto {
     prevailingConstructionMaterials: string;
 
     @ApiProperty({ type: RoomResponseDto, isArray: true })
+    @Type(() => RoomResponseDto)
     @Expose()
     room: RoomResponseDto[];
 
     @ApiProperty({ type: ResponseWelfare, isArray: true })
+    @Type(() => ResponseWelfare)
     @Expose()
     welfare: ResponseWelfare[];
 }
