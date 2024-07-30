@@ -24,8 +24,8 @@ export class ConstructionsController {
   constructor(private constructionsService: ConstructionsService) {}
 
   @Post("register/:demandId")
-  // @ApiBearerAuth()
-  // @UseGuards(JwtAccessTokenGuard)
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
   @UseInterceptors(FilesInterceptor("files"))
   @ApiConsumes("multipart/form-data")
   @ApiBody({
