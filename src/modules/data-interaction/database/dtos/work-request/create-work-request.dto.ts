@@ -37,6 +37,11 @@ export class CreateWorkRequestDto {
     description: string;
 
     @ApiProperty()
+    @IsString()
+    @IsNotEmpty()
+    responsiblePersonName: string;
+
+    @ApiProperty()
     @IsNumber()
     @Max(10)
     @Min(0)

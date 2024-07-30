@@ -7,16 +7,19 @@ export const ApiOkResponseDtoData = <
 >({
     type,
     description = undefined,
+    isArray = false,
     status = 200,
 }: {
     type: DataDto;
     description?: string;
+    isArray?: boolean;
     status?: number;
 }) => {
     if (Array.isArray(type)) {
         return applyDecorators(
             ApiExtraModels(ApiResponseDto, type[0]),
             ApiOkResponse({
+                isArray:true,
                 description: description,
                 status: status,
                 schema: {
@@ -39,6 +42,7 @@ export const ApiOkResponseDtoData = <
             return applyDecorators(
                 ApiExtraModels(ApiResponseDto, type),
                 ApiOkResponse({
+                    isArray,
                     description: description,
                     status: status,
                     schema: {
@@ -59,6 +63,7 @@ export const ApiOkResponseDtoData = <
         return applyDecorators(
             ApiExtraModels(ApiResponseDto),
             ApiOkResponse({
+                isArray,
                 description: description,
                 status: status,
                 schema: {
