@@ -27,6 +27,13 @@ export class WorkRequestEntity extends BaseEntity {
     resident: number;
 
     @Column({
+        type: "varchar",
+        length: 50,
+        default: "",
+    })
+    responsiblePersonName: string;
+
+    @Column({
         enum: KinshipEnum,
         type: "enum",
         default: KinshipEnum.Me,

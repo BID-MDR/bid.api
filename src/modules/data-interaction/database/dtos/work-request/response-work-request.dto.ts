@@ -23,6 +23,10 @@ export class ResponseWorkRequestDto extends BaseResponseDto {
 
     @ApiProperty()
     @Expose()
+    responsiblePersonName: string;
+    
+    @ApiProperty()
+    @Expose()
     @Type(() => String)
     kinship: string;
 

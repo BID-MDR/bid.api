@@ -31,6 +31,7 @@ export class DemandController {
     @UseGuards(JwtAccessTokenGuard)
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
+        isArray: true,
         description: "Pedido de obra.",
     })
     @SerializeOptions({
