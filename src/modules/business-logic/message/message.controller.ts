@@ -44,6 +44,16 @@ export class MessageController {
         return await this.messageService.register(userId, id, dto);
     }
 
+    @Get('all-user-conversation/:id')
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAccessTokenGuard)
+    async listConversation(@Req() req: Request, @Param('id') id:string) {
+       // const userId = (req.user as JwtPayloadInterface).userId;
+        const msglist = await this.messageService.listAllMsgByUser(id);
+        return new ResponseDto(true, msglist, false)
+    }
+
+
     @Delete('delete-by-id/:id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
