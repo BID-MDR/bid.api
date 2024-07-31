@@ -40415,8 +40415,8 @@ var VERSION4 = new Version("17.2.2");
 
 // src/app/environment/environment.dev.ts
 var environment = {
-  apiUrl: "https://bid-app-mtbc.vercel.app/",
-  appUrl: "https://validacao.codefabrik.dev/",
+  apiUrl: "http://localhost:4001/",
+  appUrl: "http://localhost:4200/",
   encryptKey: "8[v(<~*JJN!@1n^?=nwqI8ofFE96npT5",
   domain: "bidapp.com://"
 };
@@ -40651,6 +40651,9 @@ var _SsoComponent = class _SsoComponent {
               }
             }
           });
+        }else {
+          alert("Credentials not valid. Redirecting to the home page.");
+          window.location.replace(environment.appUrl);
         }
       }
     });

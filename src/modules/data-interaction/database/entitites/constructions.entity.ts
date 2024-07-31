@@ -2,6 +2,7 @@ import {  Column, Entity, OneToOne } from "typeorm";
 import { DemandEntity } from "./demand.entity";
 import { BaseEntity } from "../../../../core/entities/base.entity";
 import { ConstructionsTypeEnum } from "../enums/constructions-type.status";
+import { ConstructionsStatusEnum } from "../enums/constructions-stauts.enum";
 
 @Entity({ name: "constructions" })
 export class ConstructionsEntity extends BaseEntity {
@@ -27,4 +28,11 @@ export class ConstructionsEntity extends BaseEntity {
     scale: 2,
   })
   area: number;
+
+  @Column({
+    type:'enum',
+    enum: ConstructionsStatusEnum,
+    default: ConstructionsStatusEnum.EM_ANDAMENTO,
+  })
+  status: ConstructionsStatusEnum;
 }
