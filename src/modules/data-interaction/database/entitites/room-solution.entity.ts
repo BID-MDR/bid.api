@@ -6,9 +6,7 @@ import { UserGeneratedMediaEntity } from './user-generated-media.entity';
 
 @Entity({ name: 'room_solution' })
 export class RoomSolutionEntity extends BaseEntity {
-    @ManyToOne(() => RoomEntity, (room) => room.roomSolutions, {
-        eager: true,
-    })
+    @ManyToOne(() => RoomEntity, (room) => room.roomSolutions)
     room: RoomEntity;
 
     @Column({

@@ -36,7 +36,10 @@ import { MessageRepository } from './repositories/user/message.repository';
 import { WorkRequestWelfareEntity } from './entitites/work-request-welfare.entity';
 import { WorkRequestRepository } from './repositories/work-request/work-request.repository';
 import { WorkRequestWelfateRepository } from './repositories/work-request/work-request-welfare.repository';
+import { ChatRoomEntity } from './entitites/chat-room.entity';
 import { RoomSolutionRepository } from './repositories/room/room-solution.repository';
+import { ConstructionsEntity } from './entitites/constructions.entity';
+import { ConstructionsRepository } from './repositories/constructions.repository';
 
 const ENTITIES = [
     UserEntity,
@@ -57,7 +60,9 @@ const ENTITIES = [
     DemandEntity,
     WorkRequestEntity,
     MessageEntity,
-    WorkRequestWelfareEntity
+    WorkRequestWelfareEntity,
+    ChatRoomEntity,
+    ConstructionsEntity
 ];
 const REPOSITORIES = [
     UserRepository,
@@ -76,7 +81,8 @@ const REPOSITORIES = [
     DemandRepository,
     MessageRepository,
     WorkRequestRepository,
-    WorkRequestWelfateRepository
+    WorkRequestWelfateRepository,
+    ConstructionsRepository
 ];
 
 @Module({

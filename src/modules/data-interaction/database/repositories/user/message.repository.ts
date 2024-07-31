@@ -16,6 +16,21 @@ export class MessageRepository extends BaseRepository<MessageEntity, MessageRegi
         return this.repository.findOne({ where: { id: _id } });
     }
 
+    async listConversationByIdentifier(identifier: string): Promise<MessageEntity[]> {
+        // // Log para verificar o identifier recebido
+        // console.log(`Filtering messages by identifier: ${identifier}`);
+        
+        
+        const messages = await this.repository.find({
+            where: { identifier },
+            order: { sentAt: 'DESC' } // Ordena por data de envio, mais recente primeiro
+        });
+        
+  
+        console.log('Filtered messages:', messages.length);
+        return messages;
+    }
+
     async listByConversation(user1: UserEntity, user2: UserEntity): Promise<MessageEntity[]> {
         return await this.repository.createQueryBuilder('message')
             .innerJoinAndSelect('message.sender', 'sender')
@@ -24,6 +39,27 @@ export class MessageRepository extends BaseRepository<MessageEntity, MessageRegi
             .orderBy('message.sentAt', 'ASC')
             .getMany();
     }
+
+    async listAllMsgByUser(user: UserEntity): Promise<MessageEntity[]> {
+        
+        return await this.repository.createQueryBuilder('message')
+        .innerJoinAndSelect('message.sender', 'sender')
+        .innerJoinAndSelect('message.receiver', 'receiver')
+        .where('sender.id = :userId OR receiver.id = :userId', { userId: user.id })
+        .orderBy('message.sentAt', 'DESC')
+        .getMany();
+    }
+    // async listAllMsgByUser(user1: UserEntity): Promise<MessageEntity[]> {
+    //     return await this.repository.createQueryBuilder('message')
+    //         .innerJoinAndSelect('message.sender', 'sender')
+    //         .innerJoinAndSelect('message.receiver', 'receiver')
+    //         .where(
+    //             '(sender.id = :user1Id AND receiver.id = :user1Id) OR (sender.id = :user1Id AND receiver.id = :user1Id)',
+    //             { user1Id: user1.id }
+    //         )
+    //         .orderBy('message.sentAt', 'ASC')
+    //         .getMany();
+    // }
     async list() {
         return this.repository.find();
     }
