@@ -6,6 +6,11 @@ import { ResponseRoomSolutionDto } from "../room-solution/response-room-solution
 export class RoomResponseDto {
     @ApiProperty()
     @Expose()
+    @Type(() => String)
+    id: string;
+
+    @ApiProperty()
+    @Expose()
     name: string;
 
     @ApiProperty()
