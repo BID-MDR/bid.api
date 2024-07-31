@@ -49,6 +49,7 @@ export class DemandRepository extends BaseRepository<
             .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
             .leftJoinAndSelect("workRequest.room", "room")
             .leftJoinAndSelect("workRequest.welfare", "welfare")
+            .leftJoinAndSelect("demand.construction", "constructions")
             .where("beneficiary.id = :userId", { userId })
             .orWhere("professional.id = :userId", { userId });
 

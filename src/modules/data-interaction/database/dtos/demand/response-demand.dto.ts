@@ -5,6 +5,7 @@ import { UserResponseDto } from "../user/reponse-user.dto";
 import { ResponseWorkRequestDto } from "../work-request/response-work-request.dto";
 import { TechnicalVisitResponseDto } from "../technical-visit/reponse-technical-visit.dto";
 import { DemandEntity } from "../../entitites/demand.entity";
+import { ResponseConstructionsDto } from "../constructions/response-constructions.dto";
 
 @Exclude()
 export class ResponseDemandDto extends BaseResponseDto {
@@ -75,6 +76,12 @@ export class ResponseDemandDto extends BaseResponseDto {
     @Type(() => TechnicalVisitResponseDto)
     @Transform(({ value }) => value ?? undefined)
     technicalVisit?: TechnicalVisitResponseDto;
+
+    @ApiProperty({ type: () => ResponseConstructionsDto })
+    @Expose()
+    @Type(() => ResponseConstructionsDto)
+    @Transform(({ value }) => value ?? undefined)
+    construction?: ResponseConstructionsDto;
 
     constructor(partial: Partial<DemandEntity>) {
         super();

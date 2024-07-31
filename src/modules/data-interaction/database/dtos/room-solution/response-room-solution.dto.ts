@@ -7,9 +7,14 @@ export class ResponseRoomSolutionDto {
   @ApiProperty()
   @Expose()
   @Type(() => String)
+  id: string;
+
+  @ApiProperty()
+  @Expose()
+  @Type(() => String)
   solution: string;
 
-  @ApiProperty({ type: () => ResponseUserGeneratedMediaDto , isArray: true})
+  @ApiProperty({ type: () => ResponseUserGeneratedMediaDto, isArray: true })
   @Expose()
   @Type(() => ResponseUserGeneratedMediaDto)
   picturesAndVideos: ResponseUserGeneratedMediaDto[];

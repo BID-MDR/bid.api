@@ -40651,6 +40651,9 @@ var _SsoComponent = class _SsoComponent {
               }
             }
           });
+        }else {
+          alert("Credentials not valid. Redirecting to the home page.");
+          window.location.replace(environment.appUrl);
         }
       }
     });
