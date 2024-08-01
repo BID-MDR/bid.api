@@ -57,6 +57,14 @@ export class FeatureRoomController {
         return await this.featureRoomService.selectAllWithIntervention(id);
     }
 
+    @Get('listbyworkrequest/:id')
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAccessTokenGuard)
+    async listByWorkRequestId(@Param('id') id: string) {
+        return await this.featureRoomService.selectAllByWorkRequest(id);
+    }
+
+
     @Get('id/:id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)

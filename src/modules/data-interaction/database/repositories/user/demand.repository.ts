@@ -23,6 +23,23 @@ export class DemandRepository extends BaseRepository<
         return this.repository.findOne({ where: { id: _id } });
     }
 
+    async listByUserWaitImprove(userId: string): Promise<DemandEntity[]> {
+        const query = this.repository
+            .createQueryBuilder("demand")
+            .innerJoinAndSelect("demand.beneficiary", "beneficiary")
+            .innerJoinAndSelect("demand.professional", "professional")
+            .leftJoinAndSelect("demand.workRequest", "workRequest")
+            .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
+            .leftJoinAndSelect("workRequest.room", "room")
+            .leftJoinAndSelect("workRequest.welfare", "welfare")
+            .where("demand.status = 'ESPERANDO_MELHORIA'")
+            .andWhere("professional.id = :userId", { userId });
+
+        return await query.getMany();
+    }
+
+
+
     async listByUser(userId: string): Promise<DemandEntity[]> {
         const query = this.repository
             .createQueryBuilder("demand")
