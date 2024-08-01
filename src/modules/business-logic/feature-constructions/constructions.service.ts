@@ -65,7 +65,7 @@ export class ConstructionsService {
       type: dto.type,
       area: +dto.area,
       description: dto.description,
-      status:ConstructionsStatusEnum.FOTOS_EM_ANALISE,
+      status:ConstructionsStatusEnum.EM_ANDAMENTO,
     });
 
     demand.construction = constructions;
