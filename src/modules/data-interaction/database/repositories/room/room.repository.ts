@@ -11,4 +11,8 @@ export class RoomRepository extends BaseRepository<RoomEntity, CreateRoomDto, Up
     constructor(@InjectRepository(RoomEntity) private repository: Repository<RoomEntity>) {
         super(repository);
     }
+
+    async findByWorkRequest(workRequestId:string){
+       return  this.repository.createQueryBuilder("room").where("workRequestId = :workRequestId", {workRequestId}).execute()
+    }
 }
