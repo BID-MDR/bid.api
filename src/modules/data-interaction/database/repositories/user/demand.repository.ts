@@ -39,7 +39,7 @@ export class DemandRepository extends BaseRepository<
         return await query.getMany();
     }
 
-    async getByWorkRequestId(workRequestId: string): Promise<DemandEntity[]> {
+    async getByWorkRequestId(workRequestId: string): Promise<DemandEntity> {
         const query = this.repository
             .createQueryBuilder("demand")
             .innerJoinAndSelect("demand.beneficiary", "beneficiary")
@@ -50,7 +50,7 @@ export class DemandRepository extends BaseRepository<
             .leftJoinAndSelect("workRequest.welfare", "welfare")
             .where("workRequest.id = :workRequestId", { workRequestId })
 
-        return await query.getMany();
+        return await query.getOne();
     }
 
     async list() {

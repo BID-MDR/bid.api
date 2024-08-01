@@ -6,46 +6,72 @@ import { WorkRequestEntity } from "../../data-interaction/database/entitites/wor
 import { WorkRequestRepository } from "../../data-interaction/database/repositories/work-request/work-request.repository";
 import { DemandRepository } from "../../data-interaction/database/repositories/user/demand.repository";
 import { DemandStatusEnum } from "../../data-interaction/database/enums/demand-status.enum";
+import { TechnicalVisitStatusEnum } from "src/modules/data-interaction/database/enums/technical-visit-status.enum";
 
 @Injectable()
-export class WorkRequestService extends BaseService<
-    WorkRequestEntity,
-    CreateWorkRequestDto,
-    UpdateWorkRequestDto
-> {
-    constructor(
-        private workRequestRepository: WorkRequestRepository,
-        private demandRepository: DemandRepository,
-    ) {
-        super(workRequestRepository);
-    }
+export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWorkRequestDto, UpdateWorkRequestDto> {
+  constructor(
+    private workRequestRepository: WorkRequestRepository,
+    private demandRepository: DemandRepository
+  ) {
+    super(workRequestRepository);
+  }
 
-    async list() {
-        return await this.workRequestRepository.findAll();
-    }
+  async list() {
+    return await this.workRequestRepository.findAll();
+  }
 
-    async register(data: CreateWorkRequestDto) {
-        const demand = await this.demandRepository.getById(data.demandId);
-        data.demand = demand;
+  async getById(workRequestId: string) {
+    return await this.workRequestRepository.findById(workRequestId);
+  }
 
-        if (!data.demand)
-            throw new BadRequestException("Demanda não encontrada.");
+  async register(data: CreateWorkRequestDto) {
+    const demand = await this.demandRepository.getById(data.demandId);
+    data.demand = demand;
 
-        const result = await super.create(data);
+    if (!data.demand) throw new BadRequestException("Demanda não encontrada.");
 
-        demand.workRequest = result;
-        demand.status = DemandStatusEnum.CADASTRADO_VISTORIA;
+    const result = await super.create(data);
 
-        await demand.save();
+    demand.workRequest = result;
+    demand.status = DemandStatusEnum.CADASTRADO_VISTORIA;
 
-        return result;
-    }
+    await demand.save();
 
-    async update(workRequestId: string, data: UpdateWorkRequestDto) {
-        return await super.update(workRequestId, data);
-    }
+    return result;
+  }
 
-    async delete(workRequestId: string) {
-        return await this.workRequestRepository.hardDelete(workRequestId);
-    }
+  async update(workRequestId: string, data: UpdateWorkRequestDto) {
+    return await super.update(workRequestId, data);
+  }
+
+  async delete(workRequestId: string) {
+    return await this.workRequestRepository.hardDelete(workRequestId);
+  }
+
+  async carryOut(workRequestId: string) {
+    const workRequest = await this.getById(workRequestId);
+
+    workRequest.status = TechnicalVisitStatusEnum.REALIZADA;
+
+    const demand = await this.demandRepository.getByWorkRequestId(workRequestId);
+
+    demand.status = DemandStatusEnum.ESPERANDO_MELHORIA;
+    await demand.save();
+
+    return await workRequest.save();
+  }
+
+  async cancel(workRequestId: string) {
+    const workRequest = await this.getById(workRequestId);
+
+    workRequest.status = TechnicalVisitStatusEnum.CANCELADA;
+
+    const demand = await this.demandRepository.getByWorkRequestId(workRequestId);
+
+    demand.status = DemandStatusEnum.CANCELADO;
+    await demand.save();
+
+    return await workRequest.save();
+  }
 }
