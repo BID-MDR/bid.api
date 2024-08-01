@@ -47,9 +47,10 @@ export class DemandRepository extends BaseRepository<
             .innerJoinAndSelect("demand.professional", "professional")
             .leftJoinAndSelect("demand.workRequest", "workRequest")
             .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
+            .leftJoinAndSelect("demand.construction", "constructions")
             .leftJoinAndSelect("workRequest.room", "room")
             .leftJoinAndSelect("workRequest.welfare", "welfare")
-            .leftJoinAndSelect("demand.construction", "constructions")
+            .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
             .where("beneficiary.id = :userId", { userId })
             .orWhere("professional.id = :userId", { userId });
 
@@ -63,9 +64,27 @@ export class DemandRepository extends BaseRepository<
             .innerJoinAndSelect("demand.professional", "professional")
             .leftJoinAndSelect("demand.workRequest", "workRequest")
             .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
+            .leftJoinAndSelect("demand.construction", "constructions")
             .leftJoinAndSelect("workRequest.room", "room")
             .leftJoinAndSelect("workRequest.welfare", "welfare")
+            .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
             .where("workRequest.id = :workRequestId", { workRequestId })
+
+        return await query.getOne();
+    }
+
+    async getByConstructionId(constructionId: string): Promise<DemandEntity> {
+        const query = this.repository
+            .createQueryBuilder("demand")
+            .innerJoinAndSelect("demand.beneficiary", "beneficiary")
+            .innerJoinAndSelect("demand.professional", "professional")
+            .leftJoinAndSelect("demand.workRequest", "workRequest")
+            .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
+            .leftJoinAndSelect("demand.construction", "constructions")
+            .leftJoinAndSelect("workRequest.room", "room")
+            .leftJoinAndSelect("workRequest.welfare", "welfare")
+            .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
+            .where("constructions.id = :constructionId", { constructionId })
 
         return await query.getOne();
     }
