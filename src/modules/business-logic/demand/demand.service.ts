@@ -28,7 +28,7 @@ export class DemandService extends BaseService<
         return await this.demandRepository.listByUserWaitImprove(userId);
     }
 
-    async getByWorkRequestId(workRequestId) {
+    async getByWorkRequestId(workRequestId:string) {
         return await this.demandRepository.getByWorkRequestId(workRequestId);
     }
 

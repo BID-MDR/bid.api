@@ -7,6 +7,7 @@ import { MediaTypeEnum } from "../../data-interaction/database/enums/media-type.
 import { ConstructionsRepository } from "../../data-interaction/database/repositories/constructions.repository";
 import { DemandRepository } from "../../data-interaction/database/repositories/user/demand.repository";
 import { DemandStatusEnum } from "../../data-interaction/database/enums/demand-status.enum";
+import { ConstructionsStatusEnum } from "src/modules/data-interaction/database/enums/constructions-stauts.enum";
 
 @Injectable()
 export class ConstructionsService {
@@ -64,11 +65,66 @@ export class ConstructionsService {
       type: dto.type,
       area: +dto.area,
       description: dto.description,
+      status:ConstructionsStatusEnum.EM_ANDAMENTO,
     });
 
     demand.construction = constructions;
     demand.status = DemandStatusEnum.CONCLUIR_OBRAS;
 
     await demand.save();
+  }
+
+  async list() {
+    return await this.constructionsRepository.findAll();
+  }
+
+  async getById(constructionsId: string) {
+    return await this.constructionsRepository.findById(constructionsId);
+  }
+
+  async validatePhotos(constructionsId: string) {
+    const constructions = await this.getById(constructionsId);
+
+    if(!constructions) {
+      throw new BadRequestException("Constructions not found");
+    }
+
+    constructions.status = ConstructionsStatusEnum.EM_ANDAMENTO;
+
+    return await constructions.save();
+  }
+
+  async cancel(constructionsId: string) {
+    const constructions = await this.getById(constructionsId);
+
+    if(!constructions) {
+      throw new BadRequestException("Constructions not found");
+    }
+
+    const demand = await this.demandRepository.getByConstructionId(constructionsId);
+
+    demand.status = DemandStatusEnum.CANCELADO;
+    await demand.save();
+
+    constructions.status = ConstructionsStatusEnum.CANCELADA;
+
+    return await constructions.save();
+  }
+
+  async conclude(constructionsId: string) {
+    const constructions = await this.getById(constructionsId);
+
+    if(!constructions) {
+      throw new BadRequestException("Constructions not found");
+    }
+
+    const demand = await this.demandRepository.getByConstructionId(constructionsId);
+
+    demand.status = DemandStatusEnum.CONCLUIDO;
+    await demand.save();
+
+    constructions.status = ConstructionsStatusEnum.CONCLUIDA;
+
+    return await constructions.save();
   }
 }
