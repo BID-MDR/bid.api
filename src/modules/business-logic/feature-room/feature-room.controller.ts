@@ -89,6 +89,23 @@ export class FeatureRoomController {
         return await this.featureRoomService.findById(id);
     }
 
+    @Get('get-room/:id')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOperation({
+        description: 'Retorna o Quarto.',
+        summary: 'Retorna o Quarto por ID.',
+    })
+    @ApiParam({
+        name: 'id',
+        description: 'ID do Quarto.',
+        required: true,
+        allowEmptyValue: false,
+    })
+    async getRoom(@Param('id') id: string) {
+        return await this.featureRoomService.getRoom(id);
+    }
+
     @Post('')
     @UseInterceptors(new EncryptInterceptor())
     @ApiOperation({

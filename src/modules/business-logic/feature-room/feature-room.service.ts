@@ -100,4 +100,8 @@ export class FeatureRoomService extends BaseService<
             }
         }
     }
+
+   async getRoom(roomId: string) {
+       return await this.workRequestRepository.getByRoomId(roomId)
+    }
 }
