@@ -101,4 +101,18 @@ export class WorkRequestController {
     async update(@Param('id') id: string, @Body() dto: UpdateWorkRequestDto) {
         return await this.service.update(id, dto);
     }
+
+    @Put('carry-out/:id')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOkResponseDtoData({
+        type: ResponseWorkRequestDto,
+        description: "Pedido de demanda.",
+    })
+    @SerializeOptions({
+        type: ResponseWorkRequestDto,
+    })
+    async carryOut(@Param("id") id: string) {
+        return await this.service.carryOut(id);
+    }
 }

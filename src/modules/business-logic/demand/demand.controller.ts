@@ -80,6 +80,22 @@ export class DemandController {
         return await this.demandService.listByUserImprovement(id);
     }
 
+    @Get("visit")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOkResponseDtoData({
+        type: ResponseDemandDto,
+        isArray: true,
+        description: "Pedido de demanda.",
+    })
+    @SerializeOptions({
+        type: ResponseDemandDto,
+    })
+    async listVisit(@Req() req: Request) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.demandService.listByVisit(userId);
+    }
+
     @Post("")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
