@@ -39,7 +39,7 @@ export class DemandRepository extends BaseRepository<
     return await query.getMany();
   }
 
-  async listByVisit(userId: string): Promise<DemandEntity[]> {
+  async listForVisit(userId: string): Promise<DemandEntity[]> {
     const query = this.repository
       .createQueryBuilder("demand")
       .innerJoinAndSelect("demand.beneficiary", "beneficiary")
@@ -58,6 +58,40 @@ export class DemandRepository extends BaseRepository<
         ],
       })
       .andWhere("roomSolutions.id IS NULL");
+
+    return await query.getMany();
+  }
+
+  async listForConstructions(userId: string): Promise<DemandEntity[]> {
+    const query = this.repository
+      .createQueryBuilder("demand")
+      .innerJoinAndSelect("demand.beneficiary", "beneficiary")
+      .innerJoinAndSelect("demand.professional", "professional")
+      .leftJoinAndSelect("demand.workRequest", "workRequest")
+      .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
+      .leftJoinAndSelect("workRequest.room", "room")
+      .leftJoinAndSelect("workRequest.welfare", "welfare")
+      .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
+      .where("professional.id = :userId", { userId })
+      .andWhere("demand.status IN (:...status)", {
+        status: [DemandStatusEnum.ESPERANDO_OBRA, DemandStatusEnum.CONCLUIR_OBRAS, DemandStatusEnum.CONCLUIDO],
+      });
+
+    return await query.getMany();
+  }
+
+  async listCanclled(userId: string): Promise<DemandEntity[]> {
+    const query = this.repository
+      .createQueryBuilder("demand")
+      .innerJoinAndSelect("demand.beneficiary", "beneficiary")
+      .innerJoinAndSelect("demand.professional", "professional")
+      .leftJoinAndSelect("demand.workRequest", "workRequest")
+      .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
+      .leftJoinAndSelect("workRequest.room", "room")
+      .leftJoinAndSelect("workRequest.welfare", "welfare")
+      .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
+      .where("professional.id = :userId", { userId })
+      .andWhere("demand.status = :status", { status: DemandStatusEnum.CANCELADO });
 
     return await query.getMany();
   }

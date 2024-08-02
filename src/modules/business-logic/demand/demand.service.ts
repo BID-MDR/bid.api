@@ -23,8 +23,12 @@ export class DemandService extends BaseService<
         return await this.demandRepository.listByUser(userId);
     }
 
-    async listByVisit(userId: string){
-        return await this.demandRepository.listByVisit(userId);
+    async listForVisit(userId: string){
+        return await this.demandRepository.listForVisit(userId);
+    }
+
+    async listForConstructions(userId: string){
+        return await this.demandRepository.listForConstructions(userId);
     }
 
     async listByUserImprovement(userId: string) {
