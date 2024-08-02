@@ -17,6 +17,7 @@ import { NotificationEntity } from "./notification.entity";
 import { UserProgramTypeEnum } from "../enums/user-program-type.enum";
 import { DemandEntity } from "./demand.entity";
 import { MessageEntity } from "./message.entity";
+import { HelpEntity } from "./help.entity";
 
 @Entity({ name: "user" })
 export class UserEntity extends BaseEntity {
@@ -208,4 +209,7 @@ export class UserEntity extends BaseEntity {
     receivedMessages: MessageEntity[];
     @OneToMany(() => DemandEntity, demand => demand.professional)
     demandsAsProfessional: DemandEntity[];
+
+    @OneToMany(() => HelpEntity, (help) => help.user)
+    helpRequests: HelpEntity[];
 }

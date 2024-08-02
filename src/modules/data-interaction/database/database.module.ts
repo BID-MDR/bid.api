@@ -40,6 +40,8 @@ import { ChatRoomEntity } from './entitites/chat-room.entity';
 import { RoomSolutionRepository } from './repositories/room/room-solution.repository';
 import { ConstructionsEntity } from './entitites/constructions.entity';
 import { ConstructionsRepository } from './repositories/constructions.repository';
+import { HelpEntity } from './entitites/help.entity';
+import { HelpRepository } from './repositories/user/help.repository';
 
 const ENTITIES = [
     UserEntity,
@@ -62,7 +64,8 @@ const ENTITIES = [
     MessageEntity,
     WorkRequestWelfareEntity,
     ChatRoomEntity,
-    ConstructionsEntity
+    ConstructionsEntity,
+    HelpEntity
 ];
 const REPOSITORIES = [
     UserRepository,
@@ -82,7 +85,8 @@ const REPOSITORIES = [
     MessageRepository,
     WorkRequestRepository,
     WorkRequestWelfateRepository,
-    ConstructionsRepository
+    ConstructionsRepository,
+    HelpRepository
 ];
 
 @Module({
