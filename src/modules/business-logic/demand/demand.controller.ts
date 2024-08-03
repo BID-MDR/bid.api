@@ -6,6 +6,7 @@ import {
     Logger,
     Param,
     Post,
+    Put,
     Req,
     SerializeOptions,
     UseGuards
@@ -18,6 +19,8 @@ import { JwtPayloadInterface } from "src/core/interfaces/jwt-payload.interface";
 import { DemandRegisterRequestDto } from "src/modules/data-interaction/database/dtos/demand/register-demand.dto";
 import { ResponseDemandDto } from "../../data-interaction/database/dtos/demand/response-demand.dto";
 import { DemandService } from "./demand.service";
+import { DemandStatusEnum } from "src/modules/data-interaction/database/enums/demand-status.enum";
+import { StatusDemandDto } from "src/modules/data-interaction/database/dtos/demand/update-status-demand.dto";
 
 @Controller("demand")
 @ApiTags("Demand/Pedido de demanda")
@@ -78,6 +81,13 @@ export class DemandController {
     @UseGuards(JwtAccessTokenGuard)
     async getByProfessionalIdImprovement(@Param("id") id: string) {
         return await this.demandService.listByUserImprovement(id);
+    }
+
+    @Put("changeStatus/:id")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async changeStatus(@Param("id") id: string, @Body() status: StatusDemandDto) {
+        return await this.demandService.updateStatus(id, status);
     }
 
     @Post("")

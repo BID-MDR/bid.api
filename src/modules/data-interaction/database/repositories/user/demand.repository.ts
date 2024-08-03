@@ -5,6 +5,8 @@ import { DeepPartial, Repository } from "typeorm";
 import { DemandEntity } from "../../entitites/demand.entity";
 import { DemandRegisterRequestDto } from "../../dtos/demand/register-demand.dto";
 import { UserEntity } from "../../entitites/user.entity";
+import { DemandStatusEnum } from "../../enums/demand-status.enum";
+import { StatusDemandDto } from "../../dtos/demand/update-status-demand.dto";
 
 @Injectable()
 export class DemandRepository extends BaseRepository<
@@ -23,6 +25,10 @@ export class DemandRepository extends BaseRepository<
         return this.repository.findOne({ where: { id: _id } });
     }
 
+    async updateStatus(id: string,dto: StatusDemandDto){
+        return this.repository.createQueryBuilder().update('demands').set({status: dto.status}).where("id = :id", {id}).execute()
+    }
+
     async listByUserWaitImprove(userId: string): Promise<DemandEntity[]> {
         const query = this.repository
             .createQueryBuilder("demand")
@@ -33,6 +39,7 @@ export class DemandRepository extends BaseRepository<
             .leftJoinAndSelect("workRequest.room", "room")
             .leftJoinAndSelect("workRequest.welfare", "welfare")
             .where("demand.status = 'ESPERANDO_MELHORIA'")
+            .orWhere("demand.status = 'EM_ANALISE'")
             .andWhere("professional.id = :userId", { userId });
 
         return await query.getMany();
