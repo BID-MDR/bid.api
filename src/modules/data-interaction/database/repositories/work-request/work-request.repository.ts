@@ -18,4 +18,15 @@ export class WorkRequestRepository extends BaseRepository<
     ) {
         super(repository);
     }
+
+    async getByRoomId(roomId: string) {
+        return this.repository.findOne({
+          where: { room: { id: roomId } },
+          relations: [
+            'demand',
+            'room',
+            'welfare',
+          ],
+        });
+      }
 }
