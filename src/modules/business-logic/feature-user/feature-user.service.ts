@@ -200,30 +200,34 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         return result
 
     }
-
     async updatePasswordRequest(userId: string) {
         totp.options = {
             digits: 6,
             step: 300,
         };
         const token = totp.generate(this.configService.get(EnviromentVariablesEnum.OTP_TOKEN));
-
+    
         const user = await this.findById(userId);
+        if (!user) {
+            throw new Error('User not found');
+        }
+    
         const otpRequest = new UserOtpRequestEntity();
         otpRequest.token = await this.hashStringData(token);
+        otpRequest.user = user;
+    
         await otpRequest.save();
+    
         user.otpRequest = otpRequest;
         await user.save();
-
+    
         await this.emailFacade.sendPasswordResetCodeEmail(token, user.email);
     }
 
     async verifyToken(userId: string, token: string) {
         const user = await this.findById(userId);
 
-        if (!user.otpRequest?.token) {
-            throw new BadRequestException('Nenhum pedido de recuperação de senha foi feito para este usuário.');
-        }
+   
         totp.options = {
             digits: 6,
             step: 300,
@@ -232,6 +236,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
 
         try {
             const valid = totp.check(token, this.configService.get(EnviromentVariablesEnum.OTP_TOKEN));
+            console.log(valid, '<--')
             if (valid) {
                 user.otpRequest.status = UserOtpStatusEnum.VERIFIED;
                 await user.otpRequest.save();
@@ -272,7 +277,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         }
 
         user.password = await this.hashStringData(dto.password);
-        await user.otpRequest.remove();
+        // await user.otpRequest.remove();
         user.otpRequest = null;
         await user.save();
     }
