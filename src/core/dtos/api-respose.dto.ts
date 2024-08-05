@@ -27,7 +27,7 @@ export class ErrorApiResponseDto implements ErrorApiResponseInterface {
 
 export class ApiResponseDto<T> {
     @ApiProperty({ type: Boolean })
-    success = true;
+    success: boolean;
 
     @ApiProperty({ isArray: true, type: ErrorApiResponseDto, nullable: true })
     errors: ErrorApiResponseDto[] | null = null;
@@ -35,7 +35,7 @@ export class ApiResponseDto<T> {
     data: T;
 
     constructor(
-        success: boolean,
+        success: boolean = true,
         data: T,
         errors: ErrorApiResponseDto[] | null = null,
     ) {

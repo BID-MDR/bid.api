@@ -4,6 +4,7 @@ import { UserRepository } from 'src/modules/data-interaction/database/repositori
 import { DemandEntity } from 'src/modules/data-interaction/database/entitites/demand.entity';
 import { DemandRegisterRequestDto } from 'src/modules/data-interaction/database/dtos/demand/register-demand.dto';
 import { DemandRepository } from 'src/modules/data-interaction/database/repositories/user/demand.repository';
+import { DemandStatusEnum } from 'src/modules/data-interaction/database/enums/demand-status.enum';
 
 @Injectable()
 export class DemandService extends BaseService<
@@ -63,6 +64,10 @@ export class DemandService extends BaseService<
 
     async delete(demandId: string) {
         return await this.demandRepository.hardDelete(demandId);
+    }
+
+    async listByStatus(status: DemandStatusEnum) {
+        return await this.demandRepository.listByStatus(status);
     }
     
 }
