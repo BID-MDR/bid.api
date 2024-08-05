@@ -8,25 +8,21 @@ import { UpdateWorkRequestDto } from "../../dtos/work-request/update-work-reques
 
 @Injectable()
 export class WorkRequestRepository extends BaseRepository<
-    WorkRequestEntity,
-    CreateWorkRequestDto,
-    UpdateWorkRequestDto
+  WorkRequestEntity,
+  CreateWorkRequestDto,
+  UpdateWorkRequestDto
 > {
-    constructor(
-        @InjectRepository(WorkRequestEntity)
-        private repository: Repository<WorkRequestEntity>,
-    ) {
-        super(repository);
-    }
+  constructor(
+    @InjectRepository(WorkRequestEntity)
+    private repository: Repository<WorkRequestEntity>,
+  ) {
+    super(repository);
+  }
 
-    async getByRoomId(roomId: string) {
-        return this.repository.findOne({
-          where: { room: { id: roomId } },
-          relations: [
-            'demand',
-            'room',
-            'welfare',
-          ],
-        });
-      }
+  async getByRoomId(roomId: string) {
+    return this.repository.createQueryBuilder('room')
+      .leftJoinAndSelect('room.roomSolutions', 'roomSolution')
+      .where('roomSolution.id = :solutionId', { roomId })
+      .getOne();
+  }
 }
