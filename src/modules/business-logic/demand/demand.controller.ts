@@ -18,6 +18,7 @@ import { JwtPayloadInterface } from "src/core/interfaces/jwt-payload.interface";
 import { DemandRegisterRequestDto } from "src/modules/data-interaction/database/dtos/demand/register-demand.dto";
 import { ResponseDemandDto } from "../../data-interaction/database/dtos/demand/response-demand.dto";
 import { DemandService } from "./demand.service";
+import { DemandStatusEnum } from "src/modules/data-interaction/database/enums/demand-status.enum";
 
 @Controller("demand")
 @ApiTags("Demand/Pedido de demanda")
@@ -132,5 +133,20 @@ export class DemandController {
     @UseGuards(JwtAccessTokenGuard)
     async delete(@Param("id") id: string) {
         return await this.demandService.delete(id);
+    }
+
+    @Get('status/:status')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOkResponseDtoData({
+        type: ResponseDemandDto,
+        isArray: true,
+        description: "Pedido de demanda.",
+    })
+    @SerializeOptions({
+        type: ResponseDemandDto,
+    })
+    async listByStatus(@Param('status') status: DemandStatusEnum) {
+        return await this.demandService.listByStatus(status);
     }
 }
