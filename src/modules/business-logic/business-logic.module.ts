@@ -8,6 +8,7 @@ import { MessageModule } from './message/message.module';
 import { WorkRequestModule } from './work-request/work-request.module';
 import { FeatureRoomModule } from './feature-room/feature-room.module';
 import { ConstructionsModule } from './feature-constructions/constructions.module';
+import { HelpModule } from './help/help.module';
 @Module({
     imports: [
         FeatureUserModule,
@@ -18,7 +19,8 @@ import { ConstructionsModule } from './feature-constructions/constructions.modul
         MessageModule,
         WorkRequestModule,
         FeatureRoomModule,
-        ConstructionsModule
+        ConstructionsModule,
+        HelpModule
     ],
 })
 export class BusinessLogicModule {}
