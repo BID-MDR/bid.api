@@ -123,7 +123,7 @@ export class FeatureUserController {
         return await this.featureAuthService.signinFromCreateUser(user);
     }
 
-    @Post("password/update/request")
+    @Get("password/update/request")
     @UseGuards(JwtAccessTokenGuard)
     @ApiBearerAuth()
     @UseInterceptors(new EncryptInterceptor())
@@ -138,11 +138,12 @@ export class FeatureUserController {
     })
     async updatePasswordRequest(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
+        console.log('aq', userId)
 
         await this.featureUserService.updatePasswordRequest(userId);
     }
 
-    @Post("password/update/verify/token/:token")
+    @Post("password/update/verify/token")
     @UseGuards(JwtAccessTokenGuard)
     @ApiBearerAuth()
     @ApiOperation({
@@ -165,7 +166,7 @@ export class FeatureUserController {
     })
     async verifyUpdatePasswordRequest(
         @Req() req: Request,
-        @Param() paramDto: TokenVerifyParamsDto,
+        @Body() paramDto: TokenVerifyParamsDto,
     ) {
         const userId = (req.user as JwtPayloadInterface).userId;
 
