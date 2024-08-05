@@ -124,6 +124,7 @@ export class DemandRepository extends BaseRepository<
       .leftJoinAndSelect("workRequest.room", "room")
       .leftJoinAndSelect("workRequest.welfare", "welfare")
       .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
+      .leftJoinAndSelect("roomSolutions.picturesAndVideos", "picturesAndVideos")
       .where("workRequest.id = :workRequestId", { workRequestId });
 
     return await query.getOne();

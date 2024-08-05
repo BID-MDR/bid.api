@@ -21,7 +21,7 @@ import { ConstructionsService } from "./constructions.service";
 export class ConstructionsController {
   private readonly _logger = new Logger(ConstructionsController.name);
 
-  constructor(private constructionsService: ConstructionsService) {}
+  constructor(private constructionsService: ConstructionsService) { }
 
   // @Post("register/:demandId")
   // @ApiBearerAuth()
