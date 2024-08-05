@@ -6,6 +6,11 @@ export class ResponseUserGeneratedMediaDto {
   @ApiProperty()
   @Expose()
   @Type(() => String)
+  id: string;
+
+  @ApiProperty()
+  @Expose()
+  @Type(() => String)
   url: string;
 
   @ApiProperty()

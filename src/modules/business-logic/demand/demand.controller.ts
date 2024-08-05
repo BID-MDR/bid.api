@@ -90,6 +90,35 @@ export class DemandController {
         return await this.demandService.updateStatus(id, status);
     }
 
+    @Get("visit")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOkResponseDtoData({
+        type: ResponseDemandDto,
+        isArray: true,
+        description: "Pedido de demanda.",
+    })
+    async listVisit(@Req() req: Request) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.demandService.listForVisit(userId);
+    }
+
+    @Get('constructions')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOkResponseDtoData({
+        type: ResponseDemandDto,
+        isArray: true,
+        description: "Pedido de demanda.",
+    })
+    @SerializeOptions({
+        type: ResponseDemandDto,
+    })
+    async listForConstructions(@Req() req: Request) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.demandService.listForConstructions(userId);
+    }
+
     @Post("")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)

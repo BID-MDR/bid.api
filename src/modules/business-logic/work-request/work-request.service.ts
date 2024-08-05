@@ -52,6 +52,8 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
   async carryOut(workRequestId: string) {
     const workRequest = await this.getById(workRequestId);
 
+    if(!workRequest) throw new BadRequestException("Vistoria não encontrada.");
+
     workRequest.status = TechnicalVisitStatusEnum.REALIZADA;
 
     const demand = await this.demandRepository.getByWorkRequestId(workRequestId);

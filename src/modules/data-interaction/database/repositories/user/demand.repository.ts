@@ -10,20 +10,20 @@ import { StatusDemandDto } from "../../dtos/demand/update-status-demand.dto";
 
 @Injectable()
 export class DemandRepository extends BaseRepository<
-    DemandEntity,
-    DemandRegisterRequestDto,
-    DeepPartial<DemandEntity>
+  DemandEntity,
+  DemandRegisterRequestDto,
+  DeepPartial<DemandEntity>
 > {
-    constructor(
-        @InjectRepository(DemandEntity)
-        private repository: Repository<DemandEntity>,
-    ) {
-        super(repository);
-    }
+  constructor(
+    @InjectRepository(DemandEntity)
+    private repository: Repository<DemandEntity>
+  ) {
+    super(repository);
+  }
 
-    async getById(_id: string) {
-        return this.repository.findOne({ where: { id: _id } });
-    }
+  async getById(_id: string) {
+    return this.repository.findOne({ where: { id: _id } });
+  }
 
     async updateStatus(id: string,dto: StatusDemandDto){
         return this.repository.createQueryBuilder().update('demands').set({status: dto.status}).where("id = :id", {id}).execute()
@@ -42,61 +42,116 @@ export class DemandRepository extends BaseRepository<
             .orWhere("demand.status = 'EM_ANALISE'")
             .andWhere("professional.id = :userId", { userId });
 
-        return await query.getMany();
-    }
+    return await query.getMany();
+  }
 
+  async listForVisit(userId: string): Promise<DemandEntity[]> {
+    const query = this.repository
+      .createQueryBuilder("demand")
+      .innerJoinAndSelect("demand.beneficiary", "beneficiary")
+      .innerJoinAndSelect("demand.professional", "professional")
+      .leftJoinAndSelect("demand.workRequest", "workRequest")
+      .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
+      .leftJoinAndSelect("workRequest.room", "room")
+      .leftJoinAndSelect("workRequest.welfare", "welfare")
+      .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
+      .where("professional.id = :userId", { userId })
+      .andWhere("demand.status IN (:...statuses)", {
+        statuses: [
+          DemandStatusEnum.RASCUNHO,
+          DemandStatusEnum.CADASTRADO_VISTORIA,
+          DemandStatusEnum.ESPERANDO_MELHORIA,
+        ],
+      })
+      .andWhere("roomSolutions.id IS NULL");
 
+    return await query.getMany();
+  }
 
-    async listByUser(userId: string): Promise<DemandEntity[]> {
-        const query = this.repository
-            .createQueryBuilder("demand")
-            .innerJoinAndSelect("demand.beneficiary", "beneficiary")
-            .innerJoinAndSelect("demand.professional", "professional")
-            .leftJoinAndSelect("demand.workRequest", "workRequest")
-            .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
-            .leftJoinAndSelect("demand.construction", "constructions")
-            .leftJoinAndSelect("workRequest.room", "room")
-            .leftJoinAndSelect("workRequest.welfare", "welfare")
-            .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
-            .where("beneficiary.id = :userId", { userId })
-            .orWhere("professional.id = :userId", { userId });
+  async listForConstructions(userId: string): Promise<DemandEntity[]> {
+    const query = this.repository
+      .createQueryBuilder("demand")
+      .innerJoinAndSelect("demand.beneficiary", "beneficiary")
+      .innerJoinAndSelect("demand.professional", "professional")
+      .leftJoinAndSelect("demand.workRequest", "workRequest")
+      .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
+      .leftJoinAndSelect("workRequest.room", "room")
+      .leftJoinAndSelect("workRequest.welfare", "welfare")
+      .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
+      .where("professional.id = :userId", { userId })
+      .andWhere("demand.status IN (:...status)", {
+        status: [DemandStatusEnum.ESPERANDO_OBRA, DemandStatusEnum.CONCLUIR_OBRAS, DemandStatusEnum.CONCLUIDO],
+      });
 
-        return await query.getMany();
-    }
+    return await query.getMany();
+  }
 
-    async getByWorkRequestId(workRequestId: string): Promise<DemandEntity> {
-        const query = this.repository
-            .createQueryBuilder("demand")
-            .innerJoinAndSelect("demand.beneficiary", "beneficiary")
-            .innerJoinAndSelect("demand.professional", "professional")
-            .leftJoinAndSelect("demand.workRequest", "workRequest")
-            .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
-            .leftJoinAndSelect("demand.construction", "constructions")
-            .leftJoinAndSelect("workRequest.room", "room")
-            .leftJoinAndSelect("workRequest.welfare", "welfare")
-            .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
-            .where("workRequest.id = :workRequestId", { workRequestId })
+  async listCanclled(userId: string): Promise<DemandEntity[]> {
+    const query = this.repository
+      .createQueryBuilder("demand")
+      .innerJoinAndSelect("demand.beneficiary", "beneficiary")
+      .innerJoinAndSelect("demand.professional", "professional")
+      .leftJoinAndSelect("demand.workRequest", "workRequest")
+      .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
+      .leftJoinAndSelect("workRequest.room", "room")
+      .leftJoinAndSelect("workRequest.welfare", "welfare")
+      .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
+      .where("professional.id = :userId", { userId })
+      .andWhere("demand.status = :status", { status: DemandStatusEnum.CANCELADO });
 
-        return await query.getOne();
-    }
+    return await query.getMany();
+  }
 
-    async getByConstructionId(constructionId: string): Promise<DemandEntity> {
-        const query = this.repository
-            .createQueryBuilder("demand")
-            .innerJoinAndSelect("demand.beneficiary", "beneficiary")
-            .innerJoinAndSelect("demand.professional", "professional")
-            .leftJoinAndSelect("demand.workRequest", "workRequest")
-            .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
-            .leftJoinAndSelect("demand.construction", "constructions")
-            .leftJoinAndSelect("workRequest.room", "room")
-            .leftJoinAndSelect("workRequest.welfare", "welfare")
-            .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
-            .where("constructions.id = :constructionId", { constructionId })
+  async listByUser(userId: string): Promise<DemandEntity[]> {
+    const query = this.repository
+      .createQueryBuilder("demand")
+      .innerJoinAndSelect("demand.beneficiary", "beneficiary")
+      .innerJoinAndSelect("demand.professional", "professional")
+      .leftJoinAndSelect("demand.workRequest", "workRequest")
+      .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
+      .leftJoinAndSelect("demand.construction", "constructions")
+      .leftJoinAndSelect("workRequest.room", "room")
+      .leftJoinAndSelect("workRequest.welfare", "welfare")
+      .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
+      .where("beneficiary.id = :userId", { userId })
+      .orWhere("professional.id = :userId", { userId });
 
-        return await query.getOne();
-    }
+    return await query.getMany();
+  }
 
-    async list() {
-        return this.repository.find();
-    }
+  async getByWorkRequestId(workRequestId: string): Promise<DemandEntity> {
+    const query = this.repository
+      .createQueryBuilder("demand")
+      .innerJoinAndSelect("demand.beneficiary", "beneficiary")
+      .innerJoinAndSelect("demand.professional", "professional")
+      .leftJoinAndSelect("demand.workRequest", "workRequest")
+      .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
+      .leftJoinAndSelect("demand.construction", "constructions")
+      .leftJoinAndSelect("workRequest.room", "room")
+      .leftJoinAndSelect("workRequest.welfare", "welfare")
+      .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
+      .where("workRequest.id = :workRequestId", { workRequestId });
+
+    return await query.getOne();
+  }
+
+  async getByConstructionId(constructionId: string): Promise<DemandEntity> {
+    const query = this.repository
+      .createQueryBuilder("demand")
+      .innerJoinAndSelect("demand.beneficiary", "beneficiary")
+      .innerJoinAndSelect("demand.professional", "professional")
+      .leftJoinAndSelect("demand.workRequest", "workRequest")
+      .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
+      .leftJoinAndSelect("demand.construction", "constructions")
+      .leftJoinAndSelect("workRequest.room", "room")
+      .leftJoinAndSelect("workRequest.welfare", "welfare")
+      .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
+      .where("constructions.id = :constructionId", { constructionId });
+
+    return await query.getOne();
+  }
+
+  async list() {
+    return this.repository.find();
+  }
 }
