@@ -70,5 +70,9 @@ export class DemandService extends BaseService<
     async delete(demandId: string) {
         return await this.demandRepository.hardDelete(demandId);
     }
+
+    async listByStatus(status: DemandStatusEnum) {
+        return await this.demandRepository.listByStatus(status);
+    }
     
 }

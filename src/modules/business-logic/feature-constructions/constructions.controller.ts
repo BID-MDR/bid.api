@@ -21,61 +21,7 @@ import { ConstructionsService } from "./constructions.service";
 export class ConstructionsController {
   private readonly _logger = new Logger(ConstructionsController.name);
 
-  constructor(private constructionsService: ConstructionsService) {}
-
-  // @Post("register/:demandId")
-  // @ApiBearerAuth()
-  // @UseGuards(JwtAccessTokenGuard)
-  // @UseInterceptors(FilesInterceptor("files"))
-  // @ApiConsumes("multipart/form-data")
-  // @ApiBody({
-  //   schema: {
-  //     type: "object",
-  //     properties: {
-  //       files: {
-  //         type: "array",
-  //         items: {
-  //           type: "string",
-  //           format: "binary",
-  //         },
-  //       },
-  //       constructions: {
-  //         type: "array",
-  //         items: {
-  //           type: "object",
-  //           properties: {
-  //             roomSolutionId: { type: "string" },
-  //           },
-  //         },
-  //       },
-  //       type: { type: "string" },
-  //       area: { type: "string" },
-  //       description: { type: "string" },
-  //     },
-  //   },
-  // })
-  // async register(
-  //   @Param("demandId") demandId: string,
-  //   @Body() dto: CreateConstructionsDto,
-  //   @UploadedFiles() files: Array<Express.Multer.File>
-  // ) {
-  //   let constructionsArray;
-
-  //   if (typeof dto.constructions === "string") {
-  //     try {
-  //       constructionsArray = JSON.parse(`[${dto.constructions}]`);
-  //     } catch (error) {
-  //       console.error("Erro ao parsear constructions:", error);
-  //       throw new BadRequestException("Invalid constructions format");
-  //     }
-  //   } else {
-  //     constructionsArray = dto.constructions;
-  //   }
-
-  //   dto.constructions = constructionsArray;
-
-  //   return await this.constructionsService.register(dto, files, demandId);
-  // }
+  constructor(private constructionsService: ConstructionsService) { }
 
   @Post("first-step-photos/:demandId")
   @ApiBearerAuth()

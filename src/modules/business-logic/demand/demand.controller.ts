@@ -140,4 +140,19 @@ export class DemandController {
     async delete(@Param("id") id: string) {
         return await this.demandService.delete(id);
     }
+
+    @Get('status/:status')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOkResponseDtoData({
+        type: ResponseDemandDto,
+        isArray: true,
+        description: "Pedido de demanda.",
+    })
+    @SerializeOptions({
+        type: ResponseDemandDto,
+    })
+    async listByStatus(@Param('status') status: DemandStatusEnum) {
+        return await this.demandService.listByStatus(status);
+    }
 }
