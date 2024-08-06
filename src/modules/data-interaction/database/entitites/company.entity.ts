@@ -28,7 +28,7 @@ export class CompanyEntity extends BaseEntity {
 
   @OneToMany(() => AddressEntity, address => address.company, { eager: true, cascade: true }) // Ajuste aqui
   addresses: AddressEntity[];
-  
+
   @OneToOne(() => UserEntity, user => user.companyAdministrator, { eager: true })
   @JoinColumn()
   userAdmin: UserEntity;
@@ -36,6 +36,7 @@ export class CompanyEntity extends BaseEntity {
   @OneToMany(() => EmployeeEntity, employee => employee.company, { eager: true, cascade: true })
   employees: EmployeeEntity[];
 
-  @OneToMany(()=> DemandEntity, demand => demand.company)
-  demands: DemandEntity[];
+  @OneToOne(()=> DemandEntity, demand => demand.company)
+  @JoinColumn()
+  demands: DemandEntity;
 }
