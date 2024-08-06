@@ -5,6 +5,7 @@ import { DeepPartial, Repository } from "typeorm";
 import { DemandRegisterRequestDto } from "../../dtos/demand/register-demand.dto";
 import { DemandEntity } from "../../entitites/demand.entity";
 import { DemandStatusEnum } from "../../enums/demand-status.enum";
+import { StatusDemandDto } from "../../dtos/demand/update-status-demand.dto";
 
 @Injectable()
 export class DemandRepository extends BaseRepository<
@@ -27,10 +28,22 @@ export class DemandRepository extends BaseRepository<
     return this.repository.find({ where: { status }, loadEagerRelations: true });
   }
 
-  async listByUserWaitImprove(userId: string): Promise<DemandEntity[]> {
-    const query = this.getDefaulQuery()
-      .where("demand.status = 'ESPERANDO_MELHORIA'")
-      .andWhere("professional.id = :userId", { userId });
+    async updateStatus(id: string,dto: StatusDemandDto){
+        return this.repository.createQueryBuilder().update('demands').set({status: dto.status}).where("id = :id", {id}).execute()
+    }
+
+    async listByUserWaitImprove(userId: string): Promise<DemandEntity[]> {
+        const query = this.repository
+            .createQueryBuilder("demand")
+            .innerJoinAndSelect("demand.beneficiary", "beneficiary")
+            .innerJoinAndSelect("demand.professional", "professional")
+            .leftJoinAndSelect("demand.workRequest", "workRequest")
+            .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
+            .leftJoinAndSelect("workRequest.room", "room")
+            .leftJoinAndSelect("workRequest.welfare", "welfare")
+            .where("demand.status = 'ESPERANDO_MELHORIA'")
+            .orWhere("demand.status = 'EM_ANALISE'")
+            .andWhere("professional.id = :userId", { userId });
 
     return await query.getMany();
   }

@@ -5,6 +5,7 @@ import { DemandEntity } from 'src/modules/data-interaction/database/entitites/de
 import { DemandRegisterRequestDto } from 'src/modules/data-interaction/database/dtos/demand/register-demand.dto';
 import { DemandRepository } from 'src/modules/data-interaction/database/repositories/user/demand.repository';
 import { DemandStatusEnum } from 'src/modules/data-interaction/database/enums/demand-status.enum';
+import { StatusDemandDto } from 'src/modules/data-interaction/database/dtos/demand/update-status-demand.dto';
 
 @Injectable()
 export class DemandService extends BaseService<
@@ -39,6 +40,10 @@ export class DemandService extends BaseService<
 
     async getByWorkRequestId(workRequestId:string) {
         return await this.demandRepository.getByWorkRequestId(workRequestId);
+    }
+
+    async updateStatus(id:string, status: StatusDemandDto){
+        return await this.demandRepository.updateStatus(id,status);
     }
 
     async list() {

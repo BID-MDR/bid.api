@@ -71,6 +71,11 @@ export class FeatureRoomService extends BaseService<
         return await this.RoomRepository.findByWorkRequest(id);
     }
 
+    async selectInterventions(id:string){
+
+        return await this.RoomRepository.findRoomAndSolutions(id);
+    }
+
 
     async register(body: RequestRoomSolutionDto){
         

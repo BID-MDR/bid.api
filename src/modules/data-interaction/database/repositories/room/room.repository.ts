@@ -12,7 +12,15 @@ export class RoomRepository extends BaseRepository<RoomEntity, CreateRoomDto, Up
         super(repository);
     }
 
-    async findByWorkRequest(workRequestId:string){
+    async findByWorkRequest(workRequestId:string): Promise<any[]> {
        return  this.repository.createQueryBuilder("room").where("workRequestId = :workRequestId", {workRequestId}).execute()
+    }
+
+    async findRoomAndSolutions(workRequestId: string): Promise<any[]>{
+        return await     this.repository.createQueryBuilder('room')
+        .leftJoinAndSelect('room.roomSolutions', 'roomSolution')
+        .leftJoin('room.workRequest', 'workRequest')
+        .where('workRequest.id = :workRequestId', { workRequestId })
+        .getMany();
     }
 }
