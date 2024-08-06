@@ -42,8 +42,8 @@ export class DemandRepository extends BaseRepository<
             .leftJoinAndSelect("workRequest.room", "room")
             .leftJoinAndSelect("workRequest.welfare", "welfare")
             .where("demand.status = 'ESPERANDO_MELHORIA'")
+            // .andWhere("professional.id = :userId", { userId });
             .orWhere("demand.status = 'EM_ANALISE'")
-            .andWhere("professional.id = :userId", { userId });
 
     return await query.getMany();
   }
@@ -51,7 +51,7 @@ export class DemandRepository extends BaseRepository<
   async listForVisit(userId: string): Promise<DemandEntity[]> {
     const query = this.getDefaultQuery()
       .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
-      .where("professional.id = :userId", { userId })
+      // .where("professional.id = :userId", { userId })
       .andWhere("demand.status IN (:...statuses)", {
         statuses: [
           DemandStatusEnum.RASCUNHO,
@@ -66,7 +66,7 @@ export class DemandRepository extends BaseRepository<
 
   async listForConstructions(userId: string): Promise<DemandEntity[]> {
     const query = this.getDefaultQuery()
-      .where("professional.id = :userId", { userId })
+      // .where("professional.id = :userId", { userId })
       .andWhere("demand.status IN (:...status)", {
         status: [DemandStatusEnum.ESPERANDO_OBRA, DemandStatusEnum.CONCLUIR_OBRAS, DemandStatusEnum.CONCLUIDO],
       });
@@ -76,7 +76,7 @@ export class DemandRepository extends BaseRepository<
 
   async listCanclled(userId: string): Promise<DemandEntity[]> {
     const query = this.getDefaultQuery()
-      .where("professional.id = :userId", { userId })
+      // .where("professional.id = :userId", { userId })
       .andWhere("demand.status = :status", { status: DemandStatusEnum.CANCELADO });
 
     return await query.getMany();
@@ -85,7 +85,7 @@ export class DemandRepository extends BaseRepository<
   async listByUser(userId: string): Promise<DemandEntity[]> {
     const query = this.getDefaultQuery()
       .where("beneficiary.id = :userId", { userId })
-      .orWhere("professional.id = :userId", { userId });
+      // .orWhere("professional.id = :userId", { userId });
 
     return await query.getMany();
   }
