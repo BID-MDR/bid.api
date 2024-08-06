@@ -81,6 +81,6 @@ export class AddressEntity extends BaseEntity {
     @ManyToOne(() => UserProfessionalInfoEntity, (userProfessionalInfoEntity) => userProfessionalInfoEntity.addresses)
     userProfessionalInfo: UserProfessionalInfoEntity;
 
-    @OneToOne(() => CompanyEntity, (company) => company.addresses)
+    @ManyToOne(() => CompanyEntity, (company) => company.addresses)
     company: CompanyEntity;
 }
