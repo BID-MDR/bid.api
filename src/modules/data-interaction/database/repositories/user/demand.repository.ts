@@ -36,7 +36,7 @@ export class DemandRepository extends BaseRepository<
         const query = this.repository
             .createQueryBuilder("demand")
             .innerJoinAndSelect("demand.beneficiary", "beneficiary")
-            .innerJoinAndSelect("demand.professional", "professional")
+            .innerJoinAndSelect("demand.company", "company")
             .leftJoinAndSelect("demand.workRequest", "workRequest")
             .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
             .leftJoinAndSelect("workRequest.room", "room")
@@ -110,7 +110,7 @@ export class DemandRepository extends BaseRepository<
     return this.repository
       .createQueryBuilder("demand")
       .innerJoinAndSelect("demand.beneficiary", "beneficiary")
-      .innerJoinAndSelect("demand.professional", "professional")
+      .innerJoinAndSelect("demand.company", "company")
       .leftJoinAndSelect("demand.workRequest", "workRequest")
       .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
       .leftJoinAndSelect("demand.construction", "constructions")

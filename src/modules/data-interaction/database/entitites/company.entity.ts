@@ -27,6 +27,7 @@ export class CompanyEntity extends BaseEntity {
   status: CompanyStatusEnum;
 
   @OneToOne(() => AddressEntity, address => address.company, { eager: true, cascade: true })
+  @JoinColumn()
   addresses: AddressEntity;
 
   @OneToOne(() => UserEntity, user => user.companyAdministrator, { eager: true })
