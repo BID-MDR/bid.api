@@ -8,6 +8,7 @@ import { DemandRepository } from "../../data-interaction/database/repositories/u
 export class EmployeeService extends BaseService<EmployeeEntity, any, any> {
   constructor(
     private employeeRepository: EmployeeRepository,
+    private employeeroleRepository: EmployeeRepository,
     private demandRepository: DemandRepository
   ) {
     super(employeeRepository);
