@@ -5,6 +5,7 @@ import { WorkRequestEntity } from "./work-request.entity";
 import { TechnicalVisitEntity } from "./technical-visit.entity";
 import { DemandStatusEnum } from "../enums/demand-status.enum";
 import { ConstructionsEntity } from "./constructions.entity";
+import { CompanyEntity } from "./company.entity";
 
 @Entity({ name: "demands" })
 export class DemandEntity extends BaseEntity {
@@ -81,10 +82,10 @@ export class DemandEntity extends BaseEntity {
   })
   beneficiary: UserEntity;
 
-  @ManyToOne(() => UserEntity, user => user.demandsAsProfessional, {
+  @ManyToOne(() => CompanyEntity, company => company.demands, {
     eager: true,
   })
-  professional: UserEntity;
+  company: CompanyEntity;
 
   @OneToOne(() => WorkRequestEntity, workRequest => workRequest.demand, {
     cascade: true,

@@ -42,6 +42,11 @@ import { ConstructionsEntity } from './entitites/constructions.entity';
 import { ConstructionsRepository } from './repositories/constructions.repository';
 import { HelpEntity } from './entitites/help.entity';
 import { HelpRepository } from './repositories/user/help.repository';
+import { CompanyEntity } from './entitites/company.entity';
+import { EmployeeEntity } from './entitites/employee.entity';
+import { EmployeeRoleEntity } from './entitites/employee-role.entity';
+import { CompanyRepository } from './repositories/company/company.repository';
+import { EmployeeRepository } from './repositories/employee/employee.repository';
 
 const ENTITIES = [
     UserEntity,
@@ -65,7 +70,10 @@ const ENTITIES = [
     WorkRequestWelfareEntity,
     ChatRoomEntity,
     ConstructionsEntity,
-    HelpEntity
+    HelpEntity,
+    CompanyEntity,
+    EmployeeEntity,
+    EmployeeRoleEntity
 ];
 const REPOSITORIES = [
     UserRepository,
@@ -86,7 +94,9 @@ const REPOSITORIES = [
     WorkRequestRepository,
     WorkRequestWelfateRepository,
     ConstructionsRepository,
-    HelpRepository
+    HelpRepository,
+    CompanyRepository,
+    EmployeeRepository
 ];
 
 @Module({

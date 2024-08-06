@@ -191,9 +191,6 @@ export class UserEntity extends BaseEntity {
   @OneToMany(() => MessageEntity, message => message.receiver)
   receivedMessages: MessageEntity[];
 
-  @OneToMany(() => DemandEntity, demand => demand.professional)
-  demandsAsProfessional: DemandEntity[];
-
   @OneToMany(() => HelpEntity, help => help.user)
   helpRequests: HelpEntity[];
 
@@ -201,5 +198,5 @@ export class UserEntity extends BaseEntity {
   companyAdministrator: CompanyEntity;
 
   @OneToOne(() => EmployeeEntity, employee => employee.user, { nullable: true })
-    employee: EmployeeEntity;
+  employee: EmployeeEntity;
 }

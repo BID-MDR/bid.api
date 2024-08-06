@@ -4,17 +4,18 @@ import { AddressEntity } from "./address.entity";
 import { EmployeeEntity } from "./employee.entity";
 import { UserEntity } from "./user.entity";
 import { CompanyStatusEnum } from "../enums/company-status.enum";
+import { DemandEntity } from "./demand.entity";
 
 @Entity({ name: "company" })
 export class CompanyEntity extends BaseEntity {
   @Column({
-    type: "text",
+    type: "varchar",
     length: 100,
   })
   name: string;
 
   @Column({
-    type: "text",
+    type: "varchar",
   })
   cnpj: string;
 
@@ -34,4 +35,7 @@ export class CompanyEntity extends BaseEntity {
 
   @OneToMany(() => EmployeeEntity, employee => employee.company, { eager: true, cascade: true })
   employees: EmployeeEntity[];
+
+  @OneToMany(()=> DemandEntity, demand => demand.company)
+  demands: DemandEntity[];
 }
