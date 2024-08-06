@@ -196,6 +196,11 @@ export class UserEntity extends BaseEntity {
         },
     )
     notificationUser: NotificationEntity[];
+    @OneToOne(() => UserOtpRequestEntity, (otpRequest) => otpRequest.user, {
+        cascade: true,
+        eager: true,
+        nullable: true,
+    })
     @JoinColumn()
     otpRequest: UserOtpRequestEntity;
 
