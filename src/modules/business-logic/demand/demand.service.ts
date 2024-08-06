@@ -6,6 +6,7 @@ import { DemandRegisterRequestDto } from 'src/modules/data-interaction/database/
 import { DemandRepository } from 'src/modules/data-interaction/database/repositories/user/demand.repository';
 import { DemandStatusEnum } from 'src/modules/data-interaction/database/enums/demand-status.enum';
 import { StatusDemandDto } from 'src/modules/data-interaction/database/dtos/demand/update-status-demand.dto';
+import { CompanyRepository } from '../../data-interaction/database/repositories/company/company.repository';
 
 @Injectable()
 export class DemandService extends BaseService<
@@ -15,6 +16,7 @@ export class DemandService extends BaseService<
 > {
     constructor(
         private demandRepository: DemandRepository,
+        private companyRepository: CompanyRepository,
         private readonly userRepository: UserRepository,
     ) {
         super(demandRepository);
@@ -52,10 +54,20 @@ export class DemandService extends BaseService<
     }
 
     async register(userId: string, data: DemandRegisterRequestDto) {
-        data.professional = await this.userRepository.getById(userId);
+        const professional = await this.userRepository.getUserCompany(userId);
 
-        if(!data.professional) {
+        if(professional) {
             throw new BadRequestException("Professional não encontrado.");
+        }
+
+        if(!professional.employee || !professional.companyAdministrator) {
+            throw new BadRequestException("O usuário não é um profissional associado à uma empresa.");
+        }
+
+        data.campany = await this.companyRepository.findById(professional.employee.company.id);
+
+        if(!data.campany) {
+            throw new BadRequestException("Empresa não encontrada.");
         }
 
         data.beneficiary = await this.userRepository.getByCpf(data.document);

@@ -47,6 +47,7 @@ import { EmployeeEntity } from './entitites/employee.entity';
 import { EmployeeRoleEntity } from './entitites/employee-role.entity';
 import { CompanyRepository } from './repositories/company/company.repository';
 import { EmployeeRepository } from './repositories/employee/employee.repository';
+import { EmployeeRoleRepository } from './repositories/employee/employee-role.repository';
 
 const ENTITIES = [
     UserEntity,
@@ -96,7 +97,8 @@ const REPOSITORIES = [
     ConstructionsRepository,
     HelpRepository,
     CompanyRepository,
-    EmployeeRepository
+    EmployeeRepository,
+    EmployeeRoleRepository
 ];
 
 @Module({
