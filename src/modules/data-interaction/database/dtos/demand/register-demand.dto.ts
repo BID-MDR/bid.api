@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, Length } from 'class-validator';
 import { UserEntity } from '../../entitites/user.entity';
+import { CompanyEntity } from '../../entitites/company.entity';
 
 export class DemandRegisterRequestDto {
     @ApiProperty()
@@ -47,5 +48,5 @@ export class DemandRegisterRequestDto {
 
     beneficiary: UserEntity
 
-    professional: UserEntity;
+    campany: CompanyEntity;
 }
