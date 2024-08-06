@@ -110,7 +110,6 @@ export class DemandRepository extends BaseRepository<
     return this.repository
       .createQueryBuilder("demand")
       .innerJoinAndSelect("demand.beneficiary", "beneficiary")
-      .innerJoinAndSelect("demand.professional", "professional")
       .leftJoinAndSelect("demand.workRequest", "workRequest")
       .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
       .leftJoinAndSelect("demand.construction", "constructions")

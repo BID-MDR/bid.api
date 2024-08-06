@@ -28,7 +28,6 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
   async register(data: CreateWorkRequestDto) {
     const demand = await this.demandRepository.getById(data.demandId);
     data.demand = demand;
-
     if (!data.demand) throw new BadRequestException("Demanda não encontrada.");
 
     const result = await super.create(data);
