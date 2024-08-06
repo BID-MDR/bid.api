@@ -156,4 +156,13 @@ export class FeatureRoomController {
 
        return await this.featureRoomService.register(body)
     }
+
+
+    @Get('room-solution/:id')
+    @UseInterceptors(new EncryptInterceptor())
+    async selectSolutions(@Param('id') id: string){
+
+       return await this.featureRoomService.selectInterventions(id)
+    }
+
 }

@@ -71,6 +71,24 @@ export class FeatureRoomService extends BaseService<
         return await this.RoomRepository.findByWorkRequest(id);
     }
 
+    async selectInterventions(id:string){
+        const rooms =  await this.selectAllByWorkRequest(id);
+        var roomsInterventions = [];
+        rooms.forEach( async element => {
+            
+            let solutions =  await this.roomSolutionRepository.findById(element.room_id)
+            
+            // console.log(element)
+
+            var data = {
+                roomId : element.room_id,
+                solution: solutions.solution 
+            }
+            console.log(data)
+
+        })
+    }
+
 
     async register(body: RequestRoomSolutionDto){
         
