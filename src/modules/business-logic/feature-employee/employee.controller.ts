@@ -1,11 +1,10 @@
-import { Body, Controller, Logger, Post, Req, SerializeOptions, UseGuards } from "@nestjs/common";
+import { Body, Controller, Logger, Param, Post, Put, Req, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { EmployeeService } from "./employee.service";
-import { JwtPayloadInterface } from "../../../core/interfaces/jwt-payload.interface";
 import { Request } from "express";
-import { ApiOkResponseDtoData } from "../../../core/decorators/swagger/api-ok-response-dto.decorator";
 import { JwtAccessTokenGuard } from "../../../core/guards/jwt-access-token.guard";
+import { JwtPayloadInterface } from "../../../core/interfaces/jwt-payload.interface";
 import { EmployeeRegisterRequestDto } from "../../data-interaction/database/dtos/employee/employee-register-request.dto";
+import { EmployeeService } from "./employee.service";
 
 @Controller("employee")
 @ApiTags("employee/Funcionario")
@@ -20,4 +19,13 @@ export class EmployeeController {
     const userId = (req.user as JwtPayloadInterface).userId;
     return await this.service.register(dto, userId);
   }
+
+  @Put("active/:id")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  async activeEmployee(@Param("id") id: string, @Req() req: Request) {
+    const userId = (req.user as JwtPayloadInterface).userId;
+    return await this.service.activeEmployee(id, userId);
+  }
+
 }
