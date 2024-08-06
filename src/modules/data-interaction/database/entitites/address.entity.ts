@@ -2,6 +2,7 @@ import { BaseEntity } from 'src/core/entities/base.entity';
 import { Column, Entity, ManyToOne, OneToOne } from 'typeorm';
 import { UserProfessionalInfoEntity } from './user-professional-info.entity';
 import { UserEntity } from './user.entity';
+import { CompanyEntity } from './company.entity';
 
 @Entity({ name: 'address' })
 export class AddressEntity extends BaseEntity {
@@ -79,4 +80,7 @@ export class AddressEntity extends BaseEntity {
 
     @ManyToOne(() => UserProfessionalInfoEntity, (userProfessionalInfoEntity) => userProfessionalInfoEntity.addresses)
     userProfessionalInfo: UserProfessionalInfoEntity;
+
+    @OneToOne(() => CompanyEntity, (company) => company.addresses)
+    company: CompanyEntity;
 }
