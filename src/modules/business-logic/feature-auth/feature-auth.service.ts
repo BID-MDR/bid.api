@@ -12,12 +12,14 @@ import { GovbrFacade } from 'src/modules/data-interaction/facade/apis/gov/govbr/
 import { GovbrTokenPayloadDto } from './dtos/govbr-token-payload.dto';
 import { SigninRequestDto } from './dtos/signin-request.dto';
 import { SigninResponseDto } from './dtos/signin-response.dto';
+import { CompanyRepository } from 'src/modules/data-interaction/database/repositories/company/company.repository';
 
 @Injectable()
 export class FeatureAuthService {
     constructor(
         private govbrFacade: GovbrFacade,
         private userRepository: UserRepository,
+        private companyRepository: CompanyRepository,
         private jwtService: JwtService,
         private govbrSsoRepository: GovbrSsoRepository,
         private configService: ConfigService,
@@ -94,11 +96,23 @@ export class FeatureAuthService {
                 await ssoAttempt.save();
                 return ssoAttempt.id;
         }
+
+        const company = await this.companyRepository.getByEmployee(user.id);
+
+        if(company){
+
+            var token = await this.jwtService.signAsync({
+                userId: user.id,
+                userType: user.type,
+                companyId: company.id
+            } as JwtPayloadInterface);
+        }else{
+            var token = await this.jwtService.signAsync({
+                userId: user.id,
+                userType: user.type
+            } as JwtPayloadInterface);
+        }
         
-        const token = await this.jwtService.signAsync({
-            userId: user.id,
-            userType: user.type,
-        } as JwtPayloadInterface);
 
         await this.govbrSsoRepository.update(ssoAttempt.id, {
             token: CryptoUtil.encrypt(this.configService.get(EnviromentVariablesEnum.OTP_TOKEN), token),

@@ -33,7 +33,7 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
     const result = await super.create(data);
 
     demand.workRequest = result;
-    demand.status = DemandStatusEnum.CADASTRADO_VISTORIA;
+    demand.status = DemandStatusEnum.ESPERANDO_MELHORIA;
 
     await demand.save();
 

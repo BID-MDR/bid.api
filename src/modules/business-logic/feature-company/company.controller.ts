@@ -32,6 +32,13 @@ export class CompanyController {
     return await this.service.getByOwner(id);
   }
 
+  @Get("by-employee/:id")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  async getByEmployee(@Param('id') id: string) {
+    return await this.service.getByEmployee(id);
+  }
+
   @Delete("by-id/:id")
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard)

@@ -92,7 +92,8 @@ export class DemandRepository extends BaseRepository<
   }
 
   async getByWorkRequestId(workRequestId: string): Promise<DemandEntity> {
-    const query = this.getDefaultQuery().where("workRequest.id = :workRequestId", { workRequestId });
+    const query = this.getDefaultQuery()
+    .where("workRequest.id = :workRequestId", { workRequestId });
 
     return await query.getOne();
   }

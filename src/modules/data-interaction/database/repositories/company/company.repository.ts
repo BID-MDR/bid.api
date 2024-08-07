@@ -14,5 +14,14 @@ export class CompanyRepository extends BaseRepository<CompanyEntity, any, any> {
         where: { userAdmin: { id: ownerId } },
         relations: ['employees', 'demands', 'userAdmin'],
     });
-}
+
+  }
+
+  async getByEmployee(userId: string){
+    return  this.repository.createQueryBuilder("company")
+    .leftJoinAndSelect("company.employees", "employees")
+    .leftJoinAndSelect("employees.user", "user")
+    .where("user.id = :userId", { userId })
+    .getOne();
+  }
 }
