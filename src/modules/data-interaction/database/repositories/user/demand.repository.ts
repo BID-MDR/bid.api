@@ -91,7 +91,8 @@ export class DemandRepository extends BaseRepository<
   }
 
   async getByWorkRequestId(workRequestId: string): Promise<DemandEntity> {
-    const query = this.getDefaultQuery().where("workRequest.id = :workRequestId", { workRequestId });
+    const query = this.getDefaultQuery()
+    .where("workRequest.id = :workRequestId", { workRequestId });
 
     return await query.getOne();
   }
@@ -111,6 +112,7 @@ export class DemandRepository extends BaseRepository<
       .createQueryBuilder("demand")
       .innerJoinAndSelect("demand.beneficiary", "beneficiary")
       .innerJoinAndSelect("demand.company", "company")
+      .leftJoinAndSelect("company.employees", "employees")
       .leftJoinAndSelect("demand.workRequest", "workRequest")
       .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
       .leftJoinAndSelect("demand.construction", "constructions")

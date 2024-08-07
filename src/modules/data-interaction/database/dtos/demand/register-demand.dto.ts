@@ -23,7 +23,6 @@ export class DemandRegisterRequestDto {
 
     @ApiProperty()
     @IsOptional()
-    @Length(3, 100)
     complement: string;
 
     @ApiProperty()

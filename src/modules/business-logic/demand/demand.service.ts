@@ -39,7 +39,7 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
   async getByWorkRequestId(workRequestId: string) {
     return await this.demandRepository.getByWorkRequestId(workRequestId);
   }
-
+  
   async updateStatus(id: string, status: StatusDemandDto) {
     return await this.demandRepository.updateStatus(id, status);
   }

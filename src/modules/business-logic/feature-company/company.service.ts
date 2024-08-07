@@ -30,6 +30,10 @@ export class CompanyService extends BaseService<CompanyEntity, any, any> {
     return await this.companyRepository.getByOwner(id)
   }
 
+  async getByEmployee(id:string):Promise<CompanyEntity>{
+    return await this.companyRepository.getByEmployee(id)
+  }
+
   async delete(companyId: string): Promise<void>{
     return await this.companyRepository.hardDelete(companyId)
   }
