@@ -1,13 +1,13 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { BaseService } from "../../../core/services/base.service";
+import { EmployeeRegisterRequestDto } from "../../data-interaction/database/dtos/employee/employee-register-request.dto";
 import { EmployeeEntity } from "../../data-interaction/database/entitites/employee.entity";
+import { EmployeeRoleEnum } from "../../data-interaction/database/enums/employee-role.enum";
+import { EmployeeStatusEnum } from "../../data-interaction/database/enums/employee-status.enum";
+import { CompanyRepository } from "../../data-interaction/database/repositories/company/company.repository";
 import { EmployeeRepository } from "../../data-interaction/database/repositories/employee/employee.repository";
 import { DemandRepository } from "../../data-interaction/database/repositories/user/demand.repository";
 import { UserRepository } from "../../data-interaction/database/repositories/user/user.repository";
-import { CompanyRepository } from "../../data-interaction/database/repositories/company/company.repository";
-import { EmployeeRegisterRequestDto } from "../../data-interaction/database/dtos/employee/employee-register-request.dto";
-import { EmployeeStatusEnum } from "../../data-interaction/database/enums/employee-status.enum";
-import { EmployeeRoleRepository } from "../../data-interaction/database/repositories/employee/employee-role.repository";
 
 @Injectable()
 export class EmployeeService extends BaseService<EmployeeEntity, any, any> {
@@ -15,7 +15,6 @@ export class EmployeeService extends BaseService<EmployeeEntity, any, any> {
     private userRepository: UserRepository,
     private companyRepository: CompanyRepository,
     private employeeRepository: EmployeeRepository,
-    private employeeRoleRepository: EmployeeRoleRepository,
     private demandRepository: DemandRepository
   ) {
     super(employeeRepository);
@@ -26,6 +25,14 @@ export class EmployeeService extends BaseService<EmployeeEntity, any, any> {
 
     if (!user) {
       throw new BadRequestException("Usuário não encontrado.");
+    }
+
+    if(user.companyAdministrator) {
+      throw new BadRequestException("Usuário já é administrador de uma empresa.");
+    }
+
+    if (user.employee) {
+      throw new BadRequestException("Usuário já é funcionário de uma empresa.");
     }
 
     const company = await this.companyRepository.findById(data.companyId);
@@ -43,7 +50,7 @@ export class EmployeeService extends BaseService<EmployeeEntity, any, any> {
   }
 
   async activeEmployee(employeeId: string, userId: string) {
-    const user = await this.userRepository.getUserCompany(userId);
+    const user = await this.userRepository.getById(userId);
 
     if (!user.companyAdministrator) {
       throw new BadRequestException("Usuário não é administrador da empresa.");

@@ -1,23 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsCPF } from 'brazilian-class-validator';
-import { Type } from 'class-transformer';
 import {
-    IsCurrency,
-    IsDateString,
-    IsDefined,
-    IsEmail,
     IsEnum,
-    IsNumberString,
-    IsOptional,
-    IsPhoneNumber,
-    Length,
-    Max,
-    Min,
-    ValidateIf,
-    ValidateNested,
+    Length
 } from 'class-validator';
-import { EmployeeRoleEnum } from '../../enums/employee-role.enum';
 import { EmployeeEntity } from '../../entitites/employee.entity';
+import { EmployeeRoleEnum } from '../../enums/employee-role.enum';
 
 export class CreateEmployeeRoleDto {
     @ApiProperty()

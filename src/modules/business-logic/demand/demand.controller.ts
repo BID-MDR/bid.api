@@ -21,6 +21,9 @@ import { ResponseDemandDto } from "../../data-interaction/database/dtos/demand/r
 import { DemandService } from "./demand.service";
 import { DemandStatusEnum } from "src/modules/data-interaction/database/enums/demand-status.enum";
 import { StatusDemandDto } from "src/modules/data-interaction/database/dtos/demand/update-status-demand.dto";
+import { Roles } from "../../../core/decorators/roles.decorator";
+import { RolesGuard } from "../../../core/guards/roles.guard";
+import { EmployeeRoleEnum } from "../../data-interaction/database/enums/employee-role.enum";
 
 @Controller("demand")
 @ApiTags("Demand/Pedido de demanda")
@@ -121,7 +124,8 @@ export class DemandController {
 
     @Post("")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard)
+    @UseGuards(JwtAccessTokenGuard, RolesGuard)
+    @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_demand])
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
         description: "Pedido de demanda.",
@@ -136,7 +140,8 @@ export class DemandController {
 
     @Delete("delete-by-id/:id")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard)
+    @UseGuards(JwtAccessTokenGuard, RolesGuard)
+    @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_demand])
     async delete(@Param("id") id: string) {
         return await this.demandService.delete(id);
     }
