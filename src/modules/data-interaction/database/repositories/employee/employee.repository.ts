@@ -11,19 +11,20 @@ export class EmployeeRepository extends BaseRepository<EmployeeEntity, any, any>
   }
 
   async getById(_id: string) {
-    return await this.repository
-      .createQueryBuilder("employee")
-      .leftJoinAndSelect("employee.user", "user")
-      .leftJoinAndSelect("employee.company", "company")
-      .where("employee.id = :id", { id: _id })
-      .getOne();
+    return await this.repository.findOne({
+      where: { id: _id },
+      relations: {
+        user: true,
+        company: true,
+        roles: true,
+      },
+    });
   }
 
   async listByCompany(companyId: string): Promise<EmployeeEntity[]> {
-    return await this.repository
-      .createQueryBuilder("employee")
-      .leftJoinAndSelect("employee.company", "company")
-      .where("company.id = :companyId", { companyId })
-      .getMany();
+    return await this.repository.find({
+      where: { company: { id: companyId } },
+      relations: ["company"],
+    });
   }
 }

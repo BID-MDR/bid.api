@@ -19,7 +19,32 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
   }
 
   async getById(_id: string) {
-    return this.repository.findOne({ where: { id: _id } });
+    return this.repository.findOne({
+      where: { id: _id },
+      relations: {
+        companyAdministrator: true,
+        employee: {
+          company: true,
+          roles: true,
+        },
+        beneficiaryUserInfo: true,
+        technicalVisitsAsBeneficiary: true,
+        technicalVisitsAsProfessional: true,
+      },
+    });
+  }
+
+  async getForGuard(_id: string) {
+    return this.repository.findOne({
+      where: { id: _id },
+      relations: {
+        companyAdministrator: true,
+        employee: {
+          company: true,
+          roles: true,
+        },
+      },
+    });
   }
 
   async updateUserProgramType(_id: string, programType: UserProgramTypeEnum) {
@@ -77,16 +102,6 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
       .createQueryBuilder("user")
       .innerJoinAndSelect("user.userProfessionalInfo", "user-professional-info")
       .leftJoinAndSelect("user.technicalVisitsAsProfessional", "technical-visit")
-      .where("user.id = :userId", { userId })
-      .getOne();
-  }
-
-  async getUserCompany(userId: string) {
-    return await this.repository
-      .createQueryBuilder("user")
-      .leftJoinAndSelect("user.companyAdministrator", "companyAdministrator")
-      .leftJoinAndSelect("user.employee", "employee")
-      .leftJoinAndSelect("employee.company", "company")
       .where("user.id = :userId", { userId })
       .getOne();
   }
