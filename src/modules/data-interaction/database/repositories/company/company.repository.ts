@@ -9,4 +9,10 @@ export class CompanyRepository extends BaseRepository<CompanyEntity, any, any> {
   constructor(@InjectRepository(CompanyEntity) private repository: Repository<CompanyEntity>) {
     super(repository);
   }
+  async getByOwner(ownerId: string) {
+    return this.repository.find({
+        where: { userAdmin: { id: ownerId } },
+        relations: ['employees', 'demands', 'userAdmin'],
+    });
+}
 }
