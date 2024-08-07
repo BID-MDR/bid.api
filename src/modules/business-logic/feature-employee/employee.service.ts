@@ -67,4 +67,8 @@ export class EmployeeService extends BaseService<EmployeeEntity, any, any> {
       status: EmployeeStatusEnum.ACTIVE,
     });
   }
+
+  async list(): Promise<EmployeeEntity[]> {
+    return await this.employeeRepository.findAll()
+  }
 }

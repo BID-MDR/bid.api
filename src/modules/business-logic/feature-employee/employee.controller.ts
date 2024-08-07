@@ -1,4 +1,4 @@
-import { Body, Controller, Logger, Param, Post, Put, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Logger, Param, Post, Put, Req, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Request } from "express";
 import { JwtAccessTokenGuard } from "../../../core/guards/jwt-access-token.guard";
@@ -26,6 +26,13 @@ export class EmployeeController {
   async activeEmployee(@Param("id") id: string, @Req() req: Request) {
     const userId = (req.user as JwtPayloadInterface).userId;
     return await this.service.activeEmployee(id, userId);
+  }
+
+  @Get("")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  async list() {
+    return await this.service.list();
   }
 
 }

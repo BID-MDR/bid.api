@@ -10,6 +10,8 @@ import { FeatureRoomModule } from './feature-room/feature-room.module';
 import { ConstructionsModule } from './feature-constructions/constructions.module';
 import { HelpModule } from './help/help.module';
 import { CompanyModule } from './feature-company/company.module';
+import { EmployeeModule } from './feature-employee/employee.module';
+import { EmployeeRoleModule } from './feature-employee-role/employee-role.module';
 @Module({
     imports: [
         FeatureUserModule,
@@ -22,7 +24,9 @@ import { CompanyModule } from './feature-company/company.module';
         FeatureRoomModule,
         ConstructionsModule,
         HelpModule,
-        CompanyModule
+        CompanyModule,
+        EmployeeModule,
+        EmployeeRoleModule
     ],
 })
 export class BusinessLogicModule {}
