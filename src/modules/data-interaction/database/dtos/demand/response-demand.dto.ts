@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiExtraModels, ApiProperty, OmitType } from "@nestjs/swagger";
 import { Exclude, Expose, Transform, Type } from "class-transformer";
 import { BaseResponseDto } from "../../../../../core/dtos/crud/base-response.dto";
 import { UserResponseDto } from "../user/reponse-user.dto";
@@ -6,6 +6,7 @@ import { ResponseWorkRequestDto } from "../work-request/response-work-request.dt
 import { TechnicalVisitResponseDto } from "../technical-visit/reponse-technical-visit.dto";
 import { DemandEntity } from "../../entitites/demand.entity";
 import { ResponseConstructionsDto } from "../constructions/response-constructions.dto";
+import { ResponseCompanyDto } from "../company/response-company.dto";
 
 @Exclude()
 export class ResponseDemandDto extends BaseResponseDto {
@@ -59,11 +60,11 @@ export class ResponseDemandDto extends BaseResponseDto {
     @Transform(({ value }) => value ?? undefined)
     beneficiary: UserResponseDto;
 
-    @ApiProperty({ type: () => UserResponseDto })
+    @ApiProperty({ type: () => ResponseCompanyDto, nullable: false })
     @Expose()
-    @Type(() => UserResponseDto)
+    @Type(() => ResponseCompanyDto)
     @Transform(({ value }) => value ?? undefined)
-    professional: UserResponseDto;
+    company: ResponseCompanyDto;
 
     @ApiProperty({ type: () => ResponseWorkRequestDto })
     @Expose()
