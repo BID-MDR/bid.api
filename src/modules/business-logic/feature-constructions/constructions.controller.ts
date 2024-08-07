@@ -15,6 +15,9 @@ import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { JwtAccessTokenGuard } from "../../../core/guards/jwt-access-token.guard";
 import { CreateConstructionsDto } from "../../data-interaction/database/dtos/constructions/create-constructions.dto";
 import { ConstructionsService } from "./constructions.service";
+import { Roles } from "../../../core/decorators/roles.decorator";
+import { RolesGuard } from "../../../core/guards/roles.guard";
+import { EmployeeRoleEnum } from "../../data-interaction/database/enums/employee-role.enum";
 
 @Controller("construction")
 @ApiTags("Constructions/obra")
@@ -25,7 +28,8 @@ export class ConstructionsController {
 
   @Post("first-step-photos/:demandId")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard)
+  @UseGuards(JwtAccessTokenGuard, RolesGuard)
+  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
   @UseInterceptors(FilesInterceptor("files"))
   @ApiConsumes("multipart/form-data")
   @ApiBody({
@@ -53,14 +57,16 @@ export class ConstructionsController {
 
   @Post("second-step-constructions/:demandId")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard)
+  @UseGuards(JwtAccessTokenGuard, RolesGuard)
+  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
   async secondStepConstructions(@Param("demandId") demandId: string, @Body() dto: CreateConstructionsDto) {
     return await this.constructionsService.secondStepConstructions(dto, demandId);
   }
 
   @Put("update-constructions/:demandId")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard)
+  @UseGuards(JwtAccessTokenGuard, RolesGuard)
+  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
   async update(@Param("demandId") demandId: string, @Body() dto: CreateConstructionsDto) {
     return await this.constructionsService.update(dto, demandId);
   }
@@ -68,7 +74,8 @@ export class ConstructionsController {
 
   @Delete("photo/:demandId/:photoId")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard)
+  @UseGuards(JwtAccessTokenGuard, RolesGuard)
+  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
   async deletePhoto(@Param("demandId") demandId: string, @Param("photoId") photoId: string) {
     return await this.constructionsService.deletePhoto(demandId, photoId);
   }

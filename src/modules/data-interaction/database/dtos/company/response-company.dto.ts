@@ -1,4 +1,4 @@
-import { ApiExtraModels, ApiProperty, OmitType } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 import { Exclude, Expose, Transform, Type } from "class-transformer";
 import { BaseResponseDto } from "../../../../../core/dtos/crud/base-response.dto";
 import { AddressResponseDto } from "../address/response-address.dto";
@@ -41,9 +41,9 @@ export class ResponseCompanyDto extends BaseResponseDto {
   employees: ResponseEmployeeDto[];
 
   // @ApiProperty({ type: ResponseDemandDto, isArray: true })
-  // @Expose()
-  // @Type(() => ResponseDemandDto) 
-  // @Transform(({ value }) => value ?? [])
-  // demands: ResponseDemandDto[];
+  @Expose()
+  @Type(() => ResponseDemandDto) 
+  @Transform(({ value }) => value ?? [])
+  demands: ResponseDemandDto[];
 }
 

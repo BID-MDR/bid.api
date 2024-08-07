@@ -19,16 +19,21 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
   }
 
   async listByUser(userId: string) {
-    // const user = await this.userRepository.getById(userId);
-    return await this.demandRepository.listByUser(userId);
+    const user = await this.userRepository.getById(userId);
+    const companyId = user.employee.company.id || user.companyAdministrator.id;
+    return await this.demandRepository.listByUser(userId, companyId);
   }
 
   async listForVisit(userId: string) {
-    return await this.demandRepository.listForVisit(userId);
+    const user = await this.userRepository.getById(userId);
+    const companyId = user.employee.company.id || user.companyAdministrator.id;
+    return await this.demandRepository.listForVisit(companyId);
   }
 
   async listForConstructions(userId: string) {
-    return await this.demandRepository.listForConstructions(userId);
+    const user = await this.userRepository.getById(userId);
+    const companyId = user.employee.company.id || user.companyAdministrator.id;
+    return await this.demandRepository.listForConstructions(companyId);
   }
 
   async listByUserImprovement(userId: string) {

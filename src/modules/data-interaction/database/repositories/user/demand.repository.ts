@@ -48,10 +48,10 @@ export class DemandRepository extends BaseRepository<
     return await query.getMany();
   }
 
-  async listForVisit(userId: string): Promise<DemandEntity[]> {
+  async listForVisit(companyId:string = ''): Promise<DemandEntity[]> {
     const query = this.getDefaultQuery()
       .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
-      // .where("professional.id = :userId", { userId })
+      .where("company.id = :companyId", { companyId })
       .andWhere("demand.status IN (:...statuses)", {
         statuses: [
           DemandStatusEnum.RASCUNHO,
@@ -64,9 +64,9 @@ export class DemandRepository extends BaseRepository<
     return await query.getMany();
   }
 
-  async listForConstructions(userId: string): Promise<DemandEntity[]> {
+  async listForConstructions(companyId:string = ''): Promise<DemandEntity[]> {
     const query = this.getDefaultQuery()
-      // .where("professional.id = :userId", { userId })
+      .where("company.id = :companyId", { companyId })
       .andWhere("demand.status IN (:...status)", {
         status: [DemandStatusEnum.ESPERANDO_OBRA, DemandStatusEnum.CONCLUIR_OBRAS, DemandStatusEnum.CONCLUIDO],
       });
@@ -82,10 +82,11 @@ export class DemandRepository extends BaseRepository<
     return await query.getMany();
   }
 
-  async listByUser(userId: string): Promise<DemandEntity[]> {
+  async listByUser(userId: string, companyId:string = ''): Promise<DemandEntity[]> {
     const query = this.getDefaultQuery()
       .where("beneficiary.id = :userId", { userId })
-      // .orWhere("professional.id = :userId", { userId });
+      .orWhere("company.id = :companyId", { companyId });
+      
 
     return await query.getMany();
   }
@@ -111,6 +112,7 @@ export class DemandRepository extends BaseRepository<
       .createQueryBuilder("demand")
       .innerJoinAndSelect("demand.beneficiary", "beneficiary")
       .innerJoinAndSelect("demand.company", "company")
+      .leftJoinAndSelect("company.employees", "employees")
       .leftJoinAndSelect("demand.workRequest", "workRequest")
       .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
       .leftJoinAndSelect("demand.construction", "constructions")

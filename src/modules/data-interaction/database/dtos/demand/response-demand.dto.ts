@@ -1,18 +1,18 @@
-import { ApiExtraModels, ApiProperty, OmitType } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 import { Exclude, Expose, Transform, Type } from "class-transformer";
 import { BaseResponseDto } from "../../../../../core/dtos/crud/base-response.dto";
+import { DemandEntity } from "../../entitites/demand.entity";
+import { ResponseCompanyDto } from "../company/response-company.dto";
+import { ResponseConstructionsDto } from "../constructions/response-constructions.dto";
+import { TechnicalVisitResponseDto } from "../technical-visit/reponse-technical-visit.dto";
 import { UserResponseDto } from "../user/reponse-user.dto";
 import { ResponseWorkRequestDto } from "../work-request/response-work-request.dto";
-import { TechnicalVisitResponseDto } from "../technical-visit/reponse-technical-visit.dto";
-import { DemandEntity } from "../../entitites/demand.entity";
-import { ResponseConstructionsDto } from "../constructions/response-constructions.dto";
-import { ResponseCompanyDto } from "../company/response-company.dto";
 
 @Exclude()
 export class ResponseDemandDto extends BaseResponseDto {
     @ApiProperty()
     @Expose()
-    document: string;
+    document: string
 
     @ApiProperty()
     @Expose()
