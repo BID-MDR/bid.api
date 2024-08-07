@@ -28,6 +28,9 @@ export class CreateEmployeeRoleDto {
     @IsEnum(EmployeeRoleEnum)
     role: EmployeeRoleEnum;
 
+    @ApiProperty()
+    employeeId: string;
+
     active: boolean
 
     employee: EmployeeEntity
