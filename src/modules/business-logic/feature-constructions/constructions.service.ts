@@ -19,65 +19,12 @@ export class ConstructionsService {
     private readonly S3: AwsSubsystem
   ) {}
 
-  // async register(dto: CreateConstructionsDto, files: Array<Express.Multer.File>, demandId: string) {
-  //   const demand = await this.demandRepository.findById(demandId);
-
-  //   if (!demand) {
-  //     throw new BadRequestException("Demand not found");
-  //   }
-
-  //   if (!dto.constructions.length || !files.length) {
-  //     throw new BadRequestException("Files and constructions are required");
-  //   }
-
-  //   if (dto.constructions.length !== files.length) {
-  //     throw new BadRequestException("Number of files and constructions do not match");
-  //   }
-
-  //   const roomSolutions = demand.workRequest.room
-  //     .map(room => room.roomSolutions)
-  //     .filter(a => !!a)
-  //     .flat();
-
-  //   for (const construction of dto.constructions) {
-  //     if (!roomSolutions.find(roomSolution => roomSolution.id === construction.roomSolutionId)) {
-  //       throw new BadRequestException("Room solution not found");
-  //     }
-  //   }
-
-  //   dto.constructions.forEach(async (construction, idx) => {
-  //     const roomSolution = await this.roomSolutionService.findById(construction.roomSolutionId);
-  //     if (!roomSolution) {
-  //       throw new BadRequestException("Room solution not found");
-  //     }
-  //     if (files[idx]) {
-  //       const file = files[idx];
-  //       const name = "construction-" + new Date().getTime();
-  //       const url = await this.S3.uploadMediaBuffer(file.mimetype, name, file.buffer);
-  //       const userMidia = await this.userGeneratedMediaRepository.create({
-  //         url,
-  //         mimeType: file.mimetype,
-  //         type: MediaTypeEnum.FOTO,
-  //       });
-  //       roomSolution.picturesAndVideos.push(userMidia);
-  //       await roomSolution.save();
-  //     }
-  //   });
-
-  //   const constructions = await this.constructionsRepository.create({
-  //     type: dto.type,
-  //     area: +dto.area,
-  //     description: dto.description,
-  //     status: ConstructionsStatusEnum.EM_ANDAMENTO,
-  //   });
-
-  //   demand.construction = constructions;
-  //   demand.status = DemandStatusEnum.CONCLUIR_OBRAS;
-
-  //   await demand.save();
-  // }
-
-  async firstStepPhotos(roomSolutionId: string, files: Array<Express.Multer.File>, demandId: string) {
+  async firstStepPhotos(
+    roomSolutionId: string,
+    files: Array<Express.Multer.File>,
+    demandId: string,
+    companyId: string
+  ) {
     if (!files.length) {
       throw new BadRequestException("Files are required");
     }
@@ -86,6 +33,10 @@ export class ConstructionsService {
 
     if (!demand) {
       throw new BadRequestException("Demand not found");
+    }
+
+    if (demand.company.id !== companyId) {
+      throw new BadRequestException("Not authorized to access this demand");
     }
 
     const roomSolutions = demand.workRequest.room
@@ -117,14 +68,17 @@ export class ConstructionsService {
     await demand.reload();
 
     return demand;
-
   }
 
-  async secondStepConstructions(dto: CreateConstructionsDto, demandId: string) {
+  async secondStepConstructions(dto: CreateConstructionsDto, demandId: string, companyId: string) {
     const demand = await this.demandRepository.findById(demandId);
 
     if (!demand) {
       throw new BadRequestException("Demand not found");
+    }
+
+    if (demand.company.id !== companyId) {
+      throw new BadRequestException("Not authorized to access this demand");
     }
 
     const constructions = await this.constructionsRepository.create({
@@ -140,11 +94,15 @@ export class ConstructionsService {
     return await demand.save();
   }
 
-  async update(dto: CreateConstructionsDto, demandId: string) {
+  async update(dto: CreateConstructionsDto, demandId: string, companyId: string) {
     const demand = await this.demandRepository.findById(demandId);
 
     if (!demand) {
       throw new BadRequestException("Demand not found");
+    }
+
+    if (demand.company.id !== companyId) {
+      throw new BadRequestException("Not authorized to access this demand");
     }
 
     const constructions = await this.constructionsRepository.findById(demand.construction.id);
@@ -160,7 +118,7 @@ export class ConstructionsService {
     return await constructions.save();
   }
 
-  async deletePhoto(demandId:string, photoId:string) {
+  async deletePhoto(demandId: string, photoId: string) {
     const demand = await this.demandRepository.findById(demandId);
 
     if (!demand) {
@@ -232,7 +190,7 @@ export class ConstructionsService {
     return await constructions.save();
   }
 
-  async conclude(constructionsId: string) {
+  async conclude(constructionsId: string, companyId: string) {
     const constructions = await this.getById(constructionsId);
 
     if (!constructions) {
@@ -241,7 +199,11 @@ export class ConstructionsService {
 
     const demand = await this.demandRepository.getByConstructionId(constructionsId);
 
-    demand.status = DemandStatusEnum.CONCLUIDO;
+    if (demand.company.id !== companyId) {
+      throw new BadRequestException("Not authorized to access this demand");
+    }
+
+    demand.status = DemandStatusEnum.ESPERANDO_VALIDACAO;
     await demand.save();
 
     constructions.status = ConstructionsStatusEnum.CONCLUIDA;

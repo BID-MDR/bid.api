@@ -160,4 +160,20 @@ export class DemandController {
     async listByStatus(@Param('status') status: DemandStatusEnum) {
         return await this.demandService.listByStatus(status);
     }
+
+    @Put('confirm-conclusion/:id')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOkResponseDtoData({
+        type: ResponseDemandDto,
+        isArray: true,
+        description: "Pedido de demanda.",
+    })
+    @SerializeOptions({
+        type: ResponseDemandDto,
+    })
+    async confirmConclusion(@Param('id') id: string, @Req() req: Request) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.demandService.confirmConclusion(id, userId);
+    }
 }

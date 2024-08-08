@@ -82,4 +82,33 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
   async listByStatus(status: DemandStatusEnum) {
     return await this.demandRepository.listByStatus(status);
   }
+
+  async confirmConclusion(id:string, userId:string){
+    const user = await this.userRepository.getById(userId);
+
+    if(!user){
+      throw new BadRequestException("Usuário não encontrado.");
+    }
+
+    const demand = await this.demandRepository.findById(id);
+
+    if(!demand){
+      throw new BadRequestException("Demanda não encontrada.");
+    }
+
+    if(demand.status !== DemandStatusEnum.ESPERANDO_VALIDACAO){
+      throw new BadRequestException("Essa demanda não está pronta para ser concluída.");
+    }
+
+    if(demand.beneficiary.id !== user.id){
+      throw new BadRequestException("Você não tem permissão para concluir essa demanda.");
+    }
+
+    demand.status = DemandStatusEnum.CONCLUIDO;
+    demand.conclusionDate = new Date();
+    return await demand.save({reload: true});
+  
+  }
+
+
 }
