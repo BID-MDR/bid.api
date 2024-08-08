@@ -20,6 +20,7 @@ import { MessageEntity } from "./message.entity";
 import { HelpEntity } from "./help.entity";
 import { CompanyEntity } from "./company.entity";
 import { EmployeeEntity } from "./employee.entity";
+import { SatisfactionResearchEntity } from "./satisfaction-research.entity";
 
 @Entity({ name: "user" })
 export class UserEntity extends BaseEntity {
@@ -199,4 +200,7 @@ export class UserEntity extends BaseEntity {
 
   @OneToOne(() => EmployeeEntity, employee => employee.user, { nullable: true })
   employee: EmployeeEntity;
+
+  @OneToMany(() => SatisfactionResearchEntity, (satisfaction) => satisfaction.user)
+  satisfaction: SatisfactionResearchEntity[];
 }

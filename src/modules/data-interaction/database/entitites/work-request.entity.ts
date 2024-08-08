@@ -8,6 +8,7 @@ import { DemandEntity } from "./demand.entity";
 import { RoomEntity } from "./room.entity";
 import { WorkRequestWelfareEntity } from "./work-request-welfare.entity";
 import { TechnicalVisitStatusEnum } from "../enums/technical-visit-status.enum";
+import { SatisfactionResearchEntity } from "./satisfaction-research.entity";
 
 @Entity({ name: "work_request" })
 export class WorkRequestEntity extends BaseEntity {
@@ -80,4 +81,10 @@ export class WorkRequestEntity extends BaseEntity {
         default: TechnicalVisitStatusEnum.PENDENTE,
     })
     status: TechnicalVisitStatusEnum;
+
+    @OneToOne(() => SatisfactionResearchEntity, (satisfaction) => satisfaction.workRequest, {
+        cascade: true,
+        eager: true,
+      })
+      satisfaction: SatisfactionResearchEntity;
 }
