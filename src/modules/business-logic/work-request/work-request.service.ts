@@ -37,7 +37,7 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
     const result = await super.create(data);
 
     demand.workRequest = result;
-    demand.status = DemandStatusEnum.ESPERANDO_MELHORIA;
+    demand.status = DemandStatusEnum.CADASTRADO_VISTORIA;
 
     await demand.save();
 
@@ -46,6 +46,16 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
 
   async update(workRequestId: string, data: UpdateWorkRequestDto) {
     return await super.update(workRequestId, data);
+  }
+
+  async updateStatus(workRequestId: string, status: TechnicalVisitStatusEnum) {
+    const workRequest = await this.getById(workRequestId);
+
+    if (!workRequest) throw new BadRequestException("Vistoria não encontrada.");
+
+    workRequest.status = status;
+
+    return await workRequest.save();
   }
 
   async delete(workRequestId: string) {

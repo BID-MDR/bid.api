@@ -106,7 +106,7 @@ export class FeatureRoomController {
         allowEmptyValue: false,
     })
     async getRoom(@Param('id') id: string) {
-        return await this.featureRoomService.getRoom(id);
+        return await this.featureRoomService.getRoomByRoomSolutionId(id);
     }
 
     @Post('')
