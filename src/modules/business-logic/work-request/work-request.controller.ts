@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Logger, Param, Post, Put, SerializeOptions, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Logger, Param, Post, Put, Req, SerializeOptions, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { Roles } from "../../../core/decorators/roles.decorator";
 import { ApiOkResponseDtoData } from "../../../core/decorators/swagger/api-ok-response-dto.decorator";
@@ -9,6 +9,8 @@ import { ResponseWorkRequestDto } from "../../data-interaction/database/dtos/wor
 import { UpdateWorkRequestDto } from "../../data-interaction/database/dtos/work-request/update-work-request.dto";
 import { EmployeeRoleEnum } from "../../data-interaction/database/enums/employee-role.enum";
 import { WorkRequestService } from "./work-request.service";
+import { Request } from "express";
+import { JwtPayloadInterface } from "src/core/interfaces/jwt-payload.interface";
 
 @Controller("work-request")
 @ApiTags("Work Request/Vistoria")
@@ -68,8 +70,9 @@ export class WorkRequestController {
     required: true,
     description: "Construção a ser criado.",
   })
-  async create(@Body() dto: CreateWorkRequestDto) {
-    return await this.service.register(dto);
+  async create(@Body() dto: CreateWorkRequestDto, @Req() req: Request) {
+    const companyId = (req.user as JwtPayloadInterface).companyId;
+    return await this.service.register(dto, companyId);
   }
 
   @Put("id/:id")
@@ -107,7 +110,8 @@ export class WorkRequestController {
   @SerializeOptions({
     type: ResponseWorkRequestDto,
   })
-  async carryOut(@Param("id") id: string) {
-    return await this.service.carryOut(id);
+  async carryOut(@Param("id") id: string, @Req() req: Request) {
+    const companyId = (req.user as JwtPayloadInterface).companyId;
+    return await this.service.carryOut(id, companyId);
   }
 }

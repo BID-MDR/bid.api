@@ -28,30 +28,34 @@ export class DemandRepository extends BaseRepository<
     return this.repository.find({ where: { status }, loadEagerRelations: true });
   }
 
-    async updateStatus(id: string,dto: StatusDemandDto){
-        return this.repository.createQueryBuilder().update('demands').set({status: dto.status}).where("id = :id", {id}).execute()
-    }
+  async updateStatus(id: string, dto: StatusDemandDto) {
+    return await this.repository.update(id, { status: dto.status });
+  }
 
-    async listByUserWaitImprove(userId: string): Promise<DemandEntity[]> {
-        const query = this.repository
-            .createQueryBuilder("demand")
-            .innerJoinAndSelect("demand.beneficiary", "beneficiary")
-            .innerJoinAndSelect("demand.company", "company")
-            .leftJoinAndSelect("demand.workRequest", "workRequest")
-            .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
-            .leftJoinAndSelect("workRequest.room", "room")
-            .leftJoinAndSelect("workRequest.welfare", "welfare")
-            .where("demand.status = 'ESPERANDO_MELHORIA'")
-            // .andWhere("professional.id = :userId", { userId });
-            .orWhere("demand.status = 'EM_ANALISE'")
+  async listByUserWaitImprove(companyId: string): Promise<DemandEntity[]> {
+    const query = this.repository
+      .createQueryBuilder("demand")
+      .innerJoinAndSelect("demand.beneficiary", "beneficiary")
+      .innerJoinAndSelect("demand.company", "company")
+      .leftJoinAndSelect("demand.workRequest", "workRequest")
+      .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
+      .leftJoinAndSelect("workRequest.room", "room")
+      .leftJoinAndSelect("workRequest.welfare", "welfare")
+      .where("company.id = :companyId", { companyId })
+      .andWhere("demand.status IN (:...status)", {
+        status: [
+          DemandStatusEnum.ESPERANDO_MELHORIA,
+          DemandStatusEnum.EM_ANALISE,
+        ],
+      });
 
     return await query.getMany();
   }
 
-  async listForVisit(userId: string): Promise<DemandEntity[]> {
+  async listForVisit(companyId: string = ""): Promise<DemandEntity[]> {
     const query = this.getDefaultQuery()
       .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
-      // .where("professional.id = :userId", { userId })
+      .where("company.id = :companyId", { companyId })
       .andWhere("demand.status IN (:...statuses)", {
         statuses: [
           DemandStatusEnum.RASCUNHO,
@@ -64,11 +68,16 @@ export class DemandRepository extends BaseRepository<
     return await query.getMany();
   }
 
-  async listForConstructions(userId: string): Promise<DemandEntity[]> {
+  async listForConstructions(companyId: string = ""): Promise<DemandEntity[]> {
     const query = this.getDefaultQuery()
-      // .where("professional.id = :userId", { userId })
+      .where("company.id = :companyId", { companyId })
       .andWhere("demand.status IN (:...status)", {
-        status: [DemandStatusEnum.ESPERANDO_OBRA, DemandStatusEnum.CONCLUIR_OBRAS, DemandStatusEnum.CONCLUIDO],
+        status: [
+          DemandStatusEnum.ESPERANDO_OBRA,
+          DemandStatusEnum.ESPERANDO_VALIDACAO,
+          DemandStatusEnum.CONCLUIR_OBRAS,
+          DemandStatusEnum.CONCLUIDO,
+        ],
       });
 
     return await query.getMany();
@@ -82,17 +91,16 @@ export class DemandRepository extends BaseRepository<
     return await query.getMany();
   }
 
-  async listByUser(userId: string): Promise<DemandEntity[]> {
+  async listByUser(userId: string, companyId: string = ""): Promise<DemandEntity[]> {
     const query = this.getDefaultQuery()
       .where("beneficiary.id = :userId", { userId })
-      // .orWhere("professional.id = :userId", { userId });
+      .orWhere("company.id = :companyId", { companyId });
 
     return await query.getMany();
   }
 
   async getByWorkRequestId(workRequestId: string): Promise<DemandEntity> {
-    const query = this.getDefaultQuery()
-    .where("workRequest.id = :workRequestId", { workRequestId });
+    const query = this.getDefaultQuery().where("workRequest.id = :workRequestId", { workRequestId });
 
     return await query.getOne();
   }

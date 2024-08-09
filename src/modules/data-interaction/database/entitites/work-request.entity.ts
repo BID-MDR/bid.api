@@ -8,76 +8,82 @@ import { DemandEntity } from "./demand.entity";
 import { RoomEntity } from "./room.entity";
 import { WorkRequestWelfareEntity } from "./work-request-welfare.entity";
 import { TechnicalVisitStatusEnum } from "../enums/technical-visit-status.enum";
+import { SatisfactionResearchEntity } from "./satisfaction-research.entity";
 
 @Entity({ name: "work_request" })
 export class WorkRequestEntity extends BaseEntity {
-    @OneToOne(() => DemandEntity, (demand) => demand.workRequest)
-    demand: DemandEntity;
+  @OneToOne(() => DemandEntity, demand => demand.workRequest)
+  demand: DemandEntity;
 
-    @Column({
-        type: "varchar",
-        length: 50,
-        default: "",
-    })
-    description: string;
+  @Column({
+    type: "varchar",
+    length: 50,
+    default: "",
+  })
+  description: string;
 
-    @Column({
-        type: "tinyint",
-    })
-    resident: number;
+  @Column({
+    type: "tinyint",
+  })
+  resident: number;
 
-    @Column({
-        type: "varchar",
-        length: 50,
-        default: "",
-    })
-    responsiblePersonName: string;
+  @Column({
+    type: "varchar",
+    length: 50,
+    default: "",
+  })
+  responsiblePersonName: string;
 
-    @Column({
-        enum: KinshipEnum,
-        type: "enum",
-        default: KinshipEnum.Me,
-    })
-    kinship: KinshipEnum;
+  @Column({
+    enum: KinshipEnum,
+    type: "enum",
+    default: KinshipEnum.Me,
+  })
+  kinship: KinshipEnum;
 
-    @Column({
-        enum: PropertyTypeEnum,
-        type: "enum",
-        default: PropertyTypeEnum.CASA,
-    })
-    propertyType: PropertyTypeEnum;
+  @Column({
+    enum: PropertyTypeEnum,
+    type: "enum",
+    default: PropertyTypeEnum.CASA,
+  })
+  propertyType: PropertyTypeEnum;
 
-    @Column({
-        enum: FlooringEnum,
-        type: "enum",
-        default: FlooringEnum.TERRIO,
-    })
-    flooring: FlooringEnum;
+  @Column({
+    enum: FlooringEnum,
+    type: "enum",
+    default: FlooringEnum.TERRIO,
+  })
+  flooring: FlooringEnum;
 
-    @Column({
-        enum: PrevalingConstructionMaterialsEnum,
-        type: "enum",
-        default: PrevalingConstructionMaterialsEnum.TIJOLO,
-    })
-    prevailingConstructionMaterials: PrevalingConstructionMaterialsEnum;
+  @Column({
+    enum: PrevalingConstructionMaterialsEnum,
+    type: "enum",
+    default: PrevalingConstructionMaterialsEnum.TIJOLO,
+  })
+  prevailingConstructionMaterials: PrevalingConstructionMaterialsEnum;
 
-    @OneToMany(() => RoomEntity, (room) => room.workRequest, {
-        cascade: true,
-        eager: true,
-    })
-    room: RoomEntity[];
+  @OneToMany(() => RoomEntity, room => room.workRequest, {
+    cascade: true,
+    eager: true,
+  })
+  room: RoomEntity[];
 
-    @OneToMany(
-        () => WorkRequestWelfareEntity,
-        (workRequestWelfare) => workRequestWelfare.workRequest,
-        { cascade: true, eager: true },
-    )
-    welfare: WorkRequestWelfareEntity[];
+  @OneToMany(() => WorkRequestWelfareEntity, workRequestWelfare => workRequestWelfare.workRequest, {
+    cascade: true,
+    eager: true,
+  })
+  welfare: WorkRequestWelfareEntity[];
 
-    @Column({
-        type: 'enum',
-        enum: TechnicalVisitStatusEnum,
-        default: TechnicalVisitStatusEnum.PENDENTE,
-    })
-    status: TechnicalVisitStatusEnum;
+  @Column({
+    type: "enum",
+    enum: TechnicalVisitStatusEnum,
+    default: TechnicalVisitStatusEnum.PENDENTE,
+  })
+  status: TechnicalVisitStatusEnum;
+
+  @OneToOne(() => SatisfactionResearchEntity, satisfaction => satisfaction.workRequest, {
+    cascade: true,
+    eager: true,
+  })
+  satisfaction: SatisfactionResearchEntity;
 }

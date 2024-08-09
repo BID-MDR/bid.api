@@ -17,6 +17,9 @@ import { RoomResponseDto } from 'src/modules/data-interaction/database/dtos/room
 import { FeatureRoomService } from './feature-room.service';
 import { CreateRoomSolutionDto } from 'src/modules/data-interaction/database/dtos/room-solution/create-room-solution.dto';
 import { RequestRoomSolutionDto } from 'src/modules/data-interaction/database/dtos/room-solution/request.dto';
+import { Roles } from '../../../core/decorators/roles.decorator';
+import { RolesGuard } from '../../../core/guards/roles.guard';
+import { EmployeeRoleEnum } from '../../data-interaction/database/enums/employee-role.enum';
 
 @Controller('room')
 @ApiTags('Quarto')
@@ -103,11 +106,13 @@ export class FeatureRoomController {
         allowEmptyValue: false,
     })
     async getRoom(@Param('id') id: string) {
-        return await this.featureRoomService.getRoom(id);
+        return await this.featureRoomService.getRoomByRoomSolutionId(id);
     }
 
     @Post('')
     @UseInterceptors(new EncryptInterceptor())
+    @UseGuards(JwtAccessTokenGuard, RolesGuard)
+    @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_quality, EmployeeRoleEnum.manager_inspection])
     @ApiOperation({
         description: 'Cria um Quarto.',
         summary: 'Cria um Quarto.',
@@ -129,6 +134,8 @@ export class FeatureRoomController {
     }
 
     @Post('room-solution')
+    @UseGuards(JwtAccessTokenGuard, RolesGuard)
+    @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_quality])
     @UseInterceptors(new EncryptInterceptor())
     @ApiOperation({
         description: 'Cria um Quarto.',
@@ -151,6 +158,8 @@ export class FeatureRoomController {
     }
 
     @Post('room-solution/wait-intervention')
+    @UseGuards(JwtAccessTokenGuard, RolesGuard)
+    @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_quality])
     @UseInterceptors(new EncryptInterceptor())
     async waitIntervention(@Body() body: RequestRoomSolutionDto){
 

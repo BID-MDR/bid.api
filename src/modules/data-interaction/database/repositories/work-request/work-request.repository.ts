@@ -18,11 +18,4 @@ export class WorkRequestRepository extends BaseRepository<
   ) {
     super(repository);
   }
-
-  async getByRoomId(roomId: string) {
-    return this.repository.createQueryBuilder('room')
-      .leftJoinAndSelect('room.roomSolutions', 'roomSolution')
-      .where('roomSolution.id = :solutionId', { roomId })
-      .getOne();
-  }
 }

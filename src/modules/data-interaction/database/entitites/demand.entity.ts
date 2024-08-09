@@ -1,5 +1,5 @@
 import { BaseEntity } from "src/core/entities/base.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne } from "typeorm";
 import { UserEntity } from "./user.entity";
 import { WorkRequestEntity } from "./work-request.entity";
 import { TechnicalVisitEntity } from "./technical-visit.entity";
@@ -76,6 +76,11 @@ export class DemandEntity extends BaseEntity {
     default: DemandStatusEnum.RASCUNHO,
   })
   status: DemandStatusEnum;
+
+  @CreateDateColumn({
+    nullable: true,
+  })
+  conclusionDate: Date;
 
   @ManyToOne(() => UserEntity, user => user.demands, {
     eager: true,

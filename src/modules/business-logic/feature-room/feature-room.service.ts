@@ -18,12 +18,12 @@ export class FeatureRoomService extends BaseService<
     UpdateRoomDto
 > {
     constructor(
-        private RoomRepository: RoomRepository,
+        private roomRepository: RoomRepository,
         private roomSolutionRepository: RoomSolutionRepository,
         private workRequestRepository: WorkRequestRepository
 
     ) {
-        super(RoomRepository);
+        super(roomRepository);
     }
 
     // async listByUserId(userId: string) {
@@ -33,7 +33,7 @@ export class FeatureRoomService extends BaseService<
     
     async findById(id: string) {
         // Implement logic to find cost estimation by ID
-        return await this.RoomRepository.findById(id);
+        return await this.roomRepository.findById(id);
     }
 
     async create(room: CreateRoomDto): Promise<RoomEntity> {
@@ -49,7 +49,7 @@ export class FeatureRoomService extends BaseService<
 
 
     async createRoomSolution(data: CreateRoomSolutionDto): Promise<RoomSolutionEntity> {
-        const room = await this.RoomRepository.findById(data.roomId);
+        const room = await this.roomRepository.findById(data.roomId);
         if(room){
             data.room = room;
             return await this.roomSolutionRepository.create(data);
@@ -68,12 +68,12 @@ export class FeatureRoomService extends BaseService<
     }
 
     async selectAllByWorkRequest(id:string){
-        return await this.RoomRepository.findByWorkRequest(id);
+        return await this.roomRepository.findByWorkRequest(id);
     }
 
     async selectInterventions(id:string){
 
-        return await this.RoomRepository.findRoomAndSolutions(id);
+        return await this.roomRepository.findRoomAndSolutions(id);
     }
 
 
@@ -85,7 +85,7 @@ export class FeatureRoomService extends BaseService<
 
         if(body.roomId){
            
-            const RoomEntity =  await this.RoomRepository.findById(body.roomId)
+            const RoomEntity =  await this.roomRepository.findById(body.roomId)
 
             body.solution.forEach( async(element) => {
                 let room =  new CreateRoomSolutionDto({ room: RoomEntity, solution: element});
@@ -95,7 +95,7 @@ export class FeatureRoomService extends BaseService<
         }
 
         if(body.room){
-            var result = await super.create({...body.room, workRequest: body.workRequest});
+            const result = await super.create({...body.room, workRequest: body.workRequest});
             if(result.id){
                 body.solution.forEach( async(element) => {
                     let room =  new CreateRoomSolutionDto({ room: result, solution: element});
@@ -106,7 +106,7 @@ export class FeatureRoomService extends BaseService<
         }
     }
 
-   async getRoom(roomId: string) {
-       return await this.workRequestRepository.getByRoomId(roomId)
+   async getRoomByRoomSolutionId(roomSolutionId: string) {
+       return await this.roomRepository.getRoomByRoomSolutionId(roomSolutionId)
     }
 }

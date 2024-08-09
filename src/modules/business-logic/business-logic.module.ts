@@ -12,6 +12,7 @@ import { HelpModule } from './help/help.module';
 import { CompanyModule } from './feature-company/company.module';
 import { EmployeeModule } from './feature-employee/employee.module';
 import { EmployeeRoleModule } from './feature-employee-role/employee-role.module';
+import { SatisfactionResearchModule } from './satisfaction-research/satisfaction-research.module';
 @Module({
     imports: [
         FeatureUserModule,
@@ -26,7 +27,8 @@ import { EmployeeRoleModule } from './feature-employee-role/employee-role.module
         HelpModule,
         CompanyModule,
         EmployeeModule,
-        EmployeeRoleModule
+        EmployeeRoleModule,
+        SatisfactionResearchModule
     ],
 })
 export class BusinessLogicModule {}

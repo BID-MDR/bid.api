@@ -50,6 +50,8 @@ import { EmployeeRepository } from './repositories/employee/employee.repository'
 import { EmployeeRoleRepository } from './repositories/employee/employee-role.repository';
 import { UserBackofficeRepository } from './repositories/backoffice/user/user.repository';
 import { UserBackofficeEntity } from './entitites/user-backoffice.entity';
+import { SatisfactionResearchEntity } from './entitites/satisfaction-research.entity';
+import { SatisfactionResearchRepository } from './repositories/satisfaction-research/satisfaction-research.repository';
 
 const ENTITIES = [
     UserEntity,
@@ -77,7 +79,8 @@ const ENTITIES = [
     CompanyEntity,
     EmployeeEntity,
     EmployeeRoleEntity,
-    UserBackofficeEntity
+    UserBackofficeEntity,
+    SatisfactionResearchEntity
 ];
 const REPOSITORIES = [
     UserRepository,
@@ -102,7 +105,8 @@ const REPOSITORIES = [
     CompanyRepository,
     EmployeeRepository,
     EmployeeRoleRepository,
-    UserBackofficeRepository
+    UserBackofficeRepository,
+    SatisfactionResearchRepository
 ];
 
 @Module({

@@ -1,14 +1,13 @@
 import {
     CallHandler,
     ExecutionContext,
-    NestInterceptor,
-    StreamableFile,
+    NestInterceptor
 } from "@nestjs/common";
 import { Injectable } from "@nestjs/common/decorators";
+import { Reflector } from "@nestjs/core";
+import { plainToClass } from "class-transformer";
 import { Observable, map } from "rxjs";
 import { ResponseDto } from "../dtos/response.dto";
-import { Reflector } from "@nestjs/core";
-import { plainToInstance } from "class-transformer";
 
 type Response<T> = {
     success: boolean;
@@ -56,7 +55,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
         const serializationIgnore = reflectorLocal?.ignoreDecorators || false;
 
         if (serializationClassType && !serializationIgnore) {
-            return plainToInstance(serializationClassType, data, {
+            return plainToClass(serializationClassType, data, {
                 excludeExtraneousValues: true,
             }) as T;
         }
