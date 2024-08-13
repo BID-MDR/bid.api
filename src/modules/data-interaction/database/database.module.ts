@@ -48,8 +48,12 @@ import { EmployeeRoleEntity } from './entitites/employee-role.entity';
 import { CompanyRepository } from './repositories/company/company.repository';
 import { EmployeeRepository } from './repositories/employee/employee.repository';
 import { EmployeeRoleRepository } from './repositories/employee/employee-role.repository';
+import { UserBackofficeRepository } from './repositories/backoffice/user/user.repository';
+import { UserBackofficeEntity } from './entitites/user-backoffice.entity';
 import { SatisfactionResearchEntity } from './entitites/satisfaction-research.entity';
 import { SatisfactionResearchRepository } from './repositories/satisfaction-research/satisfaction-research.repository';
+import { UserRolesBackofficeEntity } from './entitites/user-roles-backoffice.entity';
+import { UserRolesBackofficeRepository } from './repositories/backoffice/user/user-roles.repository';
 
 const ENTITIES = [
     UserEntity,
@@ -77,7 +81,9 @@ const ENTITIES = [
     CompanyEntity,
     EmployeeEntity,
     EmployeeRoleEntity,
-    SatisfactionResearchEntity
+    UserBackofficeEntity,
+    SatisfactionResearchEntity,
+    UserRolesBackofficeEntity
 ];
 const REPOSITORIES = [
     UserRepository,
@@ -102,7 +108,9 @@ const REPOSITORIES = [
     CompanyRepository,
     EmployeeRepository,
     EmployeeRoleRepository,
-    SatisfactionResearchRepository
+    UserBackofficeRepository,
+    SatisfactionResearchRepository,
+    UserRolesBackofficeRepository
 ];
 
 @Module({
