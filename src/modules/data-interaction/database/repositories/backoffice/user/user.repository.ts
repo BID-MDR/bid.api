@@ -9,4 +9,14 @@ export class UserBackofficeRepository extends BaseRepository<UserBackofficeEntit
   constructor(@InjectRepository(UserBackofficeEntity) private repository: Repository<UserBackofficeEntity>) {
     super(repository);
   }
+
+  async getById(_id: string) {
+    return await this.repository.findOne({
+      where: { id: _id },
+      relations: {
+        roles: true
+      },
+    });
+  }
+
 }
