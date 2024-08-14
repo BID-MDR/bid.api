@@ -6,10 +6,10 @@ import { UserBackofficeEntity } from "./user-backoffice.entity";
 @Entity({ name: "user_roles_backoffice" })
 export class UserRolesBackofficeEntity extends BaseEntity {
   @Column({
-    type: "varchar",
-    length: 50,
+    type: "enum",
+    enum: FunctionTypeEnum,
   })
-  role: string;
+  role: FunctionTypeEnum;
 
   @Column({
     type: "varchar",

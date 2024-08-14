@@ -11,12 +11,21 @@ export class UserBackofficeRepository extends BaseRepository<UserBackofficeEntit
   }
 
   async getById(_id: string) {
-    return await this.repository.findOne({
-      where: { id: _id },
-      relations: {
-        roles: true
-      },
-    });
+    return await this.repository.findOne({ where: { id: _id }, relations: { roles: true }});
   }
+
+  async getForGuard(_id: string) {
+    return this.repository.findOne({ where: { id: _id }, relations: { roles: true }});
+  }
+
+
+  async getByEmail(email:string){
+    return await this.repository.findOne({ where: {email}, relations: {roles: true}});
+  }
+
+  async updateLastAccess(userId: string, date: Date) {
+    return await this.repository.update({ id: userId }, {lastAccess: date});
+  }
+
 
 }
