@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEnum, IsEmail } from "class-validator";
+import { IsEnum, IsEmail, IsOptional } from "class-validator";
 import { UserBackofficeTypeEnum } from "./userTypeEnum";
 import { FunctionTypeEnum } from "./functionTypeEnum";
 import { UserRolesBackofficeEntity } from "src/modules/data-interaction/database/entitites/user-roles-backoffice.entity";
@@ -23,6 +23,14 @@ export class CreateUserBackofficeDto {
 
     @ApiProperty()
     password: string;
+
+    @ApiProperty({default: new Date()})
+    lastAccess: Date;
+
+    @ApiProperty()
+    @IsOptional()
+    timeView?: number;
+          
 
     @ApiProperty()
     rolesId: string[];

@@ -29,6 +29,18 @@ export class UserBackofficeEntity extends BaseEntity {
   length: 100,
   })
   password: string;
+
+  @Column({
+    type: "datetime",
+    nullable: true,
+  })
+  lastAccess: Date;
+
+  @Column({
+    type: "int",
+    nullable: true,
+  })
+  timeView: number;
       
       
   @ManyToMany(() => UserRolesBackofficeEntity, roles => roles.user, { eager: true })

@@ -1,16 +1,15 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { BaseService } from "src/core/services/base.service";
-import { UserBackofficeEntity } from "src/modules/data-interaction/database/entitites/user-backoffice.entity";
 import { UserBackofficeRepository } from "src/modules/data-interaction/database/repositories/backoffice/user/user.repository";
 import { EmailFacade } from "src/modules/data-interaction/facade/apis/email/email.facade";
 import { CaubFacade } from "src/modules/data-interaction/facade/apis/gov/caubr/caub.facade";
 import { ConfeaFacade } from "src/modules/data-interaction/facade/apis/gov/confea/confea.facade";
 import { StorageFacade } from "src/modules/data-interaction/facade/apis/storage/storage.facade";
-import { CreateUserBackofficeDto } from "../user/dto/create-user-backoffice.dto";
 import { UserRolesBackofficeEntity } from "src/modules/data-interaction/database/entitites/user-roles-backoffice.entity";
 import { UserRolesBackofficeRepository } from "src/modules/data-interaction/database/repositories/backoffice/user/user-roles.repository";
 import { CreateUserBackofficeRoleDto } from "./dto/create-role-backoffice.dto";
+import { FunctionTypeEnum } from "../user/dto/functionTypeEnum";
 
 @Injectable()
 export class UserRoleService extends BaseService<UserRolesBackofficeEntity, CreateUserBackofficeRoleDto, any> {
@@ -40,7 +39,7 @@ export class UserRoleService extends BaseService<UserRolesBackofficeEntity, Crea
         return await this.userRolesBackofficeRepository.update(roleId, { active: 1 });
     }
 
-    async findByName(name:string): Promise<UserRolesBackofficeEntity>{
+    async findByName(name:FunctionTypeEnum): Promise<UserRolesBackofficeEntity>{
         return await this.userRolesBackofficeRepository.findByName(name)
     }
     

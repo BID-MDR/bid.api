@@ -29,6 +29,8 @@ export class UserService extends BaseService<UserBackofficeEntity, CreateUserBac
     async create(data: CreateUserBackofficeDto): Promise<any> {
         data.password = await this.hashStringData(data.password);
 
+        data.roles = [];
+
         data.rolesId.forEach(async element => {
             let role = await this.userRoleBackofficeRepository.findById(element);
             if(role)
