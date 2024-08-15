@@ -7,8 +7,9 @@ import { UserBackofficeRepository } from "src/modules/data-interaction/database/
 import { AuthenticateRequestDto } from "./dto/authenticate-request.dto";
 import { AuthenticateResponseDto } from "./dto/authenticate-response.dto";
 import { EnviromentVariablesEnum } from "src/core/enums/environment-variables.enum";
-import { JwtPayload } from "src/core/interfaces/jwt-payload-backoffice.interface";
+import { JwtPayloadBackoffice } from "src/core/interfaces/jwt-payload-backoffice.interface";
 import { UserBackofficeTypeEnum } from "../user/dto/userTypeEnum";
+import { UserRolesBackofficeEntity } from "src/modules/data-interaction/database/entitites/user-roles-backoffice.entity";
 
 @Injectable()
 export class AuthenticateService {
@@ -36,7 +37,7 @@ export class AuthenticateService {
 
     if (!user) throw new NotFoundException('Invalid email and password!');
 
-    const token = this._createToken(user.id.toString(), user.email);
+    const token = this._createToken(user.id.toString(), user.email, user.roles);
 
     const verify = await this._userRepository.getById(user.id.toString());
 
@@ -65,8 +66,8 @@ export class AuthenticateService {
     return new AuthenticateResponseDto(user.email, token.accessToken, dateLastLogin);
   }
 
-  private _createToken(userId: string, email: string) {
-    const user: JwtPayload = { userId, email };
+  private _createToken(userId: string, email: string, roles: UserRolesBackofficeEntity[]) {
+    const user: JwtPayloadBackoffice = { userId, email, roles};
     const expiresIn = this._configService.get(
       EnviromentVariablesEnum.JWT_ACCESS_TOKEN_EXPIRATION,
     );

@@ -6,7 +6,7 @@ import { AuthenticateService } from "./authenticate.service";
 
 
 @ApiTags('Authenticate Backoffice')
-@Controller('authenticate')
+@Controller('authenticate-backoffice')
 export class AuthenticateController {
 
   private readonly _logger = new Logger(AuthenticateController.name);
@@ -18,7 +18,7 @@ export class AuthenticateController {
   @Post('/authenticate')
   @HttpCode(200)
   async authenticate(
-    @Body() dto: any,
+    @Body() dto: AuthenticateRequestDto,
   ) {
 
     try {
