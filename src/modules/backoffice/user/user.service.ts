@@ -31,15 +31,16 @@ export class UserService extends BaseService<UserBackofficeEntity, CreateUserBac
 
         data.roles = [];
 
-        data.rolesId.forEach(async element => {
-            let role = await this.userRoleBackofficeRepository.findById(element);
-            if(role)
+        for(let i =0; i< data.rolesId.length ; i++){
+            let role = await this.userRoleBackofficeRepository.findById(data.rolesId[i]);
+            if(role){
+                console.log(role);
                 data.roles.push(role);
+            }
             else
                 throw new BadRequestException("Role não encontrada.");
+        }
 
-        });
-        
         return await super.create(data);
     }
 

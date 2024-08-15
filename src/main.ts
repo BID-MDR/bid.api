@@ -27,7 +27,7 @@ async function bootstrap() {
     app.useGlobalPipes(
         new ParseToClassPipe(),
         new ValidationPipe({
-            forbidUnknownValues: true,
+            forbidUnknownValues: false,
             skipMissingProperties: false,
             skipUndefinedProperties: false,
             skipNullProperties: false,
@@ -36,6 +36,7 @@ async function bootstrap() {
     );
 
     app.useGlobalInterceptors(new ResponseInterceptor(app.get(Reflector)));
+    
 
     if (configService.get(EnviromentVariablesEnum.ENABLE_CORS) === "true") {
         const corsOptions: CorsOptions = {

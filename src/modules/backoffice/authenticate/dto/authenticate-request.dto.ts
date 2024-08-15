@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export abstract class AuthenticateRequestDto {
+export class AuthenticateRequestDto {
     
     @ApiProperty({ type: String })
     email?: string;
