@@ -2,6 +2,8 @@ import { BaseEntity } from "src/core/entities/base.entity";
 import { Column, Entity, JoinTable, ManyToMany, OneToMany } from "typeorm";
 import { UserBackofficeTypeEnum } from "src/modules/backoffice/user/dto/userTypeEnum";
 import { UserRolesBackofficeEntity } from "./user-roles-backoffice.entity";
+import { UserOtpStatusEnum } from "../enums/user-otp.enum";
+import { UserStatusEnum } from "src/modules/backoffice/user/dto/userStatusEnum";
 
 @Entity({ name: "user_backoffice" })
 export class UserBackofficeEntity extends BaseEntity {
@@ -27,6 +29,7 @@ export class UserBackofficeEntity extends BaseEntity {
   @Column({
   type: "varchar",
   length: 100,
+  nullable: true
   })
   password: string;
 
@@ -42,8 +45,15 @@ export class UserBackofficeEntity extends BaseEntity {
   })
   timeView: number;
       
+
+  @Column({
+    type: "enum",
+    enum: UserStatusEnum,
+    default: UserStatusEnum.ACTIVE,
+  })
+  status: UserStatusEnum;
       
-  @ManyToMany(() => UserRolesBackofficeEntity, roles => roles.user, { eager: true })
+  @ManyToMany(() => UserRolesBackofficeEntity, roles => roles.user, { eager: true})
   @JoinTable()
   roles: UserRolesBackofficeEntity[];
 }

@@ -21,7 +21,7 @@ export class UserRoleBackofficeController {
     @Post("register")
     @ApiBearerAuth()
     // @UseGuards(JwtAccessTokenGuard)
-    async register(@Body() dto: any) {
+    async register(@Body() dto: CreateUserBackofficeRoleDto) {
       let role = await this.UserRoleService.findByName(dto.role);
       if(role)
         throw new BadRequestException("Role ja existe");
