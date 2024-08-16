@@ -10,6 +10,7 @@ import { ConfeaFacade } from "src/modules/data-interaction/facade/apis/gov/confe
 import { StorageFacade } from "src/modules/data-interaction/facade/apis/storage/storage.facade";
 import { CreateUserBackofficeDto } from "./dto/create-user-backoffice.dto";
 import { UserRolesBackofficeRepository } from "src/modules/data-interaction/database/repositories/backoffice/user/user-roles.repository";
+import { JwtPayloadBackoffice } from "src/core/interfaces/jwt-payload-backoffice.interface";
 
 @Injectable()
 export class UserService extends BaseService<UserBackofficeEntity, CreateUserBackofficeDto, any> {
@@ -27,14 +28,15 @@ export class UserService extends BaseService<UserBackofficeEntity, CreateUserBac
     }
 
     async create(data: CreateUserBackofficeDto): Promise<any> {
-        data.password = await this.hashStringData(data.password);
+        if(data.password){
+            data.password = await this.hashStringData(data.password);
+        }
 
         data.roles = [];
 
         for(let i =0; i< data.rolesId.length ; i++){
             let role = await this.userRoleBackofficeRepository.findById(data.rolesId[i]);
             if(role){
-                console.log(role);
                 data.roles.push(role);
             }
             else
@@ -47,5 +49,30 @@ export class UserService extends BaseService<UserBackofficeEntity, CreateUserBac
 
     private async hashStringData(stringData: string): Promise<string> {
         return bcrypt.hash(stringData, 13);
+    }
+
+    async getByPayload(payload: JwtPayloadBackoffice) {
+        return await this.userBackofficeRepository.findById(payload.userId);
+    }
+
+    async update(id: string, data: any): Promise<any> {
+
+        const user = await this.userBackofficeRepository.getById(id);
+
+        user.roles = []
+
+        await user.save();
+
+
+        for(let i =0; i< data.rolesId.length ; i++){
+            let role = await this.userRoleBackofficeRepository.findById(data.rolesId[i]);
+            if(role){
+                user.roles.push(role);
+            }
+            else
+                throw new BadRequestException("Role não encontrada.");
+        }
+        
+        return await user.save();
     }
 }
