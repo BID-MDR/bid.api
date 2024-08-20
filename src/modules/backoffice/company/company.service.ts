@@ -23,7 +23,7 @@ export class CompanyBackofficeService extends BaseService<CompanyEntity, any, an
     return await this.companyRepository.create(dto)
   }
   async list(): Promise<CompanyEntity[]>{
-    return await this.companyRepository.findAll()
+    return await this.companyRepository.find()
   }
 
   async getByOwner(id:string):Promise<CompanyEntity[]>{
