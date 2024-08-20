@@ -27,5 +27,12 @@ export class UserBackofficeRepository extends BaseRepository<UserBackofficeEntit
     return await this.repository.update({ id: userId }, {lastAccess: date});
   }
 
+  async registerPassword(userId, password){
+    const user = await this.repository.findOne({where: {id: userId}});
+    user.password = password.password;
+
+    return await user.save()
+  }
+
 
 }

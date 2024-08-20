@@ -11,6 +11,9 @@ import { StorageFacade } from "src/modules/data-interaction/facade/apis/storage/
 import { CreateUserBackofficeDto } from "./dto/create-user-backoffice.dto";
 import { UserRolesBackofficeRepository } from "src/modules/data-interaction/database/repositories/backoffice/user/user-roles.repository";
 import { JwtPayloadBackoffice } from "src/core/interfaces/jwt-payload-backoffice.interface";
+import { EnviromentVariablesEnum } from "src/core/enums/environment-variables.enum";
+import { EmailRepository } from "src/modules/data-interaction/database/repositories/backoffice/email/email.repository";
+import { UserRegisterPasswordDto } from "./dto/user-register-password.dto";
 
 @Injectable()
 export class UserService extends BaseService<UserBackofficeEntity, CreateUserBackofficeDto, any> {
@@ -21,6 +24,7 @@ export class UserService extends BaseService<UserBackofficeEntity, CreateUserBac
         private readonly caubFacade: CaubFacade,
         private readonly confeaFacade: ConfeaFacade,
         private readonly emailFacade: EmailFacade,
+        private readonly emailRepository: EmailRepository,
         private readonly storageFacade: StorageFacade,
         private readonly configService: ConfigService,
     ) {
@@ -43,7 +47,29 @@ export class UserService extends BaseService<UserBackofficeEntity, CreateUserBac
                 throw new BadRequestException("Role não encontrada.");
         }
 
-        return await super.create(data);
+        const user =  await super.create(data);
+
+        const linkPaiel = await this.configService.get(EnviromentVariablesEnum.PAINEL_LINK);
+        const linkUrl = `${linkPaiel}/auth/first-access/${user.id.toString()}`
+        const message = `Seja bem vindo a plataforma, para realizar o cadastro de sua senha clique <a href="${linkUrl}" target="_blank">aqui</a>`
+        await this.emailRepository.send(user.email, 'BID', message, message);
+        return user;
+
+    }
+
+    async firstAccess(userId: string, data: UserRegisterPasswordDto ): Promise<any> {
+        const user = await this.userBackofficeRepository.getById(userId);
+        if(!user) {
+          throw new BadRequestException('User not found!');
+        }
+    
+        if(user.password) {
+          throw new BadRequestException('User already password!');
+        }
+    
+        data.password = await this.hashStringData(data.password);
+    
+        return await this.userBackofficeRepository.registerPassword(userId, data);
     }
 
 
