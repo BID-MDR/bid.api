@@ -29,4 +29,5 @@ export enum EnviromentVariablesEnum {
     OTP_TOKEN = 'OTP_TOKEN',
     GOVBR_CLIENT_ID = 'GOVBR_CLIENT_ID',
     GOVBR_CLIENT_SECRET = 'GOVBR_CLIENT_SECRET',
+    PAINEL_LINK= 'PAINEL_LINK'
 }
