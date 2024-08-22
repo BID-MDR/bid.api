@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { BaseService } from 'src/core/services/base.service';
 import { CreateWorkRequestDto } from 'src/modules/data-interaction/database/dtos/work-request/create-work-request.dto';
 import { UpdateWorkRequestDto } from 'src/modules/data-interaction/database/dtos/work-request/update-work-request.dto';
@@ -12,6 +12,10 @@ import { WorkRequestRoomTypeQuantityRepository } from 'src/modules/data-interact
 import { WorkRequestRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request.repository';
 import { StorageFacade } from './../../data-interaction/facade/apis/storage/storage.facade';
 import { WorkRequestWelfareProgramRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request-welfare-program.repository';
+import { UserRepository } from 'src/modules/data-interaction/database/repositories/user/user.repository';
+import { UserProgramTypeEnum } from '../../data-interaction/database/enums/user-program-type.enum';
+import { AwsSubsystem } from '../../data-interaction/facade/apis/storage/aws.subsystem';
+import { UserTypeEnum } from '../../data-interaction/database/enums/user-type.enum';
 
 @Injectable()
 export class FeatureWorkRequestService extends BaseService<
@@ -29,6 +33,8 @@ export class FeatureWorkRequestService extends BaseService<
         private readonly workRequestRoomTypeQuantityRepository: WorkRequestRoomTypeQuantityRepository,
         private readonly workRequestWelfareProgramRepository: WorkRequestWelfareProgramRepository,
         private readonly storageFacade: StorageFacade,
+        private readonly AwsSubsystem: AwsSubsystem,
+        private readonly userRepository: UserRepository,
     ) {
         super(workRequestRepository);
     }
@@ -37,11 +43,51 @@ export class FeatureWorkRequestService extends BaseService<
         return await this.workRequestRepository.findByUserId(userId);
     }
 
-    async create(data: CreateWorkRequestDto) {
+    async getByBeneficiaryId(beneficiaryId: string) {
+        return await this.workRequestRepository.findByBeneficiaryId(beneficiaryId);
+    }
+
+    async findAllNotAtribute() {
+        return await this.workRequestRepository.findAll();
+    }
+
+    async register(userId: string, data: CreateWorkRequestDto) {
+        data.beneficiary = await this.userRepository.getById(userId);
         for (const iterator of data.picturesAndVideos) {
             const link = await this.storageFacade.uploadMedia(iterator.mimeType, Date.now().toString(), iterator.url);
             iterator.url = link;
         }
+        return await super.create(data);
+    }
+
+    async registerRequestRegmel(userId: string, data: CreateWorkRequestDto) {
+        if (!data.document) {
+            throw new BadRequestException('Documento do beneficiário é obrigatório');
+        }
+
+        const professional = await this.userRepository.getById(userId);
+        if (
+            professional.programType !== UserProgramTypeEnum.REGMEL ||
+            professional.type !== UserTypeEnum.PROFISSIONAL
+        ) {
+            throw new BadRequestException('Usuário não é do tipo REGMEL');
+        }
+
+        for (const iterator of data.picturesAndVideos) {
+            const link = await this.AwsSubsystem.uploadMedia(iterator.mimeType, Date.now().toString(), iterator.url);
+            iterator.url = link;
+        }
+
+        const beneficiary = await this.userRepository.getByCpf(data.document);
+
+        if (beneficiary) {
+            data.beneficiary = beneficiary;
+        }
+
+        data.professional = professional;
+
+        data.programType = UserProgramTypeEnum.REGMEL;
+
         return await super.create(data);
     }
 
@@ -144,4 +190,13 @@ export class FeatureWorkRequestService extends BaseService<
         delete data.prevalingConstructionMaterials;
         return await super.update(workRequest.id, data);
     }
+
+    async updateStatus(work_id: string, professional_id: string) {
+        return await this.workRequestRepository.updateStatus(work_id, professional_id);
+    }
+
+    async getByProfessionalId(userId:string){
+        return this.workRequestRepository.getByProfessionalId(userId);
+    }
+    
 }

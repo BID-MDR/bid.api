@@ -31,15 +31,25 @@ export class FeatureAuthService {
             codeVerifier: pkce.code_verifier,
             codeChallenge: pkce.code_challenge,
         });
+ 
     }
 
     async getSsoId(id: string) {
         const ssoAttempt = await this.govbrSsoRepository.findById(id);
 
+        var token = '';
+
         if (!ssoAttempt) {
             throw new NotFoundException('Tentativa de SSO não encontrada.');
         }
-        const token = CryptoUtil.decrypt(this.configService.get(EnviromentVariablesEnum.OTP_TOKEN), ssoAttempt.token);
+
+        if(ssoAttempt.infoToRegister){
+
+             token = ssoAttempt.token
+        }else{
+
+             token = CryptoUtil.decrypt(this.configService.get(EnviromentVariablesEnum.OTP_TOKEN), ssoAttempt.token);
+        }
 
         const returnData = new SigninResponseDto(token, ssoAttempt.registered, ssoAttempt.infoToRegister);
 
@@ -50,38 +60,41 @@ export class FeatureAuthService {
 
     async govbrAuthorize(dto: SigninRequestDto) {
         const ssoAttempt = await this.govbrSsoRepository.findById(dto.state);
-
+        
         if (!ssoAttempt) {
             throw new BadRequestException('State invalidado pelo backend.');
         }
-
+            
         const govbrData = await this.govbrFacade.login(dto.code, ssoAttempt.codeVerifier);
-
+        
         const jwk = await this.govbrFacade.getJwk();
-
+        
         // await this.jwtService.verifyAsync(govbrData.access_token, {
-        //     publicKey: jwkToPem(jwk),
-        //     algorithms: ['RS256'],
-        // });
-        // await this.jwtService.verifyAsync(govbrData.id_token, {
-        //     publicKey: jwkToPem(jwk),
-        //     algorithms: ['RS256'],
-        // });
-
+            //     publicKey: jwkToPem(jwk),
+            //     algorithms: ['RS256'],
+            // });
+            // await this.jwtService.verifyAsync(govbrData.id_token, {
+                //     publicKey: jwkToPem(jwk),
+                //     algorithms: ['RS256'],
+                // });
+                    
         const decodedJwt = this.jwtService.decode(govbrData.id_token);
-        const user = await this.userRepository.findByCpf(decodedJwt.sub);
 
+        const user = await this.userRepository.findByCpf(decodedJwt.sub);
+        
         if (!user) {
+            ssoAttempt.token = govbrData.id_token
             ssoAttempt.infoToRegister = new GovbrSsoInfoToRegisterEntity(
                 decodedJwt.name,
                 decodedJwt.sub,
                 decodedJwt.email,
                 decodedJwt.phone_number,
-            );
-            await ssoAttempt.save();
-            return ssoAttempt.id;
-        }
+                );
 
+                await ssoAttempt.save();
+                return ssoAttempt.id;
+        }
+        
         const token = await this.jwtService.signAsync({
             userId: user.id,
             userType: user.type,

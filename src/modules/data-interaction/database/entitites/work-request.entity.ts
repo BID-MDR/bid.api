@@ -1,5 +1,5 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { PropertyTypeEnum } from '../enums/property-type.enum';
 import { CostEstimationEntity } from './cost-estimation.entity';
 import { TechnicalVisitEntity } from './technical-visit.entity';
@@ -11,6 +11,9 @@ import { WorkRequestRoomToWorkEntity } from './work-request-room-to-work.entity'
 import { WorkRequestRoomTypeQuantityEntity } from './work-request-room-type-quantity.entity';
 import { WorkRequestWelfareProgramEntity } from './work-request-welfare-program.entity';
 import { AddressEntity } from './address.entity';
+import { WorkRequestTypeEnum } from '../enums/work-request-type.enum';
+import { UserProfessionalInfoEntity } from './user-professional-info.entity';
+import { UserProgramTypeEnum } from '../enums/user-program-type.enum';
 
 @Entity({ name: 'work-request' })
 export class WorkRequestEntity extends BaseEntity {
@@ -25,6 +28,20 @@ export class WorkRequestEntity extends BaseEntity {
         unsigned: true,
     })
     numberOfResidents: number;
+
+    @Column({
+        type: 'varchar',
+        length: 100,
+        nullable: true,
+    })
+    document: string;
+
+    @Column({
+        type: 'enum',
+        enum: UserProgramTypeEnum,
+        nullable: true,
+    })
+    programType: UserProgramTypeEnum;
 
     @Column({
         type: 'varchar',
@@ -91,6 +108,12 @@ export class WorkRequestEntity extends BaseEntity {
     })
     aditionalInformation: string;
 
+    @Column({
+        type: 'enum',
+        enum: WorkRequestTypeEnum,
+    })
+    status: WorkRequestTypeEnum;
+
     @OneToMany(() => UserGeneratedMediaEntity, (userGeneratedMediaEntity) => userGeneratedMediaEntity.workRequest, {
         cascade: true,
         eager: true,
@@ -107,9 +130,14 @@ export class WorkRequestEntity extends BaseEntity {
     })
     costEstimations: CostEstimationEntity[];
 
-    @OneToOne(() => UserEntity, (user) => user.workRequest, {
+    @ManyToOne(() => UserEntity, (user) => user.workRequest, {
         eager: true,
     })
-    @JoinColumn()
     beneficiary: UserEntity;
+
+    @ManyToOne(() => UserEntity, (user) => user.id, {
+        eager: true,
+    })
+    @JoinColumn({ name: 'professionalId' })
+    professional: UserEntity;
 }

@@ -15,6 +15,9 @@ import { UserOtpRequestEntity } from './user-otp-request.entity';
 import { UserBirthGenderEnum } from '../enums/user-birth-gender.enum';
 import { UserGenderIdentityEnum } from '../enums/user-gender-identity.enum';
 import { UserMonthlyFamilyIncomeEnum } from '../enums/user-monthly-family-income.enum';
+import { NotificationEntity } from './notification.entity';
+import { UserProgramTypeEnum } from '../enums/user-program-type.enum';
+import { DemandEntity } from './demand.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -30,6 +33,13 @@ export class UserEntity extends BaseEntity {
         length: 50,
     })
     name: string;
+
+    @Column({
+        type: 'enum',
+        enum: UserProgramTypeEnum,
+        nullable: true,
+    })
+    programType: UserProgramTypeEnum;
 
     @Column({
         type: 'varchar',
@@ -169,14 +179,22 @@ export class UserEntity extends BaseEntity {
     })
     costEstimationsAsProfessional: CostEstimationEntity[];
 
-    @OneToOne(() => WorkRequestEntity, (workRequest) => workRequest.beneficiary)
-    workRequest: WorkRequestEntity;
+    @OneToMany(() => WorkRequestEntity, (workRequest) => workRequest.beneficiary)
+    workRequest: WorkRequestEntity[];
 
     @OneToOne(() => UserOtpRequestEntity, (otpRequest) => otpRequest.user, {
         eager: true,
         cascade: true,
         nullable: true,
     })
+
+    @OneToMany(() => NotificationEntity, (notificationEntity) => notificationEntity.user, {
+        eager: true,
+    })
+    notificationUser: NotificationEntity[];
     @JoinColumn()
     otpRequest: UserOtpRequestEntity;
+
+    @OneToMany(() => DemandEntity, demand => demand.beneficiary)
+    demands: DemandEntity[];
 }

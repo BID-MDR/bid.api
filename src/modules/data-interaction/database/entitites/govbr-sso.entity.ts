@@ -18,7 +18,7 @@ export class GovbrSsoEntity extends BaseEntity {
 
     @Column({
         type: 'varchar',
-        length: 500,
+        length: 2000,
         nullable: true,
     })
     token: string;

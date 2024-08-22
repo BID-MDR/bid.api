@@ -6,6 +6,7 @@ import { CreateUserDto } from '../../dtos/user/create-user.dto';
 import { UpdateUserDto } from '../../dtos/user/update-user.dto';
 import { UserEntity } from '../../entitites/user.entity';
 import { UserTypeEnum } from '../../enums/user-type.enum';
+import { UserProgramTypeEnum } from '../../enums/user-program-type.enum';
 
 @Injectable()
 export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -17,8 +18,20 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
         return this.repository.findOne({ where: { cpf } });
     }
 
+    async getById(_id: string) {
+        return this.repository.findOne({ where: { id: _id } });
+    }
+
+    async updateUserProgramType(_id: string, programType:UserProgramTypeEnum ) {
+        return this.repository.update(_id, { programType });
+    }
+
     async list() {
         return this.repository.find();
+    }
+
+    async getByCpf(cpf: string) {
+        return this.repository.findOne({ where: { cpf } });
     }
 
     async getFirstBeneficiary() {
@@ -31,7 +44,7 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
             },
         });
     }
-    
+
     async getFirstProfessional() {
         return this.repository.findOne({
             order: {
@@ -47,20 +60,22 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
             .createQueryBuilder('user')
             .innerJoinAndSelect('user.beneficiaryUserInfo', 'user-beneficiary-info')
             .leftJoinAndSelect('user.technicalVisitsAsBeneficiary', 'technical-visit')
+            .where('user.id = :userId', { userId })
             .getOne();
     }
     async getDashboardDataWithJoinProfessional(userId: string) {
         return await this.repository
             .createQueryBuilder('user')
-            .innerJoinAndSelect('user.UserProfessionalInfoEntity', 'user-professional-info')
+            .innerJoinAndSelect('user.userProfessionalInfo', 'user-professional-info')
             .leftJoinAndSelect('user.technicalVisitsAsProfessional', 'technical-visit')
+            .where('user.id = :userId', { userId })
             .getOne();
     }
     async profileBalanceGetBeneficiary(userId: string) {
         return await this.repository.query(`
         SELECT *
-        FROM work_request
-        INNER JOIN user ON work_request.beneficiaryId = user.id
+        FROM work-request
+        INNER JOIN user ON work-request.beneficiaryId = user.id
         INNER JOIN user ON user-beneficiary-info.id = user.id
         WHERE beneficiaryId = '${userId}'
         `);
@@ -68,8 +83,8 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
     async profileBalanceGetProfessional(userId: string) {
         return await this.repository.query(`
         SELECT *
-        FROM work_request
-        INNER JOIN user ON work_request.beneficiaryId = user.id
+        FROM work-request
+        INNER JOIN user ON work-request.beneficiaryId = user.id
         INNER JOIN user ON user-professional-info.id = user.id
         WHERE beneficiaryId = '${userId}'
         `);

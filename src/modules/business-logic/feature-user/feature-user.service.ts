@@ -27,6 +27,7 @@ import { StorageFacade } from 'src/modules/data-interaction/facade/apis/storage/
 import { WorkRequestWelfareProgramRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request-welfare-program.repository';
 import { WorkRequestRoomTypeQuantityRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request-room-type-quantity.repository';
 import { WorkRequestRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request.repository';
+import { UpdateUserProgramTypeDto } from 'src/modules/data-interaction/database/dtos/user/update-user-program-type.dto';
 
 @Injectable()
 export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -72,7 +73,6 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
     async updateById(id: string, data: any) {
 
         const user = await this.userRepository.findById(id)
-        // console.log(`vim aqui`)a
         if ( data.IUser.paramToBeUpdated === 'personal_info') {
             const { address, ...rest } = data.IUser
             return await this.userRepository.update(id, rest)
@@ -88,7 +88,11 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
            data.IUser.workRequest.address = user.address
             //await this.userRepository.update(user.id, data.IUser)
         }
-        
+
+    }
+
+    async updateUserProgramTypeDto(id: string, dto: UpdateUserProgramTypeDto) {
+            return await this.userRepository.updateUserProgramType(id, dto.programType)
     }
 
     async update(id: string, data: UpdateUserDto): Promise<UserEntity> {
@@ -179,7 +183,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         return await super.update(id, data);
     }
 
-  
+
 
     async updatePasswordRequest(userId: string) {
         totp.options = {

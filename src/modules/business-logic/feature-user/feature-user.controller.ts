@@ -2,6 +2,9 @@ import {
     Body,
     Controller,
     Get,
+    HttpException,
+    HttpStatus,
+    Logger,
     Param,
     Post,
     Put,
@@ -28,10 +31,16 @@ import { TokenVerifyReponseDto } from './dtos/token-verify-reponse.dto';
 import { FeatureUserService } from './feature-user.service';
 import { FeatureAuthService } from '../feature-auth/feature-auth.service';
 import { SigninResponseDto } from '../feature-auth/dtos/signin-response.dto';
+import { UpdateUserProgramTypeDto } from 'src/modules/data-interaction/database/dtos/user/update-user-program-type.dto';
+import { ResponseDto } from 'src/core/dtos/response.dto';
 
 @Controller('user')
 @ApiTags('User/Usuário')
 export class FeatureUserController {
+
+    private readonly _logger = new Logger(FeatureUserController.name);
+
+
     constructor(private featureUserService: FeatureUserService, private featureAuthService: FeatureAuthService) {}
 
     @Get('')
@@ -49,13 +58,23 @@ export class FeatureUserController {
         type: UserResponseDto,
     })
     async getLogged(@Req() req: Request) {
-        const userId = (req.user as JwtPayloadInterface).userId;
-        return await this.featureUserService.findById(userId);
+        try {
+            const userId = (req.user as JwtPayloadInterface).userId;
+            const result = await this.featureUserService.findById(userId);
+            return new ResponseDto(true, result, null);
+        } catch (error) {
+            this._logger.error(error.message);
+
+            throw new HttpException(
+                new ResponseDto(false, null, [error.message]),
+                HttpStatus.BAD_REQUEST,
+            );
+        }
     }
 
     @Get('id/:id')
-    @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard)
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAccessTokenGuard)
     @ApiOperation({
         description: 'Retorna o usuário e sua agenda, caso exista.',
         summary: 'Retorna o usuário pelo ID.',
@@ -64,7 +83,7 @@ export class FeatureUserController {
         name: 'id',
         description: 'ID do usuário.',
         required: true,
-        allowEmptyValue: false,
+        allowEmptyValue: false
     })
     @ApiOkResponseDtoData({
         type: UserResponseDto,
@@ -74,7 +93,8 @@ export class FeatureUserController {
         type: UserResponseDto,
     })
     async getById(@Param('id') userId: string) {
-        return await this.featureUserService.findById(userId);
+        const us =  await this.featureUserService.findById(userId);
+        return new ResponseDto(true, us, false)
     }
 
     @Post('')
@@ -164,7 +184,30 @@ export class FeatureUserController {
 
         return await this.featureUserService.confirmUpdatePasswordRequest(userId, dto);
     }
-@Get('dashboard/beneficiary/id/:id')
+    @Get('dashboard/professional/id/:id')
+    @ApiOperation({
+        description: 'Retorna os dados necessarios do usuario para o perfil profisional dashboard',
+        summary: 'Retorna dados do usuario profisional e joins.',
+    })
+    @ApiParam({
+        name: 'id',
+        description: 'ID do usuário.',
+        required: true,
+        allowEmptyValue: false,
+    })
+    @ApiOkResponseDtoData({
+        type: UserResponseDto,
+        description: 'Usuário logado que iniciou a requisição.',
+    })
+    @SerializeOptions({
+        type: UserResponseDto,
+    })
+    async getDashboardDataWithJoinProfessional(@Param('id') userId: string) {
+        // Example of performing a join to fetch additional data from other tables
+        const userData = await this.featureUserService.getDashboardDataWithJoinProfessional(userId);
+        return userData;
+    }
+    @Get('dashboard/beneficiary/id/:id')
     @ApiOperation({
         description: 'Retorna os dados necessarios do usuario para o perfil beneficiario dashboard',
         summary: 'Retorna dados do usuario beneficiario e joins.',
@@ -187,7 +230,6 @@ export class FeatureUserController {
         const userData = await this.featureUserService.getDashboardDataWithJoinBeneficiary(userId);
         return userData;
     }
-
     @Put()
     @UseGuards(JwtAccessTokenGuard)
     @ApiBearerAuth()
@@ -221,6 +263,15 @@ export class FeatureUserController {
     async updateById(@Param('id') id: string, @Body() body: any) {
 
         return await this.featureUserService.updateById(id, body);
+    }
+
+    @Put('update-user-program-type/:id')
+    // @UseGuards(JwtAccessTokenGuard)
+    // @ApiBearerAuth()
+    // @UseInterceptors(new EncryptInterceptor())
+    async updateUserProgramType(@Param('id') id: string, @Body() body: UpdateUserProgramTypeDto) {
+
+        return await this.featureUserService.updateUserProgramTypeDto(id, body);
     }
 
     @Get('caubr/check-professional-status/cpf/:cpf')

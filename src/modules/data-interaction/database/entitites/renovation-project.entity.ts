@@ -1,6 +1,6 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
-import { ConstructionCertificateTypeEnum } from '../enums/construction-certificate-type.enum';
+import { DocumentTypeEnum } from '../enums/document-type.enum';
 import { ContractEntity } from './contract.entity';
 import { ConstructionProfessionalEntity } from './construction-professional.entity';
 
@@ -14,9 +14,9 @@ export class RenovationProjectEntity extends BaseEntity {
 
     @Column({
         type: 'enum',
-        enum: ConstructionCertificateTypeEnum,
+        enum: DocumentTypeEnum,
     })
-    documentType: ConstructionCertificateTypeEnum;
+    documentType: DocumentTypeEnum;
 
     @Column({
         type: 'varchar',
@@ -46,6 +46,11 @@ export class RenovationProjectEntity extends BaseEntity {
     })
     renovationWorkWorkSchedule: string;
 
+    @Column({
+        type: 'varchar',
+        length: 200,
+    })
+    contractId: string;
     @OneToMany(
         () => ConstructionProfessionalEntity,
         (constructionProfessional) => constructionProfessional.renovationProject,
