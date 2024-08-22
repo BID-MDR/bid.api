@@ -1,54 +1,65 @@
-import { CallHandler, ExecutionContext, HttpException, NestInterceptor, StreamableFile } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { plainToInstance } from 'class-transformer';
-import { Observable, map } from 'rxjs';
-import { ApiResponseDto } from '../dtos/api-respose.dto';
+import {
+    CallHandler,
+    ExecutionContext,
+    NestInterceptor
+} from "@nestjs/common";
+import { Injectable } from "@nestjs/common/decorators";
+import { Reflector } from "@nestjs/core";
+import { plainToClass } from "class-transformer";
+import { Observable, map } from "rxjs";
+import { ResponseDto } from "../dtos/response.dto";
 
-export class ApiReponseInterceptor implements NestInterceptor {
+type Response<T> = {
+    success: boolean;
+    data: T;
+    errors: any;
+};
+
+@Injectable()
+export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
     constructor(private reflector: Reflector) {}
 
-    intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
-        return next.handle().pipe(
-            map((data) => {
-                if (data instanceof Error || data instanceof HttpException) {
-                    return data;
-                }
-
-                const serializationClassType = this.reflector.getAllAndOverride('class_serializer:options', [
-                    context.getClass(),
-                    context.getHandler(),
-                ])?.type;
-                const response = new ApiResponseDto(true, data, null);
-
-                if (serializationClassType) {
-                    let dataProp = data;
-
-                    if (typeof response !== 'object' || response instanceof StreamableFile) {
-                        return response;
+    intercept(
+        context: ExecutionContext,
+        next: CallHandler,
+    ): Observable<Response<T>> {
+        if (context.getType() === "http") {
+            return next.handle().pipe(
+                map((data) => {
+                    if (data instanceof ResponseDto) {
+                        return data;
                     }
-                    if (data.pagination) {
-                        response.totalDocumentCount = data.pagination.totalDocumentCount;
-                        response.skip = data.pagination.skip;
-                        response.limit = data.pagination.limit;
+                    return new ResponseDto<T>(
+                        true,
+                        this.serialize(data, context),
+                        null,
+                    );
+                }),
+            );
+        }
+        return next.handle();
+    }
 
-                        if (!data.data) {
-                            throw new Error('Pagination data prop not found');
-                        }
-                        dataProp = data.data;
-                    }
-
-                    if (Array.isArray(dataProp)) {
-                        response.data = [];
-                        dataProp.forEach((el) => {
-                            response.data.push(plainToInstance(serializationClassType, el));
-                        });
-                    } else {
-                        response.data = plainToInstance(serializationClassType, dataProp);
-                    }
-                    return response;
-                }
-                return response;
-            }),
+    serialize(data: T, context: ExecutionContext) {
+        // @SerializeOptions({
+        //   type: UserResponseDto,
+        //   ignoreDecorators: true,
+        // })
+        const reflectorLocal = this.reflector.getAllAndOverride(
+            "class_serializer:options",
+            [context.getClass(), context.getHandler()],
         );
+
+        const serializationClassType = reflectorLocal?.type;
+
+        const serializationIgnore = reflectorLocal?.ignoreDecorators || false;
+
+        if (serializationClassType && !serializationIgnore) {
+            return plainToClass(serializationClassType, data, {
+                excludeExtraneousValues: true,
+            }) as T;
+        }
+
+        return data;
     }
 }

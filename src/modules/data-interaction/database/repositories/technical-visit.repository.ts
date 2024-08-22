@@ -15,4 +15,11 @@ export class TechnicalVisitRepository extends BaseRepository<
     constructor(@InjectRepository(TechnicalVisitEntity) private repository: Repository<TechnicalVisitEntity>) {
         super(repository);
     }
+
+    async getByProfessional(professionalId: string) {
+        return this.repository.find({
+            where: { professional: { id: professionalId } },
+            relations: ['professional', 'beneficiary', 'workRequest'],
+        });
+    }
 }

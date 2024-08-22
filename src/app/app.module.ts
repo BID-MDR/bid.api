@@ -15,6 +15,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ServeStaticModule, ServeStaticModuleOptions } from '@nestjs/serve-static';
 import * as dotenv from 'dotenv';
 import { join } from 'path';
+import { WebsoketModule } from 'src/modules/data-interaction/websoket/websoket.module';
+import { BackofficeModule } from 'src/modules/backoffice/backoffice.module';
 
 dotenv.config();
 
@@ -58,6 +60,8 @@ dotenv.config();
             inject: [ConfigService],
         }),
         BusinessLogicModule,
+        BackofficeModule,
+        WebsoketModule,
         DataInteractionModule,
         CoreModule,
         FacadeModule,

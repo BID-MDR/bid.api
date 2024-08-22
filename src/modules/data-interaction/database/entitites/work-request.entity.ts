@@ -1,115 +1,89 @@
-import { BaseEntity } from 'src/core/entities/base.entity';
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
-import { PropertyTypeEnum } from '../enums/property-type.enum';
-import { CostEstimationEntity } from './cost-estimation.entity';
-import { TechnicalVisitEntity } from './technical-visit.entity';
-import { UserGeneratedMediaEntity } from './user-generated-media.entity';
-import { UserEntity } from './user.entity';
-import { WorkRequestPrecarityEntity } from './work-request-precarity.entity';
-import { WorkRequestPrevailingConstructionMaterialEntity } from './work-request-prevailing-construction-materials.entity';
-import { WorkRequestRoomToWorkEntity } from './work-request-room-to-work.entity';
-import { WorkRequestRoomTypeQuantityEntity } from './work-request-room-type-quantity.entity';
-import { WorkRequestWelfareProgramEntity } from './work-request-welfare-program.entity';
-import { AddressEntity } from './address.entity';
+import { Column, Entity, OneToMany, OneToOne } from "typeorm";
+import { BaseEntity } from "../../../../core/entities/base.entity";
+import { FlooringEnum } from "../enums/flooring.enum";
+import { KinshipEnum } from "../enums/kinship.enum";
+import { PrevalingConstructionMaterialsEnum } from "../enums/prevailing-construction-materials.enum";
+import { PropertyTypeEnum } from "../enums/property-type.enum";
+import { DemandEntity } from "./demand.entity";
+import { RoomEntity } from "./room.entity";
+import { WorkRequestWelfareEntity } from "./work-request-welfare.entity";
+import { TechnicalVisitStatusEnum } from "../enums/technical-visit-status.enum";
+import { SatisfactionResearchEntity } from "./satisfaction-research.entity";
 
-@Entity({ name: 'work-request' })
+@Entity({ name: "work_request" })
 export class WorkRequestEntity extends BaseEntity {
-    @Column({
-        type: 'varchar',
-        length: 100,
-    })
-    description: string;
+  @OneToOne(() => DemandEntity, demand => demand.workRequest)
+  demand: DemandEntity;
 
-    @Column({
-        type: 'tinyint',
-        unsigned: true,
-    })
-    numberOfResidents: number;
+  @Column({
+    type: "varchar",
+    length: 50,
+    default: "",
+  })
+  description: string;
 
-    @Column({
-        type: 'varchar',
-        length: 70,
-    })
-    responsiblePersonName: string;
+  @Column({
+    type: "tinyint",
+  })
+  resident: number;
 
-    @OneToOne(() => AddressEntity, (address) => address.workRequest, {
-        cascade: true,
-        eager: true,
-    })
-    @JoinColumn()
-    address: AddressEntity;
+  @Column({
+    type: "varchar",
+    length: 50,
+    default: "",
+  })
+  responsiblePersonName: string;
 
-    @OneToMany(() => WorkRequestWelfareProgramEntity, (welfareProgram) => welfareProgram.workRequest, {
-        cascade: true,
-        eager: true,
-    })
-    welfarePrograms: WorkRequestWelfareProgramEntity[];
+  @Column({
+    enum: KinshipEnum,
+    type: "enum",
+    default: KinshipEnum.Me,
+  })
+  kinship: KinshipEnum;
 
-    @Column({
-        type: 'enum',
-        enum: PropertyTypeEnum,
-    })
-    propertyType: PropertyTypeEnum;
+  @Column({
+    enum: PropertyTypeEnum,
+    type: "enum",
+    default: PropertyTypeEnum.CASA,
+  })
+  propertyType: PropertyTypeEnum;
 
-    @Column({
-        type: 'tinyint',
-        unsigned: true,
-    })
-    floorCount: number;
+  @Column({
+    enum: FlooringEnum,
+    type: "enum",
+    default: FlooringEnum.TERRIO,
+  })
+  flooring: FlooringEnum;
 
-    @OneToMany(
-        () => WorkRequestPrevailingConstructionMaterialEntity,
-        (prevailingConstructionMaterial) => prevailingConstructionMaterial.workRequest,
-        {
-            cascade: true,
-            eager: true,
-        },
-    )
-    prevalingConstructionMaterials: WorkRequestPrevailingConstructionMaterialEntity[];
+  @Column({
+    enum: PrevalingConstructionMaterialsEnum,
+    type: "enum",
+    default: PrevalingConstructionMaterialsEnum.TIJOLO,
+  })
+  prevailingConstructionMaterials: PrevalingConstructionMaterialsEnum;
 
-    @OneToMany(() => WorkRequestRoomTypeQuantityEntity, (roomTypeQuantity) => roomTypeQuantity.workRequest, {
-        cascade: true,
-        eager: true,
-    })
-    roomsAvailableAndQuantity: WorkRequestRoomTypeQuantityEntity[];
+  @OneToMany(() => RoomEntity, room => room.workRequest, {
+    cascade: true,
+    eager: true,
+  })
+  room: RoomEntity[];
 
-    @OneToMany(() => WorkRequestRoomToWorkEntity, (roomToWork) => roomToWork.workRequest, {
-        cascade: true,
-        eager: true,
-    })
-    roomsToBeWorked: WorkRequestRoomToWorkEntity[];
+  @OneToMany(() => WorkRequestWelfareEntity, workRequestWelfare => workRequestWelfare.workRequest, {
+    cascade: true,
+    eager: true,
+  })
+  welfare: WorkRequestWelfareEntity[];
 
-    @OneToMany(() => WorkRequestPrecarityEntity, (precarity) => precarity.workRequest, {
-        cascade: true,
-        eager: true,
-    })
-    precaritysToBeSolved: WorkRequestPrecarityEntity[];
+  @Column({
+    type: "enum",
+    enum: TechnicalVisitStatusEnum,
+    default: TechnicalVisitStatusEnum.PENDENTE,
+  })
+  status: TechnicalVisitStatusEnum;
 
-    @Column({
-        type: 'varchar',
-        length: 100,
-    })
-    aditionalInformation: string;
-
-    @OneToMany(() => UserGeneratedMediaEntity, (userGeneratedMediaEntity) => userGeneratedMediaEntity.workRequest, {
-        cascade: true,
-        eager: true,
-    })
-    picturesAndVideos: UserGeneratedMediaEntity[];
-
-    @OneToMany(() => TechnicalVisitEntity, (technicalVisit) => technicalVisit.workRequest, {
-        eager: true,
-    })
-    technicalVisits: TechnicalVisitEntity[];
-
-    @OneToMany(() => CostEstimationEntity, (costEstimation) => costEstimation.workRequest, {
-        eager: true,
-    })
-    costEstimations: CostEstimationEntity[];
-
-    @OneToOne(() => UserEntity, (user) => user.workRequest, {
-        eager: true,
-    })
-    @JoinColumn()
-    beneficiary: UserEntity;
+  @OneToOne(() => SatisfactionResearchEntity, satisfaction => satisfaction.workRequest, {
+    cascade: true,
+    eager: true,
+  })
+  satisfaction: SatisfactionResearchEntity;
 }

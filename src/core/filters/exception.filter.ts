@@ -34,6 +34,12 @@ export class ServerExceptionFilter implements ExceptionFilter {
                 status = (exception as HttpException).getStatus();
                 message = (exception as HttpException).getResponse()['message'];
                 code = (exception as HttpException).message;
+            })
+            .ofType(Error)
+            .do(() => {
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+                message = 'Internal server error';
+                code = 'InternalServerError';
             });
 
         response

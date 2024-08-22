@@ -7,6 +7,6 @@ export abstract class BaseEntity extends TypeOrmBaseEntity {
     @CreateDateColumn()
     createdAt?: Date;
 
-    @UpdateDateColumn()
-    updatedAt?: Date;
+    // @UpdateDateColumn()
+    // updatedAt?: Date;
 }

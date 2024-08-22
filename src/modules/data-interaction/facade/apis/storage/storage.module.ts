@@ -4,6 +4,6 @@ import { StorageFacade } from './storage.facade';
 
 @Module({
     providers: [AwsSubsystem, StorageFacade],
-    exports: [StorageFacade],
+    exports: [AwsSubsystem, StorageFacade],
 })
 export class StorageModule {}

@@ -1,10 +1,10 @@
-import { UserAppointmentRepository } from 'src/modules/data-interaction/database/repositories/user/user-appointment.repository';
 import { Injectable } from '@nestjs/common';
 import { BaseService } from 'src/core/services/base.service';
 import { CreateTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/create-technical-visit.dto';
 import { UpdateTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/update-technical-visit.dto';
 import { TechnicalVisitEntity } from 'src/modules/data-interaction/database/entitites/technical-visit.entity';
 import { TechnicalVisitRepository } from 'src/modules/data-interaction/database/repositories/technical-visit.repository';
+import { UserRepository } from 'src/modules/data-interaction/database/repositories/user/user.repository';
 
 @Injectable()
 export class FeatureTechnicalVisitService extends BaseService<
@@ -14,13 +14,24 @@ export class FeatureTechnicalVisitService extends BaseService<
 > {
     constructor(
         private technicalVisitRepository: TechnicalVisitRepository,
-        private readonly userAppointmentRepository: UserAppointmentRepository,
+        private readonly userRepository: UserRepository,
     ) {
         super(technicalVisitRepository);
     }
 
-    async listByUserId(userId: string) {
-        return await this.userAppointmentRepository.listByUserId(userId);
+    async getByProfessional(professionalId: string) {
+        return await this.technicalVisitRepository.getByProfessional(professionalId);
+    }
+
+    async schedule(dto: CreateTechnicalVisitDto) {
+        const beneficiary = await this.userRepository.getById(dto.beneficiaryId);
+        dto.beneficiary = beneficiary;
+        const professional = await this.userRepository.getById(dto.professionalId);
+        dto.professional= professional;
+        // const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
+        // dto.workRequest = workRequest;
+
+        return await this.technicalVisitRepository.create(dto)
     }
 
     // async findByUserId(userId: string) {

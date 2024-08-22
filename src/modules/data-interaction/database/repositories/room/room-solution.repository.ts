@@ -10,14 +10,23 @@ export class RoomSolutionRepository extends BaseRepository<RoomSolutionEntity, C
     constructor(@InjectRepository(RoomSolutionEntity) private repository: Repository<RoomSolutionEntity>) {
         super(repository);
     }
+
+
+    async findAllRoomWithoutSolution(){
+       return await this.repository.query(`SELECT r.* FROM room r LEFT JOIN room_solution rs ON r.id = rs.roomId WHERE rs.roomId IS NULL;`);
+    }
+
+    async findAllRoomWithSolution(id: string){
+        return await this.repository.query(`SELECT r.* FROM room r INNER JOIN room_solution rs ON r.id = rs.roomId WHERE r.workRequestId = '${id}';`)
+    }
+
     async updateRoomSolutions(roomSolutionUpdates: { id: string, data: CreateRoomSolutionDto }[]): Promise<void> {
         for (const update of roomSolutionUpdates) {
             const { id, data } = update;
             const roomSolution = await this.repository.findOne({ where: { id } });
 
             if (roomSolution) {
-                // Update the existing room solution with the provided data
-                roomSolution.cost = data.cost;
+
                 roomSolution.solution = data.solution;
                 // Update other fields as needed
 
@@ -26,12 +35,5 @@ export class RoomSolutionRepository extends BaseRepository<RoomSolutionEntity, C
                 throw new Error(`Room solution with ID ${id} not found.`);
             }
         }
-    }
-    async deleteByRoomAndCostEstimation(roomId: string, costEstimationId: string): Promise<void> {
-        await this.repository.createQueryBuilder('room-solution')
-            .delete()
-            .where("roomId = :roomId", { roomId })
-            .andWhere("costEstimationId = :costEstimationId", { costEstimationId })
-            .execute();
     }
 }

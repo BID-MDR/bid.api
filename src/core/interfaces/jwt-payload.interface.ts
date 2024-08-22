@@ -3,6 +3,7 @@ import { UserTypeEnum } from "src/modules/data-interaction/database/enums/user-t
 export interface JwtPayloadInterface {
     userId: string;
     userType: UserTypeEnum;
+    companyId?: string;
     iat: number;
     exp: number;
 }

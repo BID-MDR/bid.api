@@ -1,0 +1,1 @@
+pm2 start npm --name "bid-api-hom" -- run "start:hom"

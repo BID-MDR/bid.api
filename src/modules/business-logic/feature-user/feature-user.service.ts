@@ -6,8 +6,8 @@ import { EnviromentVariablesEnum } from 'src/core/enums/environment-variables.en
 import { BaseService } from 'src/core/services/base.service';
 import { commonPropertyTransfer } from 'src/core/utils/common-property-transfer.util';
 import { CreateUserDto } from 'src/modules/data-interaction/database/dtos/user/create-user.dto';
+import { UpdateUserProgramTypeDto } from 'src/modules/data-interaction/database/dtos/user/update-user-program-type.dto';
 import { UpdateUserDto } from 'src/modules/data-interaction/database/dtos/user/update-user.dto';
-import { AddressEntity } from 'src/modules/data-interaction/database/entitites/address.entity';
 import { UserAppointmentEntity } from 'src/modules/data-interaction/database/entitites/user-appointment.entity';
 import { UserOtpRequestEntity } from 'src/modules/data-interaction/database/entitites/user-otp-request.entity';
 import { UserEntity } from 'src/modules/data-interaction/database/entitites/user.entity';
@@ -21,12 +21,13 @@ import { UserRepository } from 'src/modules/data-interaction/database/repositori
 import { EmailFacade } from 'src/modules/data-interaction/facade/apis/email/email.facade';
 import { CaubFacade } from 'src/modules/data-interaction/facade/apis/gov/caubr/caub.facade';
 import { ConfeaFacade } from 'src/modules/data-interaction/facade/apis/gov/confea/confea.facade';
+import { StorageFacade } from 'src/modules/data-interaction/facade/apis/storage/storage.facade';
 import { ConfirmPasswordUpdateRequestDto } from './dtos/confirm-password-update.request.dto';
 import { ProfessionalCouncilRegistrationResponseDto } from './dtos/professional-council-resgistration-reponse.dto';
-import { StorageFacade } from 'src/modules/data-interaction/facade/apis/storage/storage.facade';
-import { WorkRequestWelfareProgramRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request-welfare-program.repository';
-import { WorkRequestRoomTypeQuantityRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request-room-type-quantity.repository';
-import { WorkRequestRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request.repository';
+import { CreateAddressDto } from 'src/modules/data-interaction/database/dtos/address/create-address.dto';
+import { UpdateAddressDto } from 'src/modules/data-interaction/database/dtos/address/update-address.dto';
+import { CreateUserGeneratedMediaDto } from 'src/modules/data-interaction/database/dtos/user/user-generated-media/create-user-generated-media.dto';
+import { MediaUploadDto } from 'src/modules/data-interaction/database/dtos/media/media-upload.dto';
 
 @Injectable()
 export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -36,8 +37,6 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         private userBeneficiaryInfoRepository: UserBeneficiaryInfoRepository,
         private userProfessionalInfoRepository: UserProfessionalInfoRepository,
         private userRestingdayRepository: UseRestingDayRepository,
-        private workRequestWelfareProgramRepository: WorkRequestWelfareProgramRepository,
-        private workRequestRepository: WorkRequestRepository,
         private addressRepository: AddressRepository,
         private readonly caubFacade: CaubFacade,
         private readonly confeaFacade: ConfeaFacade,
@@ -72,23 +71,26 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
     async updateById(id: string, data: any) {
 
         const user = await this.userRepository.findById(id)
-        // console.log(`vim aqui`)a
-        if ( data.IUser.paramToBeUpdated === 'personal_info') {
+        if (data.IUser.paramToBeUpdated === 'personal_info') {
             const { address, ...rest } = data.IUser
             return await this.userRepository.update(id, rest)
         } else if (data.IUser.paramToBeUpdated === 'address') {
 
             const { address, ...rest } = data.IUser
-           return await this.addressRepository.update(user.address.id, data.IUser.address)
+            return await this.addressRepository.update(user.address.id, data.IUser.address)
         } else {
-           const workRequest = await this.workRequestRepository.create(data.IUser.workRequest)
-           data.IUser.address = user.address
-           const {id, ...rest} = workRequest
-           data.IUser.workRequest = rest
-           data.IUser.workRequest.address = user.address
+            //    const workRequest = await this.workRequestRepository.create(data.IUser.workRequest)
+            //    data.IUser.address = user.address
+            //    const {id, ...rest} = workRequest
+            //    data.IUser.workRequest = rest
+            //    data.IUser.workRequest.address = user.address
             //await this.userRepository.update(user.id, data.IUser)
         }
 
+    }
+
+    async updateUserProgramTypeDto(id: string, dto: UpdateUserProgramTypeDto) {
+        return await this.userRepository.updateUserProgramType(id, dto.programType)
     }
 
     async update(id: string, data: UpdateUserDto): Promise<UserEntity> {
@@ -180,30 +182,52 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
     }
 
 
+    async updateAddress(dto: UpdateAddressDto) {
+        const update = await this.addressRepository.update(dto.id, dto)
+        return update
+    }
 
+    async updateProfilePicture(userId: string, dto: MediaUploadDto) {
+        let user = await this.userRepository.getById(userId) as any;
+        const media = await this.storageFacade.uploadMedia(
+            dto.mimeType,
+            dto.fileName,
+            dto.data,
+        );
+
+        const result = await this.userRepository.updateProfilePicture(userId, media)
+
+        return result
+
+    }
     async updatePasswordRequest(userId: string) {
         totp.options = {
             digits: 6,
             step: 300,
         };
         const token = totp.generate(this.configService.get(EnviromentVariablesEnum.OTP_TOKEN));
-
+    
         const user = await this.findById(userId);
+        if (!user) {
+            throw new Error('User not found');
+        }
+    
         const otpRequest = new UserOtpRequestEntity();
         otpRequest.token = await this.hashStringData(token);
+        otpRequest.user = user;
+    
         await otpRequest.save();
+    
         user.otpRequest = otpRequest;
         await user.save();
-
+    
         await this.emailFacade.sendPasswordResetCodeEmail(token, user.email);
     }
 
     async verifyToken(userId: string, token: string) {
         const user = await this.findById(userId);
 
-        if (!user.otpRequest?.token) {
-            throw new BadRequestException('Nenhum pedido de recuperação de senha foi feito para este usuário.');
-        }
+   
         totp.options = {
             digits: 6,
             step: 300,
@@ -212,6 +236,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
 
         try {
             const valid = totp.check(token, this.configService.get(EnviromentVariablesEnum.OTP_TOKEN));
+            console.log(valid, '<--')
             if (valid) {
                 user.otpRequest.status = UserOtpStatusEnum.VERIFIED;
                 await user.otpRequest.save();
@@ -252,7 +277,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         }
 
         user.password = await this.hashStringData(dto.password);
-        await user.otpRequest.remove();
+        // await user.otpRequest.remove();
         user.otpRequest = null;
         await user.save();
     }
@@ -275,12 +300,5 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         // Example of performing a join to fetch additional data from other tables
         return await this.userRepository.getDashboardDataWithJoinProfessional(userId);
     }
-    async profileBalanceGetBeneficiary(userId: string) {
-        // Example of performing a join to fetch additional data from other tables
-        return await this.userRepository.profileBalanceGetBeneficiary(userId);
-    }
-    async profileBalanceGetProfessional(userId: string) {
-        // Example of performing a join to fetch additional data from other tables
-        return await this.userRepository.profileBalanceGetProfessional(userId);
-    }
+
 }

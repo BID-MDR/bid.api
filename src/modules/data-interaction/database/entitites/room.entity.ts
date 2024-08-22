@@ -1,9 +1,8 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
-import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { RoomTypeEnum } from '../enums/room-type.enum';
 import { RoomSolutionEntity } from './room-solution.entity';
-import { WorkRequestRoomToWorkEntity } from './work-request-room-to-work.entity';
-import { WorkRequestRoomTypeQuantityEntity } from './work-request-room-type-quantity.entity';
+import { WorkRequestEntity } from './work-request.entity';
 
 @Entity({ name: 'room' })
 export class RoomEntity extends BaseEntity {
@@ -19,15 +18,14 @@ export class RoomEntity extends BaseEntity {
     })
     type: RoomTypeEnum;
 
-    @OneToMany(() => RoomSolutionEntity, (roomSolution) => roomSolution.room)
+    @OneToMany(() => RoomSolutionEntity, (roomSolution) => roomSolution.room , {
+        cascade: true,
+        eager: true,
+    })
     roomSolutions: RoomSolutionEntity[];
 
-    @OneToOne(
-        () => WorkRequestRoomTypeQuantityEntity,
-        (workRequestRoomTypeQuantityEntity) => workRequestRoomTypeQuantityEntity.room,
-    )
-    workRequestRoomTypeQuantityEntity: WorkRequestRoomTypeQuantityEntity;
+    //demanda work
+    @ManyToOne(()=> WorkRequestEntity, (workRequest) => workRequest.room)
+    workRequest: WorkRequestEntity;
 
-    @OneToMany(() => WorkRequestRoomToWorkEntity, (workRequestRoomToWork) => workRequestRoomToWork.room)
-    workRequestsToBeWorked: WorkRequestRoomToWorkEntity[];
 }
