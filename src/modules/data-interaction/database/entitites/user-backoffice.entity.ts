@@ -1,9 +1,8 @@
 import { BaseEntity } from "src/core/entities/base.entity";
-import { Column, Entity, JoinTable, ManyToMany, OneToMany } from "typeorm";
-import { UserBackofficeTypeEnum } from "src/modules/backoffice/user/dto/userTypeEnum";
-import { UserRolesBackofficeEntity } from "./user-roles-backoffice.entity";
-import { UserOtpStatusEnum } from "../enums/user-otp.enum";
 import { UserStatusEnum } from "src/modules/backoffice/user/dto/userStatusEnum";
+import { UserBackofficeTypeEnum } from "src/modules/backoffice/user/dto/userTypeEnum";
+import { Column, Entity, JoinTable, ManyToMany } from "typeorm";
+import { UserRolesBackofficeEntity } from "./user-roles-backoffice.entity";
 
 @Entity({ name: "user_backoffice" })
 export class UserBackofficeEntity extends BaseEntity {

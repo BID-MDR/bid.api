@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { BaseRepository } from "src/core/repositories/base.repository";
-import { DeepPartial, Repository } from "typeorm";
+import { DeepPartial, In, Repository } from "typeorm";
 import { DemandRegisterRequestDto } from "../../dtos/demand/register-demand.dto";
 import { DemandEntity } from "../../entitites/demand.entity";
 import { DemandStatusEnum } from "../../enums/demand-status.enum";
@@ -43,10 +43,7 @@ export class DemandRepository extends BaseRepository<
       .leftJoinAndSelect("workRequest.welfare", "welfare")
       .where("company.id = :companyId", { companyId })
       .andWhere("demand.status IN (:...status)", {
-        status: [
-          DemandStatusEnum.ESPERANDO_MELHORIA,
-          DemandStatusEnum.EM_ANALISE,
-        ],
+        status: [DemandStatusEnum.ESPERANDO_MELHORIA, DemandStatusEnum.EM_ANALISE],
       });
 
     return await query.getMany();
@@ -128,5 +125,39 @@ export class DemandRepository extends BaseRepository<
       .leftJoinAndSelect("workRequest.welfare", "welfare")
       .leftJoinAndSelect("room.roomSolutions", "roomSolution")
       .leftJoinAndSelect("roomSolution.picturesAndVideos", "pictures");
+  }
+
+  // async listDemandByStatusForDashboard(status?: DemandStatusEnum) {
+  //   const statusList = status
+  //     ? [status]
+  //     : Object.values(DemandStatusEnum).filter(
+  //         status => status !== DemandStatusEnum.CANCELADO && status !== DemandStatusEnum.RESCISAO
+  //       );
+
+  //   const query = await this.repository.find({
+  //     where: {
+  //       status: In(statusList),
+  //     },
+      
+  //   });
+
+  //   return query;
+  // }
+
+  async listDemandByStatusForDashboard(status?: DemandStatusEnum) {
+    const statusList = status
+      ? [status]
+      : Object.values(DemandStatusEnum).filter(
+          status => status !== DemandStatusEnum.CANCELADO && status !== DemandStatusEnum.RESCISAO
+        );
+  
+    const query = await this.repository.createQueryBuilder("demand")
+      .where("demand.status in (:...statusList)", { statusList })
+      .select("demand.status", "status")
+      .addSelect("COUNT(demand.id)", "count")
+      .groupBy("demand.status")
+      .getRawMany();
+  
+    return query;
   }
 }

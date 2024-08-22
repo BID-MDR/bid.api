@@ -5,6 +5,7 @@ import { AuthenticateModule } from "./authenticate/authenticate.module";
 import { DemandBackofficeModule } from "./demand/demand.module";
 import { CompanyBackofficeModule } from "./company/company.module";
 import { EmployeeBackofficeModule } from "./employee/employee.module";
+import { DashboardBackofficeModule } from "./dashboard/dashboard.module";
 
 @Module({
     imports: [
@@ -13,7 +14,8 @@ import { EmployeeBackofficeModule } from "./employee/employee.module";
         AuthenticateModule,
         DemandBackofficeModule,
         CompanyBackofficeModule,
-        EmployeeBackofficeModule
+        EmployeeBackofficeModule,
+        DashboardBackofficeModule
     ],
 })
 export class BackofficeModule {}
