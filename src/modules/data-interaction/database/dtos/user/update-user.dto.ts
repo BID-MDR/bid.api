@@ -9,13 +9,8 @@ import { UpdateUserAppointmentDto } from './user-appointment/update-user-appoint
 import { UpdateUserBeneficiaryInfoDto } from './user-beneficiary-info/update-user-beneficiary-info.dto';
 import { UpdateUserProfessionalInfoDto } from './user-professional-info/update-user-professional-info.dto';
 
-export class UpdateUserDto extends OmitType(PartialType(CreateUserDto), [
-    'password',
-    'beneficiaryUserInfo',
-    'professionalUserInfo',
-    'address',
-    'cpf'
-]) {
+export class UpdateUserDto {
+    
     @ApiProperty({ type: CreateUserAppointmentDto, isArray: true })
     @ValidateNested({ each: true })
     @Type(() => CreateUserAppointmentDto)

@@ -44,7 +44,7 @@ export class WorkRequestEntity extends BaseEntity {
         eager: true,
     })
     welfarePrograms: WorkRequestWelfareProgramEntity[];
-
+ 
     @Column({
         type: 'enum',
         enum: PropertyTypeEnum,

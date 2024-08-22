@@ -10,15 +10,7 @@ import { UpdateWorkRequestWelfareProgramDto } from './work-request-welfare-progr
 import { UpdateUserGeneratedMediaDto } from '../user/user-generated-media/update-user-generated-media.dto';
 import { UpdateAddressDto } from '../address/update-address.dto';
 
-export class UpdateWorkRequestDto extends OmitType(PartialType(CreateWorkRequestDto), [
-    'picturesAndVideos',
-    'precaritysToBeSolved',
-    'welfarePrograms',
-    'roomsToBeWorked',
-    'roomsAvailableAndQuantity',
-    'prevalingConstructionMaterials',
-    'address',
-]) {
+export class UpdateWorkRequestDto{
     @ApiProperty({ type: UpdateAddressDto })
     @ValidateNested()
     @Type(() => UpdateAddressDto)

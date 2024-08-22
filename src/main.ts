@@ -78,10 +78,7 @@ async function bootstrap() {
             ignoreGlobalPrefix: false,
         });
 
-        SwaggerModule.setup('v' + appVersion + '/docs', app, document, {
-            useGlobalPrefix: true,
-        });
-
+        SwaggerModule.setup('docs', app, document);
         logger.debug('DOCS ENABLED');
     }
 

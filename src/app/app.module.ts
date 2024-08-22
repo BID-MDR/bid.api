@@ -53,7 +53,7 @@ dotenv.config();
                 password: configService.get<string>(EnviromentVariablesEnum.SQL_SERVER_PASSWORD),
                 database: configService.get<string>(EnviromentVariablesEnum.SQL_SERVER_DATABASE),
                 autoLoadEntities: true,
-                synchronize: configService.get(EnviromentVariablesEnum.NODE_ENV) === 'development',
+                synchronize: true,
             }),
             inject: [ConfigService],
         }),
