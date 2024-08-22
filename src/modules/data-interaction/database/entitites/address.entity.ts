@@ -1,9 +1,8 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
-import { Column, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
-import { TechnicalVisitEntity } from './technical-visit.entity';
+import { Column, Entity, ManyToOne, OneToOne } from 'typeorm';
 import { UserProfessionalInfoEntity } from './user-professional-info.entity';
 import { UserEntity } from './user.entity';
-import { WorkRequestEntity } from './work-request.entity';
+import { CompanyEntity } from './company.entity';
 
 @Entity({ name: 'address' })
 export class AddressEntity extends BaseEntity {
@@ -82,9 +81,6 @@ export class AddressEntity extends BaseEntity {
     @ManyToOne(() => UserProfessionalInfoEntity, (userProfessionalInfoEntity) => userProfessionalInfoEntity.addresses)
     userProfessionalInfo: UserProfessionalInfoEntity;
 
-    @OneToOne(() => WorkRequestEntity, (workRequest) => workRequest.address)
-    workRequest: WorkRequestEntity;
-
-    @OneToMany(() => TechnicalVisitEntity, (technicalVisit) => technicalVisit.address)
-    techinicalVisits: TechnicalVisitEntity[];
+    @OneToOne(() => CompanyEntity, (company) => company.addresses)
+    company: CompanyEntity;
 }

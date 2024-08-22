@@ -4,21 +4,20 @@ import { RoomEntity } from '../../entitites/room.entity';
 import { RoomSolutionEnum } from '../../enums/room-solution.enum';
 
 export class CreateRoomSolutionDto {
+
+    constructor(partial: Partial<CreateRoomSolutionDto>) {
+        Object.assign(this, partial);
+    }
+
     @ApiProperty()
     @IsUUID()
     roomId: string;
+
+    @ApiProperty()
     room: RoomEntity;
 
     @ApiProperty({ enum: RoomSolutionEnum })
     @IsEnum(RoomSolutionEnum)
     solution: RoomSolutionEnum;
 
-    @ApiProperty({ type: String })
-    @IsCurrency({
-        allow_decimal: true,
-        digits_after_decimal: [1, 2],
-        require_symbol: false,
-        allow_negatives: false,
-    })
-    cost: number;
 }

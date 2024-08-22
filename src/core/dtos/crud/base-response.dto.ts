@@ -10,8 +10,4 @@ export abstract class BaseResponseDto {
     @ApiProperty({})
     @Expose()
     createdAt!: Date;
-
-    @ApiProperty({})
-    @Expose()
-    updatedAt!: Date;
 }

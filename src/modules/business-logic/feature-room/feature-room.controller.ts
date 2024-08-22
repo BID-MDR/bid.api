@@ -4,62 +4,86 @@ import {
     Get,
     Param,
     Post,
-    Put,
-    Req,
     SerializeOptions,
     UseGuards,
-    UseInterceptors,
+    UseInterceptors
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
 import { ApiOkResponseDtoData } from 'src/core/decorators/swagger/api-ok-response-dto.decorator';
 import { JwtAccessTokenGuard } from 'src/core/guards/jwt-access-token.guard';
 import { EncryptInterceptor } from 'src/core/interceptors/encrypt.interceptor';
-import { JwtPayloadInterface } from 'src/core/interfaces/jwt-payload.interface';
 import { CreateRoomDto } from 'src/modules/data-interaction/database/dtos/room/create-room.dto';
 import { RoomResponseDto } from 'src/modules/data-interaction/database/dtos/room/reponse-room.dto';
-import { UpdateRoomDto } from 'src/modules/data-interaction/database/dtos/room/update-room.dto';
 import { FeatureRoomService } from './feature-room.service';
+import { CreateRoomSolutionDto } from 'src/modules/data-interaction/database/dtos/room-solution/create-room-solution.dto';
+import { RequestRoomSolutionDto } from 'src/modules/data-interaction/database/dtos/room-solution/request.dto';
+import { Roles } from '../../../core/decorators/roles.decorator';
+import { RolesGuard } from '../../../core/guards/roles.guard';
+import { EmployeeRoleEnum } from '../../data-interaction/database/enums/employee-role.enum';
 
 @Controller('room')
 @ApiTags('Quarto')
-export class FeatureRoomModule {
-    constructor(private featureRoomService: FeatureRoomService) {}
+export class FeatureRoomController {
+    constructor(
+        private featureRoomService: FeatureRoomService
+    ) {}
+    // @Get('')
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAccessTokenGuard)
+    // @ApiOperation({
+    //     description: 'Lista as construções do usuário logado que iniciou a requisição através do JWT no header.',
+    //     summary: 'Lista as construções do usuário logado que iniciou a requisição.',
+    // })
+    // @ApiOkResponseDtoData({
+    //     type: RoomResponseDto,
+    //     description: 'Pedido de Construção.',
+    // })
+    // @SerializeOptions({
+    //     type: RoomResponseDto,
+    // })
+    // async listLogged(@Req() req: Request) {
+    //     const userId = (req.user as JwtPayloadInterface).userId;
+    //     return await this.featureRoomService.listByUserId(userId);
+    // }
+
     @Get('')
-    @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard)
-    @ApiOperation({
-        description: 'Lista as construções do usuário logado que iniciou a requisição através do JWT no header.',
-        summary: 'Lista as construções do usuário logado que iniciou a requisição.',
-    })
-    @ApiOkResponseDtoData({
-        type: RoomResponseDto,
-        description: 'Pedido de Construção.',
-    })
-    @SerializeOptions({
-        type: RoomResponseDto,
-    })
-    async listLogged(@Req() req: Request) {
-        const userId = (req.user as JwtPayloadInterface).userId;
-        return await this.featureRoomService.listByUserId(userId);
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAccessTokenGuard)
+    async list() {
+        return await this.featureRoomService.selectAll();
     }
+
+    @Get(':id')
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAccessTokenGuard)
+    async listByWorkRequest(@Param('id') id: string) {
+        return await this.featureRoomService.selectAllWithIntervention(id);
+    }
+
+    @Get('listbyworkrequest/:id')
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAccessTokenGuard)
+    async listByWorkRequestId(@Param('id') id: string) {
+        return await this.featureRoomService.selectAllByWorkRequest(id);
+    }
+
 
     @Get('id/:id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
     @ApiOperation({
-        description: 'Retorna o Construção.',
-        summary: 'Retorna o Construção ID.',
+        description: 'Retorna o Quarto.',
+        summary: 'Retorna o Quarto por ID.',
     })
     @ApiParam({
         name: 'id',
-        description: 'ID do Construção.',
+        description: 'ID do Quarto.',
         required: true,
         allowEmptyValue: false,
     })
     @ApiOkResponseDtoData({
         type: RoomResponseDto,
-        description: 'Construção.',
+        description: 'Quarto.',
     })
     @SerializeOptions({
         type: RoomResponseDto,
@@ -68,20 +92,39 @@ export class FeatureRoomModule {
         return await this.featureRoomService.findById(id);
     }
 
+    @Get('get-room/:id')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOperation({
+        description: 'Retorna o Quarto.',
+        summary: 'Retorna o Quarto por ID.',
+    })
+    @ApiParam({
+        name: 'id',
+        description: 'ID do Quarto.',
+        required: true,
+        allowEmptyValue: false,
+    })
+    async getRoom(@Param('id') id: string) {
+        return await this.featureRoomService.getRoomByRoomSolutionId(id);
+    }
+
     @Post('')
     @UseInterceptors(new EncryptInterceptor())
+    @UseGuards(JwtAccessTokenGuard, RolesGuard)
+    @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_quality, EmployeeRoleEnum.manager_inspection])
     @ApiOperation({
-        description: 'Cria um Construção.',
-        summary: 'Cria um Construção.',
+        description: 'Cria um Quarto.',
+        summary: 'Cria um Quarto.',
     })
     @ApiBody({
         type: CreateRoomDto,
         required: true,
-        description: 'Construção a ser criado.',
+        description: 'Quarto a ser criado.',
     })
     @ApiOkResponseDtoData({
         type: RoomResponseDto,
-        description: 'Construção a ser criado.',
+        description: 'Quarto a ser criado.',
     })
     @SerializeOptions({
         type: RoomResponseDto,
@@ -89,4 +132,46 @@ export class FeatureRoomModule {
     async create(@Body() body: CreateRoomDto) {
         return await this.featureRoomService.create(body);
     }
+
+    @Post('room-solution')
+    @UseGuards(JwtAccessTokenGuard, RolesGuard)
+    @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_quality])
+    @UseInterceptors(new EncryptInterceptor())
+    @ApiOperation({
+        description: 'Cria um Quarto.',
+        summary: 'Cria um Quarto.',
+    })
+    @ApiBody({
+        type: CreateRoomSolutionDto,
+        required: true,
+        description: 'Quarto a ser criado.',
+    })
+    @ApiOkResponseDtoData({
+        type: RoomResponseDto,
+        description: 'Quarto a ser criado.',
+    })
+    @SerializeOptions({
+        type: RoomResponseDto,
+    })
+    async createRoomSolution(@Body() body: CreateRoomSolutionDto) {
+        return await this.featureRoomService.createRoomSolution(body);
+    }
+
+    @Post('room-solution/wait-intervention')
+    @UseGuards(JwtAccessTokenGuard, RolesGuard)
+    @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_quality])
+    @UseInterceptors(new EncryptInterceptor())
+    async waitIntervention(@Body() body: RequestRoomSolutionDto){
+
+       return await this.featureRoomService.register(body)
+    }
+
+
+    @Get('room-solution/:id')
+    @UseInterceptors(new EncryptInterceptor())
+    async selectSolutions(@Param('id') id: string){
+
+       return await this.featureRoomService.selectInterventions(id)
+    }
+
 }

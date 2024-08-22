@@ -1,15 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Length } from 'class-validator';
+import { IsNotEmpty, IsOptional, Length } from 'class-validator';
 import { UserEntity } from '../../entitites/user.entity';
+import { CompanyEntity } from '../../entitites/company.entity';
 
 export class DemandRegisterRequestDto {
     @ApiProperty()
+    @IsNotEmpty()
     @Length(3, 100)
     document: string;
 
     @ApiProperty()
     @Length(2, 100)
     state: string;
+
     @ApiProperty()
     @Length(3, 100)
     city: string;
@@ -19,7 +22,7 @@ export class DemandRegisterRequestDto {
     zipcode: string;
 
     @ApiProperty()
-    @Length(3, 100)
+    @IsOptional()
     complement: string;
 
     @ApiProperty()
@@ -27,7 +30,7 @@ export class DemandRegisterRequestDto {
     neighborhood: string;
 
     @ApiProperty()
-    @Length(3, 100)
+    @Length(1, 100)
     number: string;
 
     @ApiProperty()
@@ -43,4 +46,6 @@ export class DemandRegisterRequestDto {
     longitude: string;
 
     beneficiary: UserEntity
+
+    company: CompanyEntity;
 }

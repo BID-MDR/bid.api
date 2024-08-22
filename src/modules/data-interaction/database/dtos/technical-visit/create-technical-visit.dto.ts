@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDate, IsUUID } from 'class-validator';
 import { UserEntity } from '../../entitites/user.entity';
-import { WorkRequestEntity } from '../../entitites/work-request.entity';
 import { Type } from 'class-transformer';
 
 export class CreateTechnicalVisitDto {
@@ -24,9 +23,4 @@ export class CreateTechnicalVisitDto {
     @IsUUID()
     beneficiaryId: string;
     beneficiary: UserEntity;
-
-    @ApiProperty()
-    @IsUUID()
-    workRequestId: string;
-    workRequest: WorkRequestEntity;
 }

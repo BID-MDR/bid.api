@@ -26,17 +26,8 @@ export class ErrorApiResponseDto implements ErrorApiResponseInterface {
 }
 
 export class ApiResponseDto<T> {
-    @ApiProperty({ nullable: true })
-    totalDocumentCount: number | null = null;
-
-    @ApiProperty({ nullable: true })
-    skip: number | null = null;
-
-    @ApiProperty({ nullable: true })
-    limit: number | null = null;
-
     @ApiProperty({ type: Boolean })
-    success = true;
+    success: boolean;
 
     @ApiProperty({ isArray: true, type: ErrorApiResponseDto, nullable: true })
     errors: ErrorApiResponseDto[] | null = null;
@@ -44,18 +35,12 @@ export class ApiResponseDto<T> {
     data: T;
 
     constructor(
-        success: boolean,
+        success: boolean = true,
         data: T,
         errors: ErrorApiResponseDto[] | null = null,
-        totalDocumentCount: number | null = null,
-        skip: number | null = null,
-        limit: number | null = null,
     ) {
         this.success = success;
         this.errors = errors;
-        this.totalDocumentCount = totalDocumentCount;
-        this.skip = skip;
-        this.limit = limit;
         this.data = data;
     }
 }

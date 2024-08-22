@@ -33,8 +33,7 @@ export abstract class BaseRepository<
 
     async create(data: CreateDto): Promise<T> {
         const entity = this.__repository.create(data);
-        const registeredData = await this.__repository.save(entity);
-        return await this.findById(registeredData.id);
+        return await this.__repository.save(entity);
     }
 
     async createMany(data: CreateDto[]): Promise<T[]> {

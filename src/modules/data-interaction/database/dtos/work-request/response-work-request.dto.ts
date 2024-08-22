@@ -1,89 +1,61 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Exclude } from 'class-transformer';
-import { MediaTypeEnum } from '../../enums/media-type.enum';
-import { PrecarityTypeEnum } from '../../enums/precarity-type.enum';
-import { PrevalingConstructionMaterialsEnum } from '../../enums/prevailing-construction-materials.enum';
-import { PropertyTypeEnum } from '../../enums/property-type.enum';
-import { WelfareProgramEnum } from '../../enums/welfare-program.enum';
-import { CostEstimationResponseDto } from '../cost-estimation/reponse-cost-estimation.dto';
-import { TechnicalVisitResponseDto } from '../technical-visit/reponse-technical-visit.dto';
+import { ApiProperty } from "@nestjs/swagger";
+import { Exclude, Expose, Type } from "class-transformer";
+import { BaseResponseDto } from "../../../../../core/dtos/crud/base-response.dto";
+import { RoomResponseDto } from "../room/reponse-room.dto";
 
-class WorkRequestMediaDto {
+@Exclude()
+class ResponseWelfare{
     @ApiProperty()
-    url: string;
-
-    @ApiProperty({ enum: MediaTypeEnum })
-    type: MediaTypeEnum;
+    @Expose()
+    @Type(() => String)
+    welfareProgram: string;
 }
 
-class WorkRequestPrecarityDto {
-    @ApiProperty({ enum: PrecarityTypeEnum })
-    precarity: PrecarityTypeEnum;
-}
-
-class WorkRequestRoomToWorkDto {
+@Exclude()
+export class ResponseWorkRequestDto extends BaseResponseDto {
     @ApiProperty()
-    room: string;
-}
-
-class WorkRequestRoomTypeQuantityDto {
-    @ApiProperty()
-    room: string;
-
-    @ApiProperty()
-    quantity: number;
-}
-
-class WorkRequestPrevailingConstructionMaterialDto {
-    @ApiProperty({ enum: PrevalingConstructionMaterialsEnum })
-    prevalingConstructionMaterial: PrevalingConstructionMaterialsEnum;
-}
-
-class WorkRequestWelfareProgramDto {
-    @ApiProperty({ enum: WelfareProgramEnum })
-    welfareProgram: WelfareProgramEnum;
-}
-
-export class WorkRequestResponseDto {
-    @ApiProperty()
+    @Expose()
     description: string;
 
     @ApiProperty()
-    numberOfResidents: number;
+    @Expose()
+    resident: number;
 
     @ApiProperty()
+    @Expose()
     responsiblePersonName: string;
-
-    @ApiProperty({ type: WorkRequestWelfareProgramDto, isArray: true })
-    welfarePrograms: WorkRequestWelfareProgramDto[];
-
-    @ApiProperty({ enum: PropertyTypeEnum })
-    propertyType: PropertyTypeEnum;
+    
+    @ApiProperty()
+    @Expose()
+    @Type(() => String)
+    kinship: string;
 
     @ApiProperty()
-    floorCount: number;
-
-    @ApiProperty({ type: WorkRequestPrevailingConstructionMaterialDto, isArray: true })
-    prevalingConstructionMaterials: WorkRequestPrevailingConstructionMaterialDto[];
-
-    @ApiProperty({ type: WorkRequestRoomTypeQuantityDto, isArray: true })
-    roomsAvailableAndQuantity: WorkRequestRoomTypeQuantityDto[];
-
-    @ApiProperty({ type: WorkRequestRoomToWorkDto, isArray: true })
-    roomsToBeWorked: WorkRequestRoomToWorkDto[];
-
-    @ApiProperty({ type: WorkRequestPrecarityDto, isArray: true })
-    precaritysToBeSolved: WorkRequestPrecarityDto[];
+    @Expose()
+    @Type(() => String)
+    propertyType: string;
 
     @ApiProperty()
-    aditionalInformation: string;
+    @Expose()
+    @Type(() => String)
+    flooring: string;
 
-    @ApiProperty({ type: WorkRequestMediaDto, isArray: true })
-    picturesAndVideos: WorkRequestMediaDto[];
+    @ApiProperty()
+    @Expose()
+    @Type(() => String)
+    prevailingConstructionMaterials: string;
 
-    @Exclude()
-    technicalVisits: TechnicalVisitResponseDto[];
+    @ApiProperty()
+    @Expose()
+    status: string;
 
-    @Exclude()
-    costEstimations: CostEstimationResponseDto[];
+    @ApiProperty({ type: RoomResponseDto, isArray: true })
+    @Type(() => RoomResponseDto)
+    @Expose()
+    room: RoomResponseDto[];
+
+    @ApiProperty({ type: ResponseWelfare, isArray: true })
+    @Type(() => ResponseWelfare)
+    @Expose()
+    welfare: ResponseWelfare[];
 }
