@@ -78,4 +78,8 @@ export class EmployeeBackofficeService extends BaseService<EmployeeEntity, any, 
   async list(): Promise<EmployeeEntity[]> {
     return await this.employeeRepository.findAll()
   }
+
+  async getById(id:string): Promise<EmployeeEntity>{
+    return await this.employeeRepository.findById(id);
+  }
 }

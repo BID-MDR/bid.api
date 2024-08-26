@@ -23,7 +23,7 @@ export class CompanyBackofficeService extends BaseService<CompanyEntity, any, an
     return await this.companyRepository.create(dto)
   }
   async list(): Promise<CompanyEntity[]>{
-    return await this.companyRepository.find()
+    return await this.companyRepository.findAll()
   }
 
   async getByOwner(id:string):Promise<CompanyEntity[]>{
@@ -36,5 +36,9 @@ export class CompanyBackofficeService extends BaseService<CompanyEntity, any, an
 
   async delete(companyId: string): Promise<void>{
     return await this.companyRepository.hardDelete(companyId)
+  }
+
+  async getById(companyId:string): Promise<CompanyEntity>{
+    return await this.companyRepository.findById(companyId);
   }
 }

@@ -39,4 +39,13 @@ export class EmployeeBackofficeController {
     return await this.service.list();
   }
 
+  @Get("by-id/:id")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+  @Roles([FunctionTypeEnum.GERIR_AGENTE_PROMOTOR])
+  async getById(@Param('id') id: string) {
+    return await this.service.getById(id);
+  }
+
+
 }
