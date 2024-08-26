@@ -30,6 +30,14 @@ export class CompanyBackofficeController {
     return await this.service.list();
   }
 
+  @Get("by-id/:id")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+  @Roles([FunctionTypeEnum.GERIR_EMPRESAS])
+  async getById(@Param('id') id: string) {
+    return await this.service.getById(id);
+  }
+
   @Get("by-owner/:id")
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
