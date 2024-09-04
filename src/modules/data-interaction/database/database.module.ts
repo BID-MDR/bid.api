@@ -55,6 +55,8 @@ import { SatisfactionResearchRepository } from './repositories/satisfaction-rese
 import { UserRolesBackofficeEntity } from './entitites/user-roles-backoffice.entity';
 import { UserRolesBackofficeRepository } from './repositories/backoffice/user/user-roles.repository';
 import { EmailRepository } from './repositories/backoffice/email/email.repository';
+import { MessageBackofficeEntity } from './entitites/message-backoffice.entity';
+import { MessageBackofficeRepository } from './repositories/backoffice/message/message.repository';
 
 const ENTITIES = [
     UserEntity,
@@ -84,7 +86,8 @@ const ENTITIES = [
     EmployeeRoleEntity,
     UserBackofficeEntity,
     SatisfactionResearchEntity,
-    UserRolesBackofficeEntity
+    UserRolesBackofficeEntity,
+    MessageBackofficeEntity
 ];
 const REPOSITORIES = [
     UserRepository,
@@ -112,7 +115,8 @@ const REPOSITORIES = [
     UserBackofficeRepository,
     SatisfactionResearchRepository,
     UserRolesBackofficeRepository,
-    EmailRepository
+    EmailRepository,
+    MessageBackofficeRepository
 ];
 
 @Module({
