@@ -42,7 +42,7 @@ export class AuthenticateService {
     const verify = await this._userRepository.getById(user.id.toString());
 
     if (verify.type === UserBackofficeTypeEnum.BACKOFFICE) {
-      return new AuthenticateResponseDto(user.email, token.accessToken);
+      return new AuthenticateResponseDto(user.id,user.email, token.accessToken);
     }
 
 
@@ -52,7 +52,7 @@ export class AuthenticateService {
       const dateCompare = lastAccessDate.getTime();
       const dateNow = new Date().getTime()
       if (dateCompare >= dateNow) {
-        return new AuthenticateResponseDto(user.email, token.accessToken, lastAccessDate);
+        return new AuthenticateResponseDto(user.id,user.email, token.accessToken, lastAccessDate);
       } else {
         throw new BadRequestException('Login não autorizado');
       }
@@ -63,7 +63,7 @@ export class AuthenticateService {
     
     const dateLastLogin = new Date(newDate.setMinutes(newDate.getMinutes() + verify.timeView));
     await this._userRepository.updateLastAccess(verify.id.toString(), new Date());
-    return new AuthenticateResponseDto(user.email, token.accessToken, dateLastLogin);
+    return new AuthenticateResponseDto(user.id,user.email, token.accessToken, dateLastLogin);
   }
 
   private _createToken(userId: string, email: string, roles: UserRolesBackofficeEntity[]) {
