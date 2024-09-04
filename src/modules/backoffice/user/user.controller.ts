@@ -28,6 +28,26 @@ export class UserBackofficeController {
         return new ResponseDto(true, result, null);
     }
 
+    @Get("by-id/:id")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async getUser(@Param('id') id: string) {
+
+        const result = await this.UserService.findById(id);
+        return new ResponseDto(true, result, null);
+    }
+
+    @Get("by-email/:email")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async getUserEmail(@Param('email') email: string) {
+
+        const result = await this.UserService.getByEmail(email);
+        return new ResponseDto(true, result, null);
+    }
+
+
+
 
     @Get("authenticated")
     @ApiBearerAuth()

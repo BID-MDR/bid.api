@@ -81,6 +81,10 @@ export class UserService extends BaseService<UserBackofficeEntity, CreateUserBac
         return await this.userBackofficeRepository.findById(payload.userId);
     }
 
+
+    async getByEmail(email: string){
+        return await this.userBackofficeRepository.getByEmail(email)
+    }
     async update(id: string, data: any): Promise<any> {
 
         const user = await this.userBackofficeRepository.getById(id);

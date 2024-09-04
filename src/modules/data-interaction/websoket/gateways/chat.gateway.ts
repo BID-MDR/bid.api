@@ -54,6 +54,10 @@ export class ChatGateway implements OnGatewayConnection {
       @ConnectedSocket() client: Socket,
       @MessageBody() body: MessageRegisterRequestDto,
     ) {
+
+      console.log(body)
+
+
       if (body.content) {
         await this.messageService.register(body.client1, body.client2, body);
       }
