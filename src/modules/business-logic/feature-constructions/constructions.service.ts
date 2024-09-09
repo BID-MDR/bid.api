@@ -157,6 +157,10 @@ export class ConstructionsService {
     return await this.constructionsRepository.findAll();
   }
 
+  async listByMonth(month:number){
+    return await this.constructionsRepository.findMonth(month)
+  }
+
   async getById(constructionsId: string) {
     return await this.constructionsRepository.findById(constructionsId);
   }

@@ -74,6 +74,22 @@ export class FeatureUserController {
         return new ResponseDto(true, result, null);
     }
 
+    @Get("get-beneficiary")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async getAllBeneficiary(@Req() req: Request) {
+        const result = await this.featureUserService.listBeneficiary();
+        return new ResponseDto(true, result, null);
+    }
+
+    @Get("get-month-beneficiary/:month")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async getBeneficiaryByMonth(@Param('month') month:number) {
+        const result = await this.featureUserService.listBeneficiaryByMonth(month);
+        return new ResponseDto(true, result, null);
+    }
+
     @Get("id/:id")
     // @ApiBearerAuth()
     // @UseGuards(JwtAccessTokenGuard)

@@ -21,6 +21,10 @@ export class HelpBackofficeService extends BaseService<
         super(helpRepository);
     }
 
+    async getByMonth(month: number){
+        return await this.helpRepository.findMonth(month);
+    }
+
     async register(clientId: string, data: HelpRegisterRequestDto) {
         data.user = await this.userRepository.getById(clientId);
         data.sentAt = new Date()

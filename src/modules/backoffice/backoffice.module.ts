@@ -7,6 +7,7 @@ import { CompanyBackofficeModule } from "./company/company.module";
 import { EmployeeBackofficeModule } from "./employee/employee.module";
 import { HelpBackofficeModule } from "./help/help.module";
 import { SatisfactionResearchBackofficeModule } from "./satisfaction-research/satisfaction-research.module";
+import { DashboardBackofficeModule } from "./dashboard/dashboard.module";
 
 @Module({
     imports: [
@@ -17,7 +18,8 @@ import { SatisfactionResearchBackofficeModule } from "./satisfaction-research/sa
         CompanyBackofficeModule,
         EmployeeBackofficeModule,
         HelpBackofficeModule,
-        SatisfactionResearchBackofficeModule
+        SatisfactionResearchBackofficeModule,
+        DashboardBackofficeModule
     ],
 })
 export class BackofficeModule {}

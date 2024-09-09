@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { UserEntity } from '../../entitites/user.entity';
 import { HelpEntity } from '../../entitites/help.entity';
 import { HelpRegisterRequestDto } from '../../dtos/help/register-help.dto';
+import { addMonths } from 'date-fns';
 
 @Injectable()
 export class HelpRepository extends BaseRepository<HelpEntity, HelpRegisterRequestDto, HelpRegisterRequestDto> {
@@ -27,6 +28,19 @@ export class HelpRepository extends BaseRepository<HelpEntity, HelpRegisterReque
     async list() {
         return this.repository.find();
     }
+
+    async findMonth(month: number) {
+        const now = new Date();
+        const pastDate = addMonths(now, -month);
+    
+    
+        return this.repository.createQueryBuilder('help')
+        .where('help.createdAt BETWEEN :pastDate AND :now', {
+          pastDate: pastDate.toISOString(),
+          now: now.toISOString(),
+        })
+        .getMany()
+      }
 
    
 }
