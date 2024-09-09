@@ -6,6 +6,7 @@ import { DemandRegisterRequestDto } from "../../dtos/demand/register-demand.dto"
 import { DemandEntity } from "../../entitites/demand.entity";
 import { DemandStatusEnum } from "../../enums/demand-status.enum";
 import { StatusDemandDto } from "../../dtos/demand/update-status-demand.dto";
+import { addMonths } from "date-fns";
 
 @Injectable()
 export class DemandRepository extends BaseRepository<
@@ -24,6 +25,9 @@ export class DemandRepository extends BaseRepository<
     return this.repository.findOne({ where: { id: _id }, loadEagerRelations: true });
   }
 
+  async countVistory(): Promise<any>{
+    return (await this.repository.find({where: {status: DemandStatusEnum.ESPERANDO_MELHORIA}})).length
+  }
   async listByStatus(status: DemandStatusEnum): Promise<DemandEntity[]> {
     return this.repository.find({ where: { status }, loadEagerRelations: true });
   }
@@ -113,6 +117,24 @@ export class DemandRepository extends BaseRepository<
 
   async list() {
     return this.repository.find();
+  }
+
+  async countList(){
+    return this.repository.count()
+  }
+
+  
+  async findMonth(month: number) {
+    const now = new Date();
+    const pastDate = addMonths(now, -month);
+
+
+    return this.repository.createQueryBuilder('demand')
+    .where('demand.createdAt BETWEEN :pastDate AND :now', {
+      pastDate: pastDate.toISOString(),
+      now: now.toISOString(),
+    })
+    .getMany()
   }
 
   private getDefaultQuery() {

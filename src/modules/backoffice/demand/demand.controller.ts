@@ -29,6 +29,13 @@ export class DemandBackofficeController {
         return await this.demandService.list();
     }
 
+    @Get("get-month/:month")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async getByMonth(@Param('month') month) {
+        return await this.demandService.getByMonth(month);
+    }
+
     @Get("id/:id")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)

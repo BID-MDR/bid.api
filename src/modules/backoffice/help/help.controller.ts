@@ -57,6 +57,15 @@ export class HelpBackofficeController {
         return new ResponseDto(true, help, false)
     }
 
+    @Get('get-month/:month')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async listWithMonth(@Param('month') month: number) {
+        const help = await this.helpService.getByMonth(month);
+        return new ResponseDto(true, help, false)
+    }
+
+
     @Get('user/:id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)

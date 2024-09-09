@@ -285,6 +285,14 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         return await this.userRepository.list();
     }
 
+    async listBeneficiary(){
+        return await this.userRepository.listBeneficiary();
+    }
+
+    async listBeneficiaryByMonth(month: number){
+        return await this.userRepository.findMonth(month);
+    }
+
     async getByCpf(cpf: string) {
         return await this.userRepository.findByCpf(cpf);
     }

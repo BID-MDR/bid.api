@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Logger,
   Param,
   Post,
@@ -28,6 +29,20 @@ export class ConstructionsController {
   private readonly _logger = new Logger(ConstructionsController.name);
 
   constructor(private constructionsService: ConstructionsService) {}
+
+  @Get("")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  async get() {
+    return await this.constructionsService.list();
+  }
+
+  @Get("get-month/:month")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  async getMonth(@Param('month') month: number) {
+    return await this.constructionsService.listByMonth(month);
+  }
 
   @Post("first-step-photos/:demandId")
   @ApiBearerAuth()

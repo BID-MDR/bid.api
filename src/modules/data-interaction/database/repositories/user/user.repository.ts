@@ -7,6 +7,7 @@ import { UpdateUserDto } from "../../dtos/user/update-user.dto";
 import { UserEntity } from "../../entitites/user.entity";
 import { UserTypeEnum } from "../../enums/user-type.enum";
 import { UserProgramTypeEnum } from "../../enums/user-program-type.enum";
+import { addMonths } from "date-fns";
 
 @Injectable()
 export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -53,6 +54,26 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
 
   async list() {
     return this.repository.find();
+  }
+
+  async listBeneficiary() {
+    return this.repository.find({ where: {type: UserTypeEnum.BENEFICIARIO}});
+  }
+
+  async findMonth(month: number) {
+    const now = new Date();
+    const pastDate = addMonths(now, -month);
+
+
+    return this.repository.createQueryBuilder('user')
+    .where('user.type = :type',{ type:  UserTypeEnum.BENEFICIARIO})
+    .andWhere('user.createdAt BETWEEN :pastDate AND :now', {
+      pastDate: pastDate.toISOString(),
+      now: now.toISOString(),
+    })
+    .getMany()
+
+
   }
 
   async getByCpf(cpf: string) {

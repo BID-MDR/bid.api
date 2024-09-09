@@ -26,6 +26,10 @@ export class CompanyBackofficeService extends BaseService<CompanyEntity, any, an
     return await this.companyRepository.findAll()
   }
 
+  async listByMonth(month: number): Promise<CompanyEntity[]>{
+    return await this.companyRepository.findMonth(month)
+  }
+
   async getByOwner(id:string):Promise<CompanyEntity[]>{
     return await this.companyRepository.getByOwner(id)
   }

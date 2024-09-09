@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { BaseRepository } from "../../../../../core/repositories/base.repository";
 import { CompanyEntity } from "../../entitites/company.entity";
+import { addMonths } from "date-fns";
 
 @Injectable()
 export class CompanyRepository extends BaseRepository<CompanyEntity, any, any> {
@@ -15,6 +16,19 @@ export class CompanyRepository extends BaseRepository<CompanyEntity, any, any> {
         relations: ['employees', 'demands', 'userAdmin'],
     });
 
+  }
+
+  async findMonth(month: number) {
+    const now = new Date();
+    const pastDate = addMonths(now, -month);
+
+
+    return this.repository.createQueryBuilder('company')
+    .where('company.createdAt BETWEEN :pastDate AND :now', {
+      pastDate: pastDate.toISOString(),
+      now: now.toISOString(),
+    })
+    .getMany()
   }
 
   async getByEmployee(userId: string){
