@@ -60,6 +60,14 @@ export class DemandBackofficeController {
         return await this.demandService.listByUser(id);
     }
 
+    @Get("get-by-company/:id")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA])
+    async getByCompany(@Param("id") id: string) {
+        return await this.demandService.listByCompany(id);
+    }
+
     @Get("get-by-professionalId/improvement/:id")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)

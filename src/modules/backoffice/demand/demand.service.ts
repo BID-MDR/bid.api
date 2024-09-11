@@ -26,6 +26,10 @@ export class DemandBackofficeService extends BaseService<DemandEntity, DemandReg
     return await this.demandRepository.listByUser(userId, companyId);
   }
 
+  async listByCompany(companyId: string) {
+    return await this.demandRepository.listByCompany(companyId);
+  }
+
   async getByMonth(month: number){
     return await this.demandRepository.findMonth(month);
   }
