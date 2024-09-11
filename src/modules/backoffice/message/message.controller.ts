@@ -7,7 +7,7 @@ import { MessageService } from "src/modules/business-logic/message/message.servi
 import { MessageRegisterRequestDto } from "src/modules/data-interaction/database/dtos/message/register-message.dto";
 import { Request } from 'express'
 
-@Controller('message')
+@Controller('backoffice-message')
 @ApiTags('Message/mensagens')
 export class MessageBackofficeController {
     private readonly _logger = new Logger(MessageBackofficeController.name);

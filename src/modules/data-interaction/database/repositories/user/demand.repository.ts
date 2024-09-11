@@ -103,6 +103,13 @@ export class DemandRepository extends BaseRepository<
     return await query.getMany();
   }
 
+  async listByCompany(companyId: string): Promise<DemandEntity[]> {
+    const query = this.getDefaultQuery()
+      .where("company.id = :companyId", { companyId });
+
+    return await query.getMany();
+  }
+
   async getByWorkRequestId(workRequestId: string): Promise<DemandEntity> {
     const query = this.getDefaultQuery().where("workRequest.id = :workRequestId", { workRequestId });
 
@@ -116,7 +123,8 @@ export class DemandRepository extends BaseRepository<
   }
 
   async list() {
-    return this.repository.find();
+    const query = this.getDefaultQuery()
+    return query.getMany();
   }
 
   async countList(){
