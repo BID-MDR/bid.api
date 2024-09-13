@@ -40418,7 +40418,8 @@ var environment = {
   apiUrl: "https://validacao.codefabrik.dev/",
   appUrl: "http://localhost:4200/",
   encryptKey: "8[v(<~*JJN!@1n^?=nwqI8ofFE96npT5",
-  domain: "bidapp.com://"
+  domain: "http://localhost:4200/"
+  //domain: "bidapp.com://"
 };
 
 // src/interceptors/auth.interceptor.ts
@@ -40620,6 +40621,7 @@ var _AuthService = class _AuthService {
    * @param dto
    */
   signIn(dto) {
+    console.log(isDevMode());
     return this._httpClient.post(`${this.baseUrl}signin`, isDevMode() ? dto : AuthUtils.encrypt(dto));
   }
 };
