@@ -40416,9 +40416,9 @@ var VERSION4 = new Version("17.2.2");
 // src/app/environment/environment.dev.ts
 var environment = {
   apiUrl: "https://validacao.codefabrik.dev/",
-  appUrl: "http://localhost:4200/",
+  appUrl: "https://bid-app-mtbc.vercel.app/",
   encryptKey: "8[v(<~*JJN!@1n^?=nwqI8ofFE96npT5",
-  domain: "http://localhost:4200/"
+  domain: "https://bid-app-mtbc.vercel.app/"
   //domain: "bidapp.com://"
 };
 
@@ -40638,6 +40638,7 @@ var _SsoComponent = class _SsoComponent {
     this.authService = authService;
   }
   ngOnInit() {
+    console.log(isDevMode());
     this.route.queryParamMap.subscribe({
       next: (params) => {
         if (params.has("code") && params.has("state")) {
@@ -40647,6 +40648,8 @@ var _SsoComponent = class _SsoComponent {
           }).subscribe({
             next: (data) => {
               if (isDevMode()) {
+            console.log(isDevMode());
+
                 window.location.replace(environment.appUrl + "?ssoId=" + data);
               } else {
                 window.location.replace(environment.domain + "?ssoId=" + data);
