@@ -27,7 +27,6 @@ export class MessageRepository extends BaseRepository<MessageEntity, MessageRegi
         });
         
   
-        console.log('Filtered messages:', messages.length);
         return messages;
     }
 

@@ -6,13 +6,15 @@ import { JwtPayloadInterface } from "src/core/interfaces/jwt-payload.interface";
 import { MessageService } from "src/modules/business-logic/message/message.service";
 import { MessageRegisterRequestDto } from "src/modules/data-interaction/database/dtos/message/register-message.dto";
 import { Request } from 'express'
+import { MessageBackofficeService } from "./message.service";
+import { MessageBackofficeRegisterRequestDto } from "../help/dto/message-register.dto";
 
 @Controller('backoffice-message')
 @ApiTags('Message/mensagens')
 export class MessageBackofficeController {
     private readonly _logger = new Logger(MessageBackofficeController.name);
 
-    constructor(private messageService: MessageService) {}
+    constructor(private messageService: MessageBackofficeService) {}
 
     @Get('reciver/:id')
     @ApiBearerAuth()
@@ -26,7 +28,7 @@ export class MessageBackofficeController {
     @Post('reciver/:id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
-    async register(@Req() req: Request, @Param('id') id:string,  @Body() dto: MessageRegisterRequestDto) {
+    async register(@Req() req: Request, @Param('id') id:string,  @Body() dto: MessageBackofficeRegisterRequestDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
         return await this.messageService.register(userId, id, dto);
     }

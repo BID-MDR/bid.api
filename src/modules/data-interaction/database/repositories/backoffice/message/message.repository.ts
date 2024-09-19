@@ -28,7 +28,6 @@ export class MessageBackofficeRepository extends BaseRepository<MessageBackoffic
         });
         
   
-        console.log('Filtered messages:', messages.length);
         return messages;
     }
 

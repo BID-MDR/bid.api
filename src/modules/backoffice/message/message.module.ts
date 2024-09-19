@@ -9,6 +9,7 @@ import { MessageBackofficeController } from "./message.controller";
     imports: [DatabaseModule, FacadeModule, FeatureAuthModule],
     providers: [MessageBackofficeService],
     controllers: [MessageBackofficeController],
+    exports: [MessageBackofficeService]
 })
 
 export class MessageBackofficeModule {}

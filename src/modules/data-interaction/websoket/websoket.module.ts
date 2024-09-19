@@ -3,9 +3,10 @@ import { ChatGateway } from './gateways/chat.gateway';
 import { ChatService } from './services/chat.service';
 import { CoreModule } from 'src/core/core.module';
 import { MessageModule } from 'src/modules/business-logic/message/message.module';
+import { MessageBackofficeModule } from 'src/modules/backoffice/message/message.module';
 
 @Module({
-    imports: [CoreModule, MessageModule],
+    imports: [CoreModule, MessageModule, MessageBackofficeModule],
     providers: [ChatGateway, ChatService],
 })
 export class WebsoketModule {}

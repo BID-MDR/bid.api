@@ -21,6 +21,7 @@ import { MessageBackofficeModule } from "./message/message.module";
         HelpBackofficeModule,
         SatisfactionResearchBackofficeModule,
         DashboardBackofficeModule,
+        MessageBackofficeModule
     ],
 })
 export class BackofficeModule {}
