@@ -32,6 +32,7 @@ export class FeatureAuthController {
         type: SigninResponseDto,
     })
     async getSsoId(@Param() dto: GetSsoRequestDto) {
+        console.log('teste1', dto);
         const result =  await this.featureAuthService.getSsoId(dto.id);
         return new ResponseDto(true, result, null);
 
@@ -58,6 +59,7 @@ export class FeatureAuthController {
         type: String,
     })
     async signin(@Body() body: SigninRequestDto) {
+        console.log('body login', body);
         const result =  await this.featureAuthService.govbrAuthorize(body);
 
         return new ResponseDto(true, result, null);
@@ -75,6 +77,7 @@ export class FeatureAuthController {
         type: GovbrCodeChallengeResponseDto,
     })
     async generateSsoGovbr() {
+        console.log('teste 2');
         const result = await this.featureAuthService.generateSsoGovbr();
 
         return new ResponseDto(true, result, null);
