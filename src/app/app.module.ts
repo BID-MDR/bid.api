@@ -25,6 +25,7 @@ dotenv.config();
         CacheModule.register(),
         ConfigModule.forRoot({
             isGlobal: true,
+            envFilePath: '.env',
             cache: true,
         }),
         ServeStaticModule.forRootAsync({
