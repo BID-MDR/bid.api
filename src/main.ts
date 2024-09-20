@@ -94,8 +94,7 @@ async function bootstrap() {
     await app.listen(port);
     Logger.log(
         `🚀 Application is running on: http://localhost:${port} - ${configService
-            .get(EnviromentVariablesEnum.NODE_ENV)
-            .toUpperCase()} MODE`,
+            .get(EnviromentVariablesEnum.NODE_ENV)}`,
     );
 }
 
