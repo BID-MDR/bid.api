@@ -47,7 +47,6 @@ export class FeatureAuthController {
     })
     @ApiBody({
         type: SigninRequestDto,
-        required: true,
     })
     @ApiNotFoundResponse({
         description: 'Usuário não cadastrado.',
@@ -79,7 +78,7 @@ export class FeatureAuthController {
     async generateSsoGovbr() {
         console.log('teste 2');
         const result = await this.featureAuthService.generateSsoGovbr();
-
+        console.log('result teste 2 ', result);
         return new ResponseDto(true, result, null);
     }
 }

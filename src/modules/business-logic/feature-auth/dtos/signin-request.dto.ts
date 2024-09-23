@@ -7,14 +7,11 @@ export class SigninRequestDto {
         example: '1234567890',
     })
     @IsString()
-    @IsNotEmpty()
-    code: string;
+    code?: string;
 
     @ApiProperty({
         description: 'state usado para controlar a autenticação.',
         example: 'UUID',
     })
-    @IsUUID()
-    @IsNotEmpty()
-    state: string;
+    state?: string;
 }
