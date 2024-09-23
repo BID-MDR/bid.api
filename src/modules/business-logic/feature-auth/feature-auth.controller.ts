@@ -47,6 +47,7 @@ export class FeatureAuthController {
     })
     @ApiBody({
         type: SigninRequestDto,
+        required: true,
     })
     @ApiNotFoundResponse({
         description: 'Usuário não cadastrado.',

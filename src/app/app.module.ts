@@ -17,6 +17,7 @@ import * as dotenv from 'dotenv';
 import { join } from 'path';
 import { WebsoketModule } from 'src/modules/data-interaction/websoket/websoket.module';
 import { BackofficeModule } from 'src/modules/backoffice/backoffice.module';
+import { configuration } from 'config/env/configuration';
 
 dotenv.config();
 
@@ -25,9 +26,11 @@ dotenv.config();
         CacheModule.register(),
         ConfigModule.forRoot({
             isGlobal: true,
-            envFilePath: '.env',
-            cache: true,
-        }),
+            envFilePath: process.env.NODE_ENV
+              ? `${process.cwd()}/config/env/${process.env.NODE_ENV}.env`
+              : `${process.cwd()}/config/env/dev.env`,
+            load: [configuration],
+          }),
         ServeStaticModule.forRootAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
