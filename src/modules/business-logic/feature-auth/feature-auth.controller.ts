@@ -39,15 +39,13 @@ export class FeatureAuthController {
     }
 
     @Post('signin')
-    @UseInterceptors(new EncryptInterceptor())
     @ApiOperation({
         description:
             'Autentica um usuário através do login único govbr e retorna um JWT ou um erro de usuário não cadastrado. Use após redirecionar o usuário para a página de login único govbr.',
         summary: 'Autentica um usuário.',
     })
     @ApiBody({
-        type: SigninRequestDto,
-        required: true,
+        type: SigninRequestDto
     })
     @ApiNotFoundResponse({
         description: 'Usuário não cadastrado.',
