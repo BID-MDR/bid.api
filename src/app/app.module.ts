@@ -26,10 +26,7 @@ dotenv.config();
         CacheModule.register(),
         ConfigModule.forRoot({
             isGlobal: true,
-            envFilePath: process.env.NODE_ENV
-              ? `${process.cwd()}/config/env/${process.env.NODE_ENV}.env`
-              : `${process.cwd()}/config/env/dev.env`,
-            load: [configuration],
+            cache: true,
           }),
         ServeStaticModule.forRootAsync({
             imports: [ConfigModule],
