@@ -32,20 +32,21 @@ export class FeatureAuthController {
         type: SigninResponseDto,
     })
     async getSsoId(@Param() dto: GetSsoRequestDto) {
-        console.log('teste1', dto);
         const result =  await this.featureAuthService.getSsoId(dto.id);
         return new ResponseDto(true, result, null);
 
     }
 
     @Post('signin')
+    @UseInterceptors(new EncryptInterceptor())
     @ApiOperation({
         description:
             'Autentica um usuário através do login único govbr e retorna um JWT ou um erro de usuário não cadastrado. Use após redirecionar o usuário para a página de login único govbr.',
         summary: 'Autentica um usuário.',
     })
     @ApiBody({
-        type: SigninRequestDto
+        type: SigninRequestDto,
+        required: true,
     })
     @ApiNotFoundResponse({
         description: 'Usuário não cadastrado.',
@@ -57,7 +58,6 @@ export class FeatureAuthController {
         type: String,
     })
     async signin(@Body() body: SigninRequestDto) {
-        console.log('body login', body);
         const result =  await this.featureAuthService.govbrAuthorize(body);
 
         return new ResponseDto(true, result, null);
@@ -75,9 +75,8 @@ export class FeatureAuthController {
         type: GovbrCodeChallengeResponseDto,
     })
     async generateSsoGovbr() {
-        console.log('teste 2');
         const result = await this.featureAuthService.generateSsoGovbr();
-        console.log('result teste 2 ', result);
+
         return new ResponseDto(true, result, null);
     }
 }
