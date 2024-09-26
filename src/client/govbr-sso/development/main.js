@@ -40622,7 +40622,7 @@ var _AuthService = class _AuthService {
    */
   signIn(dto) {
     console.log(isDevMode());
-    return this._httpClient.post(`${this.baseUrl}signin`, isDevMode() ? dto : AuthUtils.encrypt(dto));
+    return this._httpClient.post(`${this.baseUrl}signin`, isDevMode() ? dto : dto);
   }
 };
 _AuthService.\u0275fac = function AuthService_Factory(t) {

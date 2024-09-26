@@ -19,7 +19,7 @@ export class GovbrSubsystem {
                     `https://sso.staging.acesso.gov.br/token?grant_type=authorization_code&code=${code}&redirect_uri=${encodeURIComponent(
                         this.configService.get(EnviromentVariablesEnum.API_URL) +
                             this.configService.get(EnviromentVariablesEnum.SERVER_PATH_PREFIX) +
-                            '/govbr/sso',
+                            '/auth/govbr/sso',
                     )}&code_verifier=${codeVerifier}`,
                     undefined,
                     {

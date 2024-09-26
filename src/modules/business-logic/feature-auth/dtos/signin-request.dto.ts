@@ -6,11 +6,14 @@ export class SigninRequestDto {
         description: 'Código de autorização do login único govbr.',
         example: '1234567890',
     })
-    code?: string;
+    @IsNotEmpty()
+    code: string;
 
     @ApiProperty({
         description: 'state usado para controlar a autenticação.',
         example: 'UUID',
     })
-    state?: string;
+    @IsUUID()
+    @IsNotEmpty()
+    state: string;
 }

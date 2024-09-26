@@ -17,7 +17,6 @@ import * as dotenv from 'dotenv';
 import { join } from 'path';
 import { WebsoketModule } from 'src/modules/data-interaction/websoket/websoket.module';
 import { BackofficeModule } from 'src/modules/backoffice/backoffice.module';
-import { configuration } from 'config/env/configuration';
 
 dotenv.config();
 
