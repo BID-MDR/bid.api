@@ -1,0 +1,41 @@
+import { Request } from "express";
+import { CreateUserDto } from "src/modules/data-interaction/database/dtos/user/create-user.dto";
+import { UpdateUserDto } from "src/modules/data-interaction/database/dtos/user/update-user.dto";
+import { ConfirmPasswordUpdateRequestDto } from "./dtos/confirm-password-update.request.dto";
+import { ProfessionalCouncilRegistrationResponseDto } from "./dtos/professional-council-resgistration-reponse.dto";
+import { ProfessionalCouncilRegistrationRequestDto } from "./dtos/professional-council-resgistration-request.dto";
+import { TokenVerifyParamsDto } from "./dtos/token-verify-params.dto";
+import { FeatureUserService } from "./feature-user.service";
+import { FeatureAuthService } from "../feature-auth/feature-auth.service";
+import { SigninResponseDto } from "../feature-auth/dtos/signin-response.dto";
+import { UpdateUserProgramTypeDto } from "src/modules/data-interaction/database/dtos/user/update-user-program-type.dto";
+import { ResponseDto } from "src/core/dtos/response.dto";
+import { UpdateAddressDto } from "src/modules/data-interaction/database/dtos/address/update-address.dto";
+import { MediaUploadDto } from "src/modules/data-interaction/database/dtos/media/media-upload.dto";
+export declare class FeatureUserController {
+    private featureUserService;
+    private featureAuthService;
+    private readonly _logger;
+    constructor(featureUserService: FeatureUserService, featureAuthService: FeatureAuthService);
+    getLogged(req: Request): Promise<ResponseDto<import("../../data-interaction/database/entitites/user.entity").UserEntity>>;
+    getAllBeneficiary(req: Request): Promise<ResponseDto<import("../../data-interaction/database/entitites/user.entity").UserEntity[]>>;
+    getBeneficiaryByMonth(month: number): Promise<ResponseDto<import("../../data-interaction/database/entitites/user.entity").UserEntity[]>>;
+    getById(userId: string): Promise<ResponseDto<import("../../data-interaction/database/entitites/user.entity").UserEntity>>;
+    create(body: CreateUserDto): Promise<SigninResponseDto>;
+    updatePasswordRequest(req: Request): Promise<void>;
+    verifyUpdatePasswordRequest(req: Request, paramDto: TokenVerifyParamsDto): Promise<{
+        valid: boolean;
+    }>;
+    confirmUpdatePasswordRequest(req: Request, dto: ConfirmPasswordUpdateRequestDto): Promise<void>;
+    getDashboardDataWithJoinProfessional(userId: string): Promise<import("../../data-interaction/database/entitites/user.entity").UserEntity>;
+    getDashboardDataBeneficiary(userId: string): Promise<import("../../data-interaction/database/entitites/user.entity").UserEntity>;
+    update(req: Request, body: UpdateUserDto): Promise<import("../../data-interaction/database/entitites/user.entity").UserEntity>;
+    updatePersonalInfo(req: Request, body: UpdateUserDto): Promise<ResponseDto<import("../../data-interaction/database/entitites/user.entity").UserEntity>>;
+    pictureProfile(req: Request, body: MediaUploadDto): Promise<ResponseDto<import("typeorm").UpdateResult>>;
+    updateAdrress(body: UpdateAddressDto): Promise<ResponseDto<import("../../data-interaction/database/entitites/address.entity").AddressEntity>>;
+    updateById(id: string, body: any): Promise<import("../../data-interaction/database/entitites/user.entity").UserEntity | import("../../data-interaction/database/entitites/address.entity").AddressEntity>;
+    updateUserProgramType(id: string, body: UpdateUserProgramTypeDto): Promise<import("typeorm").UpdateResult>;
+    checkProfessionalUserCaubRegistration(reqParams: ProfessionalCouncilRegistrationRequestDto): Promise<ProfessionalCouncilRegistrationResponseDto>;
+    checkProfessionalUserConfeaRegistration(reqParams: ProfessionalCouncilRegistrationRequestDto): Promise<ProfessionalCouncilRegistrationResponseDto>;
+    getByCpf(cpf: string): Promise<import("../../data-interaction/database/entitites/user.entity").UserEntity>;
+}

@@ -1,0 +1,9 @@
+export declare enum MaritalStatusEnum {
+    SOLTEIRO = "SOLTEIRO",
+    CASADO = "CASADO",
+    DIVORCIADO = "DIVORCIADO",
+    VIUVO = "VIUVO",
+    UNIAO_ESTAVEL = "UNIAO_ESTAVEL",
+    SEPARADO = "SEPARADO",
+    OUTRO = "OUTRO"
+}

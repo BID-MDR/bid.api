@@ -1,0 +1,8 @@
+export declare enum TechnicalVisitStatusEnum {
+    AGENDADA = "AGENDADA",
+    REALIZADA = "REALIZADA",
+    CANCELADA = "CANCELADA",
+    NAO_REALIZADA = "NAO_REALIZADA",
+    PENDENTE = "PENDENTE",
+    REAGENDADA = "REAGENDADA"
+}

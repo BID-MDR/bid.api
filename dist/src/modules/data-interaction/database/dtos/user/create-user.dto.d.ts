@@ -1,0 +1,33 @@
+import { LevelOfEducationEnum } from '../../enums/level-of-education.enum';
+import { MaritalStatusEnum } from '../../enums/marital-status.enum';
+import { RaceEnum } from '../../enums/race.enum';
+import { UserBirthGenderEnum } from '../../enums/user-birth-gender.enum';
+import { UserTypeEnum } from '../../enums/user-type.enum';
+import { CreateAddressDto } from '../address/create-address.dto';
+import { MediaUploadDto } from '../media/media-upload.dto';
+import { CreateUserBeneficiaryInfoDto } from './user-beneficiary-info/create-user-beneficiary-info.dto';
+import { CreateUserProfessionalInfoDto } from './user-professional-info/create-user-professional-info.dto';
+import { UserGenderIdentityEnum } from '../../enums/user-gender-identity.enum';
+import { UserMonthlyFamilyIncomeEnum } from '../../enums/user-monthly-family-income.enum';
+export declare class CreateUserDto {
+    name: string;
+    type: UserTypeEnum;
+    phone: string;
+    email: string;
+    cpf: string;
+    address: CreateAddressDto;
+    age: number;
+    birthGender: UserBirthGenderEnum;
+    birthDate: string;
+    genderIdentity: UserGenderIdentityEnum;
+    customGenderIdentity: string;
+    levelOfEducation: LevelOfEducationEnum;
+    maritalStatus: MaritalStatusEnum;
+    monthlyFamilyIncome: UserMonthlyFamilyIncomeEnum;
+    race: RaceEnum;
+    uploadedProfilePicture: MediaUploadDto;
+    password: string;
+    beneficiaryUserInfo: CreateUserBeneficiaryInfoDto;
+    professionalUserInfo: CreateUserProfessionalInfoDto;
+    profilePicture: string;
+}

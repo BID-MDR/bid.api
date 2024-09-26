@@ -1,0 +1,32 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RoomSolutionEnum = void 0;
+var RoomSolutionEnum;
+(function (RoomSolutionEnum) {
+    RoomSolutionEnum["FOSSA_SEPTICA_SUMIDOURO"] = "FOSSA_SEPTICA_SUMIDOURO";
+    RoomSolutionEnum["NOVO_COMODO"] = "NOVO_COMODO";
+    RoomSolutionEnum["NOVO_COMODO_ISOLADO"] = "NOVO_COMODO_ISOLADO";
+    RoomSolutionEnum["NOVO_COMODO_CONTIGUO"] = "NOVO_COMODO_CONTIGUO";
+    RoomSolutionEnum["COBERTURA"] = "COBERTURA";
+    RoomSolutionEnum["COBERTURA_MADEIRA"] = "COBERTURA_MADEIRA";
+    RoomSolutionEnum["COBERTURA_MADEIRA_CINTA"] = "COBERTURA_MADEIRA_CINTA";
+    RoomSolutionEnum["INSTALACAO_CAIXA"] = "INSTALACAO_CAIXA";
+    RoomSolutionEnum["NOVO_BANHEIRO"] = "NOVO_BANHEIRO";
+    RoomSolutionEnum["NOVO_BANHEIRO_ISOLADO"] = "NOVO_BANHEIRO_ISOLADO";
+    RoomSolutionEnum["NOVO_BANHEIRO_CONTIGUO"] = "NOVO_BANHEIRO_CONTIGUO";
+    RoomSolutionEnum["REFORMA_BANHEIRO"] = "REFORMA_BANHEIRO";
+    RoomSolutionEnum["ADAPTACAO_BANHEIRO"] = "ADAPTACAO_BANHEIRO";
+    RoomSolutionEnum["REVESTIMENTO_PINTURA_EXTERNA"] = "REVESTIMENTO_PINTURA_EXTERNA";
+    RoomSolutionEnum["REVESTIMENTO_PINTURA_INTERNA"] = "REVESTIMENTO_PINTURA_INTERNA";
+    RoomSolutionEnum["PINTURA_EXTERNA"] = "PINTURA_EXTERNA";
+    RoomSolutionEnum["PINTURA_INTERNA"] = "PINTURA_INTERNA";
+    RoomSolutionEnum["RAMPA_ACESSIBILIDADE"] = "RAMPA_ACESSIBILIDADE";
+    RoomSolutionEnum["ENTRADA_ENERGIA"] = "ENTRADA_ENERGIA";
+    RoomSolutionEnum["INSTALACAO_ELETRICA"] = "INSTALACAO_ELETRICA";
+    RoomSolutionEnum["INSTALACAO_HIDROSSANITARIA"] = "INSTALACAO_HIDROSSANITARIA";
+    RoomSolutionEnum["INSTALACAO_RETIRADA_PORTA"] = "INSTALACAO_RETIRADA_PORTA";
+    RoomSolutionEnum["INSTALACAO_RETIRADA_JANELA"] = "INSTALACAO_RETIRADA_JANELA";
+    RoomSolutionEnum["CONTRAPISO_REVESTIMENTO"] = "CONTRAPISO_REVESTIMENTO";
+    RoomSolutionEnum["FORRO"] = "FORRO";
+})(RoomSolutionEnum || (exports.RoomSolutionEnum = RoomSolutionEnum = {}));
+//# sourceMappingURL=room-solution.enum.js.map
