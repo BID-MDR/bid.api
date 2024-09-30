@@ -23,9 +23,10 @@ let GovbrSubsystem = class GovbrSubsystem {
         this.httpService = httpService;
     }
     async login(code, codeVerifier) {
-        return (console.log(`https://sso.staging.acesso.gov.br/token?grant_type=authorization_code&code=${code}&redirect_uri=${encodeURIComponent(this.configService.get(environment_variables_enum_1.EnviromentVariablesEnum.API_URL) +
-            this.configService.get(environment_variables_enum_1.EnviromentVariablesEnum.SERVER_PATH_PREFIX) +
-            '/govbr/sso')}&code_verifier=${codeVerifier}`),
+        return (console.log(this.configService.get(environment_variables_enum_1.EnviromentVariablesEnum.API_URL)),
+            console.log(`https://sso.staging.acesso.gov.br/token?grant_type=authorization_code&code=${code}&redirect_uri=${encodeURIComponent(this.configService.get(environment_variables_enum_1.EnviromentVariablesEnum.API_URL) +
+                this.configService.get(environment_variables_enum_1.EnviromentVariablesEnum.SERVER_PATH_PREFIX) +
+                '/govbr/sso')}&code_verifier=${codeVerifier}`),
             await (0, rxjs_1.firstValueFrom)(this.httpService.post(`https://sso.staging.acesso.gov.br/token?grant_type=authorization_code&code=${code}&redirect_uri=${encodeURIComponent(this.configService.get(environment_variables_enum_1.EnviromentVariablesEnum.API_URL) +
                 this.configService.get(environment_variables_enum_1.EnviromentVariablesEnum.SERVER_PATH_PREFIX) +
                 '/govbr/sso')}&code_verifier=${codeVerifier}`, undefined, {

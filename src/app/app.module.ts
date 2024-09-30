@@ -44,6 +44,7 @@ dotenv.config();
                 ];
             },
         }),
+
         EventEmitterModule.forRoot(),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],

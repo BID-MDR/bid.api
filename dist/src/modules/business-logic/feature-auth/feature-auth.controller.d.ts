@@ -8,5 +8,6 @@ export declare class FeatureAuthController {
     constructor(featureAuthService: FeatureAuthService);
     getSsoId(dto: GetSsoRequestDto): Promise<ResponseDto<SigninResponseDto>>;
     signin(body: SigninRequestDto): Promise<ResponseDto<string>>;
+    signinGet(body: SigninRequestDto): Promise<ResponseDto<string>>;
     generateSsoGovbr(): Promise<ResponseDto<import("../../data-interaction/database/entitites/govbr-sso.entity").GovbrSsoEntity>>;
 }

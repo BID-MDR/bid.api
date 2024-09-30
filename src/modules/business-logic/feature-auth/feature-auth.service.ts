@@ -58,14 +58,16 @@ export class FeatureAuthService {
   }
 
   async govbrAuthorize(dto: SigninRequestDto) {
+    console.log('tetsetste');
+    console.log(dto);
     const ssoAttempt = await this.govbrSsoRepository.findById(dto.state);
-
+    console.log('ssoAttempt',ssoAttempt);
     if (!ssoAttempt) {
       throw new BadRequestException("State invalidado pelo backend.");
     }
 
     const govbrData = await this.govbrFacade.login(dto.code, ssoAttempt.codeVerifier);
-
+    console.log('govbrData',govbrData);
     const jwk = await this.govbrFacade.getJwk();
 
     // await this.jwtService.verifyAsync(govbrData.access_token, {

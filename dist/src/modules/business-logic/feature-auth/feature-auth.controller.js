@@ -36,6 +36,10 @@ let FeatureAuthController = class FeatureAuthController {
         const result = await this.featureAuthService.govbrAuthorize(body);
         return new response_dto_1.ResponseDto(true, result, null);
     }
+    async signinGet(body) {
+        const result = await this.featureAuthService.govbrAuthorize(body);
+        return new response_dto_1.ResponseDto(true, result, null);
+    }
     async generateSsoGovbr() {
         const result = await this.featureAuthService.generateSsoGovbr();
         return new response_dto_1.ResponseDto(true, result, null);
@@ -90,6 +94,31 @@ __decorate([
     __metadata("design:paramtypes", [signin_request_dto_1.SigninRequestDto]),
     __metadata("design:returntype", Promise)
 ], FeatureAuthController.prototype, "signin", null);
+__decorate([
+    (0, common_1.Get)('signin'),
+    (0, common_1.UseInterceptors)(new encrypt_interceptor_1.EncryptInterceptor()),
+    (0, swagger_1.ApiOperation)({
+        description: 'Autentica um usuário através do login único govbr e retorna um JWT ou um erro de usuário não cadastrado. Use após redirecionar o usuário para a página de login único govbr.',
+        summary: 'Autentica um usuário.',
+    }),
+    (0, swagger_1.ApiBody)({
+        type: signin_request_dto_1.SigninRequestDto,
+        required: true,
+    }),
+    (0, swagger_1.ApiNotFoundResponse)({
+        description: 'Usuário não cadastrado.',
+    }),
+    (0, api_ok_response_dto_decorator_1.ApiOkResponseDtoData)({
+        type: String,
+    }),
+    (0, common_1.SerializeOptions)({
+        type: String,
+    }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [signin_request_dto_1.SigninRequestDto]),
+    __metadata("design:returntype", Promise)
+], FeatureAuthController.prototype, "signinGet", null);
 __decorate([
     (0, common_1.Get)('govbr/sso'),
     (0, swagger_1.ApiOperation)({

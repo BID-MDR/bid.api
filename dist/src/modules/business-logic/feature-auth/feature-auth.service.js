@@ -65,11 +65,14 @@ let FeatureAuthService = class FeatureAuthService {
     }
     async govbrAuthorize(dto) {
         console.log('tetsetste');
+        console.log(dto);
         const ssoAttempt = await this.govbrSsoRepository.findById(dto.state);
+        console.log('ssoAttempt', ssoAttempt);
         if (!ssoAttempt) {
             throw new common_1.BadRequestException("State invalidado pelo backend.");
         }
         const govbrData = await this.govbrFacade.login(dto.code, ssoAttempt.codeVerifier);
+        console.log('govbrData', govbrData);
         const jwk = await this.govbrFacade.getJwk();
         const decodedJwt = this.jwtService.decode(govbrData.id_token);
         const user = await this.userRepository.findByCpf(decodedJwt.sub);
