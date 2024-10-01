@@ -40639,8 +40639,10 @@ var _SsoComponent = class _SsoComponent {
   }
   ngOnInit() {
     console.log(isDevMode());
+    console.log('testes aqui');
     this.route.queryParamMap.subscribe({
       next: (params) => {
+        console.log('params',params)
         if (params.has("code") && params.has("state")) {
           this.authService.signIn({
             code: params.get("code") || "",
@@ -40649,7 +40651,7 @@ var _SsoComponent = class _SsoComponent {
             next: (data) => {
               if (isDevMode()) {
             console.log(isDevMode());
-
+                console.log('testest');
                 window.location.replace(environment.appUrl + "?ssoId=" + data);
               } else {
                 window.location.replace(environment.domain + "?ssoId=" + data);
