@@ -64,9 +64,11 @@ exports.AppModule = AppModule = __decorate([
                 imports: [config_1.ConfigModule],
                 inject: [config_1.ConfigService],
                 useFactory: (configService) => {
+                    const rootPath = (0, path_1.join)(__dirname, '..', '..', '..', 'src', 'client', 'govbr-sso', 'development');
+                    console.log(rootPath);
                     return [
                         {
-                            rootPath: (0, path_1.join)(__dirname, '..', 'client/govbr-sso/' + configService.get(environment_variables_enum_1.EnviromentVariablesEnum.NODE_ENV)),
+                            rootPath: rootPath,
                             renderPath: '/govbr/sso',
                             exclude: ['/api/(.*)'],
                         },
