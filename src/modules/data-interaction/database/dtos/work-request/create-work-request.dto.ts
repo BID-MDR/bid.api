@@ -17,6 +17,7 @@ import { PrevalingConstructionMaterialsEnum } from "../../enums/prevailing-const
 import { Type } from "class-transformer";
 import { WelfareProgramEnum } from "../../enums/welfare-program.enum";
 import { CreateRoomDto } from "../room/create-room.dto";
+import { HouseTypeEnum } from "../../enums/house-type.enum";
 
 class CreateWorkRequestWelfareProgramDto {
     @ApiProperty({ enum: WelfareProgramEnum })
@@ -57,6 +58,11 @@ export class CreateWorkRequestDto {
     @IsNotEmpty()
     @IsEnum(PropertyTypeEnum)
     propertyType: PropertyTypeEnum;
+
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsEnum(HouseTypeEnum)
+    houseType: HouseTypeEnum;
 
     @ApiProperty()
     @IsNotEmpty()
