@@ -27,8 +27,6 @@ export class SatisfactionResearchController {
     return await this.service.list()
   }
 
-
-
   @Delete('delete-by-id/:id')
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard)
