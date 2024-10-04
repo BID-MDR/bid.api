@@ -6,6 +6,7 @@ import { TechnicalVisitEntity } from "./technical-visit.entity";
 import { DemandStatusEnum } from "../enums/demand-status.enum";
 import { ConstructionsEntity } from "./constructions.entity";
 import { CompanyEntity } from "./company.entity";
+import { SustainabilityItensEntity } from "./sustainability-Itens.entity";
 
 @Entity({ name: "demands" })
 export class DemandEntity extends BaseEntity {
@@ -115,4 +116,12 @@ export class DemandEntity extends BaseEntity {
   })
   @JoinColumn()
   construction?: ConstructionsEntity;
+
+  @OneToOne(() => SustainabilityItensEntity, c => c.demand, {
+    nullable: true,
+    eager: true,
+    cascade: true,
+  })
+  @JoinColumn()
+  sustainabilityItens?: SustainabilityItensEntity;
 }

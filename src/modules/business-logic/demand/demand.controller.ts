@@ -65,9 +65,6 @@ export class DemandController {
     @Get("get-by-workRequestId/:id")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
-    @SerializeOptions({
-        type: ResponseDemandDto,
-    })
     async getByWorkRequesId(@Param("id") id: string) {
         return await this.demandService.getByWorkRequestId(id);
     }

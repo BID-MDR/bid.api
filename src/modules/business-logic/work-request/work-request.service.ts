@@ -7,12 +7,15 @@ import { WorkRequestRepository } from "../../data-interaction/database/repositor
 import { DemandRepository } from "../../data-interaction/database/repositories/user/demand.repository";
 import { DemandStatusEnum } from "../../data-interaction/database/enums/demand-status.enum";
 import { TechnicalVisitStatusEnum } from "src/modules/data-interaction/database/enums/technical-visit-status.enum";
+import { SustainabilityItensRequestDto } from "src/modules/data-interaction/database/dtos/work-request/sustainability-itens-request.dto";
+import { SustainabilityItensRepository } from "src/modules/data-interaction/database/repositories/work-request/sustainability-itens.repository";
 
 @Injectable()
 export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWorkRequestDto, UpdateWorkRequestDto> {
   constructor(
     private workRequestRepository: WorkRequestRepository,
-    private demandRepository: DemandRepository
+    private demandRepository: DemandRepository,
+    private sustainabilityItensRepository: SustainabilityItensRepository
   ) {
     super(workRequestRepository);
   }
@@ -90,5 +93,13 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
     await demand.save();
 
     return await workRequest.save();
+  }
+
+  async createSustainabilityItens(dto: SustainabilityItensRequestDto, companyId: string, workRequestId: string) {
+    const demand = await this.demandRepository.getByWorkRequestId(workRequestId);
+    if (demand.company.id !== companyId) throw new BadRequestException("Não autorizado a acessar essa demanda.");
+    const request = await this.sustainabilityItensRepository.create(dto);
+    demand.sustainabilityItens = request;
+    return await demand.save();
   }
 }

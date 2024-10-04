@@ -11,6 +11,7 @@ import { EmployeeRoleEnum } from "../../data-interaction/database/enums/employee
 import { WorkRequestService } from "./work-request.service";
 import { Request } from "express";
 import { JwtPayloadInterface } from "src/core/interfaces/jwt-payload.interface";
+import { SustainabilityItensRequestDto } from "src/modules/data-interaction/database/dtos/work-request/sustainability-itens-request.dto";
 
 @Controller("work-request")
 @ApiTags("Work Request/Vistoria")
@@ -113,5 +114,18 @@ export class WorkRequestController {
   async carryOut(@Param("id") id: string, @Req() req: Request) {
     const companyId = (req.user as JwtPayloadInterface).companyId;
     return await this.service.carryOut(id, companyId);
+  }
+
+  @Post("sustainability-itens/:workRequestId")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard, RolesGuard)
+  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_inspection, EmployeeRoleEnum.manager_demand])
+  @ApiBody({
+    type: SustainabilityItensRequestDto,
+    required: true,
+   })
+  async createSustainabilityItens(@Body() dto: SustainabilityItensRequestDto, @Req() req: Request, @Param('workRequestId') workRequestId: string) {
+    const userId = (req.user as JwtPayloadInterface).companyId;
+    return await this.service.createSustainabilityItens(dto, userId, workRequestId);
   }
 }
