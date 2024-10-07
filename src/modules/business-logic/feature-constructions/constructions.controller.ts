@@ -47,7 +47,7 @@ export class ConstructionsController {
   @Post("first-step-photos/:demandId")
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
+  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction, EmployeeRoleEnum.manager_demand])
   @UseInterceptors(FilesInterceptor("files"))
   @ApiConsumes("multipart/form-data")
   @ApiBody({
@@ -78,7 +78,7 @@ export class ConstructionsController {
   @Post("second-step-constructions/:demandId")
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
+  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction, EmployeeRoleEnum.manager_demand])
   async secondStepConstructions(
     @Param("demandId") demandId: string,
     @Body() dto: CreateConstructionsDto,

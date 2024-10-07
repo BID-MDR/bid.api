@@ -64,6 +64,33 @@ export class FeatureAuthController {
         
     }
 
+    @Get('signin')
+    @UseInterceptors(new EncryptInterceptor())
+    @ApiOperation({
+        description:
+            'Autentica um usuário através do login único govbr e retorna um JWT ou um erro de usuário não cadastrado. Use após redirecionar o usuário para a página de login único govbr.',
+        summary: 'Autentica um usuário.',
+    })
+    @ApiBody({
+        type: SigninRequestDto,
+        required: true,
+    })
+    @ApiNotFoundResponse({
+        description: 'Usuário não cadastrado.',
+    })
+    @ApiOkResponseDtoData({
+        type: String,
+    })
+    @SerializeOptions({
+        type: String,
+    })
+    async signinGet(@Body() body: SigninRequestDto) {
+        const result =  await this.featureAuthService.govbrAuthorize(body);
+
+        return new ResponseDto(true, result, null);
+        
+    }
+
     @Get('govbr/sso')
     @ApiOperation({
         summary: 'Gera um code_challenge para o login único govbr.',

@@ -9,6 +9,7 @@ import { RoomEntity } from "./room.entity";
 import { WorkRequestWelfareEntity } from "./work-request-welfare.entity";
 import { TechnicalVisitStatusEnum } from "../enums/technical-visit-status.enum";
 import { SatisfactionResearchEntity } from "./satisfaction-research.entity";
+import { HouseTypeEnum } from "../enums/house-type.enum";
 
 @Entity({ name: "work_request" })
 export class WorkRequestEntity extends BaseEntity {
@@ -54,6 +55,13 @@ export class WorkRequestEntity extends BaseEntity {
     default: FlooringEnum.TERRIO,
   })
   flooring: FlooringEnum;
+
+  @Column({
+    enum: HouseTypeEnum,
+    type: "enum",
+    default: HouseTypeEnum.floors,
+  })
+  houseType: HouseTypeEnum;
 
   @Column({
     enum: PrevalingConstructionMaterialsEnum,

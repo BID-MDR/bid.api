@@ -6,7 +6,6 @@ export class SigninRequestDto {
         description: 'Código de autorização do login único govbr.',
         example: '1234567890',
     })
-    @IsString()
     @IsNotEmpty()
     code: string;
 
