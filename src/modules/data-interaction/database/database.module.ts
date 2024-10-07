@@ -59,6 +59,8 @@ import { MessageBackofficeEntity } from './entitites/message-backoffice.entity';
 import { MessageBackofficeRepository } from './repositories/backoffice/message/message.repository';
 import { SustainabilityItensEntity } from './entitites/sustainability-Itens.entity';
 import { SustainabilityItensRepository } from './repositories/work-request/sustainability-itens.repository';
+import { UserGeneratedMediaConclusionEntity } from './entitites/user-generated-media-conclusion.entity';
+import { UserGeneratedMediaConclusionRepository } from './repositories/user/user-generated-media-conclusion.repository';
 
 const ENTITIES = [
     UserEntity,
@@ -90,7 +92,8 @@ const ENTITIES = [
     SatisfactionResearchEntity,
     UserRolesBackofficeEntity,
     MessageBackofficeEntity,
-    SustainabilityItensEntity
+    SustainabilityItensEntity,
+    UserGeneratedMediaConclusionEntity
 ];
 const REPOSITORIES = [
     UserRepository,
@@ -120,7 +123,8 @@ const REPOSITORIES = [
     UserRolesBackofficeRepository,
     EmailRepository,
     MessageBackofficeRepository,
-    SustainabilityItensRepository
+    SustainabilityItensRepository,
+    UserGeneratedMediaConclusionRepository
 ];
 
 @Module({
