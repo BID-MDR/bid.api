@@ -40,7 +40,7 @@ export class MessageBackofficeRepository extends BaseRepository<MessageBackoffic
             .getMany();
     }
 
-    async listAllMsgByUser(user: UserBackofficeEntity): Promise<MessageBackofficeEntity[]> {
+    async listAllMsgByUser(user: UserEntity): Promise<MessageBackofficeEntity[]> {
         
         return await this.repository.createQueryBuilder('message')
         .innerJoinAndSelect('message.sender', 'sender')

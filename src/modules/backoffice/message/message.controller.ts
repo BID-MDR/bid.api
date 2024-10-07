@@ -38,6 +38,7 @@ export class MessageBackofficeController {
     // @UseGuards(JwtAccessTokenGuard)
     async listConversation(@Req() req: Request, @Param('id') id:string) {
        // const userId = (req.user as JwtPayloadInterface).userId;
+       console.log(id)
         const msglist = await this.messageService.listAllMsgByUser(id);
         return new ResponseDto(true, msglist, false)
     }
