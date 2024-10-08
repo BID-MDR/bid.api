@@ -89,9 +89,9 @@ export class WorkRequestEntity extends BaseEntity {
   })
   status: TechnicalVisitStatusEnum;
 
-  @OneToOne(() => SatisfactionResearchEntity, satisfaction => satisfaction.workRequest, {
+  @OneToMany(() => SatisfactionResearchEntity, satisfaction => satisfaction.workRequest, {
     cascade: true,
     eager: true,
   })
-  satisfaction: SatisfactionResearchEntity;
+  satisfaction: SatisfactionResearchEntity[];
 }

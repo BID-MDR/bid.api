@@ -100,6 +100,7 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
     if (demand.company.id !== companyId) throw new BadRequestException("Não autorizado a acessar essa demanda.");
     const request = await this.sustainabilityItensRepository.create(dto);
     demand.sustainabilityItens = request;
+    
     return await demand.save();
   }
 }

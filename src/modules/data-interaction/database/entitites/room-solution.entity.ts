@@ -3,6 +3,7 @@ import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { RoomSolutionEnum } from '../enums/room-solution.enum';
 import { RoomEntity } from './room.entity';
 import { UserGeneratedMediaEntity } from './user-generated-media.entity';
+import { UserGeneratedMediaConclusionEntity } from './user-generated-media-conclusion.entity';
 
 @Entity({ name: 'room_solution' })
 export class RoomSolutionEntity extends BaseEntity {
@@ -21,4 +22,11 @@ export class RoomSolutionEntity extends BaseEntity {
         nullable: true,
     })
     picturesAndVideos: UserGeneratedMediaEntity[];
+
+    @OneToMany(() => UserGeneratedMediaConclusionEntity, (userGeneratedMediaConclusionEntity) => userGeneratedMediaConclusionEntity.roomSolution, {
+        cascade: true,
+        eager: true,
+        nullable: true,
+    })
+    picturesAndVideosConclusion: UserGeneratedMediaConclusionEntity[];
 }

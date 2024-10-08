@@ -157,6 +157,7 @@ export class DemandRepository extends BaseRepository<
       .leftJoinAndSelect("workRequest.room", "room")
       .leftJoinAndSelect("workRequest.welfare", "welfare")
       .leftJoinAndSelect("room.roomSolutions", "roomSolution")
-      .leftJoinAndSelect("roomSolution.picturesAndVideos", "pictures");
+      .leftJoinAndSelect("roomSolution.picturesAndVideos", "pictures")
+      .leftJoinAndSelect("roomSolution.picturesAndVideosConclusion", "picturesConclusion")
   }
 }
