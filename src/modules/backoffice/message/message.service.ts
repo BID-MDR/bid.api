@@ -43,7 +43,7 @@ export class MessageBackofficeService extends BaseService<
     }
     
     async listAllMsgByUser(userId: string): Promise<UserWithLastMessageBackoffice[]> {
-        const user = await this.userBackofficeRepository.getById(userId);
+        const user = await this.userRepository.getById(userId);
         const msgList = await this.messageRepository.listAllMsgByUser(user);
         
         const userMessagesMap: { [key: string]: UserWithLastMessageBackoffice } = {};
