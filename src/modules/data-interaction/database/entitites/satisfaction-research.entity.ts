@@ -31,7 +31,7 @@ export class SatisfactionResearchEntity extends BaseEntity {
     @JoinColumn({ name: 'user_id' }) 
     user: UserEntity;
 
-    @OneToOne(()=> WorkRequestEntity, (workRequest) => workRequest.satisfaction)
+    @ManyToOne(()=> WorkRequestEntity, (workRequest) => workRequest.satisfaction)
     @JoinColumn() 
     workRequest: WorkRequestEntity;
 
