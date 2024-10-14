@@ -102,14 +102,12 @@ export class WorkRequestController {
 
   @Put("carry-out/:id")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_inspection])
+  @UseGuards(JwtAccessTokenGuard)
+  // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_inspection])
+  //Retirei as roles, até ajustar o script do login.
   @ApiOkResponseDtoData({
     type: ResponseWorkRequestDto,
     description: "Pedido de demanda.",
-  })
-  @SerializeOptions({
-    type: ResponseWorkRequestDto,
   })
   async carryOut(@Param("id") id: string, @Req() req: Request) {
     const companyId = (req.user as JwtPayloadInterface).companyId;
