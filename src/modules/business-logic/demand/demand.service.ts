@@ -22,25 +22,32 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
 
   async listByUser(userId: string) {
     const user = await this.userRepository.getById(userId);
-    const companyId = user.employee.company.id || user.companyAdministrator.id;
-    return await this.demandRepository.listByUser(userId, companyId);
+
+    if(user.companyAdministrator.id)
+      return await this.demandRepository.listByUser(userId, user.companyAdministrator.id);
+    if(user.employee.company.id)
+      return await this.demandRepository.listByUser(userId, user.employee.company.id);
+
+
+    return await this.demandRepository.listByUser(userId);
+
   }
 
   async listForVisit(userId: string) {
     const user = await this.userRepository.getById(userId);
-    const companyId = user.employee.company.id || user.companyAdministrator.id;
+    const companyId = user.companyAdministrator.id || user.employee.company.id;
     return await this.demandRepository.listForVisit(companyId);
   }
 
   async listForConstructions(userId: string) {
     const user = await this.userRepository.getById(userId);
-    const companyId = user.employee.company.id || user.companyAdministrator.id;
+    const companyId = user.companyAdministrator.id || user.employee.company.id;
     return await this.demandRepository.listForConstructions(companyId);
   }
 
   async listByUserImprovement(userId: string) {
     const user = await this.userRepository.getById(userId);
-    const companyId = user.employee.company.id || user.companyAdministrator.id;
+    const companyId = user.companyAdministrator.id || user.employee.company.id;
     return await this.demandRepository.listByUserWaitImprove(companyId);
   }
 
