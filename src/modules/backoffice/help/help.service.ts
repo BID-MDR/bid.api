@@ -50,8 +50,11 @@ export class HelpBackofficeService extends BaseService<
         return await this.helpRepository.list();
     }
 
-    async updateStatusOpen(id: string){
-        return await this.helpRepository.update(id, {status: HelpStatusEnum.OPEN})
+    async updateStatus(id: string, status: string){
+        if(status == HelpStatusEnum.OPEN)
+            return await this.helpRepository.update(id, {status: HelpStatusEnum.OPEN})
+        if(status == HelpStatusEnum.SOLVED)
+            return await this.helpRepository.update(id, {status: HelpStatusEnum.SOLVED})
     }
     
 }
