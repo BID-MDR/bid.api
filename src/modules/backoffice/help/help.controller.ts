@@ -76,12 +76,12 @@ export class HelpBackofficeController {
         return new ResponseDto(true, help, false)
     }
 
-    @Put('update/:id')
+    @Put('update/:id/:status')
     @ApiBearerAuth()
     // @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
     // @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA])
-    async updateOpen(@Param('id') id: string) {
-        const help = await this.helpService.updateStatusOpen(id);
+    async updateOpen(@Param('id') id: string, @Param('status') status: string) {
+        const help = await this.helpService.updateStatus(id, status);
         return new ResponseDto(true, help, false)
     }
 
