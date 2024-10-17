@@ -6,6 +6,7 @@ import { UserRepository } from 'src/modules/data-interaction/database/repositori
 import { HelpEntity } from 'src/modules/data-interaction/database/entitites/help.entity';
 import { HelpRegisterRequestDto } from 'src/modules/data-interaction/database/dtos/help/register-help.dto';
 import { HelpRepository } from 'src/modules/data-interaction/database/repositories/user/help.repository';
+import { HelpStatusEnum } from 'src/modules/data-interaction/database/dtos/help/helpStatus.enum';
 
 @Injectable()
 export class HelpBackofficeService extends BaseService<
@@ -47,6 +48,10 @@ export class HelpBackofficeService extends BaseService<
 
     async list() {
         return await this.helpRepository.list();
+    }
+
+    async updateStatusOpen(id: string){
+        return await this.helpRepository.update(id, {status: HelpStatusEnum.OPEN})
     }
     
 }

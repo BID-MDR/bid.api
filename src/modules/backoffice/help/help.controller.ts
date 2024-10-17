@@ -6,6 +6,7 @@ import {
     Logger,
     Param,
     Post,
+    Put,
     Req,
     SerializeOptions,
     UseGuards
@@ -72,6 +73,15 @@ export class HelpBackofficeController {
     @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA])
     async listByUser(@Param('id') id: string) {
         const help = await this.helpService.listByUser(id);
+        return new ResponseDto(true, help, false)
+    }
+
+    @Put('update/:id')
+    @ApiBearerAuth()
+    // @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    // @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA])
+    async updateOpen(@Param('id') id: string) {
+        const help = await this.helpService.updateStatusOpen(id);
         return new ResponseDto(true, help, false)
     }
 

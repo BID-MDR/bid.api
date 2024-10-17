@@ -8,7 +8,7 @@ import { HelpRegisterRequestDto } from '../../dtos/help/register-help.dto';
 import { addMonths } from 'date-fns';
 
 @Injectable()
-export class HelpRepository extends BaseRepository<HelpEntity, HelpRegisterRequestDto, HelpRegisterRequestDto> {
+export class HelpRepository extends BaseRepository<HelpEntity, any, any> {
     constructor(@InjectRepository(HelpEntity) private repository: Repository<HelpEntity>) {
         super(repository);
     }
