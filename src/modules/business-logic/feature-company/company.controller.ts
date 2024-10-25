@@ -19,8 +19,8 @@ export class CompanyController {
 
 
   @Get("")
-  @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(JwtAccessTokenGuard)
   async list() {
     return await this.service.list();
   }
