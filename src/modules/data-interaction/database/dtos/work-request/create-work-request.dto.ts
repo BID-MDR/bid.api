@@ -3,6 +3,7 @@ import {
     IsEnum,
     IsNotEmpty,
     IsNumber,
+    IsOptional,
     IsString,
     IsUUID,
     Max,
@@ -39,7 +40,6 @@ export class CreateWorkRequestDto {
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
     responsiblePersonName: string;
 
     @ApiProperty()
@@ -59,10 +59,8 @@ export class CreateWorkRequestDto {
     @IsEnum(PropertyTypeEnum)
     propertyType: PropertyTypeEnum;
 
-    @ApiProperty()
-    @IsNotEmpty()
-    @IsEnum(HouseTypeEnum)
-    houseType: HouseTypeEnum;
+    @ApiProperty({ required: false, enum: HouseTypeEnum, nullable: true })
+    houseType?:  HouseTypeEnum | null;
 
     @ApiProperty()
     @IsNotEmpty()

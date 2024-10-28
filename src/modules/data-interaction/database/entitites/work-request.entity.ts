@@ -57,11 +57,12 @@ export class WorkRequestEntity extends BaseEntity {
   flooring: FlooringEnum;
 
   @Column({
-    enum: HouseTypeEnum,
     type: "enum",
+    enum: HouseTypeEnum,
+    nullable: true,
     default: HouseTypeEnum.floors,
   })
-  houseType: HouseTypeEnum;
+  houseType?: HouseTypeEnum | null;
 
   @Column({
     enum: PrevalingConstructionMaterialsEnum,
