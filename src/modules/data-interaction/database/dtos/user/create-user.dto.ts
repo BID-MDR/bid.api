@@ -38,7 +38,7 @@ export class CreateUserDto {
     type: UserTypeEnum;
 
     @ApiProperty({ example: '+5511999999999' })
-    @IsPhoneNumber('BR')
+    // @IsPhoneNumber('BR')
     phone: string;
 
     @ApiProperty({ example: 'test@email.com' })
