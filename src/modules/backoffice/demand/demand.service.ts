@@ -34,6 +34,22 @@ export class DemandBackofficeService extends BaseService<DemandEntity, DemandReg
     return await this.demandRepository.findMonth(month);
   }
 
+  async countSustainability(document: string){
+    return await this.demandRepository.countSustainabilityItems(document);
+  }
+
+  async countConstructions(document: string){
+    return await this.demandRepository.countConstructions(document);
+  }
+
+  async countConstructionsCompleted(document: string){
+    return await this.demandRepository.countConstructionsCompleted(document);
+  }
+
+  async countTechnicalVisit(document: string){
+    return await this.demandRepository.countTechnicalVisit(document);
+  }
+
   async listForVisit(userId: string) {
     const user = await this.userRepository.getById(userId);
     const companyId = user.employee.company.id || user.companyAdministrator.id;

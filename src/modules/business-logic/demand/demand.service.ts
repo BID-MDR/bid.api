@@ -32,6 +32,10 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
 
   }
 
+  async countSustainability(document: string){
+    return await this.demandRepository.countSustainabilityItems(document);
+  }
+
   async listForVisit(userId: string) {
     const user = await this.userRepository.getById(userId);
     if(user?.companyAdministrator?.id)

@@ -158,6 +158,13 @@ export class DemandController {
         return await this.demandService.listByStatus(status);
     }
 
+    @Get('sustainability/:document')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async countSustainability(@Param('document') document: string) {
+        return await this.demandService.countSustainability(document);
+    }
+
     @Put('confirm-conclusion/:id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
