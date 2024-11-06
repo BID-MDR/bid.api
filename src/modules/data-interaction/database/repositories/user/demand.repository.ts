@@ -25,6 +25,51 @@ export class DemandRepository extends BaseRepository<
     return this.repository.findOne({ where: { id: _id }, loadEagerRelations: true });
   }
 
+  async countSustainabilityItems(document: string | number) {
+    const count = await this.repository
+      .createQueryBuilder("demand")
+      .leftJoin("demand.sustainabilityItens", "sustainabilityItens")
+      .where("demand.document = :document", { document })
+      .select("COUNT(sustainabilityItens.id)", "count")
+      .getRawOne();
+  
+    return count.count;
+  }
+
+  async countConstructions(document: string | number) {
+    const count = await this.repository
+      .createQueryBuilder("demand")
+      .leftJoin("demand.construction", "constructions")
+      .where("demand.document = :document", { document })
+      .select("COUNT(constructions.id)", "count")
+      .getRawOne();
+  
+    return count.count;
+  }
+
+  async countConstructionsCompleted(document: string | number) {
+    const count = await this.repository
+      .createQueryBuilder("demand")
+      .leftJoin("demand.construction", "constructions")
+      .where("demand.document = :document", { document })
+      .andWhere("demand.status = :status", {status: 'CONCLUIDO'})
+      .select("COUNT(constructions.id)", "count")
+      .getRawOne();
+  
+    return count.count;
+  }
+
+  async countTechnicalVisit(document: string | number) {
+    const count = await this.repository
+      .createQueryBuilder("demand")
+      .leftJoin("demand.technicalVisit", "technicalVisit")
+      .where("demand.document = :document", { document })
+      .select("COUNT(technicalVisit.id)", "count")
+      .getRawOne();
+  
+    return count.count;
+  }
+
   async countVistory(): Promise<any>{
     return (await this.repository.find({where: {status: DemandStatusEnum.ESPERANDO_MELHORIA}})).length
   }
@@ -152,6 +197,7 @@ export class DemandRepository extends BaseRepository<
       .innerJoinAndSelect("demand.company", "company")
       .leftJoinAndSelect("company.employees", "employees")
       .leftJoinAndSelect("demand.workRequest", "workRequest")
+      .leftJoinAndSelect("demand.sustainabilityItens", "sustainabilityItens")
       .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
       .leftJoinAndSelect("demand.construction", "constructions")
       .leftJoinAndSelect("workRequest.room", "room")
