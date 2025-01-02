@@ -115,6 +115,26 @@ export class FeatureUserController {
         return new ResponseDto(true, us, false);
     }
 
+    @Get("look-for-professional")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+   
+    @ApiOkResponseDtoData({
+        type: UserResponseDto,
+        description: "Usuário logado que iniciou a requisição.",
+    })
+    @SerializeOptions({
+        type: UserResponseDto,
+    })
+    async getLookForProfessional(@Req() req: Request) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        const resultUser = await this.featureUserService.findById(userId);
+        
+        const result = await this.featureUserService.findNearbyEmployees(Number(resultUser.address.latitude), Number(resultUser.address.longitude), 10)
+        console.log(result);
+        return new ResponseDto(true, resultUser, false);
+    }
+
     @Post("")
     @UseInterceptors(new EncryptInterceptor())
     @ApiOperation({

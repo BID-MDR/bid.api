@@ -126,4 +126,25 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
       .where("user.id = :userId", { userId })
       .getOne();
   }
+
+  async findNearbyEmployees(
+    latitude: number,
+    longitude: number,
+    radiusInKm: number,
+  ){
+    const radiusInMeters = radiusInKm * 1000;
+
+  
+    const query = `
+    SELECT u.*
+    FROM user u
+    INNER JOIN address a ON a.id = u.addressId
+    WHERE ST_Distance_Sphere(
+      point(a.longitude, a.latitude),
+      point(?, ?)
+    ) <= ?
+  `;
+
+  return this.repository.query(query, [longitude, latitude, radiusInMeters]);
+  }
 }

@@ -9,12 +9,14 @@ import { DemandStatusEnum } from "../../data-interaction/database/enums/demand-s
 import { TechnicalVisitStatusEnum } from "src/modules/data-interaction/database/enums/technical-visit-status.enum";
 import { SustainabilityItensRequestDto } from "src/modules/data-interaction/database/dtos/work-request/sustainability-itens-request.dto";
 import { SustainabilityItensRepository } from "src/modules/data-interaction/database/repositories/work-request/sustainability-itens.repository";
+import { UserRepository } from "src/modules/data-interaction/database/repositories/user/user.repository";
 
 @Injectable()
 export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWorkRequestDto, UpdateWorkRequestDto> {
   constructor(
     private workRequestRepository: WorkRequestRepository,
     private demandRepository: DemandRepository,
+     private userRepository: UserRepository,
     private sustainabilityItensRepository: SustainabilityItensRepository
   ) {
     super(workRequestRepository);
@@ -43,6 +45,15 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
     demand.status = DemandStatusEnum.CADASTRADO_VISTORIA;
 
     await demand.save();
+
+    return result;
+  }
+
+  async registerBenefficiary(data: CreateWorkRequestDto, userId: string) {
+
+    data.beneficiary = await this.userRepository.findById(userId)
+
+    const result = await super.create(data);
 
     return result;
   }

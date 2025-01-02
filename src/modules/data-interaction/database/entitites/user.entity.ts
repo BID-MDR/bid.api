@@ -21,6 +21,7 @@ import { HelpEntity } from "./help.entity";
 import { CompanyEntity } from "./company.entity";
 import { EmployeeEntity } from "./employee.entity";
 import { SatisfactionResearchEntity } from "./satisfaction-research.entity";
+import { WorkRequestEntity } from "./work-request.entity";
 
 @Entity({ name: "user" })
 export class UserEntity extends BaseEntity {
@@ -184,7 +185,7 @@ export class UserEntity extends BaseEntity {
   otpRequest: UserOtpRequestEntity;
 
   @OneToMany(() => DemandEntity, demand => demand.beneficiary)
-  demands: DemandEntity[];
+  demands?: DemandEntity[];
 
   @OneToMany(() => MessageEntity, message => message.sender)
   sentMessages: MessageEntity[];
@@ -203,4 +204,12 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => SatisfactionResearchEntity, (satisfaction) => satisfaction.user)
   satisfaction: SatisfactionResearchEntity[];
+
+  @OneToOne(() => WorkRequestEntity, workRequest => workRequest.demand, {
+    cascade: true,
+    eager: true,
+    nullable: true,
+  })
+  @JoinColumn()
+  workRequest?: WorkRequestEntity;
 }

@@ -19,6 +19,7 @@ import { Type } from "class-transformer";
 import { WelfareProgramEnum } from "../../enums/welfare-program.enum";
 import { CreateRoomDto } from "../room/create-room.dto";
 import { HouseTypeEnum } from "../../enums/house-type.enum";
+import { UserEntity } from "../../entitites/user.entity";
 
 class CreateWorkRequestWelfareProgramDto {
     @ApiProperty({ enum: WelfareProgramEnum })
@@ -30,9 +31,12 @@ class CreateWorkRequestWelfareProgramDto {
 export class CreateWorkRequestDto {
     @ApiProperty()
     @IsUUID()
-    demandId: string;
-    demand: DemandEntity;
+    demandId?: string;
+    demand?: DemandEntity;
 
+    @ApiProperty()
+    beneficiary?: UserEntity;
+    
     @ApiProperty()
     @IsString()
     @IsNotEmpty()

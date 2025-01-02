@@ -285,6 +285,12 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         return await this.userRepository.list();
     }
 
+    async findNearbyEmployees( latitude: number,
+        longitude: number,
+        radiusInKm: number,) {
+        return await this.userRepository.findNearbyEmployees( latitude, longitude, radiusInKm,);
+    }
+
     async listBeneficiary(){
         return await this.userRepository.listBeneficiary();
     }

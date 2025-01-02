@@ -76,6 +76,28 @@ export class WorkRequestController {
     return await this.service.register(dto, companyId);
   }
 
+  @Post("beneficiary")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard, RolesGuard)
+  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_inspection, EmployeeRoleEnum.manager_demand])
+  @ApiOperation({
+    description: "Registrar vistoria.",
+    summary: "Registrar vistoria.",
+  })
+  @ApiOkResponseDtoData({
+    type: ResponseWorkRequestDto,
+    description: "Vistoria registrada.",
+  })
+  @ApiBody({
+    type: CreateWorkRequestDto,
+    required: true,
+    description: "Construção a ser criado.",
+  })
+  async createBeneficiary(@Body() dto: CreateWorkRequestDto, @Req() req: Request) {
+    const userId = (req.user as JwtPayloadInterface).userId;
+    return await this.service.registerBenefficiary(dto, userId);
+  }
+
   @Put("id/:id")
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesGuard)

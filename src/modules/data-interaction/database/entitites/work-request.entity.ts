@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, OneToOne } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { BaseEntity } from "../../../../core/entities/base.entity";
 import { FlooringEnum } from "../enums/flooring.enum";
 import { KinshipEnum } from "../enums/kinship.enum";
@@ -10,12 +10,17 @@ import { WorkRequestWelfareEntity } from "./work-request-welfare.entity";
 import { TechnicalVisitStatusEnum } from "../enums/technical-visit-status.enum";
 import { SatisfactionResearchEntity } from "./satisfaction-research.entity";
 import { HouseTypeEnum } from "../enums/house-type.enum";
+import { UserEntity } from "./user.entity";
 
 @Entity({ name: "work_request" })
 export class WorkRequestEntity extends BaseEntity {
   @OneToOne(() => DemandEntity, demand => demand.workRequest)
-  demand: DemandEntity;
+  demand?: DemandEntity;
 
+  @ManyToOne(() => UserEntity, user => user.workRequest, {
+  })
+  beneficiary?: UserEntity;
+    
   @Column({
     type: "varchar",
     length: 50,
