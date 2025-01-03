@@ -139,10 +139,33 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
     SELECT u.*
     FROM user u
     INNER JOIN address a ON a.id = u.addressId
-    WHERE ST_Distance_Sphere(
-      point(a.longitude, a.latitude),
-      point(?, ?)
-    ) <= ?
+    WHERE u.type = 'PROFISSIONAL'
+      AND ST_Distance_Sphere(
+        point(a.longitude, a.latitude),
+        point(?, ?)
+      ) <= ?
+  `;
+
+  return this.repository.query(query, [longitude, latitude, radiusInMeters]);
+  }
+
+  async findNearbyBeneficiary(
+    latitude: number,
+    longitude: number,
+    radiusInKm: number,
+  ){
+    const radiusInMeters = radiusInKm * 1000;
+
+  
+    const query = `
+    SELECT u.*
+    FROM user u
+    INNER JOIN address a ON a.id = u.addressId
+    WHERE u.type = 'BENEFICIARIO'
+      AND ST_Distance_Sphere(
+        point(a.longitude, a.latitude),
+        point(?, ?)
+      ) <= ?
   `;
 
   return this.repository.query(query, [longitude, latitude, radiusInMeters]);
