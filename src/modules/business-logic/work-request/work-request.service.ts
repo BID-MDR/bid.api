@@ -30,6 +30,10 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
     return await this.workRequestRepository.findById(workRequestId);
   }
 
+  async getByUser(userId: string) {
+    return await this.workRequestRepository.getByUserId(userId);
+  }
+
   async register(data: CreateWorkRequestDto, companyId: string) {
     const demand = await this.demandRepository.getById(data.demandId);
 

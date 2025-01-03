@@ -18,4 +18,13 @@ export class WorkRequestRepository extends BaseRepository<
   ) {
     super(repository);
   }
+
+  async getByUserId(userId: string) {
+    const relations = this.repository.metadata.relations.map((rel) => rel.propertyPath);
+
+    return await this.repository.find({
+      where: { beneficiary: { id: userId } },
+      relations,
+    });
+  }
 }

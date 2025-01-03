@@ -54,6 +54,17 @@ export class WorkRequestController {
     return await this.service.findById(id);
   }
 
+  @Get("user-id")
+  @ApiBearerAuth()
+  @ApiOperation({
+    description: "Vistoria por usuario logado.",
+    summary: "Vistoria por usuario logado.",
+  })
+  async getByUserId(@Req() req: Request) {
+    const userId = (req.user as JwtPayloadInterface).userId;
+    return await this.service.getByUser(userId);
+  }
+
   @Post("")
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -81,7 +92,7 @@ export class WorkRequestController {
   @UseGuards(JwtAccessTokenGuard, RolesGuard)
   @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_inspection, EmployeeRoleEnum.manager_demand])
   @ApiOperation({
-    description: "Registrar vistoria.",
+    description: "Registrar vistoria beneficiario.",
     summary: "Registrar vistoria.",
   })
   @ApiOkResponseDtoData({
