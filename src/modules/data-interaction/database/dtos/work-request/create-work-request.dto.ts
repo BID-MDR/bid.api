@@ -30,7 +30,6 @@ class CreateWorkRequestWelfareProgramDto {
 
 export class CreateWorkRequestDto {
     @ApiProperty()
-    @IsUUID()
     demandId?: string;
     demand?: DemandEntity;
 
@@ -39,7 +38,6 @@ export class CreateWorkRequestDto {
     
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
     description: string;
 
     @ApiProperty()
