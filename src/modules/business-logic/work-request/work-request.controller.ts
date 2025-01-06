@@ -56,6 +56,7 @@ export class WorkRequestController {
 
   @Get("user-id")
   @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
   @ApiOperation({
     description: "Vistoria por usuario logado.",
     summary: "Vistoria por usuario logado.",
