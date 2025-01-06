@@ -131,8 +131,8 @@ export class FeatureUserController {
         const resultUser = await this.featureUserService.findById(userId);
         
         const result = await this.featureUserService.findNearbyEmployees(Number(resultUser.address.latitude), Number(resultUser.address.longitude), 10)
-        console.log(result);
-        return new ResponseDto(true, resultUser, false);
+      
+        return new ResponseDto(true, result, false);
     }
 
     @Get("look-for-beneficiary")
@@ -151,8 +151,8 @@ export class FeatureUserController {
         const resultUser = await this.featureUserService.findById(userId);
         
         const result = await this.featureUserService.findNearbyBeneficiary(Number(resultUser.address.latitude), Number(resultUser.address.longitude), 10)
-        console.log(result);
-        return new ResponseDto(true, resultUser, false);
+
+        return new ResponseDto(true, result, false);
     }
 
     @Post("")
