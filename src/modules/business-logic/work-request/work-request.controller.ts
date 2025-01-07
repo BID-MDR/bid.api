@@ -90,8 +90,8 @@ export class WorkRequestController {
 
   @Post("beneficiary")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_inspection, EmployeeRoleEnum.manager_demand])
+  @UseGuards(JwtAccessTokenGuard)
+  //@Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_inspection, EmployeeRoleEnum.manager_demand,])
   @ApiOperation({
     description: "Registrar vistoria beneficiario.",
     summary: "Registrar vistoria.",

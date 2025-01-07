@@ -21,7 +21,7 @@ export class RolesBackofficeGuard implements CanActivate {
     }
 
     if (!user) {
-      throw new UnauthorizedException('Requisição não autorizada.');
+      throw new UnauthorizedException('Requisição não autorizada. 1');
     }
 
     return user.roles.some(role => roles.includes(role.role) && role.active);
