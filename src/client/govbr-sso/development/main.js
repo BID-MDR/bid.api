@@ -40625,7 +40625,7 @@ var _AuthService = class _AuthService {
    * @param dto
    */
   signIn(dto) {
-    console.log(isDevMode());
+    console.log(isDevMode(), 'teste de login');
     return this._httpClient.post(`${this.baseUrl}signin`, isDevMode() ? dto : AuthUtils.encrypt(dto));
   }
 };
@@ -40642,7 +40642,7 @@ var _SsoComponent = class _SsoComponent {
     this.authService = authService;
   }
   ngOnInit() {
-    console.log(isDevMode());
+    console.log(isDevMode(), 'devmode');
     console.log('testes aqui 1');
     this.route.queryParamMap.subscribe({
       next: (params) => {
