@@ -40643,10 +40643,10 @@ var _SsoComponent = class _SsoComponent {
   }
   ngOnInit() {
     console.log(isDevMode());
-    console.log('testes aqui');
+    console.log('testes aqui 1');
     this.route.queryParamMap.subscribe({
       next: (params) => {
-        console.log('params', params.params)
+        console.log('params 2', params)
         const code = params.get("code"); 
         const state = params.get("state");
         console.log('code',code, 'state',state);
