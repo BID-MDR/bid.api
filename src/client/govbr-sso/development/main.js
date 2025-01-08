@@ -40649,8 +40649,8 @@ var _SsoComponent = class _SsoComponent {
         console.log('params', params.params)
         if (params.has("code") && params.has("state")) {
           this.authService.signIn({
-            code: params.get("code") || "",
-            state: params.get("state") || ""
+            code: params.params.get("code") || "",
+            state: params.params.get("state") || ""
           }).subscribe({
             next: (data) => {
               if (isDevMode()) {
