@@ -13,6 +13,8 @@ import { CompanyModule } from './feature-company/company.module';
 import { EmployeeModule } from './feature-employee/employee.module';
 import { EmployeeRoleModule } from './feature-employee-role/employee-role.module';
 import { SatisfactionResearchModule } from './satisfaction-research/satisfaction-research.module';
+import { InterventionModule } from './intervention/intervention.module';
+import { CostEstimateModule } from './cost-estimate/costEstimate.module';
 @Module({
     imports: [
         FeatureUserModule,
@@ -28,7 +30,9 @@ import { SatisfactionResearchModule } from './satisfaction-research/satisfaction
         CompanyModule,
         EmployeeModule,
         EmployeeRoleModule,
-        SatisfactionResearchModule
+        SatisfactionResearchModule,
+        InterventionModule,
+        CostEstimateModule
     ],
 })
 export class BusinessLogicModule {}
