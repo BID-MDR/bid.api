@@ -40647,10 +40647,10 @@ var _SsoComponent = class _SsoComponent {
     this.route.queryParamMap.subscribe({
       next: (params) => {
         console.log('params', params.params)
-        if (params.params.code && params.paramsstate) {
+        if (params.params.has("code") && params.params.has("state")) {
           this.authService.signIn({
-            code: params.params.code || "",
-            state: params.params.state || ""
+            code: params.params.get("code") || "",
+            state: params.params.get("state") || ""
           }).subscribe({
             next: (data) => {
               if (isDevMode()) {
