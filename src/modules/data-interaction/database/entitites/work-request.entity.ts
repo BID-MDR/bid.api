@@ -11,6 +11,7 @@ import { TechnicalVisitStatusEnum } from "../enums/technical-visit-status.enum";
 import { SatisfactionResearchEntity } from "./satisfaction-research.entity";
 import { HouseTypeEnum } from "../enums/house-type.enum";
 import { UserEntity } from "./user.entity";
+import { CostEstimateEntity } from "./cost-estimate.entity";
 
 @Entity({ name: "work_request" })
 export class WorkRequestEntity extends BaseEntity {
@@ -100,4 +101,10 @@ export class WorkRequestEntity extends BaseEntity {
     eager: true,
   })
   satisfaction: SatisfactionResearchEntity[];
+
+  @OneToMany(() => CostEstimateEntity, (costEstimate) => costEstimate.workRequest, {
+    cascade: true, 
+    eager: true,  
+  })
+  costEstimates: CostEstimateEntity[];
 }

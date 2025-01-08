@@ -61,6 +61,10 @@ import { SustainabilityItensEntity } from './entitites/sustainability-Itens.enti
 import { SustainabilityItensRepository } from './repositories/work-request/sustainability-itens.repository';
 import { UserGeneratedMediaConclusionEntity } from './entitites/user-generated-media-conclusion.entity';
 import { UserGeneratedMediaConclusionRepository } from './repositories/user/user-generated-media-conclusion.repository';
+import { CostEstimateEntity } from './entitites/cost-estimate.entity';
+import { InterventionEntity } from './entitites/Intervention.entity';
+import { InterventionRepository } from './repositories/intervention/intervention.repository';
+import { CostEstimateRepository } from './repositories/costEstimate/costEstimate.repository';
 
 const ENTITIES = [
     UserEntity,
@@ -93,7 +97,9 @@ const ENTITIES = [
     UserRolesBackofficeEntity,
     MessageBackofficeEntity,
     SustainabilityItensEntity,
-    UserGeneratedMediaConclusionEntity
+    UserGeneratedMediaConclusionEntity,
+    CostEstimateEntity,
+    InterventionEntity
 ];
 const REPOSITORIES = [
     UserRepository,
@@ -124,7 +130,9 @@ const REPOSITORIES = [
     EmailRepository,
     MessageBackofficeRepository,
     SustainabilityItensRepository,
-    UserGeneratedMediaConclusionRepository
+    UserGeneratedMediaConclusionRepository,
+    InterventionRepository,
+    CostEstimateRepository
 ];
 
 @Module({
