@@ -6,6 +6,7 @@ import { ContractEntity } from "../../entitites/contract.entity";
 import { CreateContractRequestDto } from "../../dtos/contract/contract-request.dto";
 import { ContractUpdateStatusDto } from "../../dtos/contract/contract-update-status.dto";
 import { ContractCancelDto } from "../../dtos/contract/contract-cancel.dto";
+import { ContractStatusEnum } from "../../enums/contract-status.enum";
 
 @Injectable()
 export class ContractRepository extends BaseRepository<
@@ -37,20 +38,28 @@ export class ContractRepository extends BaseRepository<
   }
 
   async updateStatus(costEstimateId: string, dto: ContractUpdateStatusDto) {
-    if (!dto.adjustRequested || dto.adjustRequested === '') {
-      return await this.repository.update({ id: costEstimateId }, { status: dto.type, acceptDate: new Date() });
 
-    } else {
+      return await this.repository.update({ id: costEstimateId }, { status: dto.type, acceptDate: new Date() });
+   
+  }
+
+
+  async acceptContract(costEstimateId: string, dto: ContractUpdateStatusDto) {
+
+    return await this.repository.update({ id: costEstimateId }, { status: dto.type, acceptDate: new Date() });
+ 
+}
+
+  async requestAdjust(costEstimateId: string, dto: ContractUpdateStatusDto) {
+
       return await this.repository.update({ id: costEstimateId }, { status: dto.type , adjustRequested: dto.adjustRequested});
 
-    }
   }
   
   async cancelContract(costEstimateId: string, dto: ContractCancelDto) {
 
-    return await this.repository.update({ id: costEstimateId }, { cancelReasonEnum: dto.cancelReasonEnum , cancelationReason: dto.cancelationReason});
+    return await this.repository.update({ id: costEstimateId }, { cancelReasonEnum: dto.cancelReasonEnum , cancelationReason: dto.cancelationReason, status: ContractStatusEnum.REPROVED});
 
-  
   }
 
 }
