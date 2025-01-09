@@ -1,0 +1,6 @@
+export enum ContractStatusEnum {
+    PENDING='PENDING',
+    REQUEST_CHANGE ='REQUEST_CHANGE',
+    APPROVED ='APPROVED',
+    REPROVED ='REPROVED'
+}

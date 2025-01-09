@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { BaseEntity } from "../../../../core/entities/base.entity";
 import { FlooringEnum } from "../enums/flooring.enum";
 import { KinshipEnum } from "../enums/kinship.enum";
@@ -12,6 +12,7 @@ import { SatisfactionResearchEntity } from "./satisfaction-research.entity";
 import { HouseTypeEnum } from "../enums/house-type.enum";
 import { UserEntity } from "./user.entity";
 import { CostEstimateEntity } from "./cost-estimate.entity";
+import { ContractEntity } from "./contract.entity";
 
 @Entity({ name: "work_request" })
 export class WorkRequestEntity extends BaseEntity {
@@ -107,4 +108,11 @@ export class WorkRequestEntity extends BaseEntity {
     eager: true,  
   })
   costEstimates: CostEstimateEntity[];
+
+  @OneToOne(() => ContractEntity, (contract) => contract.workRequest, {
+    cascade: true, 
+    eager: true,  
+  })
+  @JoinColumn()
+  contract: ContractEntity;
 }

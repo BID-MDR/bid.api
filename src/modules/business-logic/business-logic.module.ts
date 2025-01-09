@@ -15,6 +15,7 @@ import { EmployeeRoleModule } from './feature-employee-role/employee-role.module
 import { SatisfactionResearchModule } from './satisfaction-research/satisfaction-research.module';
 import { InterventionModule } from './intervention/intervention.module';
 import { CostEstimateModule } from './cost-estimate/costEstimate.module';
+import { ContractModule } from '../contract/contract.module';
 @Module({
     imports: [
         FeatureUserModule,
@@ -32,7 +33,8 @@ import { CostEstimateModule } from './cost-estimate/costEstimate.module';
         EmployeeRoleModule,
         SatisfactionResearchModule,
         InterventionModule,
-        CostEstimateModule
+        CostEstimateModule,
+        ContractModule
     ],
 })
 export class BusinessLogicModule {}
