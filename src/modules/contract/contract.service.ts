@@ -8,6 +8,7 @@ import { ContractEntity } from "../data-interaction/database/entitites/contract.
 import { CreateContractRequestDto } from "../data-interaction/database/dtos/contract/contract-request.dto";
 import { ContractUpdateStatusDto } from "../data-interaction/database/dtos/contract/contract-update-status.dto";
 import { ContractCancelDto } from "../data-interaction/database/dtos/contract/contract-cancel.dto";
+import { ContractStatusEnum } from "../data-interaction/database/enums/contract-status.enum";
 
 @Injectable()
 export class ContractService extends BaseService<ContractEntity, any, any> {
@@ -47,7 +48,13 @@ export class ContractService extends BaseService<ContractEntity, any, any> {
   async updateStatus(costEstimateId: string, data: ContractUpdateStatusDto) {
     const costEstimate = await this.repository.findById(costEstimateId)
     if (!costEstimate) throw new NotFoundException('Cost Estimate not found!')
-      await this.repository.updateStatus(costEstimateId, data)
+    if(data.type === ContractStatusEnum.APPROVED) {
+     return await this.repository.acceptContract(costEstimateId, data)
+    }
+    if(data.type === ContractStatusEnum.REQUEST_CHANGE) {
+     return await this.repository.requestAdjust(costEstimateId, data)
+    }
+    await this.repository.updateStatus(costEstimateId, data)
   }
   async cancelContract(costEstimateId: string, data: ContractCancelDto) {
     const costEstimate = await this.repository.findById(costEstimateId)

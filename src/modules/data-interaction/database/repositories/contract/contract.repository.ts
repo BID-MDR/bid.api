@@ -37,13 +37,22 @@ export class ContractRepository extends BaseRepository<
   }
 
   async updateStatus(costEstimateId: string, dto: ContractUpdateStatusDto) {
-    if (!dto.adjustRequested || dto.adjustRequested === '') {
-      return await this.repository.update({ id: costEstimateId }, { status: dto.type, acceptDate: new Date() });
 
-    } else {
+      return await this.repository.update({ id: costEstimateId }, { status: dto.type, acceptDate: new Date() });
+   
+  }
+
+
+  async acceptContract(costEstimateId: string, dto: ContractUpdateStatusDto) {
+
+    return await this.repository.update({ id: costEstimateId }, { status: dto.type, acceptDate: new Date() });
+ 
+}
+
+  async requestAdjust(costEstimateId: string, dto: ContractUpdateStatusDto) {
+
       return await this.repository.update({ id: costEstimateId }, { status: dto.type , adjustRequested: dto.adjustRequested});
 
-    }
   }
   
   async cancelContract(costEstimateId: string, dto: ContractCancelDto) {
