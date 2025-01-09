@@ -62,7 +62,7 @@ import { SustainabilityItensRepository } from './repositories/work-request/susta
 import { UserGeneratedMediaConclusionEntity } from './entitites/user-generated-media-conclusion.entity';
 import { UserGeneratedMediaConclusionRepository } from './repositories/user/user-generated-media-conclusion.repository';
 import { CostEstimateEntity } from './entitites/cost-estimate.entity';
-import { InterventionEntity } from './entitites/Intervention.entity';
+import { InterventionEntity } from './entitites/intervention.entity';
 import { InterventionRepository } from './repositories/intervention/intervention.repository';
 import { CostEstimateRepository } from './repositories/costEstimate/costEstimate.repository';
 

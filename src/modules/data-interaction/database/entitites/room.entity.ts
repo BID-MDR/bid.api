@@ -4,7 +4,7 @@ import { RoomTypeEnum } from '../enums/room-type.enum';
 import { RoomSolutionEntity } from './room-solution.entity';
 import { WorkRequestEntity } from './work-request.entity';
 import { CostEstimateEntity } from './cost-estimate.entity';
-import { InterventionEntity } from './Intervention.entity';
+import { InterventionEntity } from './intervention.entity';
 
 @Entity({ name: 'room' })
 export class RoomEntity extends BaseEntity {

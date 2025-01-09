@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { BaseService } from "../../../core/services/base.service";
 import { CreateWorkRequestDto } from "../../data-interaction/database/dtos/work-request/create-work-request.dto";
-import { InterventionEntity } from "src/modules/data-interaction/database/entitites/Intervention.entity";
+import { InterventionEntity } from "src/modules/data-interaction/database/entitites/intervention.entity";
 import { CreateInterventionRequestDto } from "src/modules/data-interaction/database/dtos/intervention/intervention-request.dto";
 import { InterventionRepository } from "src/modules/data-interaction/database/repositories/intervention/intervention.repository";
 import { RoomRepository } from "src/modules/data-interaction/database/repositories/room/room.repository";
