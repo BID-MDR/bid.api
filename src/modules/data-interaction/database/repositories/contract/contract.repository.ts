@@ -6,6 +6,7 @@ import { ContractEntity } from "../../entitites/contract.entity";
 import { CreateContractRequestDto } from "../../dtos/contract/contract-request.dto";
 import { ContractUpdateStatusDto } from "../../dtos/contract/contract-update-status.dto";
 import { ContractCancelDto } from "../../dtos/contract/contract-cancel.dto";
+import { ContractStatusEnum } from "../../enums/contract-status.enum";
 
 @Injectable()
 export class ContractRepository extends BaseRepository<
@@ -57,9 +58,8 @@ export class ContractRepository extends BaseRepository<
   
   async cancelContract(costEstimateId: string, dto: ContractCancelDto) {
 
-    return await this.repository.update({ id: costEstimateId }, { cancelReasonEnum: dto.cancelReasonEnum , cancelationReason: dto.cancelationReason});
+    return await this.repository.update({ id: costEstimateId }, { cancelReasonEnum: dto.cancelReasonEnum , cancelationReason: dto.cancelationReason, status: ContractStatusEnum.REPROVED});
 
-  
   }
 
 }

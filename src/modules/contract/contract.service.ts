@@ -56,6 +56,7 @@ export class ContractService extends BaseService<ContractEntity, any, any> {
     }
     await this.repository.updateStatus(costEstimateId, data)
   }
+  
   async cancelContract(costEstimateId: string, data: ContractCancelDto) {
     const costEstimate = await this.repository.findById(costEstimateId)
     if (!costEstimate) throw new NotFoundException('Cost Estimate not found!')
