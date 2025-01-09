@@ -32,7 +32,7 @@ export class DashboardService extends BaseService<any, any, any> {
 
         }
 
-        data.demands = await this.demandRepository.count();
+        data.demands = await this.demandRepository.countDemands();
         data.vistory = await this.demandRepository.countVistory();
         data.construction = await this.constructionRepository.count();
         data.constructionConcluded = await this.constructionRepository.CountConcluded();

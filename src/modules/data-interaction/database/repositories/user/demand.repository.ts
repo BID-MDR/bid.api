@@ -47,6 +47,15 @@ export class DemandRepository extends BaseRepository<
     return count.count;
   }
 
+  async countDemands() {
+    const count = await this.repository
+      .createQueryBuilder("demands")
+      .select("COUNT(demands.id)", "count")
+      .getRawOne();
+  
+    return count.count;
+  }
+
   async countConstructionsCompleted(document: string | number) {
     const count = await this.repository
       .createQueryBuilder("demand")
@@ -71,7 +80,15 @@ export class DemandRepository extends BaseRepository<
   }
 
   async countVistory(): Promise<any>{
-    return (await this.repository.find({where: {status: DemandStatusEnum.ESPERANDO_MELHORIA}})).length
+    const count = await this.repository
+    .createQueryBuilder("demands")
+    .where("demands.status = :status", {
+      status: DemandStatusEnum.ESPERANDO_MELHORIA,
+    })
+    .select("COUNT(demands.id)", "count")
+    .getRawOne();
+
+    return count.count;
   }
   async listByStatus(status: DemandStatusEnum): Promise<DemandEntity[]> {
     return this.repository.find({ where: { status }, loadEagerRelations: true });
