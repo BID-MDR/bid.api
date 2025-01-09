@@ -22,6 +22,13 @@ export class CostEstimateEntity extends BaseEntity {
     total: string;
 
     @Column({
+        type: "varchar",
+        length: 500,
+        default: ''
+    })
+    adjustDetails: string;
+
+    @Column({
         type: 'enum',
         enum: CostEstimateStatusEnum,
         default: CostEstimateStatusEnum.PENDING

@@ -5,6 +5,8 @@ import { CostEstimateEntity } from "src/modules/data-interaction/database/entiti
 import { CostEstimateRepository } from "src/modules/data-interaction/database/repositories/costEstimate/costEstimate.repository";
 import { WorkRequestRepository } from "src/modules/data-interaction/database/repositories/work-request/work-request.repository";
 import { CreateCostEstimateRequestDto } from "src/modules/data-interaction/database/dtos/cost-estimate/cost-estimate-request.dto";
+import { CostEstimateAdjustRequestDto } from "src/modules/data-interaction/database/dtos/cost-estimate/cost-estimate-adjust-request.dto";
+import { CostEstimateAproveReproveRequestDto } from "src/modules/data-interaction/database/dtos/cost-estimate/cost-estimate-aprove-reprove-request.dto";
 
 @Injectable()
 export class CostEstimateService extends BaseService<CostEstimateEntity, any, any> {
@@ -17,7 +19,7 @@ export class CostEstimateService extends BaseService<CostEstimateEntity, any, an
   }
 
   async list() {
-    return await this.repository.findAll();
+    return await this.repository.find();
   }
 
   async getById(workRequestId: string) {
@@ -48,14 +50,24 @@ export class CostEstimateService extends BaseService<CostEstimateEntity, any, an
 
  
 
-  async update(interventionId: string, data: any) {
-    return await super.update(interventionId, data);
+  async update(costEstimateId: string, data: any) {
+    return await super.update(costEstimateId, data);
   }
 
+  async requestAdjust(costEstimateId: string, data: CostEstimateAdjustRequestDto) {
+    const costEstimate = await this.repository.findById(costEstimateId)
+    if (!costEstimate) throw new NotFoundException('Cost Estimate not found!')
+      await this.repository.requestAdjust(costEstimateId, data.adjustDetails)
+  }
 
+  async updateStatus(costEstimateId: string, data: CostEstimateAproveReproveRequestDto) {
+    const costEstimate = await this.repository.findById(costEstimateId)
+    if (!costEstimate) throw new NotFoundException('Cost Estimate not found!')
+      await this.repository.updateStatus(costEstimateId, data)
+  }
 
-  async delete(interventionId: string) {
-    return await this.repository.hardDelete(interventionId);
+  async delete(costEstimateId: string) {
+    return await this.repository.hardDelete(costEstimateId);
   }
 
 

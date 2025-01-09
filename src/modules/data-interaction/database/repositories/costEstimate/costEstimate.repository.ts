@@ -4,6 +4,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CostEstimateEntity } from "../../entitites/cost-estimate.entity";
 import { CreateCostEstimateRequestDto } from "../../dtos/cost-estimate/cost-estimate-request.dto";
+import { CostEstimateStatusEnum } from "../../enums/cost-estimate-status.enum";
+import { CostEstimateAproveReproveRequestDto } from "../../dtos/cost-estimate/cost-estimate-aprove-reprove-request.dto";
 
 @Injectable()
 export class CostEstimateRepository extends BaseRepository<
@@ -17,5 +19,26 @@ export class CostEstimateRepository extends BaseRepository<
   ) {
     super(repository);
   }
+
+  async requestAdjust(costEstimateId: string, adjustDetail: string) {
+    return await this.repository.update({ id: costEstimateId }, {adjustDetails: adjustDetail, type: CostEstimateStatusEnum.CHANGE_SOLICITATION});
+  }
+
+  async findById(costEstimateId: string): Promise<CostEstimateEntity> {
+    return await this.repository.findOne({
+      where: { id: costEstimateId },
+      relations: ['rooms', 'workRequest', 'workRequest.room', 'workRequest.room.roomSolutions'],
+    });
+  }
+  async find(): Promise<CostEstimateEntity[]> {
+    return await this.repository.find({
+      relations: ['rooms', 'workRequest', 'workRequest.room', 'workRequest.room.roomSolutions'],
+    });
+  }
+
+  async updateStatus(costEstimateId: string, status: CostEstimateAproveReproveRequestDto) {
+    return await this.repository.update({ id: costEstimateId }, { type: status.type});
+  }
+
 
 }
