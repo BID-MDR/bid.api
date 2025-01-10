@@ -22,11 +22,18 @@ export class DashboardController {
   }
 
   @Get("userdata/:month")
-    @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard)
-    async userData(@Param('month') month: number) {
-      return await this.service.getDadosUsuario(month);
-    }
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  async userData(@Param('month') month: number) {
+    return await this.service.getDadosUsuario(month);
+  }
+
+  @Get("userdata-mcmv/:month")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  async userDataMcmv(@Param('month') month: number) {
+    return await this.service.getDadosUsuarioMcmv(month);
+  }
 
 //   @Get("by-id/:id")
 //   @ApiBearerAuth()
