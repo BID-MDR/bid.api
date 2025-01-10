@@ -36,8 +36,10 @@ export class CostEstimateEntity extends BaseEntity {
     type: CostEstimateStatusEnum;
 
     @Column({
-        type: 'datetime',
+        type: "varchar",
+        length: 500,
+        default: ''
     })
-    estimateDate: Date;
+    estimateDate: String;
 
 }
