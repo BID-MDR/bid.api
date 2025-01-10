@@ -24,7 +24,16 @@ export class UserBackofficeController {
     @UseGuards(JwtAccessTokenGuard)
     async getUsers() {
 
-        const result = await this.UserService.findAll();
+        const result = await this.UserService.findAllRegmel();
+        return new ResponseDto(true, result, null);
+    }
+
+    @Get("list-mcmv")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async getMcmv() {
+
+        const result = await this.UserService.findAllMinhaCasa();
         return new ResponseDto(true, result, null);
     }
 

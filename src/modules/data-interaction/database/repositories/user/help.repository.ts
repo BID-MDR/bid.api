@@ -6,6 +6,7 @@ import { UserEntity } from '../../entitites/user.entity';
 import { HelpEntity } from '../../entitites/help.entity';
 import { HelpRegisterRequestDto } from '../../dtos/help/register-help.dto';
 import { addMonths } from 'date-fns';
+import { UserProgramTypeEnum } from '../../enums/user-program-type.enum';
 
 @Injectable()
 export class HelpRepository extends BaseRepository<HelpEntity, any, any> {
@@ -26,7 +27,11 @@ export class HelpRepository extends BaseRepository<HelpEntity, any, any> {
     }
 
     async list() {
-        return this.repository.find();
+        return this.repository.find({where: {programType: UserProgramTypeEnum.REGMEL}});
+    }
+
+    async listMcmv() {
+        return this.repository.find({where: {programType: UserProgramTypeEnum.MINHA_CASA}});
     }
 
     async findMonth(month: number) {
@@ -39,8 +44,23 @@ export class HelpRepository extends BaseRepository<HelpEntity, any, any> {
           pastDate: pastDate.toISOString(),
           now: now.toISOString(),
         })
+        .andWhere('help.programType = :programType', {programType: UserProgramTypeEnum.REGMEL})
         .getMany()
-      }
+    }
+
+    async findMonthMcmv(month: number) {
+        const now = new Date();
+        const pastDate = addMonths(now, -month);
+    
+    
+        return this.repository.createQueryBuilder('help')
+        .where('help.createdAt BETWEEN :pastDate AND :now', {
+          pastDate: pastDate.toISOString(),
+          now: now.toISOString(),
+        })
+        .andWhere('help.programType = :programType', {programType: UserProgramTypeEnum.MINHA_CASA})
+        .getMany()
+    }
 
    
 }

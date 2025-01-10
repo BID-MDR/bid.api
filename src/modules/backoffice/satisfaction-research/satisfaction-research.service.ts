@@ -50,4 +50,25 @@ export class SatisfactionResearchBackofficeService extends BaseService<Satisfact
   async listProfessionalMonth(month: number): Promise<SatisfactionResearchEntity[]>{
     return await this.satisfactionResearchRepository.listProfessionalMonth(month);
   }
+
+  async listMcmv(): Promise<SatisfactionResearchEntity[]> {
+    return await this.satisfactionResearchRepository.listMcmv();
+  }
+
+  async listBeneficiaryMcmv(): Promise<SatisfactionResearchEntity[]>{
+    return await this.satisfactionResearchRepository.listBeneficiaryMcmv();
+  }
+
+
+  async listBeneficiaryMonthMcmv(month: number): Promise<SatisfactionResearchEntity[]>{
+    return await this.satisfactionResearchRepository.listBeneficiaryMonthMcmv(month);
+  }
+
+  async listProfessionalMcmv(): Promise<SatisfactionResearchEntity[]>{
+    return await this.satisfactionResearchRepository.listProfessionalMcmv();
+  }
+
+  async listProfessionalMonthMcmv(month: number): Promise<SatisfactionResearchEntity[]>{
+    return await this.satisfactionResearchRepository.listProfessionalMonthMcmv(month);
+  }
 }

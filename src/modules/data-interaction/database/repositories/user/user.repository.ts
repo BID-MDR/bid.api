@@ -170,4 +170,21 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
 
   return this.repository.query(query, [longitude, latitude, radiusInMeters]);
   }
+
+  async findMonthMcmv(month: number) {
+    const now = new Date();
+    const pastDate = addMonths(now, -month);
+
+
+    return this.repository.createQueryBuilder('user')
+    .where('user.type = :type',{ type:  UserTypeEnum.BENEFICIARIO})
+    .andWhere('user.createdAt BETWEEN :pastDate AND :now', {
+      pastDate: pastDate.toISOString(),
+      now: now.toISOString(),
+    })
+    .andWhere('help.programType = :programType', {programType: UserProgramTypeEnum.MINHA_CASA})
+    .getMany()
+
+
+  }
 }

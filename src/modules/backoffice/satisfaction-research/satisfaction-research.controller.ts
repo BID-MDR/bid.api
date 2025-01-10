@@ -74,4 +74,47 @@ export class SatisfactionResearchBackofficeController {
     return await this.service.hardDelete(id)
   }
 
+
+
+  //MCMV
+
+  @Get('list-mcmv')
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+  @Roles([FunctionTypeEnum.PESQUISAS])
+  async listMcmv(){
+    return await this.service.listMcmv()
+  }
+
+  @Get('beneficiary-mcmv')
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+  @Roles([FunctionTypeEnum.PESQUISAS])
+  async listBeneficiaryMcmv(){
+    return await this.service.listBeneficiaryMcmv()
+  }
+
+  @Get('beneficiary-mcmv/:month')
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+  @Roles([FunctionTypeEnum.PESQUISAS])
+  async listBeneficiaryMonthMcmv(@Param('month') month: number){
+    return await this.service.listBeneficiaryMonthMcmv(month)
+  }
+
+  @Get('professional-mcmv')
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+  @Roles([FunctionTypeEnum.PESQUISAS])
+  async listProfessionalMcmv(){
+    return await this.service.listProfessionalMcmv()
+  }
+
+  @Get('professional-mcmv/:month')
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+  @Roles([FunctionTypeEnum.PESQUISAS])
+  async listProfessionalMonthMcmv(@Param('month') month: number){
+    return await this.service.listProfessionalMonthMcmv(month)
+  }
 }
