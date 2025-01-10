@@ -65,6 +65,10 @@ import { CostEstimateEntity } from './entitites/cost-estimate.entity';
 import { InterventionEntity } from './entitites/intervention.entity';
 import { InterventionRepository } from './repositories/intervention/intervention.repository';
 import { CostEstimateRepository } from './repositories/costEstimate/costEstimate.repository';
+import { ContractEntity } from './entitites/contract.entity';
+import { ContractRepository } from './repositories/contract/contract.repository';
+import { BidDocumentRepository } from './repositories/bidDocument/bidDocument.repository';
+import { BidDocumentEntity } from './entitites/bid-document.entity';
 
 const ENTITIES = [
     UserEntity,
@@ -99,7 +103,9 @@ const ENTITIES = [
     SustainabilityItensEntity,
     UserGeneratedMediaConclusionEntity,
     CostEstimateEntity,
-    InterventionEntity
+    InterventionEntity,
+    ContractEntity,
+    BidDocumentEntity
 ];
 const REPOSITORIES = [
     UserRepository,
@@ -132,7 +138,9 @@ const REPOSITORIES = [
     SustainabilityItensRepository,
     UserGeneratedMediaConclusionRepository,
     InterventionRepository,
-    CostEstimateRepository
+    CostEstimateRepository,
+    ContractRepository,
+    BidDocumentRepository
 ];
 
 @Module({
