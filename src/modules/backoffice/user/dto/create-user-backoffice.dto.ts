@@ -4,6 +4,7 @@ import { UserBackofficeTypeEnum } from "./userTypeEnum";
 import { FunctionTypeEnum } from "./functionTypeEnum";
 import { UserRolesBackofficeEntity } from "src/modules/data-interaction/database/entitites/user-roles-backoffice.entity";
 import { UserStatusEnum } from "./userStatusEnum";
+import { UserProgramTypeEnum } from "src/modules/data-interaction/database/enums/user-program-type.enum";
 
 export class CreateUserBackofficeDto {
 
@@ -35,7 +36,10 @@ export class CreateUserBackofficeDto {
     @ApiProperty({ enum: UserStatusEnum })
     @IsEnum(UserStatusEnum)
     status: UserStatusEnum;
-          
+
+    @ApiProperty({ enum: UserProgramTypeEnum })
+    @IsEnum(UserProgramTypeEnum)
+    programType: UserProgramTypeEnum;
 
     @ApiProperty()
     rolesId: string[];
