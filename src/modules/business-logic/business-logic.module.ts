@@ -17,6 +17,7 @@ import { InterventionModule } from './intervention/intervention.module';
 import { CostEstimateModule } from './cost-estimate/costEstimate.module';
 import { ContractModule } from '../contract/contract.module';
 import { BidDocumentModule } from './bid-document/bidDocument.module';
+import { ImprovementProjectModule } from './improvement-project/improvement-project.module';
 @Module({
     imports: [
         FeatureUserModule,
@@ -36,7 +37,8 @@ import { BidDocumentModule } from './bid-document/bidDocument.module';
         InterventionModule,
         CostEstimateModule,
         ContractModule,
-        BidDocumentModule
+        BidDocumentModule,
+        ImprovementProjectModule
     ],
 })
 export class BusinessLogicModule {}

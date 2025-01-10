@@ -69,6 +69,8 @@ import { ContractEntity } from './entitites/contract.entity';
 import { ContractRepository } from './repositories/contract/contract.repository';
 import { BidDocumentRepository } from './repositories/bidDocument/bidDocument.repository';
 import { BidDocumentEntity } from './entitites/bid-document.entity';
+import { ImprovementProjectEntity } from './entitites/improvement-project.entity';
+import { ImprovementProjectRepository } from './repositories/improvement-project/improvement-project.repository';
 
 const ENTITIES = [
     UserEntity,
@@ -105,7 +107,8 @@ const ENTITIES = [
     CostEstimateEntity,
     InterventionEntity,
     ContractEntity,
-    BidDocumentEntity
+    BidDocumentEntity,
+    ImprovementProjectEntity
 ];
 const REPOSITORIES = [
     UserRepository,
@@ -140,7 +143,8 @@ const REPOSITORIES = [
     InterventionRepository,
     CostEstimateRepository,
     ContractRepository,
-    BidDocumentRepository
+    BidDocumentRepository,
+    ImprovementProjectRepository
 ];
 
 @Module({

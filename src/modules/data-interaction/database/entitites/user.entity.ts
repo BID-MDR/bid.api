@@ -22,6 +22,7 @@ import { CompanyEntity } from "./company.entity";
 import { EmployeeEntity } from "./employee.entity";
 import { SatisfactionResearchEntity } from "./satisfaction-research.entity";
 import { WorkRequestEntity } from "./work-request.entity";
+import { ImprovementProjectEntity } from "./improvement-project.entity";
 
 @Entity({ name: "user" })
 export class UserEntity extends BaseEntity {
@@ -212,4 +213,12 @@ export class UserEntity extends BaseEntity {
   })
   @JoinColumn()
   workRequest?: WorkRequestEntity;
+
+  @OneToMany(() => ImprovementProjectEntity, workRequest => workRequest.professional, {
+    cascade: true,
+    eager: true,
+    nullable: true,
+  })
+  @JoinColumn()
+  projects?: ImprovementProjectEntity[];
 }
