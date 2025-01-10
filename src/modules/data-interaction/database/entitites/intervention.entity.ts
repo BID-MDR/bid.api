@@ -7,7 +7,7 @@ import { RoomEntity } from './room.entity';
 export class InterventionEntity extends BaseEntity {
     @ManyToOne(() => RoomEntity, (room) => room.interventions, {
         onDelete: 'CASCADE',
-        eager: true
+
     })
     room: RoomEntity;
 
@@ -16,4 +16,10 @@ export class InterventionEntity extends BaseEntity {
         length: 255,
     })
     value: string;
+
+    @Column({
+        type: "varchar",
+        length: 500,
+    })
+    toDo: string;
 }

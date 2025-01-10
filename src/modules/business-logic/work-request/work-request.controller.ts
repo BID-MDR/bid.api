@@ -20,36 +20,36 @@ export class WorkRequestController {
   constructor(private service: WorkRequestService) {}
 
   @Get("")
-  @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard)
-  @ApiOperation({
-    description: "Lista de vistorias.",
-    summary: "Listar vistorias.",
-  })
-  @ApiOkResponseDtoData({
-    type: ResponseWorkRequestDto,
-    description: "Lista de vistorias.",
-  })
-  @SerializeOptions({
-    type: ResponseWorkRequestDto,
-  })
+  // @ApiBearerAuth()
+  // @UseGuards(JwtAccessTokenGuard)
+  // @ApiOperation({
+  //   description: "Lista de vistorias.",
+  //   summary: "Listar vistorias.",
+  // })
+  // @ApiOkResponseDtoData({
+  //   type: ResponseWorkRequestDto,
+  //   description: "Lista de vistorias.",
+  // })
+  // @SerializeOptions({
+  //   type: ResponseWorkRequestDto,
+  // })
   async list() {
     return await this.service.list();
   }
 
   @Get("id/:id")
-  @ApiBearerAuth()
-  @ApiOperation({
-    description: "Vistoria por ID.",
-    summary: "Vistoria por ID.",
-  })
-  @ApiOkResponseDtoData({
-    type: ResponseWorkRequestDto,
-    description: "Vistoria por ID.",
-  })
-  @SerializeOptions({
-    type: ResponseWorkRequestDto,
-  })
+  // @ApiBearerAuth()
+  // @ApiOperation({
+  //   description: "Vistoria por ID.",
+  //   summary: "Vistoria por ID.",
+  // })
+  // @ApiOkResponseDtoData({
+  //   type: ResponseWorkRequestDto,
+  //   description: "Vistoria por ID.",
+  // })
+  // @SerializeOptions({
+  //   type: ResponseWorkRequestDto,
+  // })
   async getById(@Param("id") id: string) {
     return await this.service.findById(id);
   }
@@ -82,7 +82,7 @@ export class WorkRequestController {
     type: CreateWorkRequestDto,
     required: true,
     description: "Construção a ser criado.",
-  })
+  })// 4ed959eb-ae55-4b56-9c4e-b7f91a325d73 room 0f6a40b1-542c-48e2-be8c-51e1cc286ede work request
   async create(@Body() dto: CreateWorkRequestDto, @Req() req: Request) {
     const companyId = (req.user as JwtPayloadInterface).companyId;
     return await this.service.register(dto, companyId);

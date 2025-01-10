@@ -21,7 +21,7 @@ export class BidDocumentRepository extends BaseRepository<
   async findById(costEstimateId: string): Promise<BidDocumentEntity> {
     return await this.repository.findOne({
       where: { id: costEstimateId },
-      relations: [ 'workRequest', 'workRequest.room'],
+   //   relations: [ 'workRequest', 'workRequest.room'],
     });
   }
   async find(): Promise<BidDocumentEntity[]> {
