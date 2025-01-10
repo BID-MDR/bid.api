@@ -15,9 +15,7 @@ export class CreateInterventionRequestDto {
     @IsString()
     value: string;
 
-    // @ApiProperty({ type: CreateRoomDto, isArray: true })
-    // @ValidateNested({ each: true })
-    // @Type(() => CreateRoomDto)
-    // room: CreateRoomDto[];
-
+    @ApiProperty()
+    @IsString()
+    toDo: string;
 }
