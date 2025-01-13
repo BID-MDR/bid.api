@@ -5,6 +5,7 @@ import { UserEntity } from './user.entity';
 import { UserRestingDayEntity } from './user-resting-day.entity';
 import { AddressEntity } from './address.entity';
 import { LevelOfEducationEnum } from '../enums/level-of-education.enum';
+import { RegisterWorkEntity } from './register-work.entity';
 
 @Entity({ name: 'user-professional-info' })
 export class UserProfessionalInfoEntity extends BaseEntity {
@@ -88,4 +89,7 @@ export class UserProfessionalInfoEntity extends BaseEntity {
 
     @OneToMany(() => AddressEntity, (address) => address.userProfessionalInfo, { cascade: true, eager: true })
     addresses: AddressEntity[];
+
+    @OneToMany(() => RegisterWorkEntity, (registerWork) => registerWork.professional, { cascade: true, eager: true })
+    registerWorkList: RegisterWorkEntity[];
 }
