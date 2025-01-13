@@ -5,6 +5,7 @@ import { RoomSolutionEntity } from './room-solution.entity';
 import { WorkRequestEntity } from './work-request.entity';
 import { CostEstimateEntity } from './cost-estimate.entity';
 import { InterventionEntity } from './intervention.entity';
+import { UserGeneratedMediaEntity } from './user-generated-media.entity';
 
 @Entity({ name: 'room' })
 export class RoomEntity extends BaseEntity {
@@ -13,6 +14,8 @@ export class RoomEntity extends BaseEntity {
         length: 70,
     })
     name: string;
+
+    
 
     @Column({
         type: 'enum',
@@ -42,4 +45,20 @@ export class RoomEntity extends BaseEntity {
         eager: true,
     })
     interventions: InterventionEntity[];
+
+
+    @OneToMany(() => UserGeneratedMediaEntity, (userGeneratedMediaEntity) => userGeneratedMediaEntity.startWorkRoom, {
+           cascade: true,
+           eager: true,
+           nullable: true,
+       })
+    startWorkPhotos?: UserGeneratedMediaEntity[];
+
+
+    @OneToMany(() => UserGeneratedMediaEntity, (userGeneratedMediaEntity) => userGeneratedMediaEntity.endWorkRoom, {
+        cascade: true,
+        eager: true,
+        nullable: true,
+    })
+    endWorkPhotos?: UserGeneratedMediaEntity[];
 }

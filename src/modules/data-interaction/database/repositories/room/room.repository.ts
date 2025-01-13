@@ -5,6 +5,7 @@ import { Repository } from "typeorm";
 import { CreateRoomDto } from "../../dtos/room/create-room.dto";
 import { UpdateRoomDto } from "../../dtos/room/update-room.dto";
 import { RoomEntity } from "../../entitites/room.entity";
+import { RoomAddPhotoDto } from "../../dtos/room/room-add-photo.dto";
 
 @Injectable()
 export class RoomRepository extends BaseRepository<RoomEntity, CreateRoomDto, UpdateRoomDto> {
@@ -35,4 +36,6 @@ export class RoomRepository extends BaseRepository<RoomEntity, CreateRoomDto, Up
       .where("roomSolution.id = :roomSolutionId", { roomSolutionId })
       .getOne();
   }
+
+
 }

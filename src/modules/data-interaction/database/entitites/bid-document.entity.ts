@@ -2,6 +2,7 @@ import { BaseEntity } from 'src/core/entities/base.entity';
 import { Column, Entity, JoinColumn, OneToOne} from 'typeorm';;
 import { BidDocumentEnum } from '../enums/bid-document.enum';
 import { ImprovementProjectEntity } from './improvement-project.entity';
+import { RegisterWorkEntity } from './register-work.entity';
 
 @Entity({ name: 'bid_document' })
 export class BidDocumentEntity extends BaseEntity {
@@ -23,5 +24,11 @@ export class BidDocumentEntity extends BaseEntity {
     })
     @JoinColumn()
     project: ImprovementProjectEntity;
+
+    @OneToOne(() => RegisterWorkEntity, (contract) => contract.bidDocument, {
+    cascade: true, 
+    })
+    @JoinColumn()
+    registerWork: RegisterWorkEntity;
 
 }
