@@ -39,6 +39,7 @@ export class RoomEntity extends BaseEntity {
 
     @OneToMany(() => InterventionEntity, (intervention) => intervention.room, {
         cascade: true,
+        eager: true,
     })
     interventions: InterventionEntity[];
 }

@@ -2,6 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsEnum, IsUUID, Length } from "class-validator";
 import { UserEntity } from "../../entitites/user.entity";
 import { WorkRequestEntity } from "../../entitites/work-request.entity";
+import { UserProgramTypeEnum } from "../../enums/user-program-type.enum";
 
 export class CreateSatisfactionResearchDto {
     @ApiProperty({type: Number})
@@ -15,6 +16,10 @@ export class CreateSatisfactionResearchDto {
 
     @ApiProperty()
     comments?: string;
+
+    @ApiProperty({ enum: UserProgramTypeEnum })
+    @IsEnum(UserProgramTypeEnum)
+    programType: UserProgramTypeEnum;
   
     user?: UserEntity;
     workRequest?: WorkRequestEntity;

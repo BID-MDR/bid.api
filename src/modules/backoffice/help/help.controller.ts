@@ -93,4 +93,21 @@ export class HelpBackofficeController {
         return await this.helpService.delete(id);
     }
 
+    @Get('get-month-mcmv/:month')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async listWithMonthMcmv(@Param('month') month: number) {
+        const help = await this.helpService.getByMonthMcmv(month);
+        return new ResponseDto(true, help, false)
+    }
+
+    @Get('list-mcmv')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA])
+    async listMcmv() {
+        const help = await this.helpService.listMcmv();
+        return new ResponseDto(true, help, false)
+    }
+
 }

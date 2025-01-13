@@ -20,6 +20,6 @@ export class CreateCostEstimateRequestDto {
     total: string;
 
     @ApiProperty()
-    estimateDate: Date
+    estimateDate: string
 
 }

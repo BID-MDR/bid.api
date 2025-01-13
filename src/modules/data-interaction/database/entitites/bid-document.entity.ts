@@ -1,6 +1,7 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
-import { Column, Entity} from 'typeorm';;
+import { Column, Entity, JoinColumn, OneToOne} from 'typeorm';;
 import { BidDocumentEnum } from '../enums/bid-document.enum';
+import { ImprovementProjectEntity } from './improvement-project.entity';
 
 @Entity({ name: 'bid_document' })
 export class BidDocumentEntity extends BaseEntity {
@@ -16,5 +17,11 @@ export class BidDocumentEntity extends BaseEntity {
         enum: BidDocumentEnum,
     })
     status: BidDocumentEnum;
+
+    @OneToOne(() => ImprovementProjectEntity, (bidDocument) => bidDocument.document, {
+        onDelete: 'CASCADE',
+    })
+    @JoinColumn()
+    project: ImprovementProjectEntity;
 
 }

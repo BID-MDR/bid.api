@@ -50,11 +50,21 @@ export class HelpBackofficeService extends BaseService<
         return await this.helpRepository.list();
     }
 
+
+
     async updateStatus(id: string, status: string){
         if(status == HelpStatusEnum.OPEN)
             return await this.helpRepository.update(id, {status: HelpStatusEnum.OPEN})
         if(status == HelpStatusEnum.SOLVED)
             return await this.helpRepository.update(id, {status: HelpStatusEnum.SOLVED})
+    }
+
+    async listMcmv() {
+        return await this.helpRepository.listMcmv();
+    }
+
+    async getByMonthMcmv(month: number){
+        return await this.helpRepository.findMonthMcmv(month);
     }
     
 }

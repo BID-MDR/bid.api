@@ -60,6 +60,27 @@ export class DashboardService extends BaseService<any, any, any> {
         return data;
     }
 
+    async getDadosUsuarioMcmv(month){
+        var data = {
+            beneficiario: 0,
+            agent: 0,
+            demands: 0,
+            constructions: 0,
+            help: 0,
+            inconsistency: 0
+
+        }
+
+        data.demands = (await this.demandRepository.findMonth(month)).length
+        data.beneficiario = (await this.userRepository.findMonthMcmv(month)).length
+        data.agent = (await this.companyRepository.findMonth(month)).length
+        data.constructions = (await this.constructionRepository.findMonthMcmv(month)).length
+        data.help = (await this.helpRepository.findMonthMcmv(month)).length
+        data.inconsistency = 0
+
+        return data;
+    }
+
     async getByEmail(email: string){
         return await this.userBackofficeRepository.getByEmail(email)
     }

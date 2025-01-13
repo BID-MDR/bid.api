@@ -31,6 +31,14 @@ export class UserService extends BaseService<UserBackofficeEntity, CreateUserBac
         super(userBackofficeRepository);
     }
 
+    async findAllRegmel(): Promise<any[]>{
+        return await this.userBackofficeRepository.getRegmel()
+    }
+
+    async findAllMinhaCasa(): Promise<any[]>{
+        return await this.userBackofficeRepository.getMinhaCasa()
+    }
+
     async create(data: CreateUserBackofficeDto): Promise<any> {
         if(data.password){
             data.password = await this.hashStringData(data.password);

@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Length } from 'class-validator';
+import { IsEnum, Length } from 'class-validator';
 import { UserBackofficeEntity } from 'src/modules/data-interaction/database/entitites/user-backoffice.entity';
 import { UserEntity } from 'src/modules/data-interaction/database/entitites/user.entity';
+import { UserProgramTypeEnum } from 'src/modules/data-interaction/database/enums/user-program-type.enum';
 
 export class MessageBackofficeRegisterRequestDto {
     @ApiProperty()
@@ -14,6 +15,11 @@ export class MessageBackofficeRegisterRequestDto {
 
     sender: UserBackofficeEntity
     receiver: UserEntity
+
+    
+    @ApiProperty({ enum: UserProgramTypeEnum })
+    @IsEnum(UserProgramTypeEnum)
+    programType: UserProgramTypeEnum;
 
     client1?:string
     client2?: string
