@@ -3,6 +3,7 @@ import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGen
 import { RoomEntity } from './room.entity';
 import { CostEstimateStatusEnum } from '../enums/cost-estimate-status.enum';
 import { WorkRequestEntity } from './work-request.entity';
+import { UserEntity } from './user.entity';
 
 @Entity({ name: 'cost_estimate' })
 export class CostEstimateEntity extends BaseEntity {
@@ -41,5 +42,10 @@ export class CostEstimateEntity extends BaseEntity {
         default: ''
     })
     estimateDate: String;
+
+    @ManyToOne(() => UserEntity, user => user.id, {
+    eager: true,
+    })
+    professional: UserEntity;
 
 }
