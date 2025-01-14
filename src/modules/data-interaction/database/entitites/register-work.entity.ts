@@ -8,6 +8,7 @@ import { ConstructionsEntity } from './constructions.entity';
 import { ConstructionsStatusEnum } from '../enums/constructions-stauts.enum';
 import { UserProgramTypeEnum } from '../enums/user-program-type.enum';
 import { ConstructionsTypeEnum } from '../enums/constructions-type.status';
+import { TechnicalVisitEntity } from './technical-visit.entity';
 
 @Entity({ name: 'register_work' })
 export class RegisterWorkEntity extends BaseEntity {
@@ -75,5 +76,15 @@ export class RegisterWorkEntity extends BaseEntity {
         default: UserProgramTypeEnum.MINHA_CASA
       })
       programType: UserProgramTypeEnum;
+
+      @OneToMany(() => TechnicalVisitEntity, technicalVisit => technicalVisit.registerWorkBeginning, {
+      eager: true,
+      })
+      beginningTechnicalVisit: TechnicalVisitEntity;
+
+      @OneToMany(() => TechnicalVisitEntity, technicalVisit => technicalVisit.registerWorkClosure, {
+      eager: true,
+      })
+      closureTechnicalVisit: TechnicalVisitEntity;
 
 }

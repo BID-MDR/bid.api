@@ -6,6 +6,7 @@ import { AddressEntity } from './address.entity';
 import { DemandEntity } from './demand.entity';
 import { WorkRequestEntity } from './work-request.entity';
 import { TechnicalVisitTypeEnum } from '../enums/technical-visit-type.enum';
+import { RegisterWorkEntity } from './register-work.entity';
 
 @Entity({ name: 'technical_visit' })
 export class TechnicalVisitEntity extends BaseEntity {
@@ -35,6 +36,12 @@ export class TechnicalVisitEntity extends BaseEntity {
 
     @ManyToOne(() => WorkRequestEntity, (workRequest) => workRequest.technicalVisit)
     workRequest: WorkRequestEntity;
+
+    @ManyToOne(() => RegisterWorkEntity, (registerWork) => registerWork.beginningTechnicalVisit)
+    registerWorkBeginning: RegisterWorkEntity;
+
+    @ManyToOne(() => RegisterWorkEntity, (registerWork) => registerWork.closureTechnicalVisit)
+    registerWorkClosure: RegisterWorkEntity;
 
     @Column({
         type: 'enum',
