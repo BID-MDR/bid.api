@@ -27,6 +27,8 @@ export class CreateTechnicalVisitDto {
     beneficiary: UserEntity;
 
     @ApiProperty()
+    @IsUUID()
+    workRequestId?: string;
     workRequest?: WorkRequestEntity;
     
     @ApiProperty()
