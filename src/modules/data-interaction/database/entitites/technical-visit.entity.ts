@@ -5,6 +5,7 @@ import { UserEntity } from './user.entity';
 import { AddressEntity } from './address.entity';
 import { DemandEntity } from './demand.entity';
 import { WorkRequestEntity } from './work-request.entity';
+import { TechnicalVisitTypeEnum } from '../enums/technical-visit-type.enum';
 
 @Entity({ name: 'technical_visit' })
 export class TechnicalVisitEntity extends BaseEntity {
@@ -36,4 +37,12 @@ export class TechnicalVisitEntity extends BaseEntity {
         default: TechnicalVisitStatusEnum.PENDENTE,
     })
     status: TechnicalVisitStatusEnum;
+
+    @Column({
+        type: 'enum',
+        enum: TechnicalVisitTypeEnum,
+        default: TechnicalVisitTypeEnum.VISITA_TECNICA,
+    })
+    type: TechnicalVisitTypeEnum;
+    
 }

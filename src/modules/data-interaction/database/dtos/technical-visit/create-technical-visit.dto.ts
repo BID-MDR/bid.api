@@ -4,6 +4,7 @@ import { UserEntity } from '../../entitites/user.entity';
 import { Type } from 'class-transformer';
 import { WorkRequestEntity } from '../../entitites/work-request.entity';
 import { TechnicalVisitStatusEnum } from '../../enums/technical-visit-status.enum';
+import { TechnicalVisitTypeEnum } from '../../enums/technical-visit-type.enum';
 
 export class CreateTechnicalVisitDto {
     @ApiProperty()
@@ -31,6 +32,9 @@ export class CreateTechnicalVisitDto {
     workRequestId?: string;
     workRequest?: WorkRequestEntity;
     
+    @ApiProperty()
+    type?: TechnicalVisitTypeEnum;
+
     @ApiProperty()
     status?: TechnicalVisitStatusEnum;
 }
