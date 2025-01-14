@@ -5,6 +5,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateWorkRequestDto } from "../../dtos/work-request/create-work-request.dto";
 import { UpdateWorkRequestDto } from "../../dtos/work-request/update-work-request.dto";
+import { WorkRequestContractStatusEnum } from "../../enums/work-request-contact-status.enum";
 
 @Injectable()
 export class WorkRequestRepository extends BaseRepository<
@@ -27,4 +28,9 @@ export class WorkRequestRepository extends BaseRepository<
       relations,
     });
   }
+
+  async changeContractStatus(workRequestId: string, ) {
+    return await this.repository.update({ id: workRequestId }, {contractStatus: WorkRequestContractStatusEnum.ALREADY_STARTED});
+  }
+
 }

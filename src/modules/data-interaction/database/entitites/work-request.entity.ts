@@ -15,6 +15,7 @@ import { CostEstimateEntity } from "./cost-estimate.entity";
 import { ContractEntity } from "./contract.entity";
 import { RegisterWorkEntity } from "./register-work.entity";
 import { TechnicalVisitEntity } from "./technical-visit.entity";
+import { WorkRequestContractStatusEnum } from "../enums/work-request-contact-status.enum";
 
 @Entity({ name: "work_request" })
 export class WorkRequestEntity extends BaseEntity {
@@ -98,6 +99,13 @@ export class WorkRequestEntity extends BaseEntity {
     default: TechnicalVisitStatusEnum.PENDENTE,
   })
   status: TechnicalVisitStatusEnum;
+
+  @Column({
+    type: "enum",
+    enum: WorkRequestContractStatusEnum,
+    default: WorkRequestContractStatusEnum.NEW_DEMAND,
+  })
+  contractStatus: WorkRequestContractStatusEnum;
 
   @OneToMany(() => SatisfactionResearchEntity, satisfaction => satisfaction.workRequest, {
     cascade: true,
