@@ -19,6 +19,11 @@ export class TechnicalVisitEntity extends BaseEntity {
     })
     to: Date;
 
+    @Column({
+        type: 'float',
+    })
+    duration?: number;
+
     @ManyToOne(() => UserEntity, (user) => user.technicalVisitsAsProfessional)
     professional: UserEntity;
 

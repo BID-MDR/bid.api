@@ -37,4 +37,7 @@ export class CreateTechnicalVisitDto {
 
     @ApiProperty()
     status?: TechnicalVisitStatusEnum;
+
+    @ApiProperty()
+    duration?: number;
 }
