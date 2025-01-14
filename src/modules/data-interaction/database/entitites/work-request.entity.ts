@@ -14,6 +14,7 @@ import { UserEntity } from "./user.entity";
 import { CostEstimateEntity } from "./cost-estimate.entity";
 import { ContractEntity } from "./contract.entity";
 import { RegisterWorkEntity } from "./register-work.entity";
+import { TechnicalVisitEntity } from "./technical-visit.entity";
 
 @Entity({ name: "work_request" })
 export class WorkRequestEntity extends BaseEntity {
@@ -23,7 +24,7 @@ export class WorkRequestEntity extends BaseEntity {
   @ManyToOne(() => UserEntity, user => user.workRequest, {
   })
   beneficiary?: UserEntity;
-    
+
   @Column({
     type: "varchar",
     length: 50,
@@ -105,21 +106,27 @@ export class WorkRequestEntity extends BaseEntity {
   satisfaction: SatisfactionResearchEntity[];
 
   @OneToMany(() => CostEstimateEntity, (costEstimate) => costEstimate.workRequest, {
-    cascade: true, 
-    eager: true,  
+    cascade: true,
+    eager: true,
   })
   costEstimates: CostEstimateEntity[];
 
   @OneToOne(() => ContractEntity, (contract) => contract.workRequest, {
-    cascade: true, 
-    eager: true,  
+    cascade: true,
+    eager: true,
   })
   @JoinColumn()
   contract: ContractEntity;
 
   @OneToOne(() => RegisterWorkEntity, (contract) => contract.workRequest, {
-    cascade: true, 
+    cascade: true,
   })
   @JoinColumn()
   registerWork: RegisterWorkEntity;
+
+  @OneToMany(() => TechnicalVisitEntity, technicalVisit => technicalVisit.workRequest, {
+    eager: true,
+  })
+  technicalVisit: TechnicalVisitEntity;
+
 }

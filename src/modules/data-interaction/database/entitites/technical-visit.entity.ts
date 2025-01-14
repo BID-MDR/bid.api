@@ -4,6 +4,7 @@ import { TechnicalVisitStatusEnum } from '../enums/technical-visit-status.enum';
 import { UserEntity } from './user.entity';
 import { AddressEntity } from './address.entity';
 import { DemandEntity } from './demand.entity';
+import { WorkRequestEntity } from './work-request.entity';
 
 @Entity({ name: 'technical_visit' })
 export class TechnicalVisitEntity extends BaseEntity {
@@ -24,7 +25,10 @@ export class TechnicalVisitEntity extends BaseEntity {
     beneficiary: UserEntity;
 
     @OneToOne(() => DemandEntity, (demand) => demand.technicalVisit)
-    demand: DemandEntity;
+    demand?: DemandEntity;
+
+    @ManyToOne(() => WorkRequestEntity, (workRequest) => workRequest.technicalVisit)
+    workRequest: WorkRequestEntity;
 
     @Column({
         type: 'enum',
