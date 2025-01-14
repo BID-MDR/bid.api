@@ -3,6 +3,8 @@ import { BaseService } from 'src/core/services/base.service';
 import { CreateTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/create-technical-visit.dto';
 import { UpdateTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/update-technical-visit.dto';
 import { TechnicalVisitEntity } from 'src/modules/data-interaction/database/entitites/technical-visit.entity';
+import { TechnicalVisitRegisterWorkEnum } from 'src/modules/data-interaction/database/enums/technical-visit-register-work-type.enum';
+import { RegisterWorkRepository } from 'src/modules/data-interaction/database/repositories/registerWork/registerWork.repository';
 import { TechnicalVisitRepository } from 'src/modules/data-interaction/database/repositories/technical-visit.repository';
 import { UserRepository } from 'src/modules/data-interaction/database/repositories/user/user.repository';
 import { WorkRequestRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request.repository';
@@ -16,7 +18,8 @@ export class FeatureTechnicalVisitService extends BaseService<
     constructor(
         private technicalVisitRepository: TechnicalVisitRepository,
         private readonly userRepository: UserRepository,
-        private workRequestRepository: WorkRequestRepository
+        private workRequestRepository: WorkRequestRepository,
+        private registerWorkRepo: RegisterWorkRepository
     ) {
         super(technicalVisitRepository);
     }
@@ -32,6 +35,26 @@ export class FeatureTechnicalVisitService extends BaseService<
         dto.professional = professional;
         const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
         dto.workRequest = workRequest;
+
+        return await this.technicalVisitRepository.create(dto)
+    }
+
+    async scheduleRegistertWorkTechnicalVisit(dto: CreateTechnicalVisitDto) {
+        const beneficiary = await this.userRepository.getById(dto.beneficiaryId);
+        dto.beneficiary = beneficiary;
+        const professional = await this.userRepository.getById(dto.professionalId);
+        dto.professional = professional;
+        if (dto.beginningOrEnd) {
+            if (dto.beginningOrEnd === TechnicalVisitRegisterWorkEnum.BEGINNING) {
+                const registerWork = await this.registerWorkRepo.findById(dto.registerWorkBeginningId);
+                dto.registerWorkBeginning = registerWork;
+            } else {
+                const registerWork = await this.registerWorkRepo.findById(dto.registerWorkClosureId);
+                dto.reregisterWorkClosure = registerWork;
+            }
+           
+        }
+    
 
         return await this.technicalVisitRepository.create(dto)
     }
