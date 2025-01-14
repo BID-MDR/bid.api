@@ -6,7 +6,7 @@ import { ContractUpdateStatusDto } from "../data-interaction/database/dtos/contr
 import { ContractCancelDto } from "../data-interaction/database/dtos/contract/contract-cancel.dto";
 
 @Controller("contract")
-@ApiTags("ccontract")
+@ApiTags("contract")
 export class ContractController {
   private readonly _logger = new Logger(ContractController.name);
   constructor(private service: ContractService) {}
