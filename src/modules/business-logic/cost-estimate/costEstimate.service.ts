@@ -7,13 +7,16 @@ import { WorkRequestRepository } from "src/modules/data-interaction/database/rep
 import { CreateCostEstimateRequestDto } from "src/modules/data-interaction/database/dtos/cost-estimate/cost-estimate-request.dto";
 import { CostEstimateAdjustRequestDto } from "src/modules/data-interaction/database/dtos/cost-estimate/cost-estimate-adjust-request.dto";
 import { CostEstimateAproveReproveRequestDto } from "src/modules/data-interaction/database/dtos/cost-estimate/cost-estimate-aprove-reprove-request.dto";
+import { UserRepository } from "src/modules/data-interaction/database/repositories/user/user.repository";
 
 @Injectable()
 export class CostEstimateService extends BaseService<CostEstimateEntity, any, any> {
   constructor(
     private repository: CostEstimateRepository,
     private roomRepo: RoomRepository,
-    private workRequestRepo: WorkRequestRepository
+    private workRequestRepo: WorkRequestRepository,
+    private userRepo: UserRepository
+
   ) {
     super(repository);
   }
@@ -42,6 +45,10 @@ export class CostEstimateService extends BaseService<CostEstimateEntity, any, an
 
     const roomPromissesResolved = await Promise.all(roomPromisses);
     data.rooms = roomPromissesResolved;
+
+    const professional  = await this.userRepo.findById(data.professionalId)
+    if (!professional) throw new NotFoundException('professional not found!');
+    data.professional = professional;
 
 
     return await this.repository.create(data);
