@@ -44,7 +44,6 @@ export class CostEstimateEntity extends BaseEntity {
     estimateDate: String;
 
     @ManyToOne(() => UserEntity, user => user.id, {
-    eager: true,
     })
     professional: UserEntity;
 

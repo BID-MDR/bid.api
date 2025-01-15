@@ -17,6 +17,7 @@ import { RegisterWorkEntity } from "./register-work.entity";
 import { TechnicalVisitEntity } from "./technical-visit.entity";
 import { WorkRequestContractStatusEnum } from "../enums/work-request-contact-status.enum";
 import { ContractResignedEntity } from "./contract-resigned.entity";
+import { SurveyEntity } from "./survey.entity";
 
 @Entity({ name: "work_request" })
 export class WorkRequestEntity extends BaseEntity {
@@ -137,5 +138,9 @@ export class WorkRequestEntity extends BaseEntity {
   })
   contractResignedList: ContractResignedEntity[];
 
+  @OneToOne(() => SurveyEntity, survey => survey.workRequest, {
+    eager: true,
+  })
+  survey: SurveyEntity;
 
 }

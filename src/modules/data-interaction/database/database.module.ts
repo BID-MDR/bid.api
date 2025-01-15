@@ -75,6 +75,7 @@ import { RegisterWorkEntity } from './entitites/register-work.entity';
 import { RegisterWorkRepository } from './repositories/registerWork/registerWork.repository';
 import { ContractResignedEntity } from './entitites/contract-resigned.entity';
 import { ContractResignedRepository } from './repositories/contract-resigned/contract-resigned.repository';
+import { SurveyEntity } from './entitites/survey.entity';
 
 const ENTITIES = [
     UserEntity,
@@ -114,7 +115,8 @@ const ENTITIES = [
     BidDocumentEntity,
     ImprovementProjectEntity,
     RegisterWorkEntity,
-    ContractResignedEntity
+    ContractResignedEntity,
+    SurveyEntity
 ];
 const REPOSITORIES = [
     UserRepository,
