@@ -8,6 +8,7 @@ import { WorkRequestEntity } from './work-request.entity';
 import { TechnicalVisitTypeEnum } from '../enums/technical-visit-type.enum';
 import { RegisterWorkEntity } from './register-work.entity';
 import { SurveyEntity } from './survey.entity';
+import { ContractEntity } from './contract.entity';
 
 @Entity({ name: 'technical_visit' })
 export class TechnicalVisitEntity extends BaseEntity {
@@ -37,6 +38,9 @@ export class TechnicalVisitEntity extends BaseEntity {
 
     @ManyToOne(() => WorkRequestEntity, (workRequest) => workRequest.technicalVisit)
     workRequest: WorkRequestEntity;
+
+    @ManyToOne(() => ContractEntity, (contract) => contract.technicalVisit)
+    contract: ContractEntity;
 
     @ManyToOne(() => RegisterWorkEntity, (registerWork) => registerWork.beginningTechnicalVisit)
     registerWorkBeginning: RegisterWorkEntity;
