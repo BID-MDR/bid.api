@@ -2,8 +2,6 @@ import {
     Body,
     Controller,
     Get,
-    HttpException,
-    HttpStatus,
     Logger,
     Param,
     Post,
@@ -119,11 +117,11 @@ export class FeatureSurveyController {
     @ApiBody({
         type: CreateProfessionalSurveyDto,
         required: true,
-        description: "Visita técnica a ser atualizada.",
+        description: "Vistoria a ser atualizada.",
     })
     @ApiOkResponseDtoData({
         type: SurveyResponseDto,
-        description: "Visita técnica atualizada.",
+        description: "Vistoria atualizada.",
     })
     @SerializeOptions({
         type: SurveyResponseDto,

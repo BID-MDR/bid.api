@@ -2,8 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { BaseRepository } from "../../../../../core/repositories/base.repository";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { InterventionEntity } from "../../entitites/intervention.entity";
-import { CreateInterventionRequestDto } from "../../dtos/intervention/intervention-request.dto";
 import { SurveyEntity } from "../../entitites/survey.entity";
 import { CreateProfessionalSurveyDto } from "../../dtos/professional-survey/create-professional-survey.dto";
 

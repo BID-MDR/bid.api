@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude, Expose } from "class-transformer";
-import { TechnicalVisitStatusEnum } from "../../enums/technical-visit-status.enum";
 import { SurveyStatusEnum } from "../../enums/survey-status.enum";
 import { WorkRequestEntity } from "../../entitites/work-request.entity";
 import { TechnicalVisitEntity } from "../../entitites/technical-visit.entity";
