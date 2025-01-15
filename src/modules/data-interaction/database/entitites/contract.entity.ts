@@ -39,6 +39,7 @@ export class ContractEntity extends BaseEntity {
         type: 'datetime',
     })
     startDate: Date;
+
     @Column({
         type: 'datetime',
     })
@@ -46,6 +47,7 @@ export class ContractEntity extends BaseEntity {
 
     @Column({
         type: 'datetime',
+        nullable: true,
     })
     acceptDate: Date;
 
