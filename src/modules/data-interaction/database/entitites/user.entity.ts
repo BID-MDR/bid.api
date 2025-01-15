@@ -181,7 +181,6 @@ export class UserEntity extends BaseEntity {
 
   @OneToOne(() => UserOtpRequestEntity, otpRequest => otpRequest.user, {
     cascade: true,
-    eager: true,
     nullable: true,
   })
   @JoinColumn()
@@ -210,7 +209,6 @@ export class UserEntity extends BaseEntity {
 
   @OneToOne(() => WorkRequestEntity, workRequest => workRequest.demand, {
     cascade: true,
-    eager: true,
     nullable: true,
   })
   @JoinColumn()
@@ -234,7 +232,6 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => ImprovementProjectEntity, workRequest => workRequest.professional, {
     cascade: true,
-    eager: true,
     nullable: true,
   })
   @JoinColumn()

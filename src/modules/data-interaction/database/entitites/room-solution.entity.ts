@@ -28,5 +28,5 @@ export class RoomSolutionEntity extends BaseEntity {
         eager: true,
         nullable: true,
     })
-    picturesAndVideosConclusion: UserGeneratedMediaConclusionEntity[];
+    picturesAndVideosConclusion: UserGeneratedMediaConclusionEntity[]
 }

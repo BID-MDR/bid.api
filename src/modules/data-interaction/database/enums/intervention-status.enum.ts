@@ -1,0 +1,5 @@
+export enum InterventionStatusEnum {
+  NOT_COMPLETED = 'NOT_COMPLETED',
+  PARTIALY_COMPLETED = 'PARTIALY_COMPLETED',
+  CONCLUDED = 'CONCLUDED'
+}
