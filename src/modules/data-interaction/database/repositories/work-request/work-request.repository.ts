@@ -29,6 +29,12 @@ export class WorkRequestRepository extends BaseRepository<
     });
   }
 
+    async findById2(id: string): Promise<WorkRequestEntity> {
+      return await this.repository.findOne({
+        where: { id: id },
+      });
+    }
+
   async changeContractStatus(workRequestId: string, ) {
     return await this.repository.update({ id: workRequestId }, {contractStatus: WorkRequestContractStatusEnum.ALREADY_STARTED});
   }

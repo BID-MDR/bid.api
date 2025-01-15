@@ -45,6 +45,7 @@ export class ContractEntity extends BaseEntity {
 
     @Column({
         type: 'datetime',
+        nullable: true
     })
     acceptDate: Date;
 
@@ -67,6 +68,6 @@ export class ContractEntity extends BaseEntity {
         enum: ContractCancelReasonEnum,
         default: ContractCancelReasonEnum.NOT_APPLY
     })
-    cancelReasonEnum: ContractCancelReasonEnum;
+    cancelReasonEnum: ContractCancelReasonEnum
 
 }
