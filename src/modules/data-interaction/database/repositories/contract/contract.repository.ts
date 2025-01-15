@@ -25,7 +25,7 @@ export class ContractRepository extends BaseRepository<
   //   return await this.repository.update({ id: costEstimateId }, {adjustDetails: adjustDetail, type: CostEstimateStatusEnum.CHANGE_SOLICITATION});
   // }
 
-  async findById(costEstimateId: string): Promise<ContractEntity> {
+  async findById2(costEstimateId: string): Promise<ContractEntity> {
     return await this.repository.findOne({
       where: { id: costEstimateId },
       relations: [ 'workRequest', 'workRequest.room'],

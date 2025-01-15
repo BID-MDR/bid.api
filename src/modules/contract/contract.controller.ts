@@ -32,6 +32,7 @@ export class ContractController {
     description: "Intervenção a ser criada.",
   })
   async create(@Body() dto: CreateContractRequestDto) {
+    console.log('bb')
     return await this.service.register(dto);
   }
 
@@ -48,9 +49,10 @@ export class ContractController {
     return await this.service.updateStatus(id, dto);
   }
 
-  @Put("update-status/:id")
+  @Put("cancel-contract/:id")
   @ApiBearerAuth()
   async cancelContract(@Param("id") id: string, @Body() dto: ContractCancelDto) {
+
     return await this.service.cancelContract(id, dto);
   }
 

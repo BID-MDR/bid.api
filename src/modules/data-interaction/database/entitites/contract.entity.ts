@@ -70,7 +70,7 @@ export class ContractEntity extends BaseEntity {
         enum: ContractCancelReasonEnum,
         default: ContractCancelReasonEnum.NOT_APPLY
     })
-    cancelReasonEnum: ContractCancelReasonEnum;
+    cancelReasonEnum: ContractCancelReasonEnum
 
     @OneToMany(() => TechnicalVisitEntity, technicalVisit => technicalVisit.contract, {
         eager: true,
