@@ -4,6 +4,7 @@ import { WorkRequestEntity } from './work-request.entity';
 import { BidDocumentEntity } from './bid-document.entity';
 import { ImprovementProjectStatusEnum } from '../enums/improvement-project-status.enum';
 import { UserEntity } from './user.entity';
+import { TechnicalVisitEntity } from './technical-visit.entity';
 
 @Entity({ name: 'improvement_project' })
 export class ImprovementProjectEntity extends BaseEntity {
@@ -29,4 +30,8 @@ export class ImprovementProjectEntity extends BaseEntity {
     })
     professional?: UserEntity;
 
+    @OneToMany(() => TechnicalVisitEntity, technicalVisit => technicalVisit.improvementProject, {
+        eager: true,
+    })
+    technicalVisit: TechnicalVisitEntity;
 }

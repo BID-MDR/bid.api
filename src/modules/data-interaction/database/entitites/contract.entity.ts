@@ -3,11 +3,12 @@ import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany
 import { WorkRequestEntity } from './work-request.entity';
 import { ContractStatusEnum } from '../enums/contract-status.enum';
 import { ContractCancelReasonEnum } from '../enums/contract-cancel-reason.enum';
+import { TechnicalVisitEntity } from './technical-visit.entity';
 
 @Entity({ name: 'contract' })
 export class ContractEntity extends BaseEntity {
 
-  
+
     @OneToOne(() => WorkRequestEntity, (workRequest) => workRequest.contract, {
         onDelete: 'CASCADE',
     })
@@ -68,5 +69,10 @@ export class ContractEntity extends BaseEntity {
         default: ContractCancelReasonEnum.NOT_APPLY
     })
     cancelReasonEnum: ContractCancelReasonEnum;
+
+    @OneToMany(() => TechnicalVisitEntity, technicalVisit => technicalVisit.contract, {
+        eager: true,
+    })
+    technicalVisit: TechnicalVisitEntity;
 
 }
