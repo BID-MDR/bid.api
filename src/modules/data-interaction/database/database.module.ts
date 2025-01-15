@@ -73,6 +73,7 @@ import { ImprovementProjectEntity } from './entitites/improvement-project.entity
 import { ImprovementProjectRepository } from './repositories/improvement-project/improvement-project.repository';
 import { RegisterWorkEntity } from './entitites/register-work.entity';
 import { RegisterWorkRepository } from './repositories/registerWork/registerWork.repository';
+import { SurveyEntity } from './entitites/survey.entity';
 
 const ENTITIES = [
     UserEntity,
@@ -111,7 +112,8 @@ const ENTITIES = [
     ContractEntity,
     BidDocumentEntity,
     ImprovementProjectEntity,
-    RegisterWorkEntity
+    RegisterWorkEntity,
+    SurveyEntity
 ];
 const REPOSITORIES = [
     UserRepository,

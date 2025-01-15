@@ -6,6 +6,7 @@ import { WorkRequestEntity } from './work-request.entity';
 import { CostEstimateEntity } from './cost-estimate.entity';
 import { InterventionEntity } from './intervention.entity';
 import { UserGeneratedMediaEntity } from './user-generated-media.entity';
+import { SurveyEntity } from './survey.entity';
 
 @Entity({ name: 'room' })
 export class RoomEntity extends BaseEntity {
@@ -15,13 +16,14 @@ export class RoomEntity extends BaseEntity {
     })
     name: string;
 
-    
-
     @Column({
         type: 'enum',
         enum: RoomTypeEnum,
     })
     type: RoomTypeEnum;
+
+    @Column({ type: "int" })
+    quantity?: number;
 
     @OneToMany(() => RoomSolutionEntity, (roomSolution) => roomSolution.room, {
         cascade: true,
@@ -34,7 +36,7 @@ export class RoomEntity extends BaseEntity {
 
     @ManyToMany(() => CostEstimateEntity, (costEstimate) => costEstimate.rooms)
     @JoinTable({
-        name: 'room_cost_estimate', 
+        name: 'room_cost_estimate',
         joinColumn: { name: 'room_id', referencedColumnName: 'id' },
         inverseJoinColumn: { name: 'cost_estimate_id', referencedColumnName: 'id' },
     })
@@ -48,12 +50,11 @@ export class RoomEntity extends BaseEntity {
 
 
     @OneToMany(() => UserGeneratedMediaEntity, (userGeneratedMediaEntity) => userGeneratedMediaEntity.startWorkRoom, {
-           cascade: true,
-           eager: true,
-           nullable: true,
-       })
+        cascade: true,
+        eager: true,
+        nullable: true,
+    })
     startWorkPhotos?: UserGeneratedMediaEntity[];
-
 
     @OneToMany(() => UserGeneratedMediaEntity, (userGeneratedMediaEntity) => userGeneratedMediaEntity.endWorkRoom, {
         cascade: true,
@@ -61,4 +62,18 @@ export class RoomEntity extends BaseEntity {
         nullable: true,
     })
     endWorkPhotos?: UserGeneratedMediaEntity[];
+
+    @ManyToOne(() => SurveyEntity, (survey) => survey.rooms, {
+        cascade: true,
+        eager: true,
+        nullable: true,
+    })
+    survey?: SurveyEntity[];
+
+    @ManyToOne(() => SurveyEntity, (survey) => survey.improveRooms, {
+        cascade: true,
+        eager: true,
+        nullable: true,
+    })
+    surveyImproveRooms?: SurveyEntity[];
 }
