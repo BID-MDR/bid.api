@@ -1,59 +1,139 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsEnum, IsUUID } from 'class-validator';
+import { IsDate, IsEnum, IsInt, IsOptional, IsString, IsUUID } from 'class-validator';
 import { UserEntity } from '../../entitites/user.entity';
 import { Type } from 'class-transformer';
 import { WorkRequestEntity } from '../../entitites/work-request.entity';
-import { TechnicalVisitStatusEnum } from '../../enums/technical-visit-status.enum';
-import { TechnicalVisitTypeEnum } from '../../enums/technical-visit-type.enum';
-import { RegisterWorkEntity } from '../../entitites/register-work.entity';
-import { TechnicalVisitRegisterWorkEnum } from '../../enums/technical-visit-register-work-type.enum';
+import { UserGeneratedMediaEntity } from '../../entitites/user-generated-media.entity';
+import { RoomEntity } from '../../entitites/room.entity';
+import { TechnicalVisitEntity } from '../../entitites/technical-visit.entity';
+import { SurveyStatusEnum } from '../../enums/survey-status.enum';
 
-export class CreateTechnicalVisitDto {
-    @ApiProperty()
-    @IsDate()
-    @Type(() => Date)
-    from: Date;
-
-    @ApiProperty()
-    @IsDate()
-    @Type(() => Date)
-    to: Date;
-
+export class CreateProfessionalSurveyDto {
     @ApiProperty()
     @IsUUID()
     professionalId: string;
+  
+    @ApiProperty()
     professional: UserEntity;
-
+  
     @ApiProperty()
     @IsUUID()
     beneficiaryId: string;
+  
+    @ApiProperty()
     beneficiary: UserEntity;
-
+  
     @ApiProperty()
-    @IsUUID()
-    workRequestId?: string;
+    @IsString()
+    @IsOptional()
+    state: string;
+  
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    city: string;
+  
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    zipcode: string;
+  
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    complement: string;
+  
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    neighborhood: string;
+  
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    number: string;
+  
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    street: string;
+  
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    latitude: string;
+  
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    longitude: string;
+  
+    @ApiProperty()
+    @IsEnum(SurveyStatusEnum)
+    status: SurveyStatusEnum;
+  
+    @ApiProperty()
+    @IsDate()
+    @Type(() => Date)
+    @IsOptional()
+    conclusionDate: Date;
+  
+    @ApiProperty()
     workRequest?: WorkRequestEntity;
-    
+  
     @ApiProperty()
-    type?: TechnicalVisitTypeEnum;
-
+    technicalVisit?: TechnicalVisitEntity;
+  
     @ApiProperty()
-    status?: TechnicalVisitStatusEnum;
-
+    @IsInt()
+    @IsOptional()
+    howManyPeopleLive: number;
+  
     @ApiProperty()
-    duration?: number;
-
+    @IsString()
+    @IsOptional()
+    responsible: string;
+  
     @ApiProperty()
-    @IsUUID()
-    registerWorkBeginningId?: string;
-    registerWorkBeginning?: RegisterWorkEntity;
-
+    @IsString()
+    @IsOptional()
+    benefits: string;
+  
     @ApiProperty()
-    @IsUUID()
-    registerWorkClosureId?: string;
-    reregisterWorkClosure?: RegisterWorkEntity;
-
-    @ApiProperty({ enum: TechnicalVisitRegisterWorkEnum })
-    @IsEnum(TechnicalVisitRegisterWorkEnum)
-    beginningOrEnd: TechnicalVisitRegisterWorkEnum;
+    @IsString()
+    @IsOptional()
+    living: string;
+  
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    houseType: string;
+  
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    flooring: string;
+  
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    houseBuilt: string;
+  
+    @ApiProperty({ type: [RoomEntity] })
+    rooms: RoomEntity[];
+  
+    @ApiProperty({ type: [RoomEntity] })
+    improveRooms: RoomEntity[];
+  
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    problems: string;
+  
+    @ApiProperty()
+    @IsString()
+    description: string;
+  
+    @ApiProperty({ type: [UserGeneratedMediaEntity] })
+    photos?: UserGeneratedMediaEntity[];
 }

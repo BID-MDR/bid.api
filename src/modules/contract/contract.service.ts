@@ -24,9 +24,8 @@ export class ContractService extends BaseService<ContractEntity, any, any> {
   }
 
   async getById(workRequestId: string) {
-    return await this.repository.findById(workRequestId);
+    return await this.repository.findByIdContract(workRequestId);
   }
-
 
   async register(data: CreateContractRequestDto) {
     const workRequest = await this.workRequestRepo.findById2(data.workRequestId);

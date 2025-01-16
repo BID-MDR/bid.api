@@ -3,10 +3,6 @@ import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, One
 import { UserEntity } from "./user.entity";
 import { WorkRequestEntity } from "./work-request.entity";
 import { TechnicalVisitEntity } from "./technical-visit.entity";
-import { DemandStatusEnum } from "../enums/demand-status.enum";
-import { ConstructionsEntity } from "./constructions.entity";
-import { CompanyEntity } from "./company.entity";
-import { SustainabilityItensEntity } from "./sustainability-Itens.entity";
 import { SurveyStatusEnum } from "../enums/survey-status.enum";
 import { RoomEntity } from "./room.entity";
 import { UserGeneratedMediaEntity } from "./user-generated-media.entity";

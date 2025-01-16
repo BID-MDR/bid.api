@@ -216,7 +216,6 @@ export class UserEntity extends BaseEntity {
 
   @OneToOne(() => SurveyEntity, survey => survey.professional, {
     cascade: true,
-    eager: true,
     nullable: true,
   })
   @JoinColumn()
@@ -224,7 +223,6 @@ export class UserEntity extends BaseEntity {
   
   @OneToOne(() => SurveyEntity, survey => survey.beneficiary, {
     cascade: true,
-    eager: true,
     nullable: true,
   })
   @JoinColumn()
