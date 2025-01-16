@@ -31,12 +31,20 @@ export class ContractRepository extends BaseRepository<
       relations: [ 'workRequest', 'workRequest.room'],
     });
   }
+  
   async find(): Promise<ContractEntity[]> {
     return await this.repository.find({
       relations: ['workRequest', 'workRequest.room'],
     });
   }
 
+  async findByIdContract(id: string): Promise<ContractEntity> {
+    return await this.repository.findOne({
+      where: { id: id },
+      relations: [ 'workRequest', 'workRequest.room'],
+    });
+  }
+  
   async updateStatus(costEstimateId: string, dto: ContractUpdateStatusDto) {
 
       return await this.repository.update({ id: costEstimateId }, { status: dto.type, acceptDate: new Date() });
