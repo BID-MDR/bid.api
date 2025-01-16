@@ -36,6 +36,20 @@ export class CostEstimateRepository extends BaseRepository<
     });
   }
 
+  async findByProfessional(professionalId: any): Promise<CostEstimateEntity[]> {
+    return await this.repository
+    .createQueryBuilder('costEstimate')
+    .leftJoinAndSelect('costEstimate.professional', 'professional')
+    .leftJoinAndSelect('costEstimate.rooms', 'rooms')
+    .leftJoinAndSelect('costEstimate.workRequest', 'workRequest')
+    .leftJoinAndSelect('workRequest.beneficiary', 'beneficiary')
+    .leftJoinAndSelect('beneficiary.address', 'address')
+    .leftJoinAndSelect('workRequest.room', 'room')
+    .leftJoinAndSelect('room.roomSolutions', 'roomSolutions')
+    .where('costEstimate.professional = :professionalId', { professionalId })
+    .getMany();
+  }
+
   async updateStatus(costEstimateId: string, status: CostEstimateAproveReproveRequestDto) {
     return await this.repository.update({ id: costEstimateId }, { type: status.type});
   }

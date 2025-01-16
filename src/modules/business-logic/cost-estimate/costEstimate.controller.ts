@@ -1,9 +1,12 @@
 import { Body, Controller, Get, Logger, Param, Post, Put, Req, SerializeOptions, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { CostEstimateService } from "./costEstimate.service";
+import { Request } from "express";
 import { CreateCostEstimateRequestDto } from "src/modules/data-interaction/database/dtos/cost-estimate/cost-estimate-request.dto";
 import { CostEstimateAdjustRequestDto } from "src/modules/data-interaction/database/dtos/cost-estimate/cost-estimate-adjust-request.dto";
 import { CostEstimateAproveReproveRequestDto } from "src/modules/data-interaction/database/dtos/cost-estimate/cost-estimate-aprove-reprove-request.dto";
+import { JwtPayloadInterface } from "src/core/interfaces/jwt-payload.interface";
+import { JwtAccessTokenGuard } from "src/core/guards/jwt-access-token.guard";
 
 @Controller("cost-estimate")
 @ApiTags("cost-estimate")
@@ -15,6 +18,14 @@ export class CostEstimateController {
   @ApiBearerAuth()
   async list() {
     return await this.service.list();
+  }
+
+  @Get("by-professional")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  async getByIdProfessional(@Req() req: Request) {
+    const userId = (req.user as JwtPayloadInterface).userId;
+    return await this.service.listProfessional(userId);
   }
 
   @Get("id/:id")
