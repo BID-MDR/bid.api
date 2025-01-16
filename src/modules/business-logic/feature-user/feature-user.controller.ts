@@ -131,8 +131,9 @@ export class FeatureUserController {
         const userId = (req.user as JwtPayloadInterface).userId;
         const resultUser = await this.featureUserService.findById(userId);
         
-        const result = await this.featureUserService.findNearbyEmployees(Number(resultUser.address.latitude), Number(resultUser.address.longitude), resultUser.address.maximumDistanceToWorks || 10)
+        const result = await this.featureUserService.findNearbyEmployees(Number(resultUser.address.latitude), Number(resultUser.address.longitude))
       
+        console.log(result);
         return new ResponseDto(true, result, false);
     }
 
