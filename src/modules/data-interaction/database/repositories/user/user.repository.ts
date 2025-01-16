@@ -130,20 +130,17 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
   async findNearbyEmployees(
     latitude: number,
     longitude: number,
-    radiusInKm: number,
   ){
-    const radiusInMeters = radiusInKm * 10000;
-
   
     const query = `
-    SELECT u.*, a.latitude, a.longitude, u.radius_km
+    SELECT u.*, a.latitude, a.longitude
     FROM user u
     INNER JOIN address a ON a.id = u.addressId
     WHERE u.type = 'PROFISSIONAL'
       AND ST_Distance_Sphere(
         point(a.longitude, a.latitude),
         point(?, ?)
-      ) <= a.maximumDistanceToWorks* 1000
+      ) <= a.maximumDistanceToWorks * 1000
   `;
 
   return this.repository.query(query, [longitude, latitude]);

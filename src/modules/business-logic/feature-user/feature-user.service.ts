@@ -286,9 +286,8 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
     }
 
     async findNearbyEmployees( latitude: number,
-        longitude: number,
-        radiusInKm: number,) {
-        return await this.userRepository.findNearbyEmployees( latitude, longitude, radiusInKm,);
+        longitude: number) {
+        return await this.userRepository.findNearbyEmployees( latitude, longitude);
     }
 
     async findNearbyBeneficiary( latitude: number,
