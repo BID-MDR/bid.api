@@ -25,6 +25,11 @@ export class CostEstimateService extends BaseService<CostEstimateEntity, any, an
     return await this.repository.find();
   }
 
+
+  async listProfessional(_id:any) {
+    return await this.repository.findByProfessional(_id);
+  }
+
   async getById(workRequestId: string) {
     return await this.repository.findById(workRequestId);
   }
