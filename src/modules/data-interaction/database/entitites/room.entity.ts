@@ -22,9 +22,6 @@ export class RoomEntity extends BaseEntity {
     })
     type: RoomTypeEnum;
 
-    @Column({ type: "int" })
-    quantity?: number;
-
     @OneToMany(() => RoomSolutionEntity, (roomSolution) => roomSolution.room, {
         cascade: true,
         eager: true,
