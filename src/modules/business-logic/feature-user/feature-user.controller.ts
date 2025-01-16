@@ -42,6 +42,7 @@ import { CreateAddressDto } from "src/modules/data-interaction/database/dtos/add
 import { UpdateAddressDto } from "src/modules/data-interaction/database/dtos/address/update-address.dto";
 import { CreateUserGeneratedMediaDto } from "src/modules/data-interaction/database/dtos/user/user-generated-media/create-user-generated-media.dto";
 import { MediaUploadDto } from "src/modules/data-interaction/database/dtos/media/media-upload.dto";
+import { CreateUserRestingDayDto } from "src/modules/data-interaction/database/dtos/user/user-resting-day/create-user-resting-day.dto";
 
 @Controller("user")
 @ApiTags("User/Usuário")
@@ -130,7 +131,7 @@ export class FeatureUserController {
         const userId = (req.user as JwtPayloadInterface).userId;
         const resultUser = await this.featureUserService.findById(userId);
         
-        const result = await this.featureUserService.findNearbyEmployees(Number(resultUser.address.latitude), Number(resultUser.address.longitude), 10)
+        const result = await this.featureUserService.findNearbyEmployees(Number(resultUser.address.latitude), Number(resultUser.address.longitude), resultUser.address.maximumDistanceToWorks || 10)
       
         return new ResponseDto(true, result, false);
     }
@@ -150,7 +151,7 @@ export class FeatureUserController {
         const userId = (req.user as JwtPayloadInterface).userId;
         const resultUser = await this.featureUserService.findById(userId);
         
-        const result = await this.featureUserService.findNearbyBeneficiary(Number(resultUser.address.latitude), Number(resultUser.address.longitude), 10)
+        const result = await this.featureUserService.findNearbyBeneficiary(Number(resultUser.address.latitude), Number(resultUser.address.longitude), resultUser.address.maximumDistanceToWorks)
 
         return new ResponseDto(true, result, false);
     }
@@ -175,7 +176,18 @@ export class FeatureUserController {
         type: SigninResponseDto,
     })
     async create(@Body() body: CreateUserDto) {
+      
+
+        body.professionalUserInfo.restingDays = body.professionalUserInfo.restingDays.map((day) => {
+            const restingDay = new CreateUserRestingDayDto();
+            restingDay.day = day.day;
+            return restingDay;
+        });
+    
+       
         const user = await this.featureUserService.create(body);
+    
+       
         return await this.featureAuthService.signinFromCreateUser(user);
     }
 

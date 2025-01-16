@@ -136,17 +136,17 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
 
   
     const query = `
-    SELECT u.*
+    SELECT u.*, a.latitude, a.longitude, u.radius_km
     FROM user u
     INNER JOIN address a ON a.id = u.addressId
     WHERE u.type = 'PROFISSIONAL'
       AND ST_Distance_Sphere(
         point(a.longitude, a.latitude),
         point(?, ?)
-      ) <= ?
+      ) <= a.maximumDistanceToWorks* 1000
   `;
 
-  return this.repository.query(query, [longitude, latitude, radiusInMeters]);
+  return this.repository.query(query, [longitude, latitude]);
   }
 
   async findNearbyBeneficiary(
