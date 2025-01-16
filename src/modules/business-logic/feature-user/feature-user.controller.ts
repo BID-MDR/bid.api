@@ -42,6 +42,7 @@ import { CreateAddressDto } from "src/modules/data-interaction/database/dtos/add
 import { UpdateAddressDto } from "src/modules/data-interaction/database/dtos/address/update-address.dto";
 import { CreateUserGeneratedMediaDto } from "src/modules/data-interaction/database/dtos/user/user-generated-media/create-user-generated-media.dto";
 import { MediaUploadDto } from "src/modules/data-interaction/database/dtos/media/media-upload.dto";
+import { CreateUserRestingDayDto } from "src/modules/data-interaction/database/dtos/user/user-resting-day/create-user-resting-day.dto";
 
 @Controller("user")
 @ApiTags("User/Usuário")
@@ -175,7 +176,18 @@ export class FeatureUserController {
         type: SigninResponseDto,
     })
     async create(@Body() body: CreateUserDto) {
+      
+
+        body.professionalUserInfo.restingDays = body.professionalUserInfo.restingDays.map((day) => {
+            const restingDay = new CreateUserRestingDayDto();
+            restingDay.day = day.day;
+            return restingDay;
+        });
+    
+       
         const user = await this.featureUserService.create(body);
+    
+       
         return await this.featureAuthService.signinFromCreateUser(user);
     }
 
