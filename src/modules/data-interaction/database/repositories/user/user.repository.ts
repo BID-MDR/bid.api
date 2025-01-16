@@ -131,12 +131,12 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
     latitude: number,
     longitude: number,
   ){
-  
+    
     const query = `
     SELECT u.*, a.latitude, a.longitude
     FROM user u
     INNER JOIN address a ON a.id = u.addressId
-    WHERE u.type = 'PROFISSIONAL'
+    WHERE u.type IN ('PROFISSIONAL', 'ARQUITETO')
       AND ST_Distance_Sphere(
         point(a.longitude, a.latitude),
         point(?, ?)

@@ -133,7 +133,6 @@ export class FeatureUserController {
         
         const result = await this.featureUserService.findNearbyEmployees(Number(resultUser.address.latitude), Number(resultUser.address.longitude))
       
-        console.log(result);
         return new ResponseDto(true, result, false);
     }
 
