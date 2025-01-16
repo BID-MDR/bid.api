@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import {IsString} from "class-validator";
 import { RoomEntity } from "../../entitites/room.entity";
+import { InterventionStatusEnum } from "../../enums/intervention-status.enum";
 
 
 export class CreateInterventionRequestDto {
@@ -18,4 +19,11 @@ export class CreateInterventionRequestDto {
     @ApiProperty()
     @IsString()
     toDo: string;
+
+    @ApiProperty()
+    interventionSituation: InterventionStatusEnum;
+
+    @ApiProperty()
+    @IsString()
+    interventiondescription: string;
 }
