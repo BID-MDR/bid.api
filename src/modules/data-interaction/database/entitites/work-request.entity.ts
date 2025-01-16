@@ -16,6 +16,8 @@ import { ContractEntity } from "./contract.entity";
 import { RegisterWorkEntity } from "./register-work.entity";
 import { TechnicalVisitEntity } from "./technical-visit.entity";
 import { WorkRequestContractStatusEnum } from "../enums/work-request-contact-status.enum";
+import { ContractResignedEntity } from "./contract-resigned.entity";
+import { SurveyEntity } from "./survey.entity";
 
 @Entity({ name: "work_request" })
 export class WorkRequestEntity extends BaseEntity {
@@ -83,13 +85,11 @@ export class WorkRequestEntity extends BaseEntity {
 
   @OneToMany(() => RoomEntity, room => room.workRequest, {
     cascade: true,
-    eager: true,
   })
   room: RoomEntity[];
 
   @OneToMany(() => WorkRequestWelfareEntity, workRequestWelfare => workRequestWelfare.workRequest, {
     cascade: true,
-    eager: true,
   })
   welfare: WorkRequestWelfareEntity[];
 
@@ -109,19 +109,16 @@ export class WorkRequestEntity extends BaseEntity {
 
   @OneToMany(() => SatisfactionResearchEntity, satisfaction => satisfaction.workRequest, {
     cascade: true,
-    eager: true,
   })
   satisfaction: SatisfactionResearchEntity[];
 
   @OneToMany(() => CostEstimateEntity, (costEstimate) => costEstimate.workRequest, {
     cascade: true,
-    eager: true,
   })
   costEstimates: CostEstimateEntity[];
 
   @OneToOne(() => ContractEntity, (contract) => contract.workRequest, {
     cascade: true,
-    eager: true,
   })
   @JoinColumn()
   contract: ContractEntity;
@@ -133,8 +130,17 @@ export class WorkRequestEntity extends BaseEntity {
   registerWork: RegisterWorkEntity;
 
   @OneToMany(() => TechnicalVisitEntity, technicalVisit => technicalVisit.workRequest, {
-    eager: true,
   })
   technicalVisit: TechnicalVisitEntity;
+
+  @OneToMany(() => ContractResignedEntity, (contractResigned) => contractResigned.workRequest, {
+    cascade: true,
+  })
+  contractResignedList: ContractResignedEntity[];
+
+  @OneToOne(() => SurveyEntity, survey => survey.workRequest, {
+    eager: true,
+  })
+  survey: SurveyEntity;
 
 }

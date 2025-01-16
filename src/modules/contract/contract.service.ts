@@ -29,10 +29,9 @@ export class ContractService extends BaseService<ContractEntity, any, any> {
 
 
   async register(data: CreateContractRequestDto) {
-    const workRequest = await this.workRequestRepo.findById(data.workRequestId);
+    const workRequest = await this.workRequestRepo.findById2(data.workRequestId);
     if (!workRequest) throw new NotFoundException('WorkRequest not found!');
     data.workRequest = workRequest;
-
     return await this.repository.create(data);
 }
 
@@ -46,6 +45,7 @@ export class ContractService extends BaseService<ContractEntity, any, any> {
 
 
   async updateStatus(costEstimateId: string, data: ContractUpdateStatusDto) {
+    console.log('111')
     const costEstimate = await this.repository.findById(costEstimateId)
     if (!costEstimate) throw new NotFoundException('Cost Estimate not found!')
     if(data.type === ContractStatusEnum.APPROVED) {
@@ -58,6 +58,7 @@ export class ContractService extends BaseService<ContractEntity, any, any> {
   }
   
   async cancelContract(costEstimateId: string, data: ContractCancelDto) {
+
     const costEstimate = await this.repository.findById(costEstimateId)
     if (!costEstimate) throw new NotFoundException('Cost Estimate not found!')
       await this.repository.cancelContract(costEstimateId, data)
