@@ -20,7 +20,7 @@ export class ContractController {
   @Get("id/:id")
   @ApiBearerAuth()
   async getById(@Param("id") id: string) {
-    return await this.service.findById(id);
+    return await this.service.getById(id);
   }
 
  
