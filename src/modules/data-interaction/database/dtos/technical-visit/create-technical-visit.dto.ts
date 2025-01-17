@@ -10,24 +10,21 @@ import { TechnicalVisitRegisterWorkEnum } from '../../enums/technical-visit-regi
 
 export class CreateTechnicalVisitDto {
     @ApiProperty()
-    @IsDate()
     @Type(() => Date)
     from: Date;
 
-    @ApiProperty()
-    @IsDate()
+    @ApiProperty({ required: false })
     @Type(() => Date)
-    to: Date;
+    to?: Date;
 
     @ApiProperty()
     @IsUUID()
     professionalId: string;
     professional: UserEntity;
 
-    @ApiProperty()
-    @IsUUID()
-    beneficiaryId: string;
-    beneficiary: UserEntity;
+    @ApiProperty({ required: false })
+    beneficiaryId?: string;
+    beneficiary?: UserEntity;
 
     @ApiProperty()
     @IsUUID()
@@ -44,16 +41,13 @@ export class CreateTechnicalVisitDto {
     duration?: number;
 
     @ApiProperty()
-    @IsUUID()
     registerWorkBeginningId?: string;
     registerWorkBeginning?: RegisterWorkEntity;
 
     @ApiProperty()
-    @IsUUID()
     registerWorkClosureId?: string;
     reregisterWorkClosure?: RegisterWorkEntity;
 
     @ApiProperty({ enum: TechnicalVisitRegisterWorkEnum })
-    @IsEnum(TechnicalVisitRegisterWorkEnum)
-    beginningOrEnd: TechnicalVisitRegisterWorkEnum;
+    beginningOrEnd?: TechnicalVisitRegisterWorkEnum;
 }

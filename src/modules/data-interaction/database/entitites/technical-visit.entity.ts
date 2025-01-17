@@ -2,7 +2,6 @@ import { BaseEntity } from 'src/core/entities/base.entity';
 import { Column, Entity, ManyToOne, OneToOne } from 'typeorm';
 import { TechnicalVisitStatusEnum } from '../enums/technical-visit-status.enum';
 import { UserEntity } from './user.entity';
-import { AddressEntity } from './address.entity';
 import { DemandEntity } from './demand.entity';
 import { WorkRequestEntity } from './work-request.entity';
 import { TechnicalVisitTypeEnum } from '../enums/technical-visit-type.enum';
@@ -20,11 +19,13 @@ export class TechnicalVisitEntity extends BaseEntity {
 
     @Column({
         type: 'datetime',
+        nullable: true,
     })
-    to: Date;
+    to?: Date;
 
     @Column({
         type: 'float',
+        nullable: true,
     })
     duration?: number;
 

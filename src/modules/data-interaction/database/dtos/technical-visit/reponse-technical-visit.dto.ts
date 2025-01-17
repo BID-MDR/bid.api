@@ -18,7 +18,7 @@ export class TechnicalVisitResponseDto {
     from: Date;
 
     @ApiProperty()
-    to: Date;
+    to?: Date;
 
     @ApiProperty()
     cancelReason: string;

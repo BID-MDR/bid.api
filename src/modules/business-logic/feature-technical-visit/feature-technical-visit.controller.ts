@@ -88,22 +88,15 @@ export class FeatureTechnicalVisitController {
     }
 
     @Post("")
-    @UseInterceptors(new EncryptInterceptor())
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
     @ApiOperation({
         description: "Cria uma visita técnica.",
         summary: "Cria uma visita técnica.",
     })
     @ApiBody({
         type: CreateTechnicalVisitDto,
-        required: true,
         description: "Visita técnica a ser criada.",
-    })
-    @ApiOkResponseDtoData({
-        type: TechnicalVisitResponseDto,
-        description: "Visita técnica criada.",
-    })
-    @SerializeOptions({
-        type: TechnicalVisitResponseDto,
     })
     async create(@Body() body: CreateTechnicalVisitDto) {
         const result = await this.featureTechnicalVisitService.schedule(body);
