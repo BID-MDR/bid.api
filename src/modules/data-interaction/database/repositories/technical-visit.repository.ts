@@ -23,6 +23,27 @@ export class TechnicalVisitRepository extends BaseRepository<
         });
     }
 
+    async getByBeneficiary(beneficiaryId: string): Promise<TechnicalVisitEntity[]> {
+          
+        const relations = [
+            'professional',
+            'beneficiary',
+            'demand',
+            'workRequest',
+            'contract',
+            'improvementProject',
+            'registerWorkBeginning',
+            'registerWorkClosure',
+            'survey',
+        ];
+    
+        const result = await this.repository.find({
+            where: { beneficiary: { id: beneficiaryId } },
+            relations: relations,
+        });
+        return result;
+    }
+
     async getByProfessionalAndStatus(professionalId: string) {
       return this.repository.find({
         where: {

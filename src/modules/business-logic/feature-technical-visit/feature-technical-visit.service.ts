@@ -59,9 +59,9 @@ export class FeatureTechnicalVisitService extends BaseService<
         return await this.technicalVisitRepository.create(dto)
     }
 
-    // async findByUserId(userId: string) {
-    //     return await this.workRequestRepository.findByUserId(userId);
-    // }
+    async findByBeneficiaryId(beneficiaryId: string) {
+        return await this.technicalVisitRepository.getByBeneficiary(beneficiaryId);
+    }
 
     // async create(data: CreateTechnicalVisitDto) {
     //     for (const iterator of data.picturesAndVideos) {
