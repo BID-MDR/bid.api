@@ -56,10 +56,7 @@ export class CreateUserProfessionalInfoDto {
     cauRegistrationNumber: string;
 
     @ApiProperty({ type: CreateUserRestingDayDto, isArray: true })
-    @ValidateNested({ each: true })
-    @Type(() => CreateUserRestingDayDto)
-    @IsDefined()
-    restingDays: CreateUserRestingDayDto[];
+    restingDays?: CreateUserRestingDayDto[];
 
     @ApiProperty({ description: 'Horário militar', example: '08:00' })
     @IsMilitaryTime()

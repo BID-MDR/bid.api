@@ -55,7 +55,7 @@ export class DemandEntity extends BaseEntity {
 
   @Column({
     type: "varchar",
-    length: 30,
+    length: 100,
   })
   street: string;
 

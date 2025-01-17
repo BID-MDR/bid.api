@@ -72,7 +72,7 @@ export class UserProfessionalInfoEntity extends BaseEntity {
         cascade: true,
         eager: true,
     })
-    restingDays: UserRestingDayEntity[];
+    restingDays?: UserRestingDayEntity[];
 
     @Column({
         type: 'varchar',
