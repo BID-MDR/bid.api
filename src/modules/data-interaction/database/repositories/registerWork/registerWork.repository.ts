@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { BaseRepository } from "../../../../../core/repositories/base.repository";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { In, Not, Repository } from "typeorm";
 import { RegisterWorkEntity } from "../../entitites/register-work.entity";
 import { RegisterWorkCreateDto } from "../../dtos/register-work/register-work.dto";
 import { RegisterWorkStatusEnum } from "../../enums/register-work.enum";
@@ -31,6 +31,15 @@ export class RegisterWorkRepository extends BaseRepository<
       //relations: ['workRequest', 'workRequest.room'],
     });
   }
+  async getByProfessionalAndStatus(professionalId: string) {
+    return this.repository.find({
+      where: {
+        professional: { id: professionalId },
+        status: Not(In(['FINALIZADA'])),
+      },
+      relations: ['professional', 'workRequest'],
+    });
+  }  
   async startRegisterWork(registerWorkId: string, ) {
     return await this.repository.update({ id: registerWorkId }, {startedDate: new Date(), status: ConstructionsStatusEnum.EM_ANDAMENTO});
   }

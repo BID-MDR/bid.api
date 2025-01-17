@@ -11,11 +11,18 @@ export class ContractController {
   private readonly _logger = new Logger(ContractController.name);
   constructor(private service: ContractService) {}
 
-  @Get("")
+  @Get("by-professional/:id")
   @ApiBearerAuth()
-  async list() {
-    return await this.service.list();
+  async list(@Param("id") id: string,) {
+    return await this.service.list(id);
   }
+
+  @Get("by-beneficiary/:id")
+  @ApiBearerAuth()
+  async listByBeneficiary(@Param("id") id: string,) {
+    return await this.service.listByBeneficiary(id);
+  }
+
 
   @Get("id/:id")
   @ApiBearerAuth()
@@ -32,7 +39,6 @@ export class ContractController {
     description: "Intervenção a ser criada.",
   })
   async create(@Body() dto: CreateContractRequestDto) {
-    console.log('bb')
     return await this.service.register(dto);
   }
 

@@ -9,18 +9,26 @@ import { CreateContractRequestDto } from "../data-interaction/database/dtos/cont
 import { ContractUpdateStatusDto } from "../data-interaction/database/dtos/contract/contract-update-status.dto";
 import { ContractCancelDto } from "../data-interaction/database/dtos/contract/contract-cancel.dto";
 import { ContractStatusEnum } from "../data-interaction/database/enums/contract-status.enum";
+import { UserProfessionalInfoRepository } from "../data-interaction/database/repositories/user/user-professional-info.repository";
 
 @Injectable()
 export class ContractService extends BaseService<ContractEntity, any, any> {
   constructor(
     private repository: ContractRepository,
-    private workRequestRepo: WorkRequestRepository
+    private workRequestRepo: WorkRequestRepository,
+    private professionalRepo: UserProfessionalInfoRepository
   ) {
     super(repository);
   }
 
-  async list() {
-    return await this.repository.find();
+  async list(professionalId: string) {
+    const profeesional = await this.professionalRepo.findById(professionalId)
+    if(!profeesional) throw new NotFoundException('Professional not found')
+    return await this.repository.findByProfessional(professionalId);
+  }
+
+  async listByBeneficiary(userId: string) {
+    return await this.repository.findByBeneficiary(userId);
   }
 
   async getById(workRequestId: string) {
@@ -31,6 +39,9 @@ export class ContractService extends BaseService<ContractEntity, any, any> {
     const workRequest = await this.workRequestRepo.findById2(data.workRequestId);
     if (!workRequest) throw new NotFoundException('WorkRequest not found!');
     data.workRequest = workRequest;
+    const professional = await this.professionalRepo.findById(data.professionalId)
+    if (!professional) throw new NotFoundException('Professional not found!');
+    data.professional = professional
     return await this.repository.create(data);
 }
 

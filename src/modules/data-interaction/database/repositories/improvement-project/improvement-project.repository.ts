@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { BaseRepository } from "../../../../../core/repositories/base.repository";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { In, Not, Repository } from "typeorm";
 import { ImprovementProjectEntity } from "../../entitites/improvement-project.entity";
 import { ImprovementProjectRequestDto } from "../../dtos/improvementProject/improvement-project-request.dto";
 import { BidDocumentEntity } from "../../entitites/bid-document.entity";
@@ -35,6 +35,16 @@ export class ImprovementProjectRepository extends BaseRepository<
   async addDocument(projectId: string, newDocument: BidDocumentEntity){
     return await this.repository.update({id: projectId}, {document: newDocument})
   }
+
+     async getByProfessionalAndStatus(professionalId: string) {
+          return this.repository.find({
+            where: {
+              professional: { id: professionalId },
+              status: Not(In(['DELIVERED'])),
+            },
+            relations: ['professional', 'workRequest'],
+          });
+        }  
 
   async updateStatus(projectId: string, data: ImprovementProjectUpdateStatusRequestDto){
     return await this.repository.update({id: projectId}, {status: data.status})
