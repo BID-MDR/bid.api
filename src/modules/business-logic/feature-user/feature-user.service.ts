@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { totp } from 'otplib';
@@ -28,6 +28,12 @@ import { CreateAddressDto } from 'src/modules/data-interaction/database/dtos/add
 import { UpdateAddressDto } from 'src/modules/data-interaction/database/dtos/address/update-address.dto';
 import { CreateUserGeneratedMediaDto } from 'src/modules/data-interaction/database/dtos/user/user-generated-media/create-user-generated-media.dto';
 import { MediaUploadDto } from 'src/modules/data-interaction/database/dtos/media/media-upload.dto';
+import { TechnicalVisitRepository } from 'src/modules/data-interaction/database/repositories/technical-visit.repository';
+import { CostEstimateRepository } from 'src/modules/data-interaction/database/repositories/costEstimate/costEstimate.repository';
+import { ImprovementProjectRepository } from 'src/modules/data-interaction/database/repositories/improvement-project/improvement-project.repository';
+import { RegisterWorkRepository } from 'src/modules/data-interaction/database/repositories/registerWork/registerWork.repository';
+import { ContractResignedRepository } from 'src/modules/data-interaction/database/repositories/contract-resigned/contract-resigned.repository';
+import { ContractRepository } from 'src/modules/data-interaction/database/repositories/contract/contract.repository';
 
 @Injectable()
 export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -43,6 +49,12 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         private readonly emailFacade: EmailFacade,
         private readonly storageFacade: StorageFacade,
         private readonly configService: ConfigService,
+        private readonly technicalVisitRepo: TechnicalVisitRepository,
+        private readonly costEstimateRepo: CostEstimateRepository,
+        private readonly improvementProjectRepo: ImprovementProjectRepository,
+        private readonly registerWorkRepo: RegisterWorkRepository,
+        private readonly contractResignedRepo: ContractResignedRepository,
+        private readonly contractRepo: ContractRepository
     ) {
         super(userRepository);
     }
@@ -318,6 +330,31 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
     async getDashboardDataWithJoinProfessional(userId: string) {
         // Example of performing a join to fetch additional data from other tables
         return await this.userRepository.getDashboardDataWithJoinProfessional(userId);
+    }
+
+    async listAppoitmentByProfessionalId(professionalId: string){
+        const techVisitList = (await this.technicalVisitRepo.getByProfessionalAndStatus(professionalId))
+        .map(item => ({ ...item, source: 'TechnicalVisit' }));
+    const costEstimateList = (await this.costEstimateRepo.getByProfessionalAndStatus(professionalId))
+        .map(item => ({ ...item, source: 'CostEstimate' }));
+    const improvementProjectList = (await this.improvementProjectRepo.getByProfessionalAndStatus(professionalId))
+        .map(item => ({ ...item, source: 'ImprovementProject' }));
+    const registerWorkList = (await this.registerWorkRepo.getByProfessionalAndStatus(professionalId))
+        .map(item => ({ ...item, source: 'RegisterWork' }));
+    const contractResignedList = (await this.contractResignedRepo.getByProfessionalAndStatus(professionalId))
+        .map(item => ({ ...item, source: 'ContractResigned' }));
+    const contractList = (await this.contractRepo.getByProfessionalAndStatus(professionalId))
+        .map(item => ({ ...item, source: 'Contract' }));
+    
+    const allAppointments = [
+        ...techVisitList,
+        ...costEstimateList,
+        ...improvementProjectList,
+        ...registerWorkList,
+        ...contractResignedList,
+        ...contractList,
+    ];
+    return allAppointments
     }
 
 }

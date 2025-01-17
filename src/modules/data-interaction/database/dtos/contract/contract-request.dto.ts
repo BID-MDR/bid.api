@@ -2,6 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import {IsString} from "class-validator";
 import { RoomEntity } from "../../entitites/room.entity";
 import { WorkRequestEntity } from "../../entitites/work-request.entity";
+import { UserProfessionalInfoEntity } from "../../entitites/user-professional-info.entity";
 
 
 export class CreateContractRequestDto {
@@ -31,5 +32,10 @@ export class CreateContractRequestDto {
 
     @ApiProperty()
     cancelationReason?:string
+
+    @ApiProperty()
+    professionalId?: string;
+
+    professional: UserProfessionalInfoEntity
 
 }

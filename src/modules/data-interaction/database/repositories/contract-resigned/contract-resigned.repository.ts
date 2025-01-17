@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { BaseRepository } from "../../../../../core/repositories/base.repository";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { In, Not, Repository } from "typeorm";
 
 import { ContractResignedEntity } from "../../entitites/contract-resigned.entity";
 import { CreateContractResignedRequestDto } from "../../dtos/contract-resigned/contract-resigned-request.dto";
@@ -31,6 +31,15 @@ export class ContractResignedRepository extends BaseRepository<
       relations: ['workRequest', 'workRequest.room'],
     });
   }
+  async getByProfessionalAndStatus(professionalId: string) {
+    return this.repository.find({
+      where: {
+        professional: { id: professionalId },
+        status: Not(In(['RESIGNED'])),
+      },
+      relations: ['professional', 'workRequest'],
+    });
+  }  
 
   async updateContractResignedStatus(contractResignedId: string, dto: CreateContractResignedUpdateStatusRequestDto) {
 
