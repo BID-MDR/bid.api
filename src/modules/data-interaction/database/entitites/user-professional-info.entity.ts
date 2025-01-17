@@ -7,6 +7,7 @@ import { AddressEntity } from './address.entity';
 import { LevelOfEducationEnum } from '../enums/level-of-education.enum';
 import { RegisterWorkEntity } from './register-work.entity';
 import { ContractResignedEntity } from './contract-resigned.entity';
+import { ContractEntity } from './contract.entity';
 
 @Entity({ name: 'user-professional-info' })
 export class UserProfessionalInfoEntity extends BaseEntity {
@@ -96,4 +97,7 @@ export class UserProfessionalInfoEntity extends BaseEntity {
 
     @OneToMany(() => ContractResignedEntity, (registerWork) => registerWork.professional, { cascade: true, eager: true })
     contractResignedList: ContractResignedEntity[];
+
+    @OneToMany(() => ContractEntity, (contract) => contract.professional, { cascade: true, eager: true })
+    contractList: ContractEntity[];
 }

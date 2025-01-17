@@ -4,6 +4,7 @@ import { WorkRequestEntity } from './work-request.entity';
 import { ContractStatusEnum } from '../enums/contract-status.enum';
 import { ContractCancelReasonEnum } from '../enums/contract-cancel-reason.enum';
 import { TechnicalVisitEntity } from './technical-visit.entity';
+import { UserProfessionalInfoEntity } from './user-professional-info.entity';
 
 @Entity({ name: 'contract' })
 export class ContractEntity extends BaseEntity {
@@ -76,5 +77,9 @@ export class ContractEntity extends BaseEntity {
         eager: true,
     })
     technicalVisit: TechnicalVisitEntity;
+
+    @ManyToOne(() => UserProfessionalInfoEntity, (profeesional) => profeesional.contractList)
+    professional: UserProfessionalInfoEntity;
+    
 
 }

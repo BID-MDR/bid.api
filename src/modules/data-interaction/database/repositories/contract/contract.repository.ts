@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { BaseRepository } from "../../../../../core/repositories/base.repository";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { In, Not, Repository } from "typeorm";
 import { ContractEntity } from "../../entitites/contract.entity";
 import { CreateContractRequestDto } from "../../dtos/contract/contract-request.dto";
 import { ContractUpdateStatusDto } from "../../dtos/contract/contract-update-status.dto";
@@ -26,19 +26,49 @@ export class ContractRepository extends BaseRepository<
   // }
 
   async findById2(costEstimateId: string): Promise<ContractEntity> {
+    
     return await this.repository.findOne({
       where: { id: costEstimateId },
       relations: [ 'workRequest', 'workRequest.room'],
     });
   }
   
-  async find(): Promise<ContractEntity[]> {
-    return await this.repository.find({
-      relations: ['workRequest', 'workRequest.room'],
+  async findByProfessional(professionalId: string): Promise<ContractEntity[]> {
+    return this.repository.find({
+      where: {
+        professional: { id: professionalId }, 
+      },
+      relations: ['professional', 'workRequest', 'workRequest.room'],
     });
   }
 
+  async findByBeneficiary(userId: string): Promise<ContractEntity[]> {
+    return this.repository.find({
+        where: {
+            workRequest: {
+                beneficiary: { id: userId }, 
+            },
+        },
+        relations: [
+            'professional',
+            'workRequest',
+            'workRequest.room',
+            'workRequest.beneficiary',
+        ],
+    });
+}
+
+  async getByProfessionalAndStatus(professionalId: string) {
+    return this.repository.find({
+      where: {
+        professional: { id: professionalId },
+        status: Not(In(['DELIVERED', 'REPROVED'])), 
+      },
+      relations: ['professional', 'workRequest'],
+    });
+  }  
   async findByIdContract(id: string): Promise<ContractEntity> {
+    
     return await this.repository.findOne({
       where: { id: id },
       relations: [ 'workRequest', 'workRequest.room'],

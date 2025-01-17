@@ -515,4 +515,9 @@ export class FeatureUserController {
     async getByCpf(@Param("cpf") cpf: string) {
         return await this.featureUserService.getByCpf(cpf);
     }
+
+    @Get("professional-appoitment/:professionalId")
+    async listAppoitmentByProfessionalId(@Param("professionalId") professionalId: string) {
+        return await this.featureUserService.listAppoitmentByProfessionalId(professionalId);
+    }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { BaseRepository } from "../../../../../core/repositories/base.repository";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { In, Not, Repository } from "typeorm";
 import { CostEstimateEntity } from "../../entitites/cost-estimate.entity";
 import { CreateCostEstimateRequestDto } from "../../dtos/cost-estimate/cost-estimate-request.dto";
 import { CostEstimateStatusEnum } from "../../enums/cost-estimate-status.enum";
@@ -49,6 +49,16 @@ export class CostEstimateRepository extends BaseRepository<
     .where('costEstimate.professional = :professionalId', { professionalId })
     .getMany();
   }
+
+      async getByProfessionalAndStatus(professionalId: string) {
+        return this.repository.find({
+          where: {
+            professional: { id: professionalId },
+            type: Not(In(['REPROVED_ESTIMATION', 'APPROVED_ESTIMATION'])),
+          },
+          relations: ['professional', 'workRequest'],
+        });
+      }   
 
   async updateStatus(costEstimateId: string, status: CostEstimateAproveReproveRequestDto) {
     return await this.repository.update({ id: costEstimateId }, { type: status.type});
