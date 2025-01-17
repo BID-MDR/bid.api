@@ -33,7 +33,7 @@ export class CreateAddressDto {
     number: string;
 
     @ApiProperty()
-    @Length(1, 30)
+    @Length(1, 100)
     street: string;
 
     @ApiProperty({ example: '-23.000000' })
