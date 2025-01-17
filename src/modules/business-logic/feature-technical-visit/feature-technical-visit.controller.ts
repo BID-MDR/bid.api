@@ -87,6 +87,37 @@ export class FeatureTechnicalVisitController {
         return await this.featureTechnicalVisitService.findById(id);
     }
 
+    @Get("beneficiary")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOperation({
+        description: "Retorna a visita técnica.",
+        summary: "Retorna a visita técnica pelo ID do beneficiario.",
+    })
+    async getByBeneficiary(@Req() req: Request) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.featureTechnicalVisitService.findByBeneficiaryId(userId);
+    }
+
+    @Get("professional")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOperation({
+        description: "Retorna a visita técnica.",
+        summary: "Retorna a visita técnica pelo ID do profissional.",
+    })
+    @ApiOkResponseDtoData({
+        type: TechnicalVisitResponseDto,
+        description: "Visita técnica.",
+    })
+    @SerializeOptions({
+        type: TechnicalVisitResponseDto,
+    })
+    async getByProfessional(@Req() req: Request) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.featureTechnicalVisitService.getByProfessional(userId);
+    }
+
     @Post("")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
