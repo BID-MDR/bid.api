@@ -19,11 +19,13 @@ export class TechnicalVisitEntity extends BaseEntity {
 
     @Column({
         type: 'datetime',
+        nullable: true,
     })
-    to: Date;
+    to?: Date;
 
     @Column({
         type: 'float',
+        nullable: true,
     })
     duration?: number;
 

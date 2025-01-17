@@ -130,20 +130,27 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
   async findNearbyEmployees(
     latitude: number,
     longitude: number,
-  ){
-    
+  ) {
     const query = `
-    SELECT u.*, a.latitude, a.longitude
-    FROM user u
-    INNER JOIN address a ON a.id = u.addressId
-    WHERE u.type IN ('PROFISSIONAL', 'ARQUITETO')
-      AND ST_Distance_Sphere(
-        point(a.longitude, a.latitude),
-        point(?, ?)
-      ) <= a.maximumDistanceToWorks * 1000
-  `;
-
-  return this.repository.query(query, [longitude, latitude]);
+      SELECT 
+        u.*, 
+        a.latitude, 
+        a.longitude, 
+        a.maximumDistanceToWorks, 
+        ST_Distance_Sphere(
+          point(a.longitude, a.latitude),
+          point(?, ?)
+        ) AS distanceInMeters
+      FROM user u
+      INNER JOIN address a ON a.id = u.addressId
+      WHERE u.type IN ('PROFISSIONAL', 'ARQUITETO')
+        AND ST_Distance_Sphere(
+          point(a.longitude, a.latitude),
+          point(?, ?)
+        ) <= a.maximumDistanceToWorks * 1000
+    `;
+  
+    return this.repository.query(query, [longitude, latitude, longitude, latitude]);
   }
 
   async findNearbyBeneficiary(
