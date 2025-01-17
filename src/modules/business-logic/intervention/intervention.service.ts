@@ -39,6 +39,12 @@ export class InterventionService extends BaseService<InterventionEntity, CreateI
  
 
   async update(interventionId: string, data: CreateInterventionRequestDto) {
+    if (data.roomId) {
+      const room = await this.roomRepo.findById(data.roomId)
+      if(!room) throw new NotFoundException('Room not found!')
+      data.room = room
+      delete data.roomId
+    }
     return await super.update(interventionId, data);
   }
 
