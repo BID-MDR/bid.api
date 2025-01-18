@@ -5,15 +5,15 @@ import { ContractResignedEntity } from "src/modules/data-interaction/database/en
 import { CreateContractResignedRequestDto } from "src/modules/data-interaction/database/dtos/contract-resigned/contract-resigned-request.dto";
 import { ContractResignedRepository } from "src/modules/data-interaction/database/repositories/contract-resigned/contract-resigned.repository";
 import { CreateContractResignedUpdateStatusRequestDto } from "src/modules/data-interaction/database/dtos/contract-resigned/contract-resigned-update-status-request.dto";
-import { UserProfessionalInfoRepository } from "src/modules/data-interaction/database/repositories/user/user-professional-info.repository";
 import { BidDocumentRepository } from "src/modules/data-interaction/database/repositories/bidDocument/bidDocument.repository";
+import { UserRepository } from "src/modules/data-interaction/database/repositories/user/user.repository";
 
 @Injectable()
 export class ContractResignedService extends BaseService<ContractResignedEntity, CreateContractResignedRequestDto, CreateContractResignedRequestDto> {
   constructor(
     private repository: ContractResignedRepository,
     private workRequestRepo: WorkRequestRepository,
-    private userRepo: UserProfessionalInfoRepository,
+    private userRepo: UserRepository,
     private bidDocumentRepo: BidDocumentRepository
 
   ) {
@@ -46,7 +46,25 @@ export class ContractResignedService extends BaseService<ContractResignedEntity,
 
  
 
-  async update(costEstimateId: string, data: any) {
+  async update(costEstimateId: string, data: CreateContractResignedRequestDto) {
+    if(data.workRequestId) {
+      const workRequest = await this.workRequestRepo.findById(data.workRequestId);
+      if (!workRequest) throw new NotFoundException('WorkRequest not found!');
+      data.workRequest = workRequest;
+      delete data.workRequestId
+    }
+    if(data.professionalId) {
+      const professional = await this.userRepo.findById(data.professionalId)
+      if(!professional) throw new NotFoundException('Professional not found!')
+      data.professional = professional
+      delete data.professionalId
+    }
+    if(data.bidDocumentId) {
+      const bidDocument = await this.bidDocumentRepo.findById(data.bidDocumentId)
+      if(!bidDocument) throw new NotFoundException('Document not found!')
+      data.bidDocument = bidDocument
+      delete data.bidDocumentId
+    }
     return await super.update(costEstimateId, data);
   }
 

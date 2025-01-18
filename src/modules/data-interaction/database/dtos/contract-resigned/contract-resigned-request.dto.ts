@@ -2,9 +2,9 @@ import { ApiProperty } from "@nestjs/swagger";
 import {IsEnum, IsString} from "class-validator";
 import { WorkRequestEntity } from "../../entitites/work-request.entity";
 import { BidDocumentEntity } from "../../entitites/bid-document.entity";
-import { UserProfessionalInfoEntity } from "../../entitites/user-professional-info.entity";
 import { ContractResignedReasonEnum } from "../../enums/contract-resigned-reason-enum.status";
 import { ContractResignedStatusEnum } from "../../enums/contract-resigned-stauts.enum";
+import { UserEntity } from "../../entitites/user.entity";
 
 
 export class CreateContractResignedRequestDto {
@@ -23,7 +23,7 @@ export class CreateContractResignedRequestDto {
     @ApiProperty()
     professionalId?: string;
 
-    professional: UserProfessionalInfoEntity
+    professional: UserEntity
 
     @ApiProperty({ enum: ContractResignedReasonEnum })
     @IsEnum(ContractResignedReasonEnum)

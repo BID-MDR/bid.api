@@ -5,6 +5,7 @@ import { BidDocumentEntity } from './bid-document.entity';
 import { UserProfessionalInfoEntity } from './user-professional-info.entity';
 import { ContractResignedReasonEnum } from '../enums/contract-resigned-reason-enum.status';
 import { ContractResignedStatusEnum } from '../enums/contract-resigned-stauts.enum';
+import { UserEntity } from './user.entity';
 
 @Entity({ name: 'contract_resigned' })
 export class ContractResignedEntity extends BaseEntity {
@@ -22,8 +23,9 @@ export class ContractResignedEntity extends BaseEntity {
     })
     @JoinColumn()
     bidDocument: BidDocumentEntity;
-    @ManyToOne(() => UserProfessionalInfoEntity, (workRequest) => workRequest.contractResignedList)
-    professional: UserProfessionalInfoEntity;
+    
+    @ManyToOne(() => UserEntity, (workRequest) => workRequest.contractResignedList)
+    professional: UserEntity;
 
     @Column({
         type: "enum",

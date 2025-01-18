@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import {IsString} from "class-validator";
 import { RoomEntity } from "../../entitites/room.entity";
 import { WorkRequestEntity } from "../../entitites/work-request.entity";
-import { UserProfessionalInfoEntity } from "../../entitites/user-professional-info.entity";
+import { UserEntity } from "../../entitites/user.entity";
 
 
 export class CreateContractRequestDto {
@@ -36,6 +36,6 @@ export class CreateContractRequestDto {
     @ApiProperty()
     professionalId?: string;
 
-    professional: UserProfessionalInfoEntity
+    professional: UserEntity
 
 }

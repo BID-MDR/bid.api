@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { WorkRequestEntity } from "../../entitites/work-request.entity";
 import { BidDocumentEntity } from "../../entitites/bid-document.entity";
-import { UserProfessionalInfoEntity } from "../../entitites/user-professional-info.entity";
+import { UserEntity } from "../../entitites/user.entity";
+import { WorkRequestEntity } from "../../entitites/work-request.entity";
 
 
 
@@ -28,6 +28,6 @@ export class RegisterWorkCreateDto {
     professionalId?: string;
 
 
-    professional?: UserProfessionalInfoEntity;
+    professional?: UserEntity;
 
 }

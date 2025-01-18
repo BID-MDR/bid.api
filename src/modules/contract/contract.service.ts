@@ -9,20 +9,20 @@ import { CreateContractRequestDto } from "../data-interaction/database/dtos/cont
 import { ContractUpdateStatusDto } from "../data-interaction/database/dtos/contract/contract-update-status.dto";
 import { ContractCancelDto } from "../data-interaction/database/dtos/contract/contract-cancel.dto";
 import { ContractStatusEnum } from "../data-interaction/database/enums/contract-status.enum";
-import { UserProfessionalInfoRepository } from "../data-interaction/database/repositories/user/user-professional-info.repository";
+import { UserRepository } from "../data-interaction/database/repositories/user/user.repository";
 
 @Injectable()
 export class ContractService extends BaseService<ContractEntity, any, any> {
   constructor(
     private repository: ContractRepository,
     private workRequestRepo: WorkRequestRepository,
-    private professionalRepo: UserProfessionalInfoRepository
+    private userRepo: UserRepository
   ) {
     super(repository);
   }
 
   async list(professionalId: string) {
-    const profeesional = await this.professionalRepo.findById(professionalId)
+    const profeesional = await this.userRepo.findById(professionalId)
     if(!profeesional) throw new NotFoundException('Professional not found')
     return await this.repository.findByProfessional(professionalId);
   }
@@ -39,7 +39,7 @@ export class ContractService extends BaseService<ContractEntity, any, any> {
     const workRequest = await this.workRequestRepo.findById2(data.workRequestId);
     if (!workRequest) throw new NotFoundException('WorkRequest not found!');
     data.workRequest = workRequest;
-    const professional = await this.professionalRepo.findById(data.professionalId)
+    const professional = await this.userRepo.findById(data.professionalId)
     if (!professional) throw new NotFoundException('Professional not found!');
     data.professional = professional
     return await this.repository.create(data);
@@ -55,7 +55,6 @@ export class ContractService extends BaseService<ContractEntity, any, any> {
 
 
   async updateStatus(costEstimateId: string, data: ContractUpdateStatusDto) {
-    console.log('111')
     const costEstimate = await this.repository.findById(costEstimateId)
     if (!costEstimate) throw new NotFoundException('Cost Estimate not found!')
     if(data.type === ContractStatusEnum.APPROVED) {

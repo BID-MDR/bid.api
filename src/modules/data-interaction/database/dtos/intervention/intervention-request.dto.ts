@@ -21,9 +21,8 @@ export class CreateInterventionRequestDto {
     toDo: string;
 
     @ApiProperty()
-    interventionSituation: InterventionStatusEnum;
+    interventionSituation?: InterventionStatusEnum;
 
     @ApiProperty()
-    @IsString()
-    interventiondescription: string;
+    interventiondescription?: string;
 }
