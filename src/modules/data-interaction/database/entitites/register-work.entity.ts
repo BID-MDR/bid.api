@@ -9,6 +9,7 @@ import { ConstructionsStatusEnum } from '../enums/constructions-stauts.enum';
 import { UserProgramTypeEnum } from '../enums/user-program-type.enum';
 import { ConstructionsTypeEnum } from '../enums/constructions-type.status';
 import { TechnicalVisitEntity } from './technical-visit.entity';
+import { UserEntity } from './user.entity';
 
 @Entity({ name: 'register_work' })
 export class RegisterWorkEntity extends BaseEntity {
@@ -33,9 +34,13 @@ export class RegisterWorkEntity extends BaseEntity {
         enum:ConstructionsTypeEnum,
         default: ConstructionsTypeEnum.REGULARIZABLE_AREA,
       })
-      type: ConstructionsTypeEnum;
-    @ManyToOne(() => UserProfessionalInfoEntity, (workRequest) => workRequest.registerWorkList)
-    professional: UserProfessionalInfoEntity;
+    type: ConstructionsTypeEnum;
+
+    @ManyToOne(() => UserEntity, (user) => user.registerWorkList, {
+      onDelete: 'SET NULL', // Ou 'CASCADE' dependendo da necessidade
+      onUpdate: 'CASCADE',
+  })
+    professional: UserEntity;
 
     @Column({
         type: 'datetime',

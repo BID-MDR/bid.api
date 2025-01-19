@@ -26,6 +26,9 @@ import { ImprovementProjectEntity } from "./improvement-project.entity";
 import { CostEstimateEntity } from "./cost-estimate.entity";
 import { SurveyEntity } from "./survey.entity";
 import { UnavailabilityEntity } from "./unavailability.entity";
+import { RegisterWorkEntity } from "./register-work.entity";
+import { ContractResignedEntity } from "./contract-resigned.entity";
+import { ContractEntity } from "./contract.entity";
 
 @Entity({ name: "user" })
 export class UserEntity extends BaseEntity {
@@ -249,4 +252,13 @@ export class UserEntity extends BaseEntity {
   })
   @JoinColumn()
   unavailabilityList?: UnavailabilityEntity[];
+  @OneToMany(() => RegisterWorkEntity, (registerWork) => registerWork.professional, { cascade: true, eager: true })
+  registerWorkList: RegisterWorkEntity[];
+
+  @OneToMany(() => ContractResignedEntity, (registerWork) => registerWork.professional, { cascade: true, eager: true })
+  contractResignedList: ContractResignedEntity[];
+
+
+  @OneToMany(() => ContractEntity, (contract) => contract.professional, { cascade: true, eager: true })
+  contractList: ContractEntity[];
 }

@@ -34,6 +34,7 @@ export class InterventionEntity extends BaseEntity {
     @Column({
         type: "varchar",
         length: 500,
+        default: ''
     })
     interventiondescription: string;
 }
