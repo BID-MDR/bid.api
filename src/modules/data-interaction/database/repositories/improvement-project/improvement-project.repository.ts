@@ -36,15 +36,24 @@ export class ImprovementProjectRepository extends BaseRepository<
     return await this.repository.update({id: projectId}, {document: newDocument})
   }
 
-     async getByProfessionalAndStatus(professionalId: string) {
-          return this.repository.find({
-            where: {
-              professional: { id: professionalId },
-              status: Not(In(['DELIVERED'])),
-            },
-            relations: ['professional', 'workRequest'],
-          });
-        }  
+  async getByProfessionalAndStatus(professionalId: string) {
+    return this.repository.find({
+      where: {
+        professional: { id: professionalId },
+        status: Not(In(['DELIVERED'])),
+      },
+        relations: ['professional', 'workRequest'],
+      });
+  }
+  async getByProfessional(professionalId: string) {
+    return this.repository.find({
+      where: {
+        professional: { id: professionalId },
+      },
+        relations: ['workRequest'],
+      });
+  }  
+  
 
   async updateStatus(projectId: string, data: ImprovementProjectUpdateStatusRequestDto){
     return await this.repository.update({id: projectId}, {status: data.status})

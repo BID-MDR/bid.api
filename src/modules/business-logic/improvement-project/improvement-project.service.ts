@@ -29,6 +29,12 @@ export class ImpromentProjectService extends BaseService<ImprovementProjectEntit
     return await this.improvementProjectRepository.findById(workRequestId);
   }
 
+  async getByProfessional(professionalId: string) {
+    const professional =  await this.userRepository.findById(professionalId);
+    if (!professional) throw new NotFoundException('Professional not found!')
+    return await this.improvementProjectRepository.getByProfessional(professionalId)
+  }
+  
 
 
   async register(data: ImprovementProjectRequestDto) {
