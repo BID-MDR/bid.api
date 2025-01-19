@@ -139,6 +139,7 @@ export class UserEntity extends BaseEntity {
   @Column({
     type: "varchar",
     length: 200,
+    default: ''
   })
   profilePicture: string;
 
