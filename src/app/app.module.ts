@@ -17,6 +17,7 @@ import * as dotenv from 'dotenv';
 import { join } from 'path';
 import { WebsoketModule } from 'src/modules/data-interaction/websoket/websoket.module';
 import { BackofficeModule } from 'src/modules/backoffice/backoffice.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 dotenv.config();
 
@@ -53,8 +54,8 @@ dotenv.config();
                 ];
             },
         }),
-
         EventEmitterModule.forRoot(),
+        ScheduleModule.forRoot(),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
             useFactory: (configService: ConfigService): TypeOrmModuleOptions => ({

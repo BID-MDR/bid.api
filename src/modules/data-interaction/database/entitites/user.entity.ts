@@ -25,6 +25,7 @@ import { WorkRequestEntity } from "./work-request.entity";
 import { ImprovementProjectEntity } from "./improvement-project.entity";
 import { CostEstimateEntity } from "./cost-estimate.entity";
 import { SurveyEntity } from "./survey.entity";
+import { UnavailabilityEntity } from "./unavailability.entity";
 
 @Entity({ name: "user" })
 export class UserEntity extends BaseEntity {
@@ -241,4 +242,11 @@ export class UserEntity extends BaseEntity {
   })
   @JoinColumn()
   costEstimate?: CostEstimateEntity[];
+
+  @OneToMany(() => UnavailabilityEntity, unavailability => unavailability.user, {
+    cascade: true,
+    nullable: true,
+  })
+  @JoinColumn()
+  unavailabilityList?: UnavailabilityEntity[];
 }
