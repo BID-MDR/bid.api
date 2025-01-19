@@ -53,5 +53,5 @@ export class TechnicalVisitRepository extends BaseRepository<
         relations: ['professional', 'beneficiary', 'workRequest'],
       });
     }
-  
+
 }
