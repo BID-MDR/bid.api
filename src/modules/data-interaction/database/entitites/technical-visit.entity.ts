@@ -35,7 +35,9 @@ export class TechnicalVisitEntity extends BaseEntity {
     @ManyToOne(() => UserEntity, (user) => user.technicalVisitsAsBeneficiary)
     beneficiary: UserEntity;
 
-    @OneToOne(() => DemandEntity, (demand) => demand.technicalVisit)
+    @OneToOne(() => DemandEntity, (demand) => demand.technicalVisit, {
+        nullable: true,
+    })
     demand?: DemandEntity;
 
     @ManyToOne(() => WorkRequestEntity, (workRequest) => workRequest.technicalVisit)
@@ -66,8 +68,13 @@ export class TechnicalVisitEntity extends BaseEntity {
         default: TechnicalVisitTypeEnum.VISITA_TECNICA,
     })
     type: TechnicalVisitTypeEnum;
-    
+
     @OneToOne(() => SurveyEntity, (survey) => survey.technicalVisit)
     survey?: SurveyEntity;
+
+    @Column({
+        type: 'mediumtext',
+    })
+    cancelReason: string;
 
 }

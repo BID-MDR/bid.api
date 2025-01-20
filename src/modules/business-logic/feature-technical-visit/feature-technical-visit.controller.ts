@@ -174,4 +174,21 @@ export class FeatureTechnicalVisitController {
 
         return await this.featureTechnicalVisitService.update(userId, body);
     }
+
+    @Put("update")
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiBearerAuth()
+    @ApiOperation({
+        description: "Enpoint único para Atualizar uma visita técnica.",
+        summary: "Atualiza uma visita técnica.",
+    })
+    @ApiBody({
+        type: UpdateTechnicalVisitDto,
+        required: true,
+        description: "Visita técnica a ser atualizada.",
+    })
+    async updateById(@Body() body: UpdateTechnicalVisitDto) {
+        console.log('teste',body);
+        return await this.featureTechnicalVisitService.update(body.id, body);
+    }
 }

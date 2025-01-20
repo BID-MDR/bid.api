@@ -5,8 +5,14 @@ import { TechnicalVisitStatusEnum } from '../../enums/technical-visit-status.enu
 import { UserEntity } from '../../entitites/user.entity';
 
 export class UpdateTechnicalVisitDto extends PickType(PartialType(CreateTechnicalVisitDto), ['to', 'from']) {
+
     @ApiProperty()
-    @Length(3, 200)
+    id: string;
+
+    @ApiProperty()
+    duration?: number;
+
+    @ApiProperty()
     cancelReason: string;
 
     @ApiProperty()
@@ -14,7 +20,6 @@ export class UpdateTechnicalVisitDto extends PickType(PartialType(CreateTechnica
     status: TechnicalVisitStatusEnum;
 
     @ApiProperty()
-    @IsUUID()
     professionalId: string;
     professional: UserEntity;
 }
