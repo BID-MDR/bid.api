@@ -106,13 +106,6 @@ export class FeatureTechnicalVisitController {
         description: "Retorna a visita técnica.",
         summary: "Retorna a visita técnica pelo ID do profissional.",
     })
-    @ApiOkResponseDtoData({
-        type: TechnicalVisitResponseDto,
-        description: "Visita técnica.",
-    })
-    @SerializeOptions({
-        type: TechnicalVisitResponseDto,
-    })
     async getByProfessional(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
         return await this.featureTechnicalVisitService.getByProfessional(userId);
