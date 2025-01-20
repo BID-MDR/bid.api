@@ -72,9 +72,10 @@ export class TechnicalVisitEntity extends BaseEntity {
     @OneToOne(() => SurveyEntity, (survey) => survey.technicalVisit)
     survey?: SurveyEntity;
 
+
     @Column({
-        type: 'mediumtext',
+        type: 'text',
+        nullable: true,
     })
     cancelReason: string;
-
 }

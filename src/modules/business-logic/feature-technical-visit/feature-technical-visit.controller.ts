@@ -188,7 +188,6 @@ export class FeatureTechnicalVisitController {
         description: "Visita técnica a ser atualizada.",
     })
     async updateById(@Body() body: UpdateTechnicalVisitDto) {
-        console.log('teste',body);
         return await this.featureTechnicalVisitService.update(body.id, body);
     }
 }
