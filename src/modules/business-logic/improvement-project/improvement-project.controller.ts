@@ -22,6 +22,11 @@ export class ImprovementProjectController {
     return await this.service.findById(id);
   }
 
+  @Get("get-by-professiona-id/:professionalId")
+  async getByProfessional(@Param("professionalId") professionalId: string) {
+    return await this.service.getByProfessional(professionalId);
+  }
+
   
   @Post("")
   //@ApiBearerAuth()
