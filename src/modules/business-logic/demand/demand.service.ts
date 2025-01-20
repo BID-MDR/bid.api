@@ -109,7 +109,7 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
       throw new BadRequestException("Professional não encontrado.");
     }
 
-    data.company = await this.companyRepository.findById(professional.employee.company.id);
+    data.company = await this.companyRepository.findById(professional.companyAdministrator.id);
 
     if (!data.company) {
       throw new BadRequestException("Empresa não encontrada.");

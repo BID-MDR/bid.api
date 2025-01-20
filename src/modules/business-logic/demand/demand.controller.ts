@@ -120,7 +120,7 @@ export class DemandController {
     }
 
     @Post("")
-    @ApiBearerAuth()
+   @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesGuard)
     @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_demand])
     @ApiOkResponseDtoData({
@@ -131,7 +131,8 @@ export class DemandController {
         type: ResponseDemandDto,
     })
     async register(@Req() req: Request, @Body() dto: DemandRegisterRequestDto) {
-        const userId = (req.user as JwtPayloadInterface).userId;
+     const userId = (req.user as JwtPayloadInterface).userId;
+
         return await this.demandService.register(userId, dto);
     }
 

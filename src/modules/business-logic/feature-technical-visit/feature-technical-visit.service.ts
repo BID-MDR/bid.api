@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { BaseService } from 'src/core/services/base.service';
 import { CreateTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/create-technical-visit.dto';
 import { UpdateTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/update-technical-visit.dto';
@@ -25,6 +25,9 @@ export class FeatureTechnicalVisitService extends BaseService<
     }
 
     async getByProfessional(professionalId: string) {
+        const professional = await this.userRepository.findById(professionalId)
+        if (!professional) throw new NotFoundException('Professional not found!')
+
         return await this.technicalVisitRepository.getByProfessional(professionalId);
     }
 
