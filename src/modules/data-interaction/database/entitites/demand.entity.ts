@@ -102,9 +102,7 @@ export class DemandEntity extends BaseEntity {
   workRequest?: WorkRequestEntity;
 
   @OneToOne(() => TechnicalVisitEntity, technical => technical.demand, {
-    nullable: true,
-    eager: true,
-    cascade: true,
+    nullable: true
   })
   @JoinColumn()
   technicalVisit?: TechnicalVisitEntity;

@@ -35,6 +35,27 @@ export class TechnicalVisitRepository extends BaseRepository<
         return result;
     }
 
+    async getByProfessionalPendent(professionalId: string) {
+        const relations = [
+            'professional',
+            'beneficiary',
+            'demand',
+            'workRequest',
+            'contract',
+            'improvementProject',
+            'registerWorkBeginning',
+            'registerWorkClosure',
+            'survey',
+        ];
+        const result = await this.repository.find({
+            where: { professional: { id: professionalId },
+            status: In(['PENDENTE', 'CANCELADA'])},
+            relations: relations,
+        });
+        
+        return result;
+    }
+
     async getByBeneficiary(beneficiaryId: string): Promise<TechnicalVisitEntity[]> {
           
         const relations = [
