@@ -15,7 +15,7 @@ export class RequestRoomSolutionDto {
     room: RoomEntity;
 
     @ApiProperty()
-    solution: Array<RoomSolutionEnum>;
+    solution: Array<RoomSolutionEnum>
 
     @ApiProperty()
     @IsUUID()

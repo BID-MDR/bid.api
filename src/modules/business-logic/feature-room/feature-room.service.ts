@@ -151,7 +151,9 @@ export class FeatureRoomService extends BaseService<
 
 
     async register(body: RequestRoomSolutionDto){
-        
+        if(body.room && Object.keys(body.room).length === 0) {
+            delete body.room
+        }
         if(body.workRequestId){
             body.workRequest = await this.workRequestRepository.findById(body.workRequestId);
         }

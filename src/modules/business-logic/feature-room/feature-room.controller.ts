@@ -199,9 +199,9 @@ export class FeatureRoomController {
     }
 
     @Post('room-solution/wait-intervention')
-    @UseGuards(JwtAccessTokenGuard, RolesGuard)
-    @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_quality])
-    @UseInterceptors(new EncryptInterceptor())
+    // @UseGuards(JwtAccessTokenGuard, RolesGuard)
+    // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_quality])
+    // @UseInterceptors(new EncryptInterceptor())
     async waitIntervention(@Body() body: RequestRoomSolutionDto){
 
        return await this.featureRoomService.register(body)
