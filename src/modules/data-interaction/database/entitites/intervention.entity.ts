@@ -2,6 +2,7 @@ import { BaseEntity } from 'src/core/entities/base.entity';
 import { Column, Entity, ManyToOne, } from 'typeorm';
 import { RoomEntity } from './room.entity';
 import { InterventionStatusEnum } from '../enums/intervention-status.enum';
+import { InterventionStepEnum } from '../enums/intervention-step.enum';
 
 
 @Entity({ name: 'intervention' })
@@ -37,4 +38,10 @@ export class InterventionEntity extends BaseEntity {
         default: ''
     })
     interventiondescription: string;
+
+    @Column({
+        type: 'text',
+        default: ''
+    })
+    step: string;
 }

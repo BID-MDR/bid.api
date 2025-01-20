@@ -20,7 +20,16 @@ export class CreateInterventionRequestDto {
     @IsString()
     toDo: string;
 
-    @ApiProperty()
+    @ApiProperty({
+      example: 'COST_ESTIMATE,CONTRACT',
+    })
+    @IsString()
+    step: string;
+
+    @ApiProperty({
+
+        example: 'NOT_COMPLETED || PARTIALY_COMPLETED || CONCLUDED'
+    })
     interventionSituation?: InterventionStatusEnum;
 
     @ApiProperty()
