@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Logger, Param, Post, Put, Req, SerializeOptions, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Logger, Param, Post, Put, Req, SerializeOptions, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { Roles } from "../../../core/decorators/roles.decorator";
 import { ApiOkResponseDtoData } from "../../../core/decorators/swagger/api-ok-response-dto.decorator";
@@ -46,6 +46,12 @@ export class InterventionController {
   @ApiBearerAuth()
   async update(@Param("id") id: string, @Body() dto: CreateInterventionRequestDto) {
     return await this.service.update(id, dto);
+  }
+
+  @Delete("id/:id")
+  @ApiBearerAuth()
+  async delete(@Param("id") id: string) {
+    return await this.service.delete(id);
   }
 
  
