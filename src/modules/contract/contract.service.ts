@@ -48,8 +48,21 @@ export class ContractService extends BaseService<ContractEntity, any, any> {
 
  
 
-  async update(costEstimateId: string, data: any) {
-    return await super.update(costEstimateId, data);
+  async update(contractId: string, data: CreateContractRequestDto) {
+    if(data.workRequestId) {
+      const workRequest = await this.workRequestRepo.findById2(data.workRequestId);
+      if (!workRequest) throw new NotFoundException('WorkRequest not found!');
+      data.workRequest = workRequest;
+      delete data.workRequestId
+    }
+    if(data.professionalId) {
+      const professional = await this.userRepo.findById(data.professionalId)
+      if (!professional) throw new NotFoundException('Professional not found!');
+      data.professional = professional
+      delete data.professionalId
+
+    }
+    return await super.update(contractId, data);
   }
 
 
