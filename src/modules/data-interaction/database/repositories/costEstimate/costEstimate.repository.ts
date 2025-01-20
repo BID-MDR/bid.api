@@ -27,7 +27,7 @@ export class CostEstimateRepository extends BaseRepository<
   async findById(costEstimateId: string): Promise<CostEstimateEntity> {
     return await this.repository.findOne({
       where: { id: costEstimateId },
-      relations: ['rooms', 'workRequest', 'workRequest.room', 'workRequest.room.roomSolutions'],
+      relations: ['rooms', 'workRequest', 'workRequest.room', 'workRequest.room.roomSolutions', 'workRequest.beneficiary', 'workRequest.beneficiary.address'],
     });
   }
   async find(): Promise<CostEstimateEntity[]> {
