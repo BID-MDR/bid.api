@@ -20,6 +20,8 @@ import { BidDocumentModule } from './bid-document/bidDocument.module';
 import { ImprovementProjectModule } from './improvement-project/improvement-project.module';
 import { RegisterWorkModule } from './register-work/registerWork.module';
 import { ContractResignedModule } from './conctract-resigned/costEstimate.module';
+import { UnavailabilityModule } from './unavailability/unavailability.module';
+import { TaskServiceModule } from './tasService/unavailability.module';
 @Module({
     imports: [
         FeatureUserModule,
@@ -42,7 +44,9 @@ import { ContractResignedModule } from './conctract-resigned/costEstimate.module
         BidDocumentModule,
         ImprovementProjectModule,
         RegisterWorkModule,
-        ContractResignedModule
+        ContractResignedModule,
+        UnavailabilityModule,
+        TaskServiceModule
     ],
 })
 export class BusinessLogicModule {}
