@@ -32,11 +32,11 @@ export class RoomEntity extends BaseEntity {
     workRequest: WorkRequestEntity;
 
     @ManyToMany(() => CostEstimateEntity, (costEstimate) => costEstimate.rooms)
-    // @JoinTable({
-    //     name: 'room_cost_estimate',
-    //     joinColumn: { name: 'room_id', referencedColumnName: 'id' },
-    //     inverseJoinColumn: { name: 'cost_estimate_id', referencedColumnName: 'id' },
-    // })
+    @JoinTable({
+        name: 'room_cost_estimate',
+        joinColumn: { name: 'room_id', referencedColumnName: 'id' },
+        inverseJoinColumn: { name: 'cost_estimate_id', referencedColumnName: 'id' },
+    })
     costEstimates: CostEstimateEntity[];
 
     @OneToMany(() => InterventionEntity, (intervention) => intervention.room, {
