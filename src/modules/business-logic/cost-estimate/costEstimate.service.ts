@@ -8,6 +8,7 @@ import { CreateCostEstimateRequestDto } from "src/modules/data-interaction/datab
 import { CostEstimateAdjustRequestDto } from "src/modules/data-interaction/database/dtos/cost-estimate/cost-estimate-adjust-request.dto";
 import { CostEstimateAproveReproveRequestDto } from "src/modules/data-interaction/database/dtos/cost-estimate/cost-estimate-aprove-reprove-request.dto";
 import { UserRepository } from "src/modules/data-interaction/database/repositories/user/user.repository";
+import { CostEstimateStatusEnum } from "src/modules/data-interaction/database/enums/cost-estimate-status.enum";
 
 @Injectable()
 export class CostEstimateService extends BaseService<CostEstimateEntity, any, any> {
@@ -100,7 +101,7 @@ async update(costEstimateId: string, data: CreateCostEstimateRequestDto) {
   if (data.total) costEstimate.total = data.total;
  
   if (data.estimateDate) costEstimate.estimateDate = data.estimateDate;
-
+  costEstimate.type = CostEstimateStatusEnum.AWAITING_APPROVAL
   return costEstimate.save()
 }
 
