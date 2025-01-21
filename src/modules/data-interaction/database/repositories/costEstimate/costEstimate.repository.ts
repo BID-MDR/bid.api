@@ -30,6 +30,13 @@ export class CostEstimateRepository extends BaseRepository<
       relations: ['rooms', 'workRequest', 'workRequest.room', 'workRequest.room.roomSolutions', 'workRequest.beneficiary', 'workRequest.beneficiary.address'],
     });
   }
+
+  async getById(costEstimateId: string): Promise<CostEstimateEntity> {
+    return await this.repository.findOne({
+      where: { id: costEstimateId },
+      relations: ['rooms'],
+    });
+  }
   async find(): Promise<CostEstimateEntity[]> {
     return await this.repository.find({
       relations: ['rooms', 'workRequest', 'workRequest.room', 'workRequest.room.roomSolutions'],
