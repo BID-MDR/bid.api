@@ -62,7 +62,37 @@ export class CostEstimateService extends BaseService<CostEstimateEntity, any, an
 
  
 
-  async update(costEstimateId: string, data: any) {
+  async update(costEstimateId: string, data: CreateCostEstimateRequestDto) {
+    const costEstimate = await this.repository.findById(costEstimateId)
+    if(!costEstimate) throw new NotFoundException('Costestimate not found!')
+      if(data.workRequestId) {
+        const workRequest = await this.workRequestRepo.findById(data.workRequestId);
+        if (!workRequest) throw new NotFoundException('WorkRequest not found!');
+        data.workRequest = workRequest;
+        delete data.workRequestId
+      }
+    if( data.roomId && data.roomId.length > 0) {
+      const roomPromisses = data.roomId.map(async (roomId: string) => {
+        const roomFound = await this.roomRepo.findById(roomId);
+        if (!roomFound) {
+            throw new NotFoundException(`Room with ID ${roomId} not found!`);
+        }
+        return roomFound;
+    });
+
+    const roomPromissesResolved = await Promise.all(roomPromisses);
+    data.rooms = roomPromissesResolved;
+    delete data.roomId
+    }
+
+    if(data.professionalId) {
+      const professional  = await this.userRepo.findById(data.professionalId)
+      if (!professional) throw new NotFoundException('professional not found!');
+      data.professional = professional;
+      delete data.professionalId
+  
+    }
+
     return await super.update(costEstimateId, data);
   }
 
