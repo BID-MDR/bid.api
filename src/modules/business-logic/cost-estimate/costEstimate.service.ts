@@ -73,7 +73,7 @@ export class CostEstimateService extends BaseService<CostEstimateEntity, any, an
       }
     if( data.roomId && data.roomId.length > 0) {
       const roomPromisses = data.roomId.map(async (roomId: string) => {
-        const roomFound = await this.roomRepo.findById(roomId);
+        const roomFound = await this.roomRepo.getById(roomId);
         if (!roomFound) {
             throw new NotFoundException(`Room with ID ${roomId} not found!`);
         }

@@ -20,6 +20,14 @@ export class RoomRepository extends BaseRepository<RoomEntity, CreateRoomDto, Up
       .execute();
   }
 
+    async getById(workRequestId: string): Promise<RoomEntity> {
+      
+      return await this.repository.findOne({
+        where: { id: workRequestId },
+      });
+    }
+    
+
   async findRoomAndSolutions(workRequestId: string): Promise<any[]> {
     return await this.repository
       .createQueryBuilder("room")
