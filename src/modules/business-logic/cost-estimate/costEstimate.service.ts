@@ -62,39 +62,47 @@ export class CostEstimateService extends BaseService<CostEstimateEntity, any, an
 
  
 
-  async update(costEstimateId: string, data: CreateCostEstimateRequestDto) {
-    const costEstimate = await this.repository.findById(costEstimateId)
-    if(!costEstimate) throw new NotFoundException('Costestimate not found!')
-      if(data.workRequestId) {
-        const workRequest = await this.workRequestRepo.findById(data.workRequestId);
-        if (!workRequest) throw new NotFoundException('WorkRequest not found!');
-        data.workRequest = workRequest;
-        delete data.workRequestId
-      }
-    if( data.roomId && data.roomId.length > 0) {
-      const roomPromisses = data.roomId.map(async (roomId: string) => {
-        const roomFound = await this.roomRepo.findById(roomId);
-        if (!roomFound) {
-            throw new NotFoundException(`Room with ID ${roomId} not found!`);
-        }
-        return roomFound;
-    });
-
-    const roomPromissesResolved = await Promise.all(roomPromisses);
-    data.rooms = roomPromissesResolved;
-    delete data.roomId
-    }
-
-    if(data.professionalId) {
-      const professional  = await this.userRepo.findById(data.professionalId)
-      if (!professional) throw new NotFoundException('professional not found!');
-      data.professional = professional;
-      delete data.professionalId
-  
-    }
-
-    return await super.update(costEstimateId, data);
+async update(costEstimateId: string, data: CreateCostEstimateRequestDto) {
+  const costEstimate = await this.repository.getById(costEstimateId);
+  if (!costEstimate) {
+      throw new NotFoundException('CostEstimate not found!');
   }
+
+  if (data.workRequestId) {
+      const workRequest = await this.workRequestRepo.findById(data.workRequestId);
+      if (!workRequest) {
+          throw new NotFoundException('WorkRequest not found!');
+      }
+      costEstimate.workRequest = workRequest;
+  }
+
+  if (data.professionalId) {
+      const professional = await this.userRepo.findById(data.professionalId);
+      if (!professional) {
+          throw new NotFoundException('Professional not found!');
+      }
+      costEstimate.professional = professional;
+  }
+
+  if (data.roomId && data.roomId.length > 0) {
+      const roomPromises = data.roomId.map(async (roomId: string) => {
+          const roomFound = await this.roomRepo.findById(roomId);
+          if (!roomFound) {
+              throw new NotFoundException(`Room with ID ${roomId} not found!`);
+          }
+          return roomFound;
+      });
+
+      const roomsResolved = await Promise.all(roomPromises);
+      costEstimate.rooms = roomsResolved;
+  }
+
+  if (data.total) costEstimate.total = data.total;
+ 
+  if (data.estimateDate) costEstimate.estimateDate = data.estimateDate;
+
+  return costEstimate.save()
+}
 
   async requestAdjust(costEstimateId: string, data: CostEstimateAdjustRequestDto) {
     const costEstimate = await this.repository.findById(costEstimateId)
