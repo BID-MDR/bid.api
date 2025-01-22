@@ -71,7 +71,7 @@ export class ContractRepository extends BaseRepository<
     
     return await this.repository.findOne({
       where: { id: id },
-      relations: [ 'workRequest', 'workRequest.room', 'workRequest.beneficiary'],
+      relations: [ 'professional' , 'workRequest', 'workRequest.room', 'workRequest.beneficiary'],
     });
   }
   
