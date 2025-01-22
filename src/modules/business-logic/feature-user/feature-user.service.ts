@@ -69,7 +69,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
 
     async create(data: CreateUserDto): Promise<UserEntity> {
         data.password = await this.hashStringData(data.password);
-        if (data.profilePicture && typeof data.profilePicture !== 'string') {           
+        if (data.uploadedProfilePicture && typeof data.uploadedProfilePicture !== 'string') {           
             data.profilePicture = await this.storageFacade.uploadMedia(
                 data.uploadedProfilePicture.mimeType,
                 data.uploadedProfilePicture.fileName,
@@ -77,6 +77,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
             );
         }
 
+        console.log(data);
         return await super.create(data);
     }
 
