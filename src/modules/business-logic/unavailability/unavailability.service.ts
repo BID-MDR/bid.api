@@ -19,6 +19,11 @@ export class UnavailabilityService extends BaseService<UnavailabilityEntity, Una
     return list
   }
 
+  async listByUser(userId: string) {
+    const list =  await this.repository.findByUser(userId);
+    return list
+  }
+
   async getById(unavailabilityId: string) {
     return await this.repository.findById(unavailabilityId);
   }

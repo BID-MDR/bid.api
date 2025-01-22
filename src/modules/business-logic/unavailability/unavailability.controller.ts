@@ -15,6 +15,12 @@ export class UnavailabilityController {
     return await this.service.list();
   }
 
+  @Get("by-user/:userId")
+  @ApiBearerAuth()
+  async listByUser(@Param('userId') userId: string) {
+    return await this.service.listByUser(userId);
+  }
+
   @Get("id/:id")
   @ApiBearerAuth()
   async getById(@Param("id") id: string) {
