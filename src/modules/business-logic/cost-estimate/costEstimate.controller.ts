@@ -33,6 +33,11 @@ export class CostEstimateController {
   async getById(@Param("id") id: string) {
     return await this.service.findById(id);
   }
+  @Get("by-beneficiary/:id")
+  @ApiBearerAuth()
+  async listByBeneficary(@Param("id") id: string) {
+    return await this.service.listByBeneficary(id);
+  }
 
  
   @Post("")

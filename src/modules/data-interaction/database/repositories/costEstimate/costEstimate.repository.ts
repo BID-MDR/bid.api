@@ -57,6 +57,20 @@ export class CostEstimateRepository extends BaseRepository<
     .getMany();
   }
 
+  async findByBeneficary(beneficiaryId: any): Promise<CostEstimateEntity[]> {
+    return await this.repository
+    .createQueryBuilder('costEstimate')
+    .leftJoinAndSelect('costEstimate.professional', 'professional')
+    .leftJoinAndSelect('costEstimate.rooms', 'rooms')
+    .leftJoinAndSelect('costEstimate.workRequest', 'workRequest')
+    .leftJoinAndSelect('workRequest.beneficiary', 'beneficiary')
+    .leftJoinAndSelect('beneficiary.address', 'address')
+    .leftJoinAndSelect('workRequest.room', 'room')
+    .leftJoinAndSelect('room.roomSolutions', 'roomSolutions')
+    .where('workRequest.beneficiary = :beneficiaryId', { beneficiaryId })
+    .getMany();
+  }
+
       async getByProfessionalAndStatus(professionalId: string) {
         return this.repository.find({
           where: {
