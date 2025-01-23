@@ -6,6 +6,7 @@ import {
     Logger,
     Param,
     Post,
+    Put,
     Req,
     SerializeOptions,
     UseGuards
@@ -44,11 +45,19 @@ export class NotificationMessageController {
     }
 
     @Get('all-user-conversation/:id')
-    // @ApiBearerAuth()
-    // @UseGuards(JwtAccessTokenGuard)
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
     async listConversation(@Req() req: Request, @Param('id') id:string) {
        // const userId = (req.user as JwtPayloadInterface).userId;
         const msglist = await this.messageService.listAllMsgByUser(id);
+        return new ResponseDto(true, msglist, false)
+    }
+
+    @Put('mark-as-read/:id')
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAccessTokenGuard)
+    async markAsRead( @Param('id') id:string) {
+        const msglist = await this.messageService.markAsRead(id);
         return new ResponseDto(true, msglist, false)
     }
 

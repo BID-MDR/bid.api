@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseRepository } from 'src/core/repositories/base.repository';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { UserEntity } from '../../entitites/user.entity';
 
 import { NotificationMsgEntity } from '../../entitites/notification-msg.entity';
@@ -27,6 +27,20 @@ export class NotificationMsgRepository extends BaseRepository<NotificationMsgEnt
   
         return messages;
     }
+
+    async markAsRead(notificationId: string, ) {
+        return await this.repository.update({ id: notificationId }, {readAt: new Date(), isRead: true});
+    
+    }
+    async findOlderThanAWeek(): Promise<NotificationMsgEntity[]> {
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    
+        return this.repository.find({
+          where: { readAt: LessThan(oneWeekAgo), isRead: true },
+          
+        });
+      }
 
     async listByConversation(user1: UserEntity): Promise<NotificationMsgEntity[]> {
         return await this.repository.createQueryBuilder('message')
