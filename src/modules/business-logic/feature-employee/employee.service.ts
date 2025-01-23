@@ -8,6 +8,7 @@ import { CompanyRepository } from "../../data-interaction/database/repositories/
 import { EmployeeRepository } from "../../data-interaction/database/repositories/employee/employee.repository";
 import { DemandRepository } from "../../data-interaction/database/repositories/user/demand.repository";
 import { UserRepository } from "../../data-interaction/database/repositories/user/user.repository";
+import { EmployeeRoleRepository } from "src/modules/data-interaction/database/repositories/employee/employee-role.repository";
 
 @Injectable()
 export class EmployeeService extends BaseService<EmployeeEntity, any, any> {
@@ -15,7 +16,8 @@ export class EmployeeService extends BaseService<EmployeeEntity, any, any> {
     private userRepository: UserRepository,
     private companyRepository: CompanyRepository,
     private employeeRepository: EmployeeRepository,
-    private demandRepository: DemandRepository
+    private demandRepository: DemandRepository,
+    private employeeRolesRepository: EmployeeRoleRepository
   ) {
     super(employeeRepository);
   }
@@ -49,6 +51,91 @@ export class EmployeeService extends BaseService<EmployeeEntity, any, any> {
     });
   }
 
+  async updateRole(employeeId: string, data: any, userId: string) {
+    const user = await this.userRepository.getById(userId);
+  
+    if (!user.companyAdministrator) {
+      throw new BadRequestException("Usuário não é administrador da empresa.");
+    }
+  
+    const employee = await this.employeeRepository.getById(employeeId);
+  
+    if (!employee) {
+      throw new BadRequestException("Funcionário não encontrado.");
+    }
+  
+    const role = await this.employeeRolesRepository.findById(data.roleId);
+  
+    if (!role) {
+      throw new BadRequestException("Role não encontrada.");
+    }
+  
+    // Atualize o relacionamento
+    employee.roles = [role]; // Ou adicione a role ao array existente
+    
+    await employee.save();
+  
+    return employee;
+  }
+
+  async updateRoleAndActive(employeeId: string, data: any, userId: string) {
+    const user = await this.userRepository.getById(userId);
+  
+    if (!user.companyAdministrator) {
+      throw new BadRequestException("Usuário não é administrador da empresa.");
+    }
+  
+    const employee = await this.employeeRepository.getById(employeeId);
+  
+    if (!employee) {
+      throw new BadRequestException("Funcionário não encontrado.");
+    }
+  
+    const role = await this.employeeRolesRepository.findById(data.roleId);
+  
+    if (!role) {
+      throw new BadRequestException("Role não encontrada.");
+    }
+  
+    // Atualize o relacionamento
+    employee.roles = [role]; // Ou adicione a role ao array existente
+    
+    employee.status = EmployeeStatusEnum.ACTIVE;
+
+    await employee.save();
+  
+    return employee;
+  }
+
+  async updateRoleAndReject(employeeId: string, data: any, userId: string) {
+    const user = await this.userRepository.getById(userId);
+  
+    if (!user.companyAdministrator) {
+      throw new BadRequestException("Usuário não é administrador da empresa.");
+    }
+  
+    const employee = await this.employeeRepository.getById(employeeId);
+  
+    if (!employee) {
+      throw new BadRequestException("Funcionário não encontrado.");
+    }
+  
+    const role = await this.employeeRolesRepository.findById(data.roleId);
+  
+    if (!role) {
+      throw new BadRequestException("Role não encontrada.");
+    }
+  
+    // Atualize o relacionamento
+    employee.roles = [role]; // Ou adicione a role ao array existente
+    
+    employee.status = EmployeeStatusEnum.BLOCKED;
+
+    await employee.save();
+  
+    return employee;
+  }
+
   async activeEmployee(employeeId: string, userId: string) {
     const user = await this.userRepository.getById(userId);
 
@@ -77,5 +164,9 @@ export class EmployeeService extends BaseService<EmployeeEntity, any, any> {
 
   async list(): Promise<EmployeeEntity[]> {
     return await this.employeeRepository.findAll()
+  }
+  
+  async listByCompany(id: string){
+    return await this.employeeRepository.listByCompany(id);
   }
 }
