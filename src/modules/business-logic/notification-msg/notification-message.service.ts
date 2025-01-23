@@ -26,7 +26,9 @@ export class NotificationMessageService extends BaseService<
         const userEntity1 = await this.userRepository.getById(user1);
         return await this.notificationMessageRepository.listByConversation(userEntity1);
     }
-
+    async markAsRead(notificationId: string) {
+        return await this.notificationMessageRepository.markAsRead(notificationId);
+    }
     async listConversationByIdentifier(identifier: string) {
         const msgList =  await this.notificationMessageRepository.listConversationByIdentifier(identifier);
         return msgList
