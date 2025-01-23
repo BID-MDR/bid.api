@@ -11,6 +11,9 @@ export class RegisterWorkCreateDto {
 
     workRequest?: WorkRequestEntity;
 
+    @ApiProperty({example: 'MINHA_CASA || REGMEL'  })
+    regmelOuMinhaCasa?: string;
+
 
     @ApiProperty()
     description: string

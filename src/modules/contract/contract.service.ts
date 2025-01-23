@@ -10,13 +10,15 @@ import { ContractUpdateStatusDto } from "../data-interaction/database/dtos/contr
 import { ContractCancelDto } from "../data-interaction/database/dtos/contract/contract-cancel.dto";
 import { ContractStatusEnum } from "../data-interaction/database/enums/contract-status.enum";
 import { UserRepository } from "../data-interaction/database/repositories/user/user.repository";
+import { NotificationMessageService } from "../business-logic/notification-msg/notification-message.service";
 
 @Injectable()
 export class ContractService extends BaseService<ContractEntity, any, any> {
   constructor(
     private repository: ContractRepository,
     private workRequestRepo: WorkRequestRepository,
-    private userRepo: UserRepository
+    private userRepo: UserRepository,
+    private notificationMsgService: NotificationMessageService
   ) {
     super(repository);
   }
@@ -36,13 +38,23 @@ export class ContractService extends BaseService<ContractEntity, any, any> {
   }
 
   async register(data: CreateContractRequestDto) {
-    const workRequest = await this.workRequestRepo.findById2(data.workRequestId);
+    const workRequest = await this.workRequestRepo.findByIdAndBringBeneficiary(data.workRequestId);
     if (!workRequest) throw new NotFoundException('WorkRequest not found!');
     data.workRequest = workRequest;
     const professional = await this.userRepo.findById(data.professionalId)
     if (!professional) throw new NotFoundException('Professional not found!');
     data.professional = professional
-    return await this.repository.create(data);
+    const contract =  await this.repository.create(data);
+    const msg = {
+      content: 'Estimativa de custo aprovada com sucesso.Siga para a fase de contrato'
+    }
+    if(workRequest.beneficiary) {
+    
+      await this.notificationMsgService.register(workRequest.beneficiary.id, msg)
+    }
+    await this.notificationMsgService.register(professional.id, msg)
+
+    return contract
 }
 
 
@@ -83,7 +95,28 @@ export class ContractService extends BaseService<ContractEntity, any, any> {
 
     const costEstimate = await this.repository.findById(costEstimateId)
     if (!costEstimate) throw new NotFoundException('Cost Estimate not found!')
-      await this.repository.cancelContract(costEstimateId, data)
+    if(data.userType && data.userType !== ''){
+      if(!data.workrequestId) throw new NotFoundException('If isBeneficary is true than you must pass an workquestId')
+      const workrequest = await this.workRequestRepo.findByIdAndBringBeneficiary(data.workrequestId)
+      if(!workrequest ) throw new NotFoundException('WorkRequest not found')
+      if(!workrequest.beneficiary) throw new NotFoundException('WorkRequest without beneficary')
+      const msg =  {
+        content: data.userType === 'beneficario' ? 'Solicitação de contrato cancelada com sucesso': `O(a) profissional ${costEstimate.professional.name} cancelou a solicitação de contrato`
+      }
+      await this.notificationMsgService.register(workrequest.beneficary.id, msg)
+      if(costEstimate.professional) {
+        const msgProf =  {
+          content: data.userType === 'beneficario' ? `O(a) beneficiário(a) ${workrequest.beneficary.name} cancelou a solicitação de contrato`: ` Solicitação de contrato cancelada com sucesso`
+        }
+        await this.notificationMsgService.register(costEstimate.professional.id, msgProf)
+
+      }
+      delete data.workrequestId
+      delete data.userType
+    }
+
+    await this.repository.cancelContract(costEstimateId, data)
+
   }
 
   async delete(costEstimateId: string) {

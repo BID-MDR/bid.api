@@ -8,6 +8,7 @@ import { RegisterWorkRepository } from 'src/modules/data-interaction/database/re
 import { TechnicalVisitRepository } from 'src/modules/data-interaction/database/repositories/technical-visit.repository';
 import { UserRepository } from 'src/modules/data-interaction/database/repositories/user/user.repository';
 import { WorkRequestRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request.repository';
+import { NotificationMessageService } from '../notification-msg/notification-message.service';
 
 @Injectable()
 export class FeatureTechnicalVisitService extends BaseService<
@@ -19,7 +20,8 @@ export class FeatureTechnicalVisitService extends BaseService<
         private technicalVisitRepository: TechnicalVisitRepository,
         private readonly userRepository: UserRepository,
         private workRequestRepository: WorkRequestRepository,
-        private registerWorkRepo: RegisterWorkRepository
+        private registerWorkRepo: RegisterWorkRepository,
+        private notifcationMsgService: NotificationMessageService
     ) {
         super(technicalVisitRepository);
     }
@@ -39,7 +41,9 @@ export class FeatureTechnicalVisitService extends BaseService<
         const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
         dto.workRequest = workRequest;
 
-        return await this.technicalVisitRepository.create(dto)
+        const technicalVisit = await this.technicalVisitRepository.create(dto)
+    
+        return technicalVisit
     }
 
     async scheduleRegistertWorkTechnicalVisit(dto: CreateTechnicalVisitDto) {
@@ -57,9 +61,32 @@ export class FeatureTechnicalVisitService extends BaseService<
             }
            
         }
-    
+        const techVisit = await this.technicalVisitRepository.create(dto)
+        if(dto.msgType && dto.msgType !== '') {
+            if(beneficiary) {
+                const msg = {
+                    content: ''
+                }
+            if(dto.msgType === 'PROJETO_DE_MELHORIA') {
+                msg.content = `${professional.name} solicitou a entrega e assinatura do contrato para o dia ${dto.to}`
+                await this.notifcationMsgService.register(beneficiary.id, msg)
 
-        return await this.technicalVisitRepository.create(dto)
+            } else if (dto.msgType === 'CADASTRO_DE_OBRA') {
+                msg.content = `${professional.name} solicitou o cadastro da obra para o dia ${dto.to}`
+                await this.notifcationMsgService.register(beneficiary.id, msg)
+
+            } else if (dto.msgType === 'CONCLUSÃO_DE_OBRA') {
+                msg.content = `${professional.name} solicitou a conclusão da obra para o dia${dto.to}`
+                await this.notifcationMsgService.register(beneficiary.id, msg)
+
+            }else {
+                throw new NotFoundException('To send a msg sucessfuly, property msgType must be  CADASTRO_DE_OBRA , CONCLUSÃO_DE_OBRA or PROJETO_DE_MELHORIA')
+            }
+            }
+        }
+
+
+        return techVisit
     }
 
     async findByBeneficiaryId(beneficiaryId: string) {

@@ -35,6 +35,13 @@ export class WorkRequestRepository extends BaseRepository<
     });
   }
 
+  async findByIdAndBringBeneficiary(workRequestId: string): Promise<any> {
+    return await this.repository.createQueryBuilder("workRequest")
+      .leftJoinAndSelect("workRequest.beneficiary", "beneficiary")
+      .where("workRequest.id = :id", { id: workRequestId })
+      .getOne();
+  }
+
   async changeContractStatus(workRequestId: string) {
     return await this.repository.update({ id: workRequestId }, { contractStatus: WorkRequestContractStatusEnum.ALREADY_STARTED });
   }
