@@ -7,4 +7,7 @@ export class CostEstimateAdjustRequestDto {
      @Length(4, 500)
     @IsString()
     adjustDetails: string;
+
+    @ApiProperty()
+   workRequestId: string;
 }

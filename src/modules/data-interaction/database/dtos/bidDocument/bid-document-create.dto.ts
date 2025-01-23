@@ -14,6 +14,9 @@ export class BidDocumentRequestDto {
     @ValidateNested()
     @Type(() => MediaUploadDto)
     documentMedia: MediaUploadDto;
+
+    @ApiProperty()
+    professionalId?: string;
     
     documentLink: string
 }

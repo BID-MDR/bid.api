@@ -11,11 +11,12 @@ export class UnavailabilityRepository extends BaseRepository<UnavailabilityEntit
     super(repository);
   }
 
-  async findByWorkRequest(userId: string): Promise<UnavailabilityEntity[]> {
+  async findByUser(userId: string): Promise<UnavailabilityEntity[]> {
     return this.repository
-      .createQueryBuilder("unavailability")
-      .where("user.id = :userId", { userId })
-      .execute();
+      .createQueryBuilder('unavailability')
+      .leftJoinAndSelect('unavailability.user', 'user') 
+      .where('user.id = :userId', { userId })
+      .getMany(); 
   }
 
   async findOlderThanAWeek(): Promise<UnavailabilityEntity[]> {

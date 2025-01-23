@@ -39,7 +39,16 @@ export class RegisterWorkRepository extends BaseRepository<
       },
       relations: ['professional', 'workRequest'],
     });
-  }  
+  } 
+  
+  async getByProfessional(professionalId: string) {
+    return this.repository.find({
+      where: {
+        professional: { id: professionalId },
+      },
+      relations: ['professional', 'workRequest'],
+    });
+  } 
   async startRegisterWork(registerWorkId: string, ) {
     return await this.repository.update({ id: registerWorkId }, {startedDate: new Date(), status: ConstructionsStatusEnum.EM_ANDAMENTO});
   }

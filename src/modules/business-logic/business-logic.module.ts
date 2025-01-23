@@ -22,6 +22,7 @@ import { RegisterWorkModule } from './register-work/registerWork.module';
 import { ContractResignedModule } from './conctract-resigned/costEstimate.module';
 import { UnavailabilityModule } from './unavailability/unavailability.module';
 import { TaskServiceModule } from './tasService/unavailability.module';
+import { NotificationMessageModule } from './notification-msg/notification-message.module';
 @Module({
     imports: [
         FeatureUserModule,
@@ -46,7 +47,8 @@ import { TaskServiceModule } from './tasService/unavailability.module';
         RegisterWorkModule,
         ContractResignedModule,
         UnavailabilityModule,
-        TaskServiceModule
+        TaskServiceModule,
+        NotificationMessageModule
     ],
 })
 export class BusinessLogicModule {}
