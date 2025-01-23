@@ -29,9 +29,12 @@ export class WorkRequestRepository extends BaseRepository<
     });
   }
 
-  async findById2(id: string): Promise<WorkRequestEntity> {
+
+  async findById2(id: string) {
+    const relations = this.repository.metadata.relations.map((rel) => rel.propertyPath);
     return await this.repository.findOne({
       where: { id: id },
+      relations,
     });
   }
 
@@ -44,6 +47,35 @@ export class WorkRequestRepository extends BaseRepository<
 
   async changeContractStatus(workRequestId: string) {
     return await this.repository.update({ id: workRequestId }, { contractStatus: WorkRequestContractStatusEnum.ALREADY_STARTED });
+  }
+
+  async findNearbyBeneficiary(
+    latitude: number,
+    longitude: number,
+    radiusInKm: number,
+  ) {
+    const radiusInMeters = radiusInKm * 1000000000;
+
+    const query = `
+     SELECT 
+  wr.*,
+  u.name,
+  a.latitude, 
+  a.longitude, 
+  ST_Distance_Sphere(
+    point(a.longitude, a.latitude),
+    point(?, ?)
+  ) AS distanceInMeters
+FROM work_request wr
+INNER JOIN user u ON u.id = wr.beneficiaryId
+INNER JOIN address a ON a.id = u.addressId
+WHERE ST_Distance_Sphere(
+    point(a.longitude, a.latitude),
+    point(?, ?)
+  ) <= ?
+    `;
+
+    return this.repository.query(query, [longitude, latitude, longitude, latitude, radiusInMeters]);
   }
 
 }

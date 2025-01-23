@@ -159,8 +159,7 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
     radiusInKm: number,
   ){
     const radiusInMeters = radiusInKm * 1000;
-
-  
+    
     const query = `
     SELECT u.*
     FROM user u
