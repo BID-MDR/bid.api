@@ -9,13 +9,15 @@ import { UserRepository } from "src/modules/data-interaction/database/repositori
 import { CompanyRepository } from "../../data-interaction/database/repositories/company/company.repository";
 import { TechnicalVisitStatusEnum } from "../../data-interaction/database/enums/technical-visit-status.enum";
 import { ConstructionsStatusEnum } from "../../data-interaction/database/enums/constructions-stauts.enum";
+import { NotificationMessageService } from "../notification-msg/notification-message.service";
 
 @Injectable()
 export class DemandService extends BaseService<DemandEntity, DemandRegisterRequestDto, DemandRegisterRequestDto> {
   constructor(
     private demandRepository: DemandRepository,
     private companyRepository: CompanyRepository,
-    private readonly userRepository: UserRepository
+    private readonly userRepository: UserRepository,
+    private readonly notificationMsgService: NotificationMessageService
   ) {
     super(demandRepository);
   }
@@ -121,7 +123,18 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
       throw new BadRequestException("Beneficiário não encontrado.");
     }
 
-    return await super.create(data);
+    const demand = await super.create(data);
+    const msgDto = {
+      content: `${professional.name} cadastrou seu CPF e será responsável pela sua obra de melhoria`,
+
+    }
+    const msgProfessionalDto = {
+      content: `Você cadastrou o uma demanda para ${data.beneficiary.name}`,
+
+    }
+    await this.notificationMsgService.register(data.beneficiary.id, msgDto)
+    await this.notificationMsgService.register(professional.id, msgProfessionalDto)
+    return demand
   }
 
   async delete(demandId: string) {

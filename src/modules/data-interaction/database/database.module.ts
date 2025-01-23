@@ -78,6 +78,8 @@ import { ContractResignedRepository } from './repositories/contract-resigned/con
 import { SurveyEntity } from './entitites/survey.entity';
 import { UnavailabilityEntity } from './entitites/unavailability.entity';
 import { UnavailabilityRepository } from './repositories/unavailability/unavailability.repository';
+import { NotificationMsgRepository } from './repositories/notification-msg/notification-msg.repository';
+import { NotificationMsgEntity } from './entitites/notification-msg.entity';
 
 const ENTITIES = [
     UserEntity,
@@ -119,7 +121,8 @@ const ENTITIES = [
     RegisterWorkEntity,
     ContractResignedEntity,
     SurveyEntity,
-    UnavailabilityEntity
+    UnavailabilityEntity,
+    NotificationMsgEntity
 ];
 const REPOSITORIES = [
     UserRepository,
@@ -158,7 +161,8 @@ const REPOSITORIES = [
     ImprovementProjectRepository,
     RegisterWorkRepository,
     ContractResignedRepository,
-    UnavailabilityRepository
+    UnavailabilityRepository,
+    NotificationMsgRepository
 ];
 
 @Module({

@@ -9,6 +9,7 @@ import { Request } from "express";
 import { JwtPayloadInterface } from "src/core/interfaces/jwt-payload.interface";
 import { CreateInterventionRequestDto } from "src/modules/data-interaction/database/dtos/intervention/intervention-request.dto";
 import { RegisterWorkCreateDto } from "src/modules/data-interaction/database/dtos/register-work/register-work.dto";
+import { ResponseDto } from "src/core/dtos/response.dto";
 
 @Controller("register-work")
 @ApiTags("register-work")
@@ -39,6 +40,16 @@ export class RegisterWorkController {
   async create(@Body() dto: RegisterWorkCreateDto) {
     return await this.service.register(dto);
   }
+
+  @Get('list-by-professional')
+  @UseGuards(JwtAccessTokenGuard)
+  @ApiBearerAuth()
+  async updatePersonalInfo(@Req() req: Request) {
+    const userId = (req.user as JwtPayloadInterface).userId;
+    const result = await this.service.getByProfessional(userId);
+    return new ResponseDto(true, result, null);
+  }
+  
 
 
   @Put("id/:id")
