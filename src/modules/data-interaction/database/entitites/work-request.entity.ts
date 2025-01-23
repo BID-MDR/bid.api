@@ -117,11 +117,8 @@ export class WorkRequestEntity extends BaseEntity {
   })
   costEstimates: CostEstimateEntity[];
 
-  @OneToOne(() => ContractEntity, (contract) => contract.workRequest, {
-    cascade: true,
-  })
-  @JoinColumn()
-  contract: ContractEntity;
+  @OneToMany(() => ContractEntity, (contract) => contract.workRequest)
+  contracts: ContractEntity[];
 
   @OneToOne(() => RegisterWorkEntity, (contract) => contract.workRequest, {
     cascade: true,
