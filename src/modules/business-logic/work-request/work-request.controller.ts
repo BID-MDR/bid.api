@@ -39,20 +39,10 @@ export class WorkRequestController {
   }
 
   @Get("id/:id")
-  // @ApiBearerAuth()
-  // @ApiOperation({
-  //   description: "Vistoria por ID.",
-  //   summary: "Vistoria por ID.",
-  // })
-  // @ApiOkResponseDtoData({
-  //   type: ResponseWorkRequestDto,
-  //   description: "Vistoria por ID.",
-  // })
-  // @SerializeOptions({
-  //   type: ResponseWorkRequestDto,
-  // })
+  @ApiBearerAuth()
+
   async getById(@Param("id") id: string) {
-    return await this.service.findById(id);
+    return await this.service.getById(id);
   }
 
   @Get("user-id")
@@ -180,6 +170,8 @@ export class WorkRequestController {
 
   async getLookForBeneficiary( @Req() req: Request) {
     const userId = (req.user as JwtPayloadInterface).userId;
+    const teste =await this.service.findNearbyBeneficiary(userId);
+   
     return await this.service.findNearbyBeneficiary(userId)
 
   }

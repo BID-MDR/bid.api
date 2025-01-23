@@ -16,7 +16,7 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
   constructor(
     private workRequestRepository: WorkRequestRepository,
     private demandRepository: DemandRepository,
-     private userRepository: UserRepository,
+    private userRepository: UserRepository,
     private sustainabilityItensRepository: SustainabilityItensRepository
   ) {
     super(workRequestRepository);
@@ -27,7 +27,7 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
   }
 
   async getById(workRequestId: string) {
-    return await this.workRequestRepository.findById(workRequestId);
+    return await this.workRequestRepository.findById2(workRequestId);
   }
 
   async getByUser(userId: string) {
@@ -115,12 +115,12 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
     if (demand.company.id !== companyId) throw new BadRequestException("Não autorizado a acessar essa demanda.");
     const request = await this.sustainabilityItensRepository.create(dto);
     demand.sustainabilityItens = request;
-    
+
     return await demand.save();
   }
 
-  async findNearbyBeneficiary( userId: string) {
+  async findNearbyBeneficiary(userId: string) {
     const professional = await this.userRepository.findById(userId)
-    return await this.workRequestRepository.findNearbyBeneficiary( Number(professional.address.latitude), Number(professional.address.longitude), professional.address.maximumDistanceToWorks);
-}
+    return await this.workRequestRepository.findNearbyBeneficiary(Number(professional.address.latitude), Number(professional.address.longitude), professional.address.maximumDistanceToWorks);
+  }
 }

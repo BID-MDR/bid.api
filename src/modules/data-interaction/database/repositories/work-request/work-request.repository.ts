@@ -29,9 +29,12 @@ export class WorkRequestRepository extends BaseRepository<
     });
   }
 
-  async findById2(id: string): Promise<WorkRequestEntity> {
+
+  async findById2(id: string) {
+    const relations = this.repository.metadata.relations.map((rel) => rel.propertyPath);
     return await this.repository.findOne({
       where: { id: id },
+      relations,
     });
   }
 
@@ -51,31 +54,28 @@ export class WorkRequestRepository extends BaseRepository<
     longitude: number,
     radiusInKm: number,
   ) {
-    const radiusInMeters = radiusInKm * 1000;
-    console.log('teste', latitude, longitude, radiusInKm);
+    const radiusInMeters = radiusInKm * 1000000000;
 
     const query = `
-    SELECT 
-      wr.*, 
-      a.latitude, 
-      a.longitude, 
-      a.maximumDistanceToWorks, 
-      ST_Distance_Sphere(
-        point(a.longitude, a.latitude),
-        point(?, ?)
-      ) AS distanceInMeters
-    FROM work_request wr
-    INNER JOIN user u ON u.id = wr.beneficiaryId
-    INNER JOIN address a ON a.id = u.addressId
-    WHERE u.type IN ('BENEFICIARIO')
-      AND ST_Distance_Sphere(
-        point(a.longitude, a.latitude),
-        point(?, ?)
-      ) <= a.maximumDistanceToWorks * 1000
-  `;
+     SELECT 
+  wr.*,
+  u.name,
+  a.latitude, 
+  a.longitude, 
+  ST_Distance_Sphere(
+    point(a.longitude, a.latitude),
+    point(?, ?)
+  ) AS distanceInMeters
+FROM work_request wr
+INNER JOIN user u ON u.id = wr.beneficiaryId
+INNER JOIN address a ON a.id = u.addressId
+WHERE ST_Distance_Sphere(
+    point(a.longitude, a.latitude),
+    point(?, ?)
+  ) <= ?
+    `;
 
-
-    return this.repository.query(query, [longitude, latitude, radiusInMeters]);
+    return this.repository.query(query, [longitude, latitude, longitude, latitude, radiusInMeters]);
   }
 
 }
