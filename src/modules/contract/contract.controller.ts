@@ -32,7 +32,7 @@ export class ContractController {
 
  
   @Post("")
-  @ApiBearerAuth()
+ // @ApiBearerAuth()
   @ApiBody({
     type: CreateContractRequestDto,
     required: true,

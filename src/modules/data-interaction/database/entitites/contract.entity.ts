@@ -11,15 +11,16 @@ import { UserEntity } from './user.entity';
 export class ContractEntity extends BaseEntity {
 
 
-    @OneToOne(() => WorkRequestEntity, (workRequest) => workRequest.contract, {
+    @ManyToOne(() => WorkRequestEntity, (workRequest) => workRequest.contracts, {
         onDelete: 'CASCADE',
-    })
-    @JoinColumn()
-    workRequest: WorkRequestEntity;
+      })
+      @JoinColumn()
+      workRequest: WorkRequestEntity;
 
     @Column({
         type: "varchar",
         length: 255,
+        default: '0'
     })
     total: string;
 
@@ -39,13 +40,16 @@ export class ContractEntity extends BaseEntity {
 
     @Column({
         type: 'datetime',
+        default: null
+
     })
-    startDate: Date;
+    startDate?: Date;
 
     @Column({
         type: 'datetime',
+        default: null
     })
-    endDate: Date;
+    endDate?: Date;
 
     @Column({
         type: 'datetime',

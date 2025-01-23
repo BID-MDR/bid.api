@@ -14,17 +14,15 @@ export class CreateContractRequestDto {
     workRequest: WorkRequestEntity
     
     @ApiProperty()
-    @IsString()
     total: string;
 
     @ApiProperty()
-    @IsString()
-    resume: string
+    resume?: string
 
-    @ApiProperty()
+    @ApiProperty({required: false})
     startDate: Date
 
-    @ApiProperty()
+    @ApiProperty({required: false})
     endDate: Date
 
     @ApiProperty()
