@@ -12,12 +12,13 @@ import { WorkRequestService } from "./work-request.service";
 import { Request } from "express";
 import { JwtPayloadInterface } from "src/core/interfaces/jwt-payload.interface";
 import { SustainabilityItensRequestDto } from "src/modules/data-interaction/database/dtos/work-request/sustainability-itens-request.dto";
+import { FeatureUserService } from "../feature-user/feature-user.service";
 
 @Controller("work-request")
 @ApiTags("Work Request/Vistoria")
 export class WorkRequestController {
   private readonly _logger = new Logger(WorkRequestController.name);
-  constructor(private service: WorkRequestService) {}
+  constructor(private service: WorkRequestService) { }
 
   @Get("")
   // @ApiBearerAuth()
@@ -64,6 +65,18 @@ export class WorkRequestController {
   async getByUserId(@Req() req: Request) {
     const userId = (req.user as JwtPayloadInterface).userId;
     return await this.service.getByUser(userId);
+  }
+
+
+  @Get("find/byBeneficiaryId/id/:id")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  @ApiOperation({
+    description: "Retorna a visita técnica.",
+    summary: "Retorna a visita técnica pelo ID do beneficiario.",
+  })
+  async findByBeneficiaryId(@Param("id") id: string) {
+    return await this.service.getByUser(id);
   }
 
   @Post("")
@@ -155,9 +168,20 @@ export class WorkRequestController {
   @ApiBody({
     type: SustainabilityItensRequestDto,
     required: true,
-   })
+  })
   async createSustainabilityItens(@Body() dto: SustainabilityItensRequestDto, @Req() req: Request, @Param('workRequestId') workRequestId: string) {
     const userId = (req.user as JwtPayloadInterface).companyId;
     return await this.service.createSustainabilityItens(dto, userId, workRequestId);
   }
+
+  @Get("look-for-beneficiary")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+
+  async getLookForBeneficiary( @Req() req: Request) {
+    const userId = (req.user as JwtPayloadInterface).userId;
+    return await this.service.findNearbyBeneficiary(userId)
+
+  }
+
 }
