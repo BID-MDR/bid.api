@@ -9,6 +9,8 @@ import { CostEstimateAdjustRequestDto } from "src/modules/data-interaction/datab
 import { CostEstimateAproveReproveRequestDto } from "src/modules/data-interaction/database/dtos/cost-estimate/cost-estimate-aprove-reprove-request.dto";
 import { UserRepository } from "src/modules/data-interaction/database/repositories/user/user.repository";
 import { CostEstimateStatusEnum } from "src/modules/data-interaction/database/enums/cost-estimate-status.enum";
+import { NotificationMessageService } from "../notification-msg/notification-message.service";
+import { NotificationMessageRegisterRequestDto } from "src/modules/data-interaction/database/dtos/notificationMsg/register-notification-message.dto";
 
 @Injectable()
 export class CostEstimateService extends BaseService<CostEstimateEntity, any, any> {
@@ -16,7 +18,8 @@ export class CostEstimateService extends BaseService<CostEstimateEntity, any, an
     private repository: CostEstimateRepository,
     private roomRepo: RoomRepository,
     private workRequestRepo: WorkRequestRepository,
-    private userRepo: UserRepository
+    private userRepo: UserRepository,
+    private notificationMsgService: NotificationMessageService
 
   ) {
     super(repository);
@@ -30,6 +33,9 @@ export class CostEstimateService extends BaseService<CostEstimateEntity, any, an
   async listProfessional(_id:any) {
     return await this.repository.findByProfessional(_id);
   }
+  async listByBeneficary(_id: string) {
+    return await this.repository.findByBeneficary(_id)
+  }
 
   async getById(workRequestId: string) {
     return await this.repository.findById(workRequestId);
@@ -37,10 +43,9 @@ export class CostEstimateService extends BaseService<CostEstimateEntity, any, an
 
 
   async register(data: CreateCostEstimateRequestDto) {
-    const workRequest = await this.workRequestRepo.findById(data.workRequestId);
+    const workRequest = await this.workRequestRepo.findByIdAndBringBeneficiary(data.workRequestId);
     if (!workRequest) throw new NotFoundException('WorkRequest not found!');
     data.workRequest = workRequest;
-
     const roomPromisses = data.roomId.map(async (roomId: string) => {
         const roomFound = await this.roomRepo.findById(roomId);
         if (!roomFound) {
@@ -57,7 +62,19 @@ export class CostEstimateService extends BaseService<CostEstimateEntity, any, an
     data.professional = professional;
 
 
-    return await this.repository.create(data);
+    const costEstimate = await this.repository.create(data);
+    const dto:NotificationMessageRegisterRequestDto = {
+      content: 'Visita técnica realizada.Siga para a fase de estimativa'
+    }
+    if(workRequest.beneficiary) {
+  
+      await this.notificationMsgService.register(workRequest.beneficiary.id, dto)
+
+    }
+    await this.notificationMsgService.register(professional.id, dto)
+
+
+    return costEstimate
 }
 
 
@@ -70,11 +87,18 @@ async update(costEstimateId: string, data: CreateCostEstimateRequestDto) {
   }
 
   if (data.workRequestId) {
-      const workRequest = await this.workRequestRepo.findById(data.workRequestId);
+      const workRequest = await this.workRequestRepo.findByIdAndBringBeneficiary(data.workRequestId);
       if (!workRequest) {
           throw new NotFoundException('WorkRequest not found!');
       }
       costEstimate.workRequest = workRequest;
+      if(workRequest.beneficiary) {
+        const msg = {
+          content: 'Estimativa de custo recebida'
+        }
+        await this.notificationMsgService.register(workRequest.beneficiary.id, msg)
+
+      }
   }
 
   if (data.professionalId) {
@@ -83,6 +107,11 @@ async update(costEstimateId: string, data: CreateCostEstimateRequestDto) {
           throw new NotFoundException('Professional not found!');
       }
       costEstimate.professional = professional;
+      const msg = {
+        content: 'Estimativa de custo enviada com sucesso'
+      }
+      await this.notificationMsgService.register(professional.id, msg)
+
   }
 
   if (data.roomId && data.roomId.length > 0) {
@@ -108,7 +137,19 @@ async update(costEstimateId: string, data: CreateCostEstimateRequestDto) {
   async requestAdjust(costEstimateId: string, data: CostEstimateAdjustRequestDto) {
     const costEstimate = await this.repository.findById(costEstimateId)
     if (!costEstimate) throw new NotFoundException('Cost Estimate not found!')
-      await this.repository.requestAdjust(costEstimateId, data.adjustDetails)
+    const workRequest = await this.workRequestRepo.findByIdAndBringBeneficiary(data.workRequestId)
+    if(!workRequest) throw new NotFoundException('Workrequest not found!')
+    if(!workRequest.beneficiary) throw new NotFoundException('Beneficary not found!')
+    await this.repository.requestAdjust(costEstimateId, data.adjustDetails)
+    const msg = {
+      content: 'Ajuste solicitado na estimativa de custo com sucesso'
+    }
+    await this.notificationMsgService.register(workRequest.beneficiary.id, msg)
+    if(costEstimate.professional) {
+      await this.notificationMsgService.register(costEstimate.professional.id, msg)
+
+    }
+
   }
 
   async updateStatus(costEstimateId: string, data: CostEstimateAproveReproveRequestDto) {

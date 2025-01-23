@@ -9,6 +9,7 @@ import { WorkRequestRepository } from "src/modules/data-interaction/database/rep
 import { BidDocumentRepository } from "src/modules/data-interaction/database/repositories/bidDocument/bidDocument.repository";
 import { ImprovementProjectAddDocumentRequestDto } from "src/modules/data-interaction/database/dtos/improvementProject/improvement-project-add-document-request.dto";
 import { ImprovementProjectUpdateStatusRequestDto } from "src/modules/data-interaction/database/dtos/improvementProject/improvement-project-update-status-request.dto";
+import { NotificationMessageService } from "../notification-msg/notification-message.service";
 
 @Injectable()
 export class ImpromentProjectService extends BaseService<ImprovementProjectEntity, ImprovementProjectRequestDto, ImprovementProjectRequestDto> {
@@ -16,7 +17,8 @@ export class ImpromentProjectService extends BaseService<ImprovementProjectEntit
     private improvementProjectRepository: ImprovementProjectRepository,
      private userRepository: UserRepository,
      private workRequestRepo: WorkRequestRepository,
-     private bidDocumentRepo: BidDocumentRepository
+     private bidDocumentRepo: BidDocumentRepository,
+     private notifcationMsgService: NotificationMessageService
   ) {
     super(improvementProjectRepository);
   }
@@ -38,7 +40,7 @@ export class ImpromentProjectService extends BaseService<ImprovementProjectEntit
 
 
   async register(data: ImprovementProjectRequestDto) {
-   const workRequest = await this.workRequestRepo.findById(data.workRequestId)
+   const workRequest = await this.workRequestRepo.findByIdAndBringBeneficiary(data.workRequestId)
    data.workRequest = workRequest
    if (!workRequest) throw new NotFoundException('Work request not found')
   if (data.documentId || data.documentId !== ''){
@@ -49,7 +51,17 @@ export class ImpromentProjectService extends BaseService<ImprovementProjectEntit
   const professional  = await this.userRepository.findById(data.professionalId)
   if (!professional) throw new NotFoundException('Professional not found!')
   data.professional = professional
-  return await this.improvementProjectRepository.create(data)
+  const project = await this.improvementProjectRepository.create(data)
+  const msg = {
+    content: `Confirmação de entrega e assinatura do contrato. Siga para a fase de projeto de melhoria`
+  }
+  if(workRequest.beneficiary) {
+
+    await this.notifcationMsgService.register(workRequest.beneficiary.id, msg)
+  }
+  await this.notifcationMsgService.register(professional.id, msg)
+
+  return project
   }
 
   async addDocument(projectId: string,data: ImprovementProjectAddDocumentRequestDto) {

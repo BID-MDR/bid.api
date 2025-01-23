@@ -10,4 +10,11 @@ export class ContractCancelDto {
 
     @ApiProperty({ type: String })
     cancelationReason?: string
+
+    @ApiProperty({ type: String, example: 'beneficario' })
+    userType?: string
+
+    @ApiProperty({ type: String })
+    workrequestId?: string
+
 }

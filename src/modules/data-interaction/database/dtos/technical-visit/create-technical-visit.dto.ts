@@ -50,4 +50,7 @@ export class CreateTechnicalVisitDto {
 
     @ApiProperty({ enum: TechnicalVisitRegisterWorkEnum })
     beginningOrEnd?: TechnicalVisitRegisterWorkEnum;
+
+    @ApiProperty({example: 'CADASTRO_DE_OBRA || PROJETO_DE_MELHORIA | CONCLUSÃO_DE_OBRA'  })
+    msgType?: string;
 }

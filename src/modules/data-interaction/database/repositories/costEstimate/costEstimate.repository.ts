@@ -27,7 +27,7 @@ export class CostEstimateRepository extends BaseRepository<
   async findById(costEstimateId: string): Promise<CostEstimateEntity> {
     return await this.repository.findOne({
       where: { id: costEstimateId },
-      relations: ['rooms', 'workRequest', 'workRequest.room', 'workRequest.room.roomSolutions', 'workRequest.beneficiary', 'workRequest.beneficiary.address'],
+      relations: ['professional', 'rooms', 'workRequest', 'workRequest.room', 'workRequest.room.roomSolutions', 'workRequest.beneficiary', 'workRequest.beneficiary.address'],
     });
   }
 
@@ -54,6 +54,20 @@ export class CostEstimateRepository extends BaseRepository<
     .leftJoinAndSelect('workRequest.room', 'room')
     .leftJoinAndSelect('room.roomSolutions', 'roomSolutions')
     .where('costEstimate.professional = :professionalId', { professionalId })
+    .getMany();
+  }
+
+  async findByBeneficary(beneficiaryId: any): Promise<CostEstimateEntity[]> {
+    return await this.repository
+    .createQueryBuilder('costEstimate')
+    .leftJoinAndSelect('costEstimate.professional', 'professional')
+    .leftJoinAndSelect('costEstimate.rooms', 'rooms')
+    .leftJoinAndSelect('costEstimate.workRequest', 'workRequest')
+    .leftJoinAndSelect('workRequest.beneficiary', 'beneficiary')
+    .leftJoinAndSelect('beneficiary.address', 'address')
+    .leftJoinAndSelect('workRequest.room', 'room')
+    .leftJoinAndSelect('room.roomSolutions', 'roomSolutions')
+    .where('workRequest.beneficiary = :beneficiaryId', { beneficiaryId })
     .getMany();
   }
 
