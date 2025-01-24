@@ -15,7 +15,7 @@ import { UserEntity } from './user.entity';
 export class RegisterWorkEntity extends BaseEntity {
 
   
-    @OneToOne(() => WorkRequestEntity, (workRequest) => workRequest.registerWork, {
+    @ManyToOne(() => WorkRequestEntity, (workRequest) => workRequest.registerWork, {
         onDelete: 'CASCADE',
         eager: true
     })
