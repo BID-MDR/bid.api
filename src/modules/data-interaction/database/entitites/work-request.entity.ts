@@ -120,7 +120,7 @@ export class WorkRequestEntity extends BaseEntity {
   @OneToMany(() => ContractEntity, (contract) => contract.workRequest)
   contracts: ContractEntity[];
 
-  @OneToOne(() => RegisterWorkEntity, (contract) => contract.workRequest, {
+  @OneToMany(() => RegisterWorkEntity, (contract) => contract.workRequest, {
     cascade: true,
   })
   @JoinColumn()
@@ -128,7 +128,7 @@ export class WorkRequestEntity extends BaseEntity {
 
   @OneToMany(() => TechnicalVisitEntity, technicalVisit => technicalVisit.workRequest, {
   })
-  technicalVisit: TechnicalVisitEntity;
+  technicalVisit: TechnicalVisitEntity[];
 
   @OneToMany(() => ContractResignedEntity, (contractResigned) => contractResigned.workRequest, {
     cascade: true,
