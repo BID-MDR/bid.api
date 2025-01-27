@@ -55,7 +55,7 @@ export class FeatureUserController {
     ) { }
 
     @Get("")
-    @ApiBearerAuth()
+   @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
     @ApiOperation({
         description:

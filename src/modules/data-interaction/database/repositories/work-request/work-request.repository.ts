@@ -54,7 +54,7 @@ export class WorkRequestRepository extends BaseRepository<
     longitude: number,
     radiusInKm: number,
   ) {
-    const radiusInMeters = radiusInKm * 1000000000;
+    const radiusInMeters = radiusInKm * 1000;
 
     const query = `
      SELECT 

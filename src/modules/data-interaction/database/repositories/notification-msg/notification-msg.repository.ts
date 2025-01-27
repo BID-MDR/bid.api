@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseRepository } from 'src/core/repositories/base.repository';
-import { LessThan, Repository } from 'typeorm';
+import { In, LessThan, Repository } from 'typeorm';
 import { UserEntity } from '../../entitites/user.entity';
 
 import { NotificationMsgEntity } from '../../entitites/notification-msg.entity';
@@ -32,6 +32,17 @@ export class NotificationMsgRepository extends BaseRepository<NotificationMsgEnt
         return await this.repository.update({ id: notificationId }, {readAt: new Date(), isRead: true});
     
     }
+    
+    async markAllAsRead(notificationIds: string[]) {
+        if (notificationIds.length === 0) {
+            throw new Error("No notification IDs provided.");
+        }
+    
+        return await this.repository.update(
+            { id: In(notificationIds) },
+            { readAt: new Date(), isRead: true }
+        );
+    }
     async findOlderThanAWeek(): Promise<NotificationMsgEntity[]> {
         const oneWeekAgo = new Date();
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -58,7 +69,7 @@ export class NotificationMsgRepository extends BaseRepository<NotificationMsgEnt
         .orderBy('message.sentAt', 'DESC')
         .getMany();
     }
-
+    //
     async list() {
         return this.repository.find();
     }
