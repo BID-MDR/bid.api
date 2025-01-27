@@ -57,7 +57,7 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
   }
 
   async listBeneficiary() {
-    return this.repository.find({ where: {type: UserTypeEnum.BENEFICIARIO}});
+    return this.repository.find({ where: { type: UserTypeEnum.BENEFICIARIO } });
   }
 
   async findMonth(month: number) {
@@ -66,12 +66,12 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
 
 
     return this.repository.createQueryBuilder('user')
-    .where('user.type = :type',{ type:  UserTypeEnum.BENEFICIARIO})
-    .andWhere('user.createdAt BETWEEN :pastDate AND :now', {
-      pastDate: pastDate.toISOString(),
-      now: now.toISOString(),
-    })
-    .getMany()
+      .where('user.type = :type', { type: UserTypeEnum.BENEFICIARIO })
+      .andWhere('user.createdAt BETWEEN :pastDate AND :now', {
+        pastDate: pastDate.toISOString(),
+        now: now.toISOString(),
+      })
+      .getMany()
 
 
   }
@@ -127,39 +127,41 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
       .getOne();
   }
 
-  async findNearbyEmployees(
-    latitude: number,
-    longitude: number,
-  ) {
+  async findNearbyEmployees(latitude: number, longitude: number) {
     const query = `
-      SELECT 
-        u.*, 
-        a.latitude, 
-        a.longitude, 
-        a.maximumDistanceToWorks, 
-        ST_Distance_Sphere(
+    SELECT 
+      u.*, 
+      a.latitude, 
+      a.longitude, 
+      a.maximumDistanceToWorks, 
+      ST_Distance_Sphere(
           point(a.longitude, a.latitude),
           point(?, ?)
-        ) AS distanceInMeters
-      FROM user u
-      INNER JOIN address a ON a.id = u.addressId
-      WHERE u.type IN ('PROFISSIONAL', 'ARQUITETO')
-        AND ST_Distance_Sphere(
+      ) AS distanceInMeters
+    FROM 
+      user u
+    INNER JOIN \`user-professional-info\` pui 
+      ON pui.id = u.professionalUserInfoId
+    INNER JOIN address a 
+      ON a.userProfessionalInfoId = pui.id
+    WHERE 
+      u.type IN ('PROFISSIONAL', 'ARQUITETO') 
+      AND ST_Distance_Sphere(
           point(a.longitude, a.latitude),
           point(?, ?)
-        ) <= a.maximumDistanceToWorks * 1000
-    `;
+      ) <= a.maximumDistanceToWorks * 1000;
+  `;
   
-    return this.repository.query(query, [longitude, latitude, longitude, latitude]);
+  return await this.repository.query(query, [longitude, latitude, longitude, latitude]);
   }
 
   async findNearbyBeneficiary(
     latitude: number,
     longitude: number,
     radiusInKm: number,
-  ){
+  ) {
     const radiusInMeters = radiusInKm * 1000;
-    
+
     const query = `
     SELECT u.*
     FROM user u
@@ -171,7 +173,7 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
       ) <= ?
   `;
 
-  return this.repository.query(query, [longitude, latitude, radiusInMeters]);
+    return this.repository.query(query, [longitude, latitude, radiusInMeters]);
   }
 
   async findMonthMcmv(month: number) {
@@ -180,13 +182,13 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
 
 
     return this.repository.createQueryBuilder('user')
-    .where('user.type = :type',{ type:  UserTypeEnum.BENEFICIARIO})
-    .andWhere('user.createdAt BETWEEN :pastDate AND :now', {
-      pastDate: pastDate.toISOString(),
-      now: now.toISOString(),
-    })
-    .andWhere('help.programType = :programType', {programType: UserProgramTypeEnum.MINHA_CASA})
-    .getMany()
+      .where('user.type = :type', { type: UserTypeEnum.BENEFICIARIO })
+      .andWhere('user.createdAt BETWEEN :pastDate AND :now', {
+        pastDate: pastDate.toISOString(),
+        now: now.toISOString(),
+      })
+      .andWhere('help.programType = :programType', { programType: UserProgramTypeEnum.MINHA_CASA })
+      .getMany()
 
 
   }
