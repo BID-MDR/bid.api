@@ -7,6 +7,7 @@ import { UserRepository } from 'src/modules/data-interaction/database/repositori
 import { NotificationMsgEntity } from 'src/modules/data-interaction/database/entitites/notification-msg.entity';
 import { NotificationMessageRegisterRequestDto } from 'src/modules/data-interaction/database/dtos/notificationMsg/register-notification-message.dto';
 import { NotificationMsgRepository } from 'src/modules/data-interaction/database/repositories/notification-msg/notification-msg.repository';
+import { NotificationMessageMarkAllAsReadDto } from 'src/modules/data-interaction/database/dtos/notificationMsg/mark-all-as-read-dto';
 
 @Injectable()
 export class NotificationMessageService extends BaseService<
@@ -66,6 +67,12 @@ export class NotificationMessageService extends BaseService<
         data.sentAt = new Date()
         const newMsg =  await super.create(data);
         return newMsg
+    }
+
+    async markAllAsRead( data: NotificationMessageMarkAllAsReadDto) {
+      
+        return await this.notificationMessageRepository.markAllAsRead(data.notificationIds);
+        
     }
 
     async delete(messageId: string, userId: string) {
