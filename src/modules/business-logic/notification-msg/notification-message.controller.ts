@@ -19,6 +19,7 @@ import { JwtPayloadInterface } from 'src/core/interfaces/jwt-payload.interface';
 import { ResponseDto } from 'src/core/dtos/response.dto';
 import { NotificationMessageService } from './notification-message.service';
 import { NotificationMessageRegisterRequestDto } from 'src/modules/data-interaction/database/dtos/notificationMsg/register-notification-message.dto';
+import { NotificationMessageMarkAllAsReadDto } from 'src/modules/data-interaction/database/dtos/notificationMsg/mark-all-as-read-dto';
 
 @Controller('notification-message')
 @ApiTags('Notification Message/mensagens')
@@ -52,12 +53,26 @@ export class NotificationMessageController {
         const msglist = await this.messageService.listAllMsgByUser(id);
         return new ResponseDto(true, msglist, false)
     }
-
+    @Get('get-by-identifier/:id')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async listConversationByIdentifier( @Param('id') id:string) {
+        const msglist = await this.messageService.listConversationByIdentifier(id);
+        return new ResponseDto(true, msglist, false)
+    }
     @Put('mark-as-read/:id')
     // @ApiBearerAuth()
     // @UseGuards(JwtAccessTokenGuard)
     async markAsRead( @Param('id') id:string) {
         const msglist = await this.messageService.markAsRead(id);
+        return new ResponseDto(true, msglist, false)
+    }
+
+    @Put('mark-all-as-read')
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAccessTokenGuard)
+    async markAllAsRead( @Body() data: NotificationMessageMarkAllAsReadDto) {
+        const msglist = await this.messageService.markAllAsRead(data);
         return new ResponseDto(true, msglist, false)
     }
 
