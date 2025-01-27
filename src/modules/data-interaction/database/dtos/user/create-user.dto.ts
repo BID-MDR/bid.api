@@ -27,6 +27,7 @@ import { CreateUserBeneficiaryInfoDto } from './user-beneficiary-info/create-use
 import { CreateUserProfessionalInfoDto } from './user-professional-info/create-user-professional-info.dto';
 import { UserGenderIdentityEnum } from '../../enums/user-gender-identity.enum';
 import { UserMonthlyFamilyIncomeEnum } from '../../enums/user-monthly-family-income.enum';
+import { UserProgramTypeEnum } from '../../enums/user-program-type.enum';
 
 export class CreateUserDto {
     @ApiProperty()
@@ -96,7 +97,7 @@ export class CreateUserDto {
     @ApiProperty({ type: MediaUploadDto })
     @ValidateNested()
     @Type(() => MediaUploadDto)
-    uploadedProfilePicture: MediaUploadDto;
+    uploadedProfilePicture?: MediaUploadDto;
 
     @ApiProperty({ example: '1234' })
     @IsNumberString()
@@ -108,14 +109,17 @@ export class CreateUserDto {
     @Type(() => CreateUserBeneficiaryInfoDto)
     @ValidateIf((o) => o.type === UserTypeEnum.BENEFICIARIO)
     @IsDefined()
-    beneficiaryUserInfo: CreateUserBeneficiaryInfoDto;
+    beneficiaryUserInfo?: CreateUserBeneficiaryInfoDto;
 
     @ApiProperty({ type: CreateUserProfessionalInfoDto, required: false })
     @ValidateNested({ each: true })
     @Type(() => CreateUserProfessionalInfoDto)
     @ValidateIf((o) => o.type === UserTypeEnum.PROFISSIONAL)
     @IsDefined()
-    professionalUserInfo: CreateUserProfessionalInfoDto;
+    professionalUserInfo?: CreateUserProfessionalInfoDto;
 
-    profilePicture: string;
+    profilePicture?: string;
+    @ApiProperty({ enum: UserProgramTypeEnum })
+    @IsEnum(UserProgramTypeEnum)
+    programType?: string
 }

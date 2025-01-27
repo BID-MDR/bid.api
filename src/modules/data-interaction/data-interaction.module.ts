@@ -17,7 +17,8 @@ import { EnviromentVariablesEnum } from 'src/core/enums/environment-variables.en
         }),
         DatabaseModule, 
         FacadeModule, 
-        WebsoketModule
+        WebsoketModule,
+        
     ],
 })
 export class DataInteractionModule {}

@@ -23,6 +23,7 @@ import { ContractResignedModule } from './conctract-resigned/costEstimate.module
 import { UnavailabilityModule } from './unavailability/unavailability.module';
 import { TaskServiceModule } from './tasService/unavailability.module';
 import { NotificationMessageModule } from './notification-msg/notification-message.module';
+import { SeedModule } from './seed/seed.module';
 @Module({
     imports: [
         FeatureUserModule,
@@ -48,7 +49,8 @@ import { NotificationMessageModule } from './notification-msg/notification-messa
         ContractResignedModule,
         UnavailabilityModule,
         TaskServiceModule,
-        NotificationMessageModule
+        NotificationMessageModule,
+        SeedModule
     ],
 })
 export class BusinessLogicModule {}
