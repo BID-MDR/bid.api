@@ -84,18 +84,15 @@ export class DemandEntity extends BaseEntity {
   conclusionDate: Date;
 
   @ManyToOne(() => UserEntity, user => user.demands, {
-    eager: true,
   })
   beneficiary: UserEntity;
 
   @ManyToOne(() => CompanyEntity, company => company.demands, {
-    eager: true,
   })
   company: CompanyEntity;
 
   @OneToOne(() => WorkRequestEntity, workRequest => workRequest.demand, {
     cascade: true,
-    eager: true,
     nullable: true,
   })
   @JoinColumn()
@@ -109,7 +106,6 @@ export class DemandEntity extends BaseEntity {
 
   @OneToOne(() => ConstructionsEntity, c => c.demand, {
     nullable: true,
-    eager: true,
     cascade: true,
   })
   @JoinColumn()
@@ -117,7 +113,6 @@ export class DemandEntity extends BaseEntity {
 
   @OneToOne(() => SustainabilityItensEntity, c => c.demand, {
     nullable: true,
-    eager: true,
     cascade: true,
   })
   @JoinColumn()

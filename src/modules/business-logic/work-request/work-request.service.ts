@@ -36,7 +36,7 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
 
   async register(data: CreateWorkRequestDto, companyId: string) {
     const demand = await this.demandRepository.getById(data.demandId);
-
+    console.log('dem', demand)
     if (!demand) throw new BadRequestException("Demanda não encontrada.");
 
     if (demand.company.id !== companyId) throw new BadRequestException("Não autorizado a acessar essa demanda.");
