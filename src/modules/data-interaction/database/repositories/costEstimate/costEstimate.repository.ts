@@ -52,7 +52,6 @@ export class CostEstimateRepository extends BaseRepository<
     .leftJoinAndSelect('workRequest.beneficiary', 'beneficiary')
     .leftJoinAndSelect('beneficiary.address', 'address')
     .leftJoinAndSelect('workRequest.room', 'room')
-    .leftJoinAndSelect('room.roomSolutions', 'roomSolutions')
     .where('costEstimate.professional = :professionalId', { professionalId })
     .getMany();
   }
@@ -66,7 +65,6 @@ export class CostEstimateRepository extends BaseRepository<
     .leftJoinAndSelect('workRequest.beneficiary', 'beneficiary')
     .leftJoinAndSelect('beneficiary.address', 'address')
     .leftJoinAndSelect('workRequest.room', 'room')
-    .leftJoinAndSelect('room.roomSolutions', 'roomSolutions')
     .where('workRequest.beneficiary = :beneficiaryId', { beneficiaryId })
     .getMany();
   }
