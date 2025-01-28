@@ -151,8 +151,8 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
           point(?, ?)
       ) <= a.maximumDistanceToWorks * 1000;
   `;
-  
-  return await this.repository.query(query, [longitude, latitude, longitude, latitude]);
+
+    return await this.repository.query(query, [longitude, latitude, longitude, latitude]);
   }
 
   async findNearbyBeneficiary(
