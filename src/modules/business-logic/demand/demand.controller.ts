@@ -131,8 +131,7 @@ export class DemandController {
         type: ResponseDemandDto,
     })
     async register(@Req() req: Request, @Body() dto: DemandRegisterRequestDto) {
-     const userId = (req.user as JwtPayloadInterface).userId;
-
+    const userId = (req.user as JwtPayloadInterface).userId;
         return await this.demandService.register(userId, dto);
     }
 
