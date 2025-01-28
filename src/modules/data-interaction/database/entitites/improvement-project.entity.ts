@@ -16,6 +16,7 @@ export class ImprovementProjectEntity extends BaseEntity {
 
     @OneToOne(() => BidDocumentEntity, (bidDocument) => bidDocument.project, {
         onDelete: 'CASCADE',
+        nullable: true
     })
     @JoinColumn()
     document: BidDocumentEntity;
