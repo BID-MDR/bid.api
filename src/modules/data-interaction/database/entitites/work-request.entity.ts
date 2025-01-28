@@ -136,7 +136,6 @@ export class WorkRequestEntity extends BaseEntity {
   contractResignedList: ContractResignedEntity[];
 
   @OneToOne(() => SurveyEntity, survey => survey.workRequest, {
-    eager: true,
   })
   survey: SurveyEntity;
 

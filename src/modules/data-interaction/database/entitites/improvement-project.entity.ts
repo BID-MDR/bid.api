@@ -31,7 +31,7 @@ export class ImprovementProjectEntity extends BaseEntity {
     professional?: UserEntity;
 
     @OneToMany(() => TechnicalVisitEntity, technicalVisit => technicalVisit.improvementProject, {
-        eager: true,
+    
     })
     technicalVisit: TechnicalVisitEntity;
 }
