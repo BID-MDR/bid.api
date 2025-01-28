@@ -121,5 +121,5 @@ export class CreateUserDto {
     profilePicture?: string;
     @ApiProperty({ enum: UserProgramTypeEnum })
     @IsEnum(UserProgramTypeEnum)
-    programType?: string
+    programType?: UserProgramTypeEnum
 }
