@@ -33,7 +33,9 @@ export class FeatureTechnicalVisitService extends BaseService<
         return await this.technicalVisitRepository.getByProfessional(professionalId);
     }
 
-    async schedule(dto: CreateTechnicalVisitDto) {
+    async schedule(userId: string ,dto: CreateTechnicalVisitDto) {
+        const userCreate = await this.userRepository.findById(userId)
+        dto.userCreate = userCreate;
         const beneficiary = await this.userRepository.getById(dto.beneficiaryId);
         dto.beneficiary = beneficiary;
         const professional = await this.userRepository.getById(dto.professionalId);

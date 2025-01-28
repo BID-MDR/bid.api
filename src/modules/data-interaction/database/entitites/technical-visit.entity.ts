@@ -32,6 +32,9 @@ export class TechnicalVisitEntity extends BaseEntity {
     @ManyToOne(() => UserEntity, (user) => user.technicalVisitsAsProfessional)
     professional: UserEntity;
 
+    @ManyToOne(() => UserEntity, (user) => user.technicalVisitsAsProfessional)
+    userCreate: UserEntity;
+
     @ManyToOne(() => UserEntity, (user) => user.technicalVisitsAsBeneficiary)
     beneficiary: UserEntity;
 
@@ -71,7 +74,6 @@ export class TechnicalVisitEntity extends BaseEntity {
 
     @OneToOne(() => SurveyEntity, (survey) => survey.technicalVisit)
     survey?: SurveyEntity;
-
 
     @Column({
         type: 'text',
