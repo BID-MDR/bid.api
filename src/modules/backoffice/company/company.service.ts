@@ -18,8 +18,9 @@ export class CompanyBackofficeService extends BaseService<CompanyEntity, any, an
 
   async register(dto: CreateCompanyDto): Promise<CompanyEntity> {
     const admin = await this.userRepository.getByCpf(dto.ownerCpf)
-    if(!admin)  throw new BadRequestException("Admin não encontrado(a).");
-    dto.userAdmin = admin
+    if(admin){
+      dto.userAdmin = admin
+    }
     return await this.companyRepository.create(dto)
   }
   async list(): Promise<CompanyEntity[]>{
