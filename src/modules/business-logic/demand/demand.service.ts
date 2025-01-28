@@ -105,36 +105,43 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
   }
 
   async register(userId: string, data: DemandRegisterRequestDto) {
-    const professional = await this.userRepository.getById(userId);
-
-    if (!professional) {
-      throw new BadRequestException("Professional não encontrado.");
+    try{
+      const professional = await this.userRepository.getById(userId);
+      if (!professional) {
+        throw new BadRequestException("Professional não encontrado.");
+      }
+  
+      data.company = await this.companyRepository.findById(professional.employee.company.id);
+      
+  
+      if (!data.company) {
+        throw new BadRequestException("Empresa não encontrada.");
+      }
+  
+      data.beneficiary = await this.userRepository.getByCpf(data.document);
+  
+      if (!data.beneficiary) {
+        throw new BadRequestException("Beneficiário não encontrado.");
+      }
+  
+      const demand = await super.create(data);
+      const msgDto = {
+        content: `${professional.name} cadastrou seu CPF e será responsável pela sua obra de melhoria`,
+  
+      }
+  
+      const msgProfessionalDto = {
+        content: `Você cadastrou o uma demanda para ${data.beneficiary.name}`,
+  
+      }
+      await this.notificationMsgService.register(data.beneficiary.id, msgDto)
+  
+      await this.notificationMsgService.register(professional.id, msgProfessionalDto)
+      return demand
+    } catch (error) {
+      
     }
-
-    data.company = await this.companyRepository.findById(professional.companyAdministrator.id);
-
-    if (!data.company) {
-      throw new BadRequestException("Empresa não encontrada.");
-    }
-
-    data.beneficiary = await this.userRepository.getByCpf(data.document);
-
-    if (!data.beneficiary) {
-      throw new BadRequestException("Beneficiário não encontrado.");
-    }
-
-    const demand = await super.create(data);
-    const msgDto = {
-      content: `${professional.name} cadastrou seu CPF e será responsável pela sua obra de melhoria`,
-
-    }
-    const msgProfessionalDto = {
-      content: `Você cadastrou o uma demanda para ${data.beneficiary.name}`,
-
-    }
-    await this.notificationMsgService.register(data.beneficiary.id, msgDto)
-    await this.notificationMsgService.register(professional.id, msgProfessionalDto)
-    return demand
+    
   }
 
   async delete(demandId: string) {
