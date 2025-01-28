@@ -128,31 +128,30 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
   }
 
   async findNearbyEmployees(latitude: number, longitude: number) {
-    const query = `
-    SELECT 
-      u.*, 
-      a.latitude, 
-      a.longitude, 
-      a.maximumDistanceToWorks, 
-      ST_Distance_Sphere(
-          point(a.longitude, a.latitude),
-          point(?, ?)
-      ) AS distanceInMeters
-    FROM 
-      user u
-    INNER JOIN \`user-professional-info\` pui 
-      ON pui.id = u.professionalUserInfoId
-    INNER JOIN address a 
-      ON a.userProfessionalInfoId = pui.id
-    WHERE 
-      u.type IN ('PROFISSIONAL', 'ARQUITETO') 
-      AND ST_Distance_Sphere(
-          point(a.longitude, a.latitude),
-          point(?, ?)
-      ) <= a.maximumDistanceToWorks * 1000;
-  `;
-
-    return await this.repository.query(query, [longitude, latitude, longitude, latitude]);
+    const result = await this.repository
+      .createQueryBuilder('u')
+      .innerJoinAndSelect('u.professionalUserInfo', 'pui')
+      .innerJoinAndSelect('pui.addresses', 'addr')
+      .addSelect(
+        `ST_Distance_Sphere(POINT(addr.longitude, addr.latitude), POINT(:longitude, :latitude))`,
+        'distanceInMeters',
+      )
+      .where('u.type IN (:...types)', { types: ['PROFISSIONAL', 'ARQUITETO'] })
+      .andWhere(
+        `ST_Distance_Sphere(POINT(addr.longitude, addr.latitude), POINT(:longitude, :latitude)) <= addr.maximumDistanceToWorks * 10000000000`,
+      )
+      .setParameters({ longitude, latitude })
+      .getRawAndEntities();
+  
+    const employees = result.entities;
+    const rawData = result.raw;
+  
+    return employees.map((employee, index) => {
+      return {
+        ...employee,
+        distanceInMeters: rawData[index].distanceInMeters,
+      };
+    });
   }
 
   async findNearbyBeneficiary(
