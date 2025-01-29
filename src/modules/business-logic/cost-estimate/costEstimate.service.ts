@@ -156,23 +156,35 @@ async update(costEstimateId: string, data: CreateCostEstimateRequestDto) {
   }
 
   async updateStatus(costEstimateId: string, data: CostEstimateAproveReproveRequestDto) {
-    const costEstimate = await this.repository.findById(costEstimateId)
-    if (data.type === CostEstimateStatusEnum.APPROVED_ESTIMATION) {
-      if(!data.interventionId) throw new NotFoundException('Intervention ID is missing!')
-      const intervention = await this.interventionRepo.findById(data.interventionId)
-      if(!intervention) throw new NotFoundException('InterventionNotfound')
-      const dto: CreateInterventionRequestDto ={
-        room: intervention.room,
-        value: intervention.value,
-        toDo: intervention.toDo,
-        step: 'INTERVENTION_HISTORY',
+    const costEstimate = await this.repository.findById(costEstimateId);
+    if (!costEstimate) throw new NotFoundException('Cost Estimate not found!');
+  
+    if (data.type === CostEstimateStatusEnum.APPROVED_ESTIMATION && data.interventionId && data.interventionId.length > 0) {
+      
+      const interventions = await Promise.all(
+        data.interventionId.map(async (interventionId) => {
+          const intervention = await this.interventionRepo.findById(interventionId);
+          if (!intervention) throw new NotFoundException(`Intervention not found for ID: ${interventionId}`);
+          return intervention;
+        })
+      );
+  
+      await Promise.all(
+        interventions.map((intervention) => {
+          const dto: CreateInterventionRequestDto = {
+            room: intervention.room,
+            value: intervention.value,
+            toDo: intervention.toDo,
+            step: 'CONTRACT',
+          };
+          return this.interventionRepo.create(dto);
+        })
+      );
     }
-    await this.interventionRepo.create(dto)
-
-    }
-    if (!costEstimate) throw new NotFoundException('Cost Estimate not found!')
-      await this.repository.updateStatus(costEstimateId, data)
+  
+    await this.repository.updateStatus(costEstimateId, data);
   }
+  
 
   async delete(costEstimateId: string) {
     return await this.repository.hardDelete(costEstimateId);
