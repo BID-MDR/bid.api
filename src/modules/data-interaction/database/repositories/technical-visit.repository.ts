@@ -61,6 +61,7 @@ export class TechnicalVisitRepository extends BaseRepository<
         const relations = [
             'professional',
             'beneficiary',
+            'userCreate',
             'demand',
             'workRequest',
             'contract',
