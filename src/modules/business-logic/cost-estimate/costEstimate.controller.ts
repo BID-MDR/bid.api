@@ -65,7 +65,7 @@ export class CostEstimateController {
   }
 
   @Put("update-status/:id")
-  @ApiBearerAuth()
+ // @ApiBearerAuth()
   async updateStatus(@Param("id") id: string, @Body() dto: CostEstimateAproveReproveRequestDto) {
     return await this.service.updateStatus(id, dto);
   }
