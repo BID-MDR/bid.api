@@ -29,6 +29,12 @@ export class TechnicalVisitEntity extends BaseEntity {
     })
     duration?: number;
 
+    @Column({
+        type: 'float',
+        nullable: true,
+    })
+    distanceInMeters?: number;
+
     @ManyToOne(() => UserEntity, (user) => user.technicalVisitsAsProfessional)
     professional: UserEntity;
 

@@ -46,6 +46,9 @@ export class CreateTechnicalVisitDto {
     duration?: number;
 
     @ApiProperty()
+    distanceInMeters?: number;
+
+    @ApiProperty()
     registerWorkBeginningId?: string;
     registerWorkBeginning?: RegisterWorkEntity;
 
