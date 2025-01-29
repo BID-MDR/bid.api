@@ -122,8 +122,9 @@ export class FeatureTechnicalVisitController {
         type: CreateTechnicalVisitDto,
         description: "Visita técnica a ser criada.",
     })
-    async create(@Body() body: CreateTechnicalVisitDto) {
-        const result = await this.featureTechnicalVisitService.schedule(body);
+    async create(@Req() req: Request, @Body() body: CreateTechnicalVisitDto) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        const result = await this.featureTechnicalVisitService.schedule(userId, body);
         return new ResponseDto(true, result, null);
     }
 

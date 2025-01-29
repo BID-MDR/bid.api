@@ -22,6 +22,10 @@ export class CreateTechnicalVisitDto {
     professionalId: string;
     professional: UserEntity;
 
+    @ApiProperty()
+    userCreateId?: string;
+    userCreate?: UserEntity;
+
     @ApiProperty({ required: false })
     beneficiaryId?: string;
     beneficiary?: UserEntity;
@@ -39,6 +43,9 @@ export class CreateTechnicalVisitDto {
 
     @ApiProperty()
     duration?: number;
+
+    @ApiProperty()
+    distanceInMeters?: number;
 
     @ApiProperty()
     registerWorkBeginningId?: string;
