@@ -103,7 +103,44 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
   async list() {
     return await this.demandRepository.list();
   }
-
+  async registerSingleDemand(userId: string, data: DemandRegisterRequestDto) {
+    try{
+      const professional = await this.userRepository.getById(userId);
+      if (!professional) {
+        throw new BadRequestException("Professional não encontrado.");
+      }
+  
+      data.company = await this.companyRepository.findById(professional.employee.company.id);
+      
+  
+      if (!data.company) {
+        throw new BadRequestException("Empresa não encontrada.");
+      }
+  
+      data.beneficiary = await this.userRepository.getByCpf(data.document);
+  
+      if (!data.beneficiary) {
+        throw new BadRequestException("Beneficiário não encontrado.");
+      }
+  
+      const demand = await super.create(data);
+      const msgDto = {
+        content: `${professional.name} cadastrou seu CPF e será responsável pela sua obra de melhoria`,
+  
+      }
+  
+      const msgProfessionalDto = {
+        content: `Você cadastrou o uma demanda para ${data.beneficiary.name}`,
+  
+      }
+      await this.notificationMsgService.register(data.beneficiary.id, msgDto)
+  
+      await this.notificationMsgService.register(professional.id, msgProfessionalDto)
+      return demand
+    } catch (error) {
+      
+    }
+  }
   async register(userId: string, data: DemandRegisterRequestDto) {
     try{
       const professional = await this.userRepository.getById(userId);
@@ -141,7 +178,6 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
     } catch (error) {
       
     }
-    
   }
 
   async delete(demandId: string) {

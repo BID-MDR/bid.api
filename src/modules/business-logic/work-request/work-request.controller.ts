@@ -87,6 +87,7 @@ export class WorkRequestController {
     description: "Construção a ser criado.",
   })
   async create(@Body() dto: CreateWorkRequestDto, @Req() req: Request) {
+    console.log('dto dto', dto)
     const companyId = (req.user as JwtPayloadInterface).companyId;
     return await this.service.register(dto, companyId);
   }

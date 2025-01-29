@@ -134,6 +134,21 @@ export class DemandController {
     const userId = (req.user as JwtPayloadInterface).userId;
         return await this.demandService.register(userId, dto);
     }
+    @Post("register-single-demand")
+   @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard, RolesGuard)
+    @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_demand])
+    @ApiOkResponseDtoData({
+        type: ResponseDemandDto,
+        description: "Pedido de demanda.",
+    })
+    @SerializeOptions({
+        type: ResponseDemandDto,
+    })
+    async registerSingleDemand(@Req() req: Request, @Body() dto: DemandRegisterRequestDto) {
+    const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.demandService.registerSingleDemand(userId, dto);
+    }
 
     @Delete("delete-by-id/:id")
     @ApiBearerAuth()

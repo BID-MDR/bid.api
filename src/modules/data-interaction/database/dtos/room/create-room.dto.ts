@@ -5,7 +5,6 @@ import { WorkRequestEntity } from "../../entitites/work-request.entity";
 
 export class CreateRoomDto {
     @ApiProperty()
-    @Length(3, 70)
     name: string;
 
     @ApiProperty({ enum: RoomTypeEnum })
