@@ -138,7 +138,7 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
       )
       .where('u.type IN (:...types)', { types: ['PROFISSIONAL', 'ARQUITETO'] })
       .andWhere(
-        `ST_Distance_Sphere(POINT(addr.longitude, addr.latitude), POINT(:longitude, :latitude)) <= addr.maximumDistanceToWorks * 10000000000`,
+        `ST_Distance_Sphere(POINT(addr.longitude, addr.latitude), POINT(:longitude, :latitude)) <= addr.maximumDistanceToWorks * 1000`,
       )
       .setParameters({ longitude, latitude })
       .getRawAndEntities();
