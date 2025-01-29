@@ -23,9 +23,8 @@ export class CreateTechnicalVisitDto {
     professional: UserEntity;
 
     @ApiProperty()
-    @IsUUID()
-    userCreateId: string;
-    userCreate: UserEntity;
+    userCreateId?: string;
+    userCreate?: UserEntity;
 
     @ApiProperty({ required: false })
     beneficiaryId?: string;
