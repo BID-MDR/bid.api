@@ -11,6 +11,8 @@ import { UserRepository } from "src/modules/data-interaction/database/repositori
 import { CostEstimateStatusEnum } from "src/modules/data-interaction/database/enums/cost-estimate-status.enum";
 import { NotificationMessageService } from "../notification-msg/notification-message.service";
 import { NotificationMessageRegisterRequestDto } from "src/modules/data-interaction/database/dtos/notificationMsg/register-notification-message.dto";
+import { InterventionRepository } from "src/modules/data-interaction/database/repositories/intervention/intervention.repository";
+import { CreateInterventionRequestDto } from "src/modules/data-interaction/database/dtos/intervention/intervention-request.dto";
 
 @Injectable()
 export class CostEstimateService extends BaseService<CostEstimateEntity, any, any> {
@@ -19,7 +21,8 @@ export class CostEstimateService extends BaseService<CostEstimateEntity, any, an
     private roomRepo: RoomRepository,
     private workRequestRepo: WorkRequestRepository,
     private userRepo: UserRepository,
-    private notificationMsgService: NotificationMessageService
+    private notificationMsgService: NotificationMessageService,
+    private interventionRepo: InterventionRepository
 
   ) {
     super(repository);
@@ -154,6 +157,19 @@ async update(costEstimateId: string, data: CreateCostEstimateRequestDto) {
 
   async updateStatus(costEstimateId: string, data: CostEstimateAproveReproveRequestDto) {
     const costEstimate = await this.repository.findById(costEstimateId)
+    if (data.type === CostEstimateStatusEnum.APPROVED_ESTIMATION) {
+      if(!data.interventionId) throw new NotFoundException('Intervention ID is missing!')
+      const intervention = await this.interventionRepo.findById(data.interventionId)
+      if(!intervention) throw new NotFoundException('InterventionNotfound')
+      const dto: CreateInterventionRequestDto ={
+        room: intervention.room,
+        value: intervention.value,
+        toDo: intervention.toDo,
+        step: 'INTERVENTION_HISTORY',
+    }
+    await this.interventionRepo.create(dto)
+
+    }
     if (!costEstimate) throw new NotFoundException('Cost Estimate not found!')
       await this.repository.updateStatus(costEstimateId, data)
   }

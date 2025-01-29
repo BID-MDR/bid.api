@@ -7,4 +7,10 @@ export class CostEstimateAproveReproveRequestDto {
     @ApiProperty({ enum: CostEstimateStatusEnum })
     @IsEnum(CostEstimateStatusEnum)
     type: CostEstimateStatusEnum;
+
+    @ApiProperty()
+   interventionId?: string;
+ 
+ 
+
 }
