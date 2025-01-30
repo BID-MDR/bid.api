@@ -112,7 +112,7 @@ export class FeatureUserController {
         type: UserResponseDto,
     })
     async getById(@Param("id") userId: string) {
-        const us = await this.featureUserService.findById(userId);
+        const us = await this.featureUserService.getById(userId);
         return new ResponseDto(true, us, false);
     }
 

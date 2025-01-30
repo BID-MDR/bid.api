@@ -47,4 +47,17 @@ export class CompanyRepository extends BaseRepository<CompanyEntity, any, any> {
     .getMany();
     
   }
+
+  async updateUserAdmin(companyId: string, userAdminId: string): Promise<CompanyEntity> {
+    await this.repository.createQueryBuilder()
+      .update(CompanyEntity)
+      .set({ userAdmin: { id: userAdminId } })
+      .where("id = :companyId", { companyId })
+      .execute();
+  
+    return this.repository.findOne({
+      where: { id: companyId },
+      relations: ['userAdmin'],
+    });
+  }
 }
