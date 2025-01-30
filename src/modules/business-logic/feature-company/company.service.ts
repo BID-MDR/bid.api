@@ -37,4 +37,13 @@ export class CompanyService extends BaseService<CompanyEntity, any, any> {
   async delete(companyId: string): Promise<void>{
     return await this.companyRepository.hardDelete(companyId)
   }
+
+  async getById(companyId:string): Promise<CompanyEntity>{
+    return await this.companyRepository.findById(companyId);
+  }
+
+  async changeUserAdmin(companyId: string, userAdminId: string): Promise<CompanyEntity> {
+    return await this.companyRepository.updateUserAdmin(companyId, userAdminId);
+  }
+
 }

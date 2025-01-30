@@ -336,6 +336,10 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         return await this.userRepository.findByCpf(cpf);
     }
 
+    async getById(id: string) {
+        return await this.userRepository.getById(id);
+    }
+
     private async hashStringData(stringData: string): Promise<string> {
         return bcrypt.hash(stringData, 13);
     }
