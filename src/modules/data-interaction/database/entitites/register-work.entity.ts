@@ -71,7 +71,7 @@ export class RegisterWorkEntity extends BaseEntity {
       @Column({
         type:'enum',
         enum: ConstructionsStatusEnum,
-        default: ConstructionsStatusEnum.EM_ANALISE,
+        default: ConstructionsStatusEnum.TO_SCHEDULE_REGISTRATION,
       })
       status: ConstructionsStatusEnum;
     
