@@ -9,6 +9,7 @@ import { TechnicalVisitRepository } from 'src/modules/data-interaction/database/
 import { UserRepository } from 'src/modules/data-interaction/database/repositories/user/user.repository';
 import { WorkRequestRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request.repository';
 import { NotificationMessageService } from '../notification-msg/notification-message.service';
+import { ConstructionsStatusEnum } from 'src/modules/data-interaction/database/enums/constructions-stauts.enum';
 
 @Injectable()
 export class FeatureTechnicalVisitService extends BaseService<
@@ -44,6 +45,7 @@ export class FeatureTechnicalVisitService extends BaseService<
         dto.workRequest = workRequest;
 
         const technicalVisit = await this.technicalVisitRepository.create(dto)
+        this.registerWorkRepo.updateStatus(dto.registerWorkId, ConstructionsStatusEnum.REGISTRATION_SCHEDULE)
     
         return technicalVisit
     }
