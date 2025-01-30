@@ -8,6 +8,8 @@ import { UserEntity } from "../../entitites/user.entity";
 import { UserTypeEnum } from "../../enums/user-type.enum";
 import { UserProgramTypeEnum } from "../../enums/user-program-type.enum";
 import { addMonths } from "date-fns";
+import { UpdateAddressDto } from "../../dtos/address/update-address.dto";
+import { AddressEntity } from "../../entitites/address.entity";
 
 @Injectable()
 export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -50,6 +52,10 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
 
   async updateUserProgramType(_id: string, programType: UserProgramTypeEnum) {
     return this.repository.update(_id, { programType });
+  }
+
+  async addAddress(_id: string, addressId: AddressEntity) {
+    return this.repository.update(_id, { address: addressId });
   }
 
   async list() {
