@@ -1,5 +1,5 @@
 import { BaseEntity } from 'src/core/entities/base.entity';
-import { Column, Entity, ManyToOne, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { UserProfessionalInfoEntity } from './user-professional-info.entity';
 import { UserEntity } from './user.entity';
 import { CompanyEntity } from './company.entity';
@@ -59,12 +59,15 @@ export class AddressEntity extends BaseEntity {
     @Column({
         type: 'varchar',
         length: 30,
+        default: '0.0000'
     })
     latitude: string;
 
     @Column({
         type: 'varchar',
         length: 30,
+        default: '0.0000'
+
     })
     longitude: string;
 
@@ -76,6 +79,7 @@ export class AddressEntity extends BaseEntity {
     maximumDistanceToWorks: number;
 
     @OneToOne(() => UserEntity, (user) => user.address)
+    @JoinColumn()
     user: UserEntity;
 
     @ManyToOne(() => UserProfessionalInfoEntity, (userProfessionalInfoEntity) => userProfessionalInfoEntity.addresses)
