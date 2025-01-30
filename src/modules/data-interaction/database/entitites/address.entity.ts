@@ -79,7 +79,6 @@ export class AddressEntity extends BaseEntity {
     maximumDistanceToWorks: number;
 
     @OneToOne(() => UserEntity, (user) => user.address)
-    @JoinColumn()
     user: UserEntity;
 
     @ManyToOne(() => UserProfessionalInfoEntity, (userProfessionalInfoEntity) => userProfessionalInfoEntity.addresses)
