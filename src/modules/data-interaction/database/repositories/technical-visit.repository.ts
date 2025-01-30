@@ -56,19 +56,13 @@ export class TechnicalVisitRepository extends BaseRepository<
         return result;
     }
 
-    async getByBeneficiary(beneficiaryId: string): Promise<TechnicalVisitEntity[]> {
+    async getByBeneficiary(beneficiaryId: string){
           
         const relations = [
             'professional',
             'beneficiary',
             'userCreate',
-            'demand',
             'workRequest',
-            'contract',
-            'improvementProject',
-            'registerWorkBeginning',
-            'registerWorkClosure',
-            'survey',
         ];
     
         const result = await this.repository.find({
