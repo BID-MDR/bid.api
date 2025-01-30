@@ -5,6 +5,7 @@ import { FeatureAuthModule } from "../feature-auth/feature-auth.module";
 import { InterventionService } from "./intervention.service";
 import { InterventionController } from "./intervention.controller";
 import { ContractModule } from "src/modules/contract/contract.module";
+import { CostEstimateModule } from "../cost-estimate/costEstimate.module";
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ContractModule } from "src/modules/contract/contract.module";
     FacadeModule,
     FeatureAuthModule,
     ContractModule,
+    CostEstimateModule
   ],
   providers: [InterventionService],
   controllers: [InterventionController],
