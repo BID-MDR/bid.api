@@ -37,7 +37,7 @@ export class RegisterWorkRepository extends BaseRepository<
         professional: { id: professionalId },
         status: Not(In(['FINALIZADA'])),
       },
-      relations: ['professional', 'workRequest'],
+      relations: ['professional', 'workRequest', 'workRequest.beneficiaryId'],
     });
   } 
   
@@ -46,13 +46,15 @@ export class RegisterWorkRepository extends BaseRepository<
       where: {
         professional: { id: professionalId },
       },
-      relations: ['professional', 'workRequest'],
+      relations: ['professional', 'workRequest', 'workRequest.beneficiary'],
     });
-  } 
+  }
   async startRegisterWork(registerWorkId: string, ) {
     return await this.repository.update({ id: registerWorkId }, {startedDate: new Date(), status: ConstructionsStatusEnum.EM_ANDAMENTO});
   }
-
+  async updateStatus(registerWorkId: string, statusUpdate:ConstructionsStatusEnum ) {
+    return await this.repository.update({ id: registerWorkId }, { status: statusUpdate});
+  }
   async endRegisterWork(registerWorkId: string, ) {
     return await this.repository.update({ id: registerWorkId }, {concludedDate: new Date(), status: ConstructionsStatusEnum.FINALIZADA});
   }

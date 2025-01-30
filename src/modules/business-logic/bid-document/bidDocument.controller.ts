@@ -23,7 +23,7 @@ export class BidDocumentController {
 
  
   @Post("")
-  @ApiBearerAuth()
+  //@ApiBearerAuth()
   @ApiBody({
     type: BidDocumentRequestDto,
     required: true,
