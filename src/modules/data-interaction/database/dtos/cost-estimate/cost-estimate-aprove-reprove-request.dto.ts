@@ -9,7 +9,7 @@ export class CostEstimateAproveReproveRequestDto {
     type: CostEstimateStatusEnum;
 
     @ApiProperty()
-   interventionId?: string;
+   interventionId?: string[];
  
  
 

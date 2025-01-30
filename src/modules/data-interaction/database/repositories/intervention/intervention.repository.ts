@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { BaseRepository } from "../../../../../core/repositories/base.repository";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { InterventionEntity } from "../../entitites/intervention.entity";
+import { FindOptionsWhere, Repository } from "typeorm";
+import { BaseRepository } from "../../../../../core/repositories/base.repository";
 import { CreateInterventionRequestDto } from "../../dtos/intervention/intervention-request.dto";
+import { InterventionEntity } from "../../entitites/intervention.entity";
 
 @Injectable()
 export class InterventionRepository extends BaseRepository<
@@ -13,9 +13,26 @@ export class InterventionRepository extends BaseRepository<
 > {
   constructor(
     @InjectRepository(InterventionEntity)
-    private repository: Repository<InterventionEntity>,
+    private ormRepo: Repository<InterventionEntity>
   ) {
-    super(repository);
+    super(ormRepo);
   }
 
+  async find(options?: {
+    where?: FindOptionsWhere<InterventionEntity> | FindOptionsWhere<InterventionEntity>[];
+    relations?: string[];
+  }): Promise<InterventionEntity[]> {
+    return this.ormRepo.find(options);
+  }
+
+  async findAll(): Promise<InterventionEntity[]> {
+    return this.ormRepo.find();
+  }
+
+  async findById(id: string): Promise<InterventionEntity | null> {
+    return this.ormRepo.findOne({
+      where: { id },
+      relations: ["room"],
+    });
+  }
 }

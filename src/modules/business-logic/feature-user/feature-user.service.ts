@@ -196,8 +196,23 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
 
 
     async updateAddress(dto: UpdateAddressDto) {
-        const update = await this.addressRepository.update(dto.id, dto)
-        return update
+
+        if(dto.id && dto.id !== '') {
+             delete dto.userId
+            const update = await this.addressRepository.update(dto.id, dto)
+            return update
+        }else {
+            delete dto.id
+            const addressRes = await this.addressRepository.create(dto)
+            const user = await this.userRepository.findById(dto.userId)
+
+            addressRes.user = user
+            user.address = addressRes
+            await addressRes.save()
+            await user.save()
+            return addressRes.reload()
+        }
+   
     }
 
     async updateProfilePicture(userId: string, dto: MediaUploadDto) {
