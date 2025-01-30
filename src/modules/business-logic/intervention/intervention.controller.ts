@@ -66,4 +66,27 @@ export class InterventionController {
       interventionId
     );
   }
+
+  @Delete("cost-estimate/:costEstimateId/room/:roomId/interventions")
+  @ApiBearerAuth()
+  async deleteAllInterventionsFromRoomCostEstimate(
+    @Param("costEstimateId") costEstimateId: string,
+    @Param("roomId") roomId: string
+  ) {
+    return await this.service.deleteAllInterventionsFromRoomCostEstimate(costEstimateId, roomId);
+  }
+
+  @Delete("cost-estimate/:costEstimateId/room/:roomId/intervention/:interventionId")
+  @ApiBearerAuth()
+  async deleteOneInterventionFromRoomCostEstimate(
+    @Param("costEstimateId") costEstimateId: string,
+    @Param("roomId") roomId: string,
+    @Param("interventionId") interventionId: string
+  ) {
+    return await this.service.deleteOneInterventionFromRoomCostEstimate(
+      costEstimateId,
+      roomId,
+      interventionId
+    );
+  }
 }

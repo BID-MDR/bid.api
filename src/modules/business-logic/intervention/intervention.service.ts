@@ -5,6 +5,7 @@ import { InterventionRepository } from "src/modules/data-interaction/database/re
 import { RoomRepository } from "src/modules/data-interaction/database/repositories/room/room.repository";
 import { BaseService } from "../../../core/services/base.service";
 import { ContractService } from "../../contract/contract.service";
+import { CostEstimateService } from "../cost-estimate/costEstimate.service";
 
 @Injectable()
 export class InterventionService extends BaseService<
@@ -15,7 +16,8 @@ export class InterventionService extends BaseService<
   constructor(
     private repository: InterventionRepository,
     private roomRepo: RoomRepository,
-    private contractService: ContractService
+    private contractService: ContractService,
+    private costEstimateService: CostEstimateService,
   ) {
     super(repository);
   }
@@ -106,6 +108,69 @@ export class InterventionService extends BaseService<
     if (!room) {
       throw new NotFoundException(
         `Room ${roomId} not found for this contract ${contractId}`
+      );
+    }
+
+    const intervention = await this.repository.findById(interventionId);
+    if (!intervention) {
+      throw new NotFoundException(`Intervention ${interventionId} not found`);
+    }
+
+    if (!intervention.room || intervention.room.id !== roomId) {
+      throw new NotFoundException(
+        `Intervention ${interventionId} does not belong to room ${roomId}`
+      );
+    }
+
+    await this.repository.hardDelete(interventionId);
+
+    return {
+      message: `Intervention ${interventionId} deleted from room ${roomId}.`,
+    };
+  }
+
+  async deleteAllInterventionsFromRoomCostEstimate(costEstimateId: string, roomId: string) {
+    const costEstimate = await this.costEstimateService.getById(costEstimateId);
+    if (!costEstimate) {
+      throw new NotFoundException(`Cost Estimate ${costEstimateId} not found`);
+    }
+
+    const room = (costEstimate.workRequest?.room || []).find(
+      (r: any) => r.id === roomId
+    );
+    if (!room) {
+      throw new NotFoundException(
+        `Room ${roomId} not found for this cost estimate ${costEstimateId}`
+      );
+    }
+
+    const interventions = await this.repository.find({
+      where: { room: { id: roomId } },
+    });
+
+    for (const interv of interventions) {
+      await this.repository.hardDelete(interv.id);
+    }
+
+    return { message: `All interventions from room ${roomId} removed.` };
+  }
+
+  async deleteOneInterventionFromRoomCostEstimate(
+    costEstimateId: string,
+    roomId: string,
+    interventionId: string
+  ) {
+    const costEstimate = await this.costEstimateService.getById(costEstimateId);
+    if (!costEstimate) {
+      throw new NotFoundException(`Cost Estimate ${costEstimateId} not found`);
+    }
+
+    const room = (costEstimate.workRequest?.room || []).find(
+      (r: any) => r.id === roomId
+    );
+    if (!room) {
+      throw new NotFoundException(
+        `Room ${roomId} not found for this cost estimate ${costEstimateId}`
       );
     }
 
