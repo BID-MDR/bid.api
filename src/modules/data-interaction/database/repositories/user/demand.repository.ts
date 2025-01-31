@@ -22,8 +22,12 @@ export class DemandRepository extends BaseRepository<
   }
 
   async getById(_id: string) {
-    return this.repository.findOne({ where: { id: _id }, loadEagerRelations: true });
-  }
+    const query = this.getDefaultQuery()
+      .where("demand.id = :id", { id: _id })
+      .distinct(true);
+
+    return query.getOne();
+}
 
   async countSustainabilityItems(document: string | number) {
     const count = await this.repository
