@@ -78,7 +78,7 @@ export class TechnicalVisitRepository extends BaseRepository<
           professional: { id: professionalId },
           status: Not(In(['REALIZADA', 'CANCELADA', 'SOLICITACAO_CANCELADA', 'VISITA_CANCELADA'])),
         },
-        relations: ['professional', 'beneficiary', 'workRequest'],
+        relations: ['professional', 'beneficiary', 'workRequest', 'workRequest.beneficiary'],
       });
     }
 

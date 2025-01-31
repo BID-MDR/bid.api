@@ -64,7 +64,7 @@ export class ContractRepository extends BaseRepository<
         professional: { id: professionalId },
         status: Not(In(['DELIVERED', 'REPROVED'])), 
       },
-      relations: ['professional', 'workRequest'],
+      relations: ['professional', 'workRequest', 'workRequest.beneficiary'],
     });
   }  
   async findByIdContract(id: string): Promise<ContractEntity> {

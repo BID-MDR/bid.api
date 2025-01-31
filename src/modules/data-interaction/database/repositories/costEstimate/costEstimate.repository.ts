@@ -75,7 +75,7 @@ export class CostEstimateRepository extends BaseRepository<
             professional: { id: professionalId },
             type: Not(In(['REPROVED_ESTIMATION', 'APPROVED_ESTIMATION'])),
           },
-          relations: ['professional', 'workRequest'],
+          relations: ['professional', 'workRequest', 'workRequest.beneficiary'],
         });
       }   
 

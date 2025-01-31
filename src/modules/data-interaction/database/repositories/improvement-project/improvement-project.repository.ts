@@ -42,7 +42,7 @@ export class ImprovementProjectRepository extends BaseRepository<
         professional: { id: professionalId },
         status: Not(In(['DELIVERED'])),
       },
-        relations: ['professional', 'workRequest'],
+        relations: ['professional', 'workRequest', 'workRequest.beneficiary'],
       });
   }
   async getByProfessional(professionalId: string) {

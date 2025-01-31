@@ -37,7 +37,7 @@ export class RegisterWorkRepository extends BaseRepository<
         professional: { id: professionalId },
         status: Not(In(['FINALIZADA'])),
       },
-      relations: ['professional', 'workRequest', 'workRequest.beneficiaryId'],
+      relations: ['professional', 'workRequest', 'workRequest.beneficiary'],
     });
   } 
   
