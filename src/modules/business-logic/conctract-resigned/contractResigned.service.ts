@@ -41,7 +41,7 @@ export class ContractResignedService extends BaseService<ContractResignedEntity,
     data.bidDocument = bidDocument
 
     return await this.repository.create(data);
-}
+  }
 
 
  
@@ -85,5 +85,8 @@ export class ContractResignedService extends BaseService<ContractResignedEntity,
     return await this.repository.hardDelete(costEstimateId);
   }
 
+  async findContractByWorkRequest(workRequestId: string) {
+    return await this.repository.getByWorkRequestId(workRequestId);
+  }
 
 }

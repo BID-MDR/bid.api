@@ -52,5 +52,12 @@ export class ContractResignedRepository extends BaseRepository<
       return await this.repository.update({ id: contractResignedId }, { reason: dto.reason });
 
   }
+
+  async getByWorkRequestId(workRequestId: string): Promise<ContractResignedEntity[]> {
+    return this.repository.find({
+      where: { workRequest: { id: workRequestId } },
+      relations: ['workRequest', 'workRequest.beneficiary', 'professional', 'bidDocument'],
+    });
+  }
   
 }

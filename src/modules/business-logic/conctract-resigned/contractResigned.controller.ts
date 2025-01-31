@@ -22,6 +22,12 @@ export class ContractResignedController {
     return await this.service.findById(id);
   }
 
+  @Get("by-workRequest/:id")
+  @ApiBearerAuth()
+  async getByworkRequest(@Param("id") id: string) {
+    return await this.service.findContractByWorkRequest(id);
+  }
+
  
   @Post("")
   @ApiBearerAuth()
