@@ -37,7 +37,7 @@ export class ContractResignedRepository extends BaseRepository<
         professional: { id: professionalId },
         status: Not(In(['RESIGNED'])),
       },
-      relations: ['professional', 'workRequest'],
+      relations: ['professional', 'workRequest', 'workRequest.beneficiary'],
     });
   }  
 
