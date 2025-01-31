@@ -63,7 +63,7 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
   }
 
   async updateStatus(id: string, dto: StatusDemandDto) {
-    const demand = await this.demandRepository.findById(id);
+    const demand = await this.demandRepository.getById(id);
 
     const { status } = dto;
 
@@ -92,7 +92,9 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
       throw new BadRequestException("Não é possível alterar para um status anterior.");
     }
 
+
     this.checkStatusForWorkRequest(demand, status);
+    console.log(demand)
     this.checkStatusForImprovement(demand, status);
     this.checkStatusForConstruction(demand, status);
 

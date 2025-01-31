@@ -71,8 +71,8 @@ export class WorkRequestController {
 
   @Post("")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_inspection, EmployeeRoleEnum.manager_demand])
+  @UseGuards(JwtAccessTokenGuard)
+  // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_inspection, EmployeeRoleEnum.manager_demand])
   @ApiOperation({
     description: "Registrar vistoria.",
     summary: "Registrar vistoria.",
@@ -87,7 +87,6 @@ export class WorkRequestController {
     description: "Construção a ser criado.",
   })
   async create(@Body() dto: CreateWorkRequestDto, @Req() req: Request) {
-    console.log('dto dto', dto)
     const companyId = (req.user as JwtPayloadInterface).companyId;
     return await this.service.register(dto, companyId);
   }

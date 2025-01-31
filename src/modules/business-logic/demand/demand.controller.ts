@@ -121,8 +121,11 @@ export class DemandController {
 
     @Post("")
    @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesGuard)
-    @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_demand])
+    @UseGuards(
+        JwtAccessTokenGuard, 
+        // RolesGuard
+    )
+    // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_demand])
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
         description: "Pedido de demanda.",
