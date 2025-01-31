@@ -7,6 +7,8 @@ import { WorkRequestRepository } from "src/modules/data-interaction/database/rep
 import { BidDocumentRepository } from "src/modules/data-interaction/database/repositories/bidDocument/bidDocument.repository";
 import { UserRepository } from "src/modules/data-interaction/database/repositories/user/user.repository";
 import { NotificationMessageService } from "../notification-msg/notification-message.service";
+import { UpdateRegisterWorkDto } from "src/modules/data-interaction/database/dtos/register-work/update-register-work.dto";
+import { ConstructionsStatusEnum } from "src/modules/data-interaction/database/enums/constructions-stauts.enum";
 
 @Injectable()
 export class RegisterWorkService extends BaseService<RegisterWorkEntity, RegisterWorkCreateDto, RegisterWorkCreateDto> {
@@ -30,10 +32,21 @@ export class RegisterWorkService extends BaseService<RegisterWorkEntity, Registe
   }
 
   async getByProfessional(professionalId: string) {
-    const professional = await this.userRepo.findById(professionalId)
-    if(!professional) throw new NotFoundException('Professional not found')
-    return await this.repository.getByProfessional(professionalId);
-  }
+    const professional = await this.userRepo.findById(professionalId);
+    if (!professional) throw new NotFoundException('Professional not found');
+
+    const result = await this.repository.getByProfessional(professionalId);
+    console.log('result', result)
+    for(let i = 0; i < result.length ; i++) {
+      if (result[i].workRequest.technicalVisit && result[i].workRequest.technicalVisit.length > 0) {
+        result[i].workRequest.technicalVisit.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        result[i].workRequest.technicalVisit = [result[i].workRequest.technicalVisit[0]];
+      }
+
+    }
+   
+    return result;
+}
 
 
   async register(data: RegisterWorkCreateDto) {
@@ -124,8 +137,20 @@ export class RegisterWorkService extends BaseService<RegisterWorkEntity, Registe
 
     return regWorkToReturn
   }
+   /**
+    * cadastrar obra ->  atualizar o registerwork o status para toScheduleCOnclusion , do register work tbm  atualizar area, type, opcional description
+    */
+  async updateRegisterWork(dto: UpdateRegisterWorkDto) {
+    const registerWork = await this.repository.findById(dto.registerWorkId)
+    if(!registerWork) throw new NotFoundException('Register work not found!')
+    registerWork.status = ConstructionsStatusEnum.TO_SCHEDULE_CONCLUSION
+    registerWork.area = dto.area ? dto.area : registerWork.area
+    registerWork.type = dto.type
+    registerWork.description =dto.description ? dto.description : registerWork.description
+    await registerWork.save()
+    return await registerWork.reload()
 
-
+  }
 
   async delete(interventionId: string) {
     return await this.repository.hardDelete(interventionId);

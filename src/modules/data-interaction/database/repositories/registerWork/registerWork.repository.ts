@@ -41,14 +41,18 @@ export class RegisterWorkRepository extends BaseRepository<
     });
   } 
   
-  async getByProfessional(professionalId: string) {
-    return this.repository.find({
-      where: {
-        professional: { id: professionalId },
-      },
-      relations: ['professional', 'workRequest', 'workRequest.beneficiary'],
-    });
+  async getByProfessional(professionalId: string){
+    return this.repository
+      .createQueryBuilder('registerWork')
+      .leftJoinAndSelect('registerWork.workRequest', 'workRequest')
+      .leftJoinAndSelect('workRequest.beneficiary', 'beneficiary')
+      .leftJoinAndSelect('beneficiary.address', 'address')
+      .leftJoinAndSelect('workRequest.technicalVisit', 'technicalVisit')
+      .where('registerWork.professionalId = :professionalId', { professionalId })
+      .getMany();
   }
+  
+  
   async startRegisterWork(registerWorkId: string, ) {
     return await this.repository.update({ id: registerWorkId }, {startedDate: new Date(), status: ConstructionsStatusEnum.EM_ANDAMENTO});
   }

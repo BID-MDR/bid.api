@@ -10,6 +10,7 @@ import { JwtPayloadInterface } from "src/core/interfaces/jwt-payload.interface";
 import { CreateInterventionRequestDto } from "src/modules/data-interaction/database/dtos/intervention/intervention-request.dto";
 import { RegisterWorkCreateDto } from "src/modules/data-interaction/database/dtos/register-work/register-work.dto";
 import { ResponseDto } from "src/core/dtos/response.dto";
+import { UpdateRegisterWorkDto } from "src/modules/data-interaction/database/dtos/register-work/update-register-work.dto";
 
 @Controller("register-work")
 @ApiTags("register-work")
@@ -56,6 +57,11 @@ export class RegisterWorkController {
   @ApiBearerAuth()
   async update(@Param("id") id: string, @Body() dto: RegisterWorkCreateDto) {
     return await this.service.update(id, dto);
+  }
+  @Put("update-register-work-from-professional")
+  @ApiBearerAuth()
+  async updateRegisterWork( @Body() dto: UpdateRegisterWorkDto) {
+    return await this.service.updateRegisterWork(dto);
   }
 
   @Put("start-work/:id")
