@@ -10,6 +10,8 @@ import { UserRepository } from 'src/modules/data-interaction/database/repositori
 import { WorkRequestRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request.repository';
 import { NotificationMessageService } from '../notification-msg/notification-message.service';
 import { ConstructionsStatusEnum } from 'src/modules/data-interaction/database/enums/constructions-stauts.enum';
+import { TechnicalVisitTypeEnum } from 'src/modules/data-interaction/database/enums/technical-visit-type.enum';
+import { RescheduleTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/reschedule-technical-visit.dto';
 
 @Injectable()
 export class FeatureTechnicalVisitService extends BaseService<
@@ -33,8 +35,9 @@ export class FeatureTechnicalVisitService extends BaseService<
 
         return await this.technicalVisitRepository.getByProfessional(professionalId);
     }
-
+     
     async schedule(userId: string ,dto: CreateTechnicalVisitDto) {
+
         const userCreate = await this.userRepository.findById(userId)
         dto.userCreate = userCreate;
         const beneficiary = await this.userRepository.getById(dto.beneficiaryId);
@@ -43,11 +46,24 @@ export class FeatureTechnicalVisitService extends BaseService<
         dto.professional = professional;
         const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
         dto.workRequest = workRequest;
-
+        dto.type = TechnicalVisitTypeEnum.CADASTRO_DE_OBRA
         const technicalVisit = await this.technicalVisitRepository.create(dto)
         this.registerWorkRepo.updateStatus(dto.registerWorkId, ConstructionsStatusEnum.REGISTRATION_SCHEDULE)
     
         return technicalVisit
+    }
+    async reScheduleVisit(technicalVisitId: string ,dto: RescheduleTechnicalVisitDto) {
+        const registerWork = await this.registerWorkRepo.findById(dto.registerWorkId)
+        if(!registerWork) throw new NotFoundException('Register work not found!')
+        this.registerWorkRepo.updateStatus(dto.registerWorkId, ConstructionsStatusEnum.RESCHEDULE_REGISTRATION)
+        const technicalVisit = await this.technicalVisitRepository.findById(technicalVisitId)
+        if(!technicalVisit) throw new NotFoundException('Technical visit not found!')
+        delete dto.registerWorkId
+        technicalVisit.from = dto.from
+        technicalVisit.to = dto.to
+        technicalVisit.duration = dto.duration ? dto.duration : technicalVisit.duration
+        await technicalVisit.save()
+        return await technicalVisit.reload()
     }
 
     async scheduleRegistertWorkTechnicalVisit(dto: CreateTechnicalVisitDto) {

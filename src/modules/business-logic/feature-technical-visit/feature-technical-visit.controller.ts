@@ -30,6 +30,7 @@ import { TechnicalVisitResponseDto } from "src/modules/data-interaction/database
 import { UpdateTechnicalVisitDto } from "src/modules/data-interaction/database/dtos/technical-visit/update-technical-visit.dto";
 import { FeatureTechnicalVisitService } from "./feature-technical-visit.service";
 import { ResponseDto } from "src/core/dtos/response.dto";
+import { RescheduleTechnicalVisitDto } from "src/modules/data-interaction/database/dtos/technical-visit/reschedule-technical-visit.dto";
 
 @Controller("technical-visit")
 @ApiTags("Technical Visit/Visita Técnica")
@@ -174,6 +175,12 @@ export class FeatureTechnicalVisitController {
         const userId = (req.user as JwtPayloadInterface).userId;
 
         return await this.featureTechnicalVisitService.update(userId, body);
+    }
+    @Put("reschedule-technical-visit/:technicalVisitId")
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiBearerAuth()
+    async reSchedule(@Param('technicalVisitId') technicalVisitId: string   , @Body() body: RescheduleTechnicalVisitDto) {
+        return await this.featureTechnicalVisitService.reScheduleVisit(technicalVisitId, body);
     }
 
     @Put("update")
