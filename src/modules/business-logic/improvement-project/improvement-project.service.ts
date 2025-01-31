@@ -36,6 +36,12 @@ export class ImpromentProjectService extends BaseService<ImprovementProjectEntit
     if (!professional) throw new NotFoundException('Professional not found!')
     return await this.improvementProjectRepository.getByProfessional(professionalId)
   }
+
+  async getByBeneficiary(beneficiaryId: string) {
+    const beneficiary =  await this.userRepository.findById(beneficiaryId);
+    if (!beneficiary) throw new NotFoundException('beneficiary not found!')
+    return await this.improvementProjectRepository.listByBeneficiary(beneficiaryId)
+  }
   
 
 
@@ -71,13 +77,13 @@ export class ImpromentProjectService extends BaseService<ImprovementProjectEntit
      if(!document) throw new NotFoundException('Document not found!')
      data.document = document
     return await this.improvementProjectRepository.addDocument(projectId, data.document)
-   }
+  }
 
-   async updateProjectStatus(projectId: string,data: ImprovementProjectUpdateStatusRequestDto) {
-    const project = await this.improvementProjectRepository.findById(projectId)
-    if(!project) throw new NotFoundException('Project not found!')
-    return await this.improvementProjectRepository.updateStatus(projectId, data)
-   }
+  async updateProjectStatus(projectId: string,data: ImprovementProjectUpdateStatusRequestDto) {
+  const project = await this.improvementProjectRepository.findById(projectId)
+  if(!project) throw new NotFoundException('Project not found!')
+  return await this.improvementProjectRepository.updateStatus(projectId, data)
+  }
 
 
 
