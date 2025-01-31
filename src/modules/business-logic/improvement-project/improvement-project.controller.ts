@@ -54,5 +54,10 @@ export class ImprovementProjectController {
     return await this.service.addDocument(id, dto);
   }
 
+  @Get('beneficiary/:beneficiaryId')
+  async getByBeneficiary(@Param('beneficiaryId') beneficiaryId: string) {
+    return await this.service.getByBeneficiary(beneficiaryId);
+  }
+
 
 }

@@ -54,6 +54,17 @@ export class ImprovementProjectRepository extends BaseRepository<
         
       });
   }  
+
+  async listByBeneficiary(beneficiaryId: string): Promise<ImprovementProjectEntity[]> {
+    return this.repository.find({
+      where: {
+        workRequest: {
+          beneficiary: { id: beneficiaryId }, 
+        },
+      },
+      relations: ['workRequest', 'workRequest.beneficiary', 'document', 'professional'],
+    });
+  }
   
 
   async updateStatus(projectId: string, data: ImprovementProjectUpdateStatusRequestDto){
