@@ -151,29 +151,23 @@ export class FeatureTechnicalVisitController {
         return new ResponseDto(true, result, null);
     }
 
-    @Put("")
+    @Put(":id")
     @UseGuards(JwtAccessTokenGuard)
     @ApiBearerAuth()
     @ApiOperation({
-        description: "Enpoint único para Atualizar uma visita técnica.",
+        description: "Atualiza uma visita técnica pelo ID.",
         summary: "Atualiza uma visita técnica.",
     })
     @ApiBody({
         type: UpdateTechnicalVisitDto,
         required: true,
-        description: "Visita técnica a ser atualizada.",
+        description: "Dados da visita técnica a serem atualizados.",
     })
-    @ApiOkResponseDtoData({
-        type: TechnicalVisitResponseDto,
-        description: "Visita técnica atualizada.",
-    })
-    @SerializeOptions({
-        type: TechnicalVisitResponseDto,
-    })
-    async update(@Req() req: Request, @Body() body: UpdateTechnicalVisitDto) {
-        const userId = (req.user as JwtPayloadInterface).userId;
-
-        return await this.featureTechnicalVisitService.update(userId, body);
+    async update(
+        @Param("id") id: string,
+        @Body() body: UpdateTechnicalVisitDto
+    ) {
+        return await this.featureTechnicalVisitService.update(id, body);
     }
 
     @Put("update")
