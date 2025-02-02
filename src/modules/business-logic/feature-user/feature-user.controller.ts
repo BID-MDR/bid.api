@@ -55,7 +55,7 @@ export class FeatureUserController {
     ) { }
 
     @Get("")
-   @ApiBearerAuth()
+    @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
     @ApiOperation({
         description:
@@ -71,7 +71,7 @@ export class FeatureUserController {
     })
     async getLogged(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
-        const result = await this.featureUserService.findById(userId);
+        const result = await this.featureUserService.getById(userId);
         return new ResponseDto(true, result, null);
     }
 
