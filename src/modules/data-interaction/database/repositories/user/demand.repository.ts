@@ -126,7 +126,6 @@ export class DemandRepository extends BaseRepository<
   async listForVisit(companyId: string = ""): Promise<DemandEntity[]> {
   
     const query = this.getDefaultQuery()
-      .leftJoinAndSelect("room.roomSolutions", "roomSolutions")
       .where("company.id = :companyId", { companyId })
       .andWhere("demand.status IN (:...statuses)", {
         statuses: [
@@ -135,7 +134,6 @@ export class DemandRepository extends BaseRepository<
           DemandStatusEnum.ESPERANDO_MELHORIA,
         ],
       })
-      .andWhere("roomSolutions.id IS NULL");
 
     return await query.getMany();
   }

@@ -36,6 +36,13 @@ export class FeatureTechnicalVisitService extends BaseService<
         return await this.technicalVisitRepository.getByProfessional(professionalId);
     }
      
+    async getByProfessionalVisitaTecnicaAgendada(professionalId: string) {
+        const professional = await this.userRepository.findById(professionalId)
+        if (!professional) throw new NotFoundException('Professional not found!')
+
+        return await this.technicalVisitRepository.getByProfessionalVisitaTecnicaAgendada(professionalId);
+    }
+
     async schedule(userId: string ,dto: CreateTechnicalVisitDto) {
 
         const userCreate = await this.userRepository.findById(userId)
