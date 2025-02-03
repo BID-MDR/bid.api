@@ -5,6 +5,7 @@ import { In, Not, Repository } from 'typeorm';
 import { CreateTechnicalVisitDto } from '../dtos/technical-visit/create-technical-visit.dto';
 import { UpdateTechnicalVisitDto } from '../dtos/technical-visit/update-technical-visit.dto';
 import { TechnicalVisitEntity } from '../entitites/technical-visit.entity';
+import { TechnicalVisitTypeEnum } from '../enums/technical-visit-type.enum';
 
 @Injectable()
 export class TechnicalVisitRepository extends BaseRepository<
@@ -35,6 +36,27 @@ export class TechnicalVisitRepository extends BaseRepository<
         return result;
     }
 
+    async getByProfessionalVisitaTecnicaAgendada(professionalId: string) {
+        const relations = [
+            'professional',
+            'beneficiary',
+            'demand',
+            'workRequest',
+            'contract',
+            'improvementProject',
+            'registerWorkBeginning',
+            'registerWorkClosure',
+            'survey',
+        ];
+        const result = await this.repository.find({
+            where: { professional: { id: professionalId },
+            type: TechnicalVisitTypeEnum.VISITA_TECNICA, 
+            status: In(['AGENDADA', 'REAGENDADA', 'REALIZADA']),},
+            relations: relations,
+        });
+        return result;
+    }
+    
     async getByProfessionalPendent(professionalId: string) {
         const relations = [
             'professional',
