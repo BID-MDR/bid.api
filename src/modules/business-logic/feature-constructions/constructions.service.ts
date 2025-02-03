@@ -31,16 +31,15 @@ export class ConstructionsService {
       throw new BadRequestException("Files are required");
     }
 
-    const demand = await this.demandRepository.findById(demandId);
+    const demand = await this.demandRepository.getById2(demandId);
 
     if (!demand) {
       throw new BadRequestException("Demand not found");
     }
 
-    if (demand.company.id !== companyId) {
+    if (demand.company?.id !== companyId) {
       throw new BadRequestException("Not authorized to access this demand");
     }
-
     const roomSolutions = demand.workRequest.room
       .map(room => room.roomSolutions)
       .filter(a => !!a)
@@ -125,12 +124,11 @@ export class ConstructionsService {
   }
 
   async secondStepConstructions(dto: CreateConstructionsDto, demandId: string, companyId: string) {
-    const demand = await this.demandRepository.findById(demandId);
+    const demand = await this.demandRepository.getById2(demandId);
 
     if (!demand) {
       throw new BadRequestException("Demand not found");
     }
-
     if (demand.company.id !== companyId) {
       throw new BadRequestException("Not authorized to access this demand");
     }

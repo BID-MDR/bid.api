@@ -46,6 +46,7 @@ export class RegisterWorkRepository extends BaseRepository<
       .createQueryBuilder('registerWork')
       .leftJoinAndSelect('registerWork.workRequest', 'workRequest')
       .leftJoinAndSelect('workRequest.beneficiary', 'beneficiary')
+      .leftJoinAndSelect('workRequest.demand', 'demand')
       .leftJoinAndSelect('beneficiary.address', 'address')
       .leftJoinAndSelect('workRequest.technicalVisit', 'technicalVisit')
       .where('registerWork.professionalId = :professionalId', { professionalId })
