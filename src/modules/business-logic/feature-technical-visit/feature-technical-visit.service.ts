@@ -12,6 +12,7 @@ import { NotificationMessageService } from '../notification-msg/notification-mes
 import { ConstructionsStatusEnum } from 'src/modules/data-interaction/database/enums/constructions-stauts.enum';
 import { TechnicalVisitTypeEnum } from 'src/modules/data-interaction/database/enums/technical-visit-type.enum';
 import { RescheduleTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/reschedule-technical-visit.dto';
+import { TechnicalVisitStatusEnum } from 'src/modules/data-interaction/database/enums/technical-visit-status.enum';
 
 @Injectable()
 export class FeatureTechnicalVisitService extends BaseService<
@@ -54,6 +55,7 @@ export class FeatureTechnicalVisitService extends BaseService<
         const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
         dto.workRequest = workRequest;
         dto.type = TechnicalVisitTypeEnum.CADASTRO_DE_OBRA
+        dto.status = !dto.status ? dto.status : TechnicalVisitStatusEnum.AGENDADA
         const technicalVisit = await this.technicalVisitRepository.create(dto)
         this.registerWorkRepo.updateStatus(dto.registerWorkId, ConstructionsStatusEnum.REGISTRATION_SCHEDULE)
     
@@ -69,6 +71,7 @@ export class FeatureTechnicalVisitService extends BaseService<
         technicalVisit.from = dto.from
         technicalVisit.to = dto.to
         technicalVisit.duration = dto.duration ? dto.duration : technicalVisit.duration
+        technicalVisit.status = TechnicalVisitStatusEnum.AGENDADA
         await technicalVisit.save()
         return await technicalVisit.reload()
     }
