@@ -33,8 +33,9 @@ export class WorkRequestRepository extends BaseRepository<
     const relations = [
       'beneficiary',
       'demand',
-      'workRequest',
-      'contract',
+      // 'workRequest',
+      'contracts',
+      'contractResignedList',
   ];
 
   return await this.repository.find({
