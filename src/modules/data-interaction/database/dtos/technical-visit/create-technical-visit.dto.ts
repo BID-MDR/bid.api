@@ -7,6 +7,7 @@ import { TechnicalVisitStatusEnum } from '../../enums/technical-visit-status.enu
 import { TechnicalVisitTypeEnum } from '../../enums/technical-visit-type.enum';
 import { RegisterWorkEntity } from '../../entitites/register-work.entity';
 import { TechnicalVisitRegisterWorkEnum } from '../../enums/technical-visit-register-work-type.enum';
+import { ContractEntity } from '../../entitites/contract.entity';
 
 export class CreateTechnicalVisitDto {
     @ApiProperty()
@@ -29,6 +30,10 @@ export class CreateTechnicalVisitDto {
     @ApiProperty({ required: false })
     beneficiaryId?: string;
     beneficiary?: UserEntity;
+
+    @ApiProperty({ required: false })
+    contractId?: string;
+    contract?: ContractEntity;
 
     @ApiProperty()
     @IsUUID()

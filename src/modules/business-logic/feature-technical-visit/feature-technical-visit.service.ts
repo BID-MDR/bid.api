@@ -13,6 +13,7 @@ import { ConstructionsStatusEnum } from 'src/modules/data-interaction/database/e
 import { TechnicalVisitTypeEnum } from 'src/modules/data-interaction/database/enums/technical-visit-type.enum';
 import { RescheduleTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/reschedule-technical-visit.dto';
 import { TechnicalVisitStatusEnum } from 'src/modules/data-interaction/database/enums/technical-visit-status.enum';
+import { ContractRepository } from 'src/modules/data-interaction/database/repositories/contract/contract.repository';
 
 @Injectable()
 export class FeatureTechnicalVisitService extends BaseService<
@@ -25,6 +26,7 @@ export class FeatureTechnicalVisitService extends BaseService<
         private readonly userRepository: UserRepository,
         private workRequestRepository: WorkRequestRepository,
         private registerWorkRepo: RegisterWorkRepository,
+        private contractRepository: ContractRepository,
         private notifcationMsgService: NotificationMessageService
     ) {
         super(technicalVisitRepository);
@@ -87,6 +89,8 @@ export class FeatureTechnicalVisitService extends BaseService<
         dto.professional = professional;
         const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
         dto.workRequest = workRequest;
+        const contract = await this.contractRepository.findById(dto.contractId);
+        dto.contract = contract;
         if (dto.beginningOrEnd) {
             if (dto.beginningOrEnd === TechnicalVisitRegisterWorkEnum.BEGINNING) {
                 const registerWork = await this.registerWorkRepo.findById(dto.registerWorkBeginningId);
