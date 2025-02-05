@@ -6,6 +6,7 @@ import { In, Not, Repository } from "typeorm";
 import { ContractResignedEntity } from "../../entitites/contract-resigned.entity";
 import { CreateContractResignedRequestDto } from "../../dtos/contract-resigned/contract-resigned-request.dto";
 import { CreateContractResignedUpdateStatusRequestDto } from "../../dtos/contract-resigned/contract-resigned-update-status-request.dto";
+import { ContractResignedStatusEnum } from "../../enums/contract-resigned-stauts.enum";
 
 @Injectable()
 export class ContractResignedRepository extends BaseRepository<
@@ -44,6 +45,12 @@ export class ContractResignedRepository extends BaseRepository<
   async updateContractResignedStatus(contractResignedId: string, dto: CreateContractResignedUpdateStatusRequestDto) {
 
     return await this.repository.update({ id: contractResignedId }, { status: dto.status});
+ 
+  }
+
+  async declineContract(contractResignedId: string) {
+
+    return await this.repository.update({ id: contractResignedId }, { status:ContractResignedStatusEnum.RESIGNED });
  
   }
 

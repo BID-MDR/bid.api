@@ -81,6 +81,14 @@ export class ContractResignedService extends BaseService<ContractResignedEntity,
     }
   }
 
+  async declineContract(contractResignedId: string,) {
+    const contractResigned = await this.repository.findById(contractResignedId)
+    if(!contractResigned) throw new NotFoundException('Contract not found!')
+    await this.workRequestRepo.changeContractStatus(contractResigned.workRequest.id)
+    return await this.repository.declineContract(contractResignedId)
+   
+  }
+
   async delete(costEstimateId: string) {
     return await this.repository.hardDelete(costEstimateId);
   }

@@ -14,6 +14,8 @@ import { TechnicalVisitTypeEnum } from 'src/modules/data-interaction/database/en
 import { RescheduleTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/reschedule-technical-visit.dto';
 import { TechnicalVisitStatusEnum } from 'src/modules/data-interaction/database/enums/technical-visit-status.enum';
 import { ContractRepository } from 'src/modules/data-interaction/database/repositories/contract/contract.repository';
+import { CreateTechnicalVisitUpdateImprovementProjectDto } from 'src/modules/data-interaction/database/dtos/technical-visit/create-technical-visit-update-improvement-project.dto';
+import { ImprovementProjectRepository } from 'src/modules/data-interaction/database/repositories/improvement-project/improvement-project.repository';
 
 @Injectable()
 export class FeatureTechnicalVisitService extends BaseService<
@@ -27,7 +29,8 @@ export class FeatureTechnicalVisitService extends BaseService<
         private workRequestRepository: WorkRequestRepository,
         private registerWorkRepo: RegisterWorkRepository,
         private contractRepository: ContractRepository,
-        private notifcationMsgService: NotificationMessageService
+        private notifcationMsgService: NotificationMessageService,
+        private improvementProjectRepo: ImprovementProjectRepository
     ) {
         super(technicalVisitRepository);
     }
@@ -67,10 +70,29 @@ export class FeatureTechnicalVisitService extends BaseService<
     
         return technicalVisit
     }
+
+    async scheduleTechnicalVisitAndUpdateImprovementProject(dto: CreateTechnicalVisitUpdateImprovementProjectDto) {
+        const userCreate = await this.userRepository.findById(dto.professionalId)
+        if(!userCreate) throw new NotFoundException('User not found!')
+        dto.userCreate = userCreate;
+        const beneficiary = await this.userRepository.getById(dto.beneficiaryId);
+        if(!beneficiary) throw new NotFoundException(' Beneficiary not found!')
+        dto.beneficiary = beneficiary;
+        const professional = await this.userRepository.getById(dto.professionalId);
+        if(!professional) throw new NotFoundException(' Professional not found!')
+        dto.professional = professional;
+        const workRequest = await this.workRequestRepository.findById2(dto.workRequestId);
+        if(!workRequest) throw new NotFoundException(' WorkRequest not found!!!')
+        dto.workRequest = workRequest;
+        const improvement_project = await this.improvementProjectRepo.findWorkRequest(dto.workRequestId)
+        if(!improvement_project) throw new NotFoundException(' Project not found!')
+        await this.improvementProjectRepo.updateStatusProjectDelivery(improvement_project.id)
+        return await this.technicalVisitRepository.create(dto)
+        
+    }
     async reScheduleVisit(technicalVisitId: string ,dto: RescheduleTechnicalVisitDto) {
         const registerWork = await this.registerWorkRepo.findById(dto.registerWorkId)
         if(!registerWork) throw new NotFoundException('Register work not found!')
-        this.registerWorkRepo.updateStatus(dto.registerWorkId, ConstructionsStatusEnum.RESCHEDULE_REGISTRATION)
         const technicalVisit = await this.technicalVisitRepository.findById(technicalVisitId)
         if(!technicalVisit) throw new NotFoundException('Technical visit not found!')
         delete dto.registerWorkId
