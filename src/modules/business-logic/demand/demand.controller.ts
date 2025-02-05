@@ -30,7 +30,7 @@ import { EmployeeRoleEnum } from "../../data-interaction/database/enums/employee
 export class DemandController {
     private readonly _logger = new Logger(DemandController.name);
 
-    constructor(private demandService: DemandService) {}
+    constructor(private demandService: DemandService) { }
 
     @Get("")
     @ApiBearerAuth()
@@ -120,9 +120,9 @@ export class DemandController {
     }
 
     @Post("")
-   @ApiBearerAuth()
+    @ApiBearerAuth()
     @UseGuards(
-        JwtAccessTokenGuard, 
+        JwtAccessTokenGuard,
         // RolesGuard
     )
     // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_demand])
@@ -134,11 +134,13 @@ export class DemandController {
         type: ResponseDemandDto,
     })
     async register(@Req() req: Request, @Body() dto: DemandRegisterRequestDto) {
-    const userId = (req.user as JwtPayloadInterface).userId;
+        const userId = (req.user as JwtPayloadInterface).userId;
+        console.log('userId', userId);
+        console.log('dto', dto);
         return await this.demandService.register(userId, dto);
     }
     @Post("register-single-demand")
-   @ApiBearerAuth()
+    @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesGuard)
     @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_demand])
     @ApiOkResponseDtoData({
@@ -149,7 +151,7 @@ export class DemandController {
         type: ResponseDemandDto,
     })
     async registerSingleDemand(@Req() req: Request, @Body() dto: DemandRegisterRequestDto) {
-    const userId = (req.user as JwtPayloadInterface).userId;
+        const userId = (req.user as JwtPayloadInterface).userId;
         return await this.demandService.registerSingleDemand(userId, dto);
     }
 
