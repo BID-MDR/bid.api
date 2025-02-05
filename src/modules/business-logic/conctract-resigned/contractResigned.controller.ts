@@ -40,6 +40,17 @@ export class ContractResignedController {
     return await this.service.register(dto);
   }
 
+  @Post("created-contract-and-update-work-request")
+  @ApiBearerAuth()
+  @ApiBody({
+    type: CreateContractResignedRequestDto,
+    required: true,
+    description: "Intervenção a ser criada.",
+  })
+  async registerAndUpdateWorkRequest(@Body() dto: CreateContractResignedRequestDto) {
+    return await this.service.registerAndUpdateWorkRequest(dto);
+  }
+
 
   @Put("id/:id")
   @ApiBearerAuth()
