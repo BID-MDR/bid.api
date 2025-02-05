@@ -11,6 +11,8 @@ import { CreateInterventionRequestDto } from "src/modules/data-interaction/datab
 import { RegisterWorkCreateDto } from "src/modules/data-interaction/database/dtos/register-work/register-work.dto";
 import { ResponseDto } from "src/core/dtos/response.dto";
 import { UpdateRegisterWorkDto } from "src/modules/data-interaction/database/dtos/register-work/update-register-work.dto";
+import { BidDocumentRequestDto } from "src/modules/data-interaction/database/dtos/bidDocument/bid-document-create.dto";
+import { RegisterWorkFinishDto } from "src/modules/data-interaction/database/dtos/register-work/finish-register-work.dto";
 
 @Controller("register-work")
 @ApiTags("register-work")
@@ -62,6 +64,12 @@ export class RegisterWorkController {
   @ApiBearerAuth()
   async updateRegisterWork( @Body() dto: UpdateRegisterWorkDto) {
     return await this.service.updateRegisterWork(dto);
+  }
+
+  @Put("finish-register-work/:registerWorkId")
+  @ApiBearerAuth()
+  async finishRegisterWork(@Param('registerWorkId') registerWorkId: string, @Body() dto: RegisterWorkFinishDto) {
+    return await this.service.finishRegisterWork(registerWorkId, dto);
   }
 
   @Put("start-work/:id")

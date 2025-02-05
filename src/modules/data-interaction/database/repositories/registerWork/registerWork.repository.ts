@@ -57,6 +57,9 @@ export class RegisterWorkRepository extends BaseRepository<
   async startRegisterWork(registerWorkId: string, ) {
     return await this.repository.update({ id: registerWorkId }, {startedDate: new Date(), status: ConstructionsStatusEnum.EM_ANDAMENTO});
   }
+  async finishRegisterWork(registerWorkId: string, description: string) {
+    return await this.repository.update({ id: registerWorkId }, { status: ConstructionsStatusEnum.CONCLUDED, description: description});
+  }
   async updateStatus(registerWorkId: string, statusUpdate:ConstructionsStatusEnum ) {
     return await this.repository.update({ id: registerWorkId }, { status: statusUpdate});
   }

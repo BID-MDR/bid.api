@@ -49,7 +49,8 @@ export class ContractResignedEntity extends BaseEntity {
     
     @Column({
       type: 'varchar',
-      nullable: true
+      nullable: true,
+      default: ''
     })
     owedValue: string;
     

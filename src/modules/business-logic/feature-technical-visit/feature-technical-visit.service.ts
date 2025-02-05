@@ -85,6 +85,8 @@ export class FeatureTechnicalVisitService extends BaseService<
         dto.beneficiary = beneficiary;
         const professional = await this.userRepository.getById(dto.professionalId);
         dto.professional = professional;
+        const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
+        dto.workRequest = workRequest;
         if (dto.beginningOrEnd) {
             if (dto.beginningOrEnd === TechnicalVisitRegisterWorkEnum.BEGINNING) {
                 const registerWork = await this.registerWorkRepo.findById(dto.registerWorkBeginningId);
