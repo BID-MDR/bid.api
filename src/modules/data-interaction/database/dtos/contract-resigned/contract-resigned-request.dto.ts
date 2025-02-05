@@ -37,7 +37,6 @@ export class CreateContractResignedRequestDto {
     owedValue?: string;
 
     @ApiProperty({ enum: ContractResignedStatusEnum, required: false })
-    @IsEnum(ContractResignedStatusEnum)
-    status?: ContractResignedStatusEnum;
+    status?: ContractResignedStatusEnum
 
 }
