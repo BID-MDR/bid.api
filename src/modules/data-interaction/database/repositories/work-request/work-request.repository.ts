@@ -20,7 +20,7 @@ export class WorkRequestRepository extends BaseRepository<
     super(repository);
   }
 
-  async getByUserId(userId: string) {
+  async getByUserIdteste(userId: string) {
     const relations = this.repository.metadata.relations.map((rel) => rel.propertyPath);
 
     return await this.repository.find({
@@ -29,6 +29,19 @@ export class WorkRequestRepository extends BaseRepository<
     });
   }
 
+  async getByUserId(userId: string) {
+    const relations = [
+      'beneficiary',
+      'demand',
+      'workRequest',
+      'contract',
+  ];
+
+  return await this.repository.find({
+      where: { beneficiary: { id: userId } },
+      relations,
+  });
+  }
 
   async findById2(id: string) {
     const relations = this.repository.metadata.relations.map((rel) => rel.propertyPath);

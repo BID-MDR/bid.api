@@ -36,6 +36,25 @@ export class TechnicalVisitRepository extends BaseRepository<
         return result;
     }
 
+    async getById(id: string) {
+        const relations = [
+            'professional',
+            'beneficiary',
+            'demand',
+            'workRequest',
+            'contract',
+            'improvementProject',
+            'registerWorkBeginning',
+            'registerWorkClosure',
+            'survey',
+        ];
+        const result = await this.repository.findOne({
+            where: { id: id },
+            relations: relations,
+        });
+        return result;
+    }
+    
     async getByProfessionalVisitaTecnicaAgendada(professionalId: string) {
         const relations = [
             'professional',
