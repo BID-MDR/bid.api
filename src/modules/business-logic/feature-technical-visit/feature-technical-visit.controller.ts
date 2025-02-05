@@ -71,21 +71,8 @@ export class FeatureTechnicalVisitController {
         description: "Retorna a visita técnica.",
         summary: "Retorna a visita técnica pelo ID.",
     })
-    @ApiParam({
-        name: "id",
-        description: "ID da visita técnica.",
-        required: true,
-        allowEmptyValue: false,
-    })
-    @ApiOkResponseDtoData({
-        type: TechnicalVisitResponseDto,
-        description: "Visita técnica.",
-    })
-    @SerializeOptions({
-        type: TechnicalVisitResponseDto,
-    })
     async getById(@Param("id") id: string) {
-        return await this.featureTechnicalVisitService.findById(id);
+        return await this.featureTechnicalVisitService.getById(id);
     }
 
     @Get("beneficiary")

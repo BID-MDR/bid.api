@@ -9,6 +9,9 @@ import { UserRepository } from "src/modules/data-interaction/database/repositori
 import { NotificationMessageService } from "../notification-msg/notification-message.service";
 import { UpdateRegisterWorkDto } from "src/modules/data-interaction/database/dtos/register-work/update-register-work.dto";
 import { ConstructionsStatusEnum } from "src/modules/data-interaction/database/enums/constructions-stauts.enum";
+import { BidDocumentRequestDto } from "src/modules/data-interaction/database/dtos/bidDocument/bid-document-create.dto";
+import { BidDocumentService } from "../bid-document/bidDocument.service";
+import { RegisterWorkFinishDto } from "src/modules/data-interaction/database/dtos/register-work/finish-register-work.dto";
 
 @Injectable()
 export class RegisterWorkService extends BaseService<RegisterWorkEntity, RegisterWorkCreateDto, RegisterWorkCreateDto> {
@@ -17,7 +20,8 @@ export class RegisterWorkService extends BaseService<RegisterWorkEntity, Registe
     private workRequestRepo: WorkRequestRepository,
     private bidDocumentRepo: BidDocumentRepository,
     private userRepo: UserRepository,
-    private notiMsgService: NotificationMessageService
+    private notiMsgService: NotificationMessageService,
+    private bidDocumentService: BidDocumentService
   ) {
     super(repository);
   }
@@ -109,6 +113,19 @@ export class RegisterWorkService extends BaseService<RegisterWorkEntity, Registe
       delete data.professionalId
     }
     return await super.update(interventionId, data);
+  }
+
+  async finishRegisterWork(registerWorkId: string, data: RegisterWorkFinishDto) {
+    const registerWork = await this.repository.findById(registerWorkId)
+    if(!registerWork) throw new NotFoundException('Register work not found')
+    const register_work = await this.repository.finishRegisterWork(registerWorkId, data.description)
+    
+      await Promise.all(
+            data.documents.map((document) => {
+              return this.bidDocumentService.register(document);
+            })
+      );
+      return register_work
   }
 
   async startWork(registerWorkId: string ) {
