@@ -115,7 +115,6 @@ async getById2(_id: string) {
   }
 
   async listByUserWaitImprove(companyId: string): Promise<DemandEntity[]> {
-   
     const query = this.repository
       .createQueryBuilder("demand")
       .innerJoinAndSelect("demand.beneficiary", "beneficiary")

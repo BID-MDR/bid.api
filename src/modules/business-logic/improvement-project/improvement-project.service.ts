@@ -32,9 +32,24 @@ export class ImpromentProjectService extends BaseService<ImprovementProjectEntit
   }
 
   async getByProfessional(professionalId: string) {
-    const professional =  await this.userRepository.findById(professionalId);
-    if (!professional) throw new NotFoundException('Professional not found!')
-    return await this.improvementProjectRepository.getByProfessional(professionalId)
+    const professional = await this.userRepository.findById(professionalId);
+    if (!professional) {
+      throw new NotFoundException('Professional not found!');
+    }
+  
+    const improvementProjects = await this.improvementProjectRepository.getByProfessional(professionalId);
+  
+    return improvementProjects.map((project) => ({
+      ...project,
+      workRequest: {
+        ...project.workRequest,
+        technicalVisit: [project.workRequest?.technicalVisit?.length
+          ? project.workRequest.technicalVisit.sort(
+              (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            )[0] 
+          : null],
+      },
+    }));
   }
 
   async getByBeneficiary(beneficiaryId: string) {

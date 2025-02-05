@@ -31,6 +31,7 @@ import { UpdateTechnicalVisitDto } from "src/modules/data-interaction/database/d
 import { FeatureTechnicalVisitService } from "./feature-technical-visit.service";
 import { ResponseDto } from "src/core/dtos/response.dto";
 import { RescheduleTechnicalVisitDto } from "src/modules/data-interaction/database/dtos/technical-visit/reschedule-technical-visit.dto";
+import { CreateTechnicalVisitUpdateImprovementProjectDto } from "src/modules/data-interaction/database/dtos/technical-visit/create-technical-visit-update-improvement-project.dto";
 
 @Controller("technical-visit")
 @ApiTags("Technical Visit/Visita Técnica")
@@ -150,6 +151,14 @@ export class FeatureTechnicalVisitController {
         const result = await this.featureTechnicalVisitService.scheduleRegistertWorkTechnicalVisit(body);
         return new ResponseDto(true, result, null);
     }
+    @Post("create-technicalvisit-update-improvement-project")
+    @UseInterceptors(new EncryptInterceptor())
+    async scheduleTechnicalVisitAndUpdateImprovementProject( @Body() body: CreateTechnicalVisitUpdateImprovementProjectDto) {
+      
+        const result = await this.featureTechnicalVisitService.scheduleTechnicalVisitAndUpdateImprovementProject(body);
+        return new ResponseDto(true, result, null);
+    }
+
 
     @Put(":id")
     @UseGuards(JwtAccessTokenGuard)

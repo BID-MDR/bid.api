@@ -47,6 +47,12 @@ export class ContractResignedController {
     return await this.service.update(id, dto);
   }
 
+  @Put("decline-contract/:id")
+  @ApiBearerAuth()
+  async declineContract(@Param("id") id: string) {
+    return await this.service.declineContract(id);
+  }
+
 
 
   @Put("update-status/:id")

@@ -39,7 +39,7 @@ export class ContractService extends BaseService<ContractEntity, any, any> {
 
   async register(data: CreateContractRequestDto) {
     const workRequest = await this.workRequestRepo.findByIdAndBringBeneficiary(data.workRequestId);
-    if (!workRequest) throw new NotFoundException('WorkRequest not found!');
+    if (!workRequest) throw new NotFoundException('WorkRequest not found!!!');
     data.workRequest = workRequest;
     const professional = await this.userRepo.findById(data.professionalId)
     if (!professional) throw new NotFoundException('Professional not found!');

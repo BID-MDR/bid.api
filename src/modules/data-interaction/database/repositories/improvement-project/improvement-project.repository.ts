@@ -6,6 +6,7 @@ import { ImprovementProjectEntity } from "../../entitites/improvement-project.en
 import { ImprovementProjectRequestDto } from "../../dtos/improvementProject/improvement-project-request.dto";
 import { BidDocumentEntity } from "../../entitites/bid-document.entity";
 import { ImprovementProjectUpdateStatusRequestDto } from "../../dtos/improvementProject/improvement-project-update-status-request.dto";
+import { ImprovementProjectStatusEnum } from "../../enums/improvement-project-status.enum";
 
 @Injectable()
 export class ImprovementProjectRepository extends BaseRepository<
@@ -50,7 +51,7 @@ export class ImprovementProjectRepository extends BaseRepository<
       where: {
         professional: { id: professionalId },
       },
-        relations: ['workRequest','workRequest.beneficiary'],
+        relations: ['workRequest','workRequest.beneficiary', 'workRequest.technicalVisit'],
         
       });
   }  
@@ -65,7 +66,16 @@ export class ImprovementProjectRepository extends BaseRepository<
       relations: ['workRequest', 'workRequest.beneficiary', 'document', 'professional'],
     });
   }
-  
+
+  async findWorkRequest(workRequestId: string): Promise<any> {
+    return await this.repository.createQueryBuilder("improvement_project")
+      .leftJoinAndSelect("improvement_project.workRequest", "workRequest")
+      .where("workRequest.id = :id", { id: workRequestId })
+      .getOne();
+  }
+  async updateStatusProjectDelivery(projectId: string){
+    return await this.repository.update({id: projectId}, {status: ImprovementProjectStatusEnum.PROJECT_DELIVERY})
+  }
 
   async updateStatus(projectId: string, data: ImprovementProjectUpdateStatusRequestDto){
     return await this.repository.update({id: projectId}, {status: data.status})
