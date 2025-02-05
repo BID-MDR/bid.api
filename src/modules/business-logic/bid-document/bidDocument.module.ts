@@ -10,5 +10,6 @@ import { NotificationMessageModule } from "../notification-msg/notification-mess
     imports: [DatabaseModule, FacadeModule, FeatureAuthModule, NotificationMessageModule],
     providers: [BidDocumentService],
     controllers: [BidDocumentController],
+    exports:[BidDocumentService]
 })
 export class BidDocumentModule {}
