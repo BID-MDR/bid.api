@@ -91,8 +91,6 @@ export class FeatureTechnicalVisitService extends BaseService<
         
     }
     async reScheduleVisit(technicalVisitId: string ,dto: RescheduleTechnicalVisitDto) {
-        const registerWork = await this.registerWorkRepo.findById(dto.registerWorkId)
-        if(!registerWork) throw new NotFoundException('Register work not found!')
         const technicalVisit = await this.technicalVisitRepository.findById(technicalVisitId)
         if(!technicalVisit) throw new NotFoundException('Technical visit not found!')
         delete dto.registerWorkId
