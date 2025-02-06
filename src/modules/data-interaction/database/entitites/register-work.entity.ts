@@ -37,7 +37,7 @@ export class RegisterWorkEntity extends BaseEntity {
     type: ConstructionsTypeEnum;
 
     @ManyToOne(() => UserEntity, (user) => user.registerWorkList, {
-      onDelete: 'SET NULL', // Ou 'CASCADE' dependendo da necessidade
+      onDelete: 'SET NULL',
       onUpdate: 'CASCADE',
   })
     professional: UserEntity;
