@@ -56,10 +56,12 @@ export class RegisterWorkRepository extends BaseRepository<
     return this.repository
       .createQueryBuilder('registerWork')
       .leftJoinAndSelect('registerWork.workRequest', 'workRequest')
+      .leftJoinAndSelect('registerWork.professional', 'professional')
       .leftJoinAndSelect('workRequest.beneficiary', 'beneficiary')
       .leftJoinAndSelect('workRequest.demand', 'demand')
       .leftJoinAndSelect('beneficiary.address', 'address')
       .leftJoinAndSelect('workRequest.technicalVisit', 'technicalVisit')
+      .leftJoinAndSelect('workRequest.contractResignedList', 'contractResignedList')
       .where('beneficiary.id = :beneficaryId', { beneficaryId }) 
       .getMany();
   }
