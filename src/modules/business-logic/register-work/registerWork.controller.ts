@@ -54,11 +54,11 @@ export class RegisterWorkController {
   }
   
   @Get('list-by-beneficary')
-  // @UseGuards(JwtAccessTokenGuard)
-  // @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  @ApiBearerAuth()
   async getByBeneficary(@Req() req: Request) {
-    // const userId = (req.user as JwtPayloadInterface).userId;
-    const result = await this.service.getByBeneficary('7cd79658-ccc4-4102-a615-2544d05a33d6');
+    const userId = (req.user as JwtPayloadInterface).userId;
+    const result = await this.service.getByBeneficary(userId);
     return new ResponseDto(true, result, null);
   }
   
