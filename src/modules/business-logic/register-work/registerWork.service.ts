@@ -53,6 +53,24 @@ export class RegisterWorkService extends BaseService<RegisterWorkEntity, Registe
 }
 
 
+async getByBeneficary(beneficaryId: string) {
+  const professional = await this.userRepo.findById(beneficaryId);
+  if (!professional) throw new NotFoundException('Professional not found');
+
+  const result = await this.repository.getByBeneficary(beneficaryId);
+  console.log('result', result)
+  for(let i = 0; i < result.length ; i++) {
+    if (result[i].workRequest.technicalVisit && result[i].workRequest.technicalVisit.length > 0) {
+      result[i].workRequest.technicalVisit.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      result[i].workRequest.technicalVisit = [result[i].workRequest.technicalVisit[0]];
+    }
+
+  }
+ 
+  return result;
+}
+
+
   async register(data: RegisterWorkCreateDto) {
     const workRequest = await this.workRequestRepo.findByIdAndBringBeneficiary(data.workRequestId)
     if (!workRequest) throw new NotFoundException('WorkRequest not found!')
