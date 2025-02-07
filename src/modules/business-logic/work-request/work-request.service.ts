@@ -10,6 +10,7 @@ import { TechnicalVisitStatusEnum } from "src/modules/data-interaction/database/
 import { SustainabilityItensRequestDto } from "src/modules/data-interaction/database/dtos/work-request/sustainability-itens-request.dto";
 import { SustainabilityItensRepository } from "src/modules/data-interaction/database/repositories/work-request/sustainability-itens.repository";
 import { UserRepository } from "src/modules/data-interaction/database/repositories/user/user.repository";
+import { StorageFacade } from "src/modules/data-interaction/facade/apis/storage/storage.facade";
 
 @Injectable()
 export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWorkRequestDto, UpdateWorkRequestDto> {
@@ -17,7 +18,8 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
     private workRequestRepository: WorkRequestRepository,
     private demandRepository: DemandRepository,
     private userRepository: UserRepository,
-    private sustainabilityItensRepository: SustainabilityItensRepository
+    private sustainabilityItensRepository: SustainabilityItensRepository,
+    private readonly storageFacade: StorageFacade,
   ) {
     super(workRequestRepository);
   }
@@ -38,25 +40,39 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
 
     const demand = await this.demandRepository.getById(data.demandId);
 
-      if (demand.company && demand.company.id !== companyId) throw new BadRequestException("Não autorizado a acessar essa demanda.");
+    if (demand.company && demand.company.id !== companyId) throw new BadRequestException("Não autorizado a acessar essa demanda.");
 
-      data.demand = demand;
-  
-      const result = await super.create(data);
-  
-      demand.workRequest = result;
-      demand.status = DemandStatusEnum.ESPERANDO_MELHORIA;
-  
-      await demand.save();
-  
-      return result;
-   
+    data.demand = demand;
+
+    const result = await super.create(data);
+
+    demand.workRequest = result;
+    demand.status = DemandStatusEnum.ESPERANDO_MELHORIA;
+
+    await demand.save();
+
+    return result;
+
   }
 
   async registerBenefficiary(data: CreateWorkRequestDto, userId: string) {
-
+    data.pictures = data.pictures || []; 
     data.beneficiary = await this.userRepository.findById(userId)
 
+    if(data.selectedFiles){
+      const uploadedFiles = await Promise.all(
+        data.selectedFiles.map(async (picture) => {
+          const imageUrl = await this.storageFacade.uploadMedia(
+            picture.mimeType,
+            picture.fileName,
+            picture.data
+          );
+          data.pictures.push(imageUrl)
+        })
+      );
+    }
+  
+   
     const result = await super.create(data);
 
     return result;

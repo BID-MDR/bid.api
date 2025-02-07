@@ -139,4 +139,8 @@ export class WorkRequestEntity extends BaseEntity {
   })
   survey: SurveyEntity;
 
+  @Column("simple-array", { nullable: true })
+  pictures: string[];
+  
+ 
 }
