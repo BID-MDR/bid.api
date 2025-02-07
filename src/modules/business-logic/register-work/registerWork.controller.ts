@@ -53,6 +53,15 @@ export class RegisterWorkController {
     return new ResponseDto(true, result, null);
   }
   
+  @Get('list-by-beneficary')
+  @UseGuards(JwtAccessTokenGuard)
+  @ApiBearerAuth()
+  async getByBeneficary(@Req() req: Request) {
+    const userId = (req.user as JwtPayloadInterface).userId;
+    const result = await this.service.getByBeneficary(userId);
+    return new ResponseDto(true, result, null);
+  }
+  
 
 
   @Put("id/:id")
@@ -60,6 +69,7 @@ export class RegisterWorkController {
   async update(@Param("id") id: string, @Body() dto: RegisterWorkCreateDto) {
     return await this.service.update(id, dto);
   }
+
   @Put("update-register-work-from-professional")
   @ApiBearerAuth()
   async updateRegisterWork( @Body() dto: UpdateRegisterWorkDto) {

@@ -52,7 +52,20 @@ export class RegisterWorkRepository extends BaseRepository<
       .where('registerWork.professionalId = :professionalId', { professionalId })
       .getMany();
   }
+  async getByBeneficary(beneficaryId: string) {
+    console.log('Beneficiary ID:', beneficaryId);
   
+    return this.repository
+      .createQueryBuilder('registerWork')
+      .leftJoinAndSelect('registerWork.workRequest', 'workRequest')
+      .leftJoinAndSelect('registerWork.professional', 'professional')
+      .leftJoinAndSelect('workRequest.demand', 'demand')
+      .leftJoinAndSelect('workRequest.technicalVisit', 'technicalVisit')
+      .leftJoinAndSelect('workRequest.contractResignedList', 'contractResignedList')
+      .leftJoinAndSelect('workRequest.beneficiary', 'beneficiary') 
+      .where('beneficiary.id = :beneficaryId', { beneficaryId }) 
+      .getMany();
+  }
   
   async startRegisterWork(registerWorkId: string, ) {
     return await this.repository.update({ id: registerWorkId }, {startedDate: new Date(), status: ConstructionsStatusEnum.EM_ANDAMENTO});
