@@ -20,6 +20,7 @@ import { WelfareProgramEnum } from "../../enums/welfare-program.enum";
 import { CreateRoomDto } from "../room/create-room.dto";
 import { HouseTypeEnum } from "../../enums/house-type.enum";
 import { UserEntity } from "../../entitites/user.entity";
+import { MediaUploadDto } from "../media/media-upload.dto";
 
 class CreateWorkRequestWelfareProgramDto {
     @ApiProperty({ enum: WelfareProgramEnum })
@@ -35,7 +36,7 @@ export class CreateWorkRequestDto {
 
     @ApiProperty()
     beneficiary?: UserEntity;
-    
+
     @ApiProperty()
     @IsString()
     description: string;
@@ -62,7 +63,7 @@ export class CreateWorkRequestDto {
     propertyType: PropertyTypeEnum;
 
     @ApiProperty({ required: false, enum: HouseTypeEnum, nullable: true })
-    houseType?:  HouseTypeEnum | null;
+    houseType?: HouseTypeEnum | null;
 
     @ApiProperty()
     @IsNotEmpty()
@@ -84,4 +85,11 @@ export class CreateWorkRequestDto {
     @Type(() => CreateRoomDto)
     room: CreateRoomDto[];
 
+
+    @ApiProperty({ type: [MediaUploadDto] })
+    @ValidateNested()
+    @Type(() => MediaUploadDto)
+    selectedFiles?: MediaUploadDto[];
+    
+    pictures?: string[];
 }

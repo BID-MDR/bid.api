@@ -76,8 +76,6 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
                 data.uploadedProfilePicture.data,
             );
         }
-
-        console.log(data);
         return await super.create(data);
     }
 
@@ -264,7 +262,6 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
 
         try {
             const valid = totp.check(token, this.configService.get(EnviromentVariablesEnum.OTP_TOKEN));
-            console.log(valid, '<--')
             if (valid) {
                 user.otpRequest.status = UserOtpStatusEnum.VERIFIED;
                 await user.otpRequest.save();

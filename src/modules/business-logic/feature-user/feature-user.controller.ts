@@ -206,7 +206,6 @@ export class FeatureUserController {
     })
     async updatePasswordRequest(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
-        console.log('aq', userId)
 
         await this.featureUserService.updatePasswordRequest(userId);
     }
