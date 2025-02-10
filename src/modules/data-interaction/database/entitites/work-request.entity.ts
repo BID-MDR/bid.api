@@ -18,6 +18,7 @@ import { TechnicalVisitEntity } from "./technical-visit.entity";
 import { WorkRequestContractStatusEnum } from "../enums/work-request-contact-status.enum";
 import { ContractResignedEntity } from "./contract-resigned.entity";
 import { SurveyEntity } from "./survey.entity";
+import { SolvedProblemsEnum } from "../enums/solved-problems.enum";
 
 @Entity({ name: "work_request" })
 export class WorkRequestEntity extends BaseEntity {
@@ -88,6 +89,14 @@ export class WorkRequestEntity extends BaseEntity {
   })
   room: RoomEntity[];
 
+  @OneToMany(() => RoomEntity, room => room.workRequestImprovementRoom, {
+    cascade: true,
+  })
+  improvementRoom: RoomEntity[];
+  
+  @Column("simple-array", { nullable: true })
+  solvedProblems: SolvedProblemsEnum[];
+
   @OneToMany(() => WorkRequestWelfareEntity, workRequestWelfare => workRequestWelfare.workRequest, {
     cascade: true,
   })
@@ -141,6 +150,6 @@ export class WorkRequestEntity extends BaseEntity {
 
   @Column("simple-array", { nullable: true })
   pictures: string[];
-  
- 
+
+
 }
