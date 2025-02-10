@@ -101,6 +101,5 @@ export class CreateWorkRequestDto {
     improvementRoom?: CreateRoomDto[];
       
     @ApiProperty({ isArray: true, enum: SolvedProblemsEnum })
-    @IsEnum(SolvedProblemsEnum)
     solvedProblems?: SolvedProblemsEnum[];
 }
