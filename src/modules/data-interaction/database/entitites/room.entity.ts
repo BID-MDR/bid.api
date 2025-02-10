@@ -31,6 +31,9 @@ export class RoomEntity extends BaseEntity {
     @ManyToOne(() => WorkRequestEntity, (workRequest) => workRequest.room)
     workRequest: WorkRequestEntity;
 
+    @ManyToOne(() => WorkRequestEntity, (workRequest) => workRequest.improvementRoom)
+    workRequestImprovementRoom: WorkRequestEntity;
+    
     @ManyToMany(() => CostEstimateEntity, (costEstimate) => costEstimate.rooms)
     @JoinTable({
         name: 'room_cost_estimate',
