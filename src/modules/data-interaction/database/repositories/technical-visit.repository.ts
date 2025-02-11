@@ -43,6 +43,7 @@ export class TechnicalVisitRepository extends BaseRepository<
             'demand',
             'workRequest',
             'workRequest.welfare',
+            'workRequest.improvementRoom',
             'workRequest.room',
             'contract',
             'improvementProject',
