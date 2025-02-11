@@ -36,6 +36,7 @@ export class WorkRequestRepository extends BaseRepository<
       // 'workRequest',
       'contracts',
       'contractResignedList',
+      'improvementRoom'
   ];
 
   return await this.repository.find({
