@@ -23,7 +23,7 @@ export class RegisterWorkRepository extends BaseRepository<
   async findById(costEstimateId: string): Promise<RegisterWorkEntity> {
     return await this.repository.findOne({
       where: { id: costEstimateId },
-   //   relations: [ 'workRequest', 'workRequest.room'],
+     relations: [ 'professional', 'workRequest.contractResignedList'],
     });
   }
   async find(): Promise<RegisterWorkEntity[]> {
@@ -37,7 +37,7 @@ export class RegisterWorkRepository extends BaseRepository<
         professional: { id: professionalId },
         status: Not(In(['FINALIZADA'])),
       },
-      relations: ['professional', 'workRequest', 'workRequest.beneficiary'],
+      relations: ['professional', 'workRequest', 'workRequest.beneficiary', 'workRequest.contractResignedList'],
     });
   } 
   
@@ -46,6 +46,7 @@ export class RegisterWorkRepository extends BaseRepository<
       .createQueryBuilder('registerWork')
       .leftJoinAndSelect('registerWork.workRequest', 'workRequest')
       .leftJoinAndSelect('workRequest.beneficiary', 'beneficiary')
+      .leftJoinAndSelect('workRequest.contractResignedList', 'contractResignedList')
       .leftJoinAndSelect('workRequest.demand', 'demand')
       .leftJoinAndSelect('workRequest.contracts', 'contract')
       .leftJoinAndSelect('beneficiary.address', 'address')
