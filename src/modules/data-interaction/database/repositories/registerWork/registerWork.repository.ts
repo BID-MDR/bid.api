@@ -23,7 +23,7 @@ export class RegisterWorkRepository extends BaseRepository<
   async findById(costEstimateId: string): Promise<RegisterWorkEntity> {
     return await this.repository.findOne({
       where: { id: costEstimateId },
-     relations: [ 'professional', 'workRequest.contractResignedList', 'workRequest.beneficiary'],
+     relations: [ 'professional', 'workRequest.contractResignedList', 'workRequest.beneficiary', 'workRequest.room'],
     });
   }
   async find(): Promise<RegisterWorkEntity[]> {
