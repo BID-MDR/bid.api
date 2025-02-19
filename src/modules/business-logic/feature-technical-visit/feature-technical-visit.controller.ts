@@ -125,7 +125,7 @@ export class FeatureTechnicalVisitController {
     })
     async create(@Req() req: Request, @Body() body: CreateTechnicalVisitDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
-        const result = await this.featureTechnicalVisitService.schedule(userId, body);
+        const result = await this.featureTechnicalVisitService.scheduleTechnicalVisit(userId, body);
         return new ResponseDto(true, result, null);
     }
 
@@ -178,6 +178,7 @@ export class FeatureTechnicalVisitController {
     ) {
         return await this.featureTechnicalVisitService.update(id, body);
     }
+    
     @Put("reschedule-technical-visit/:technicalVisitId")
     @UseGuards(JwtAccessTokenGuard)
     @ApiBearerAuth()
