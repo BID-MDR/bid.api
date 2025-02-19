@@ -115,7 +115,7 @@ export class FeatureTechnicalVisitService extends BaseService<
         technicalVisit.from = dto.from
         technicalVisit.to = dto.to
         technicalVisit.duration = dto.duration ? dto.duration : technicalVisit.duration
-        technicalVisit.status = TechnicalVisitStatusEnum.AGENDADA
+        technicalVisit.status = TechnicalVisitStatusEnum.REAGENDADA
         await technicalVisit.save()
         return await technicalVisit.reload()
     }

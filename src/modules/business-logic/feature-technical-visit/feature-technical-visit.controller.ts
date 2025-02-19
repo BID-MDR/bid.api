@@ -178,6 +178,7 @@ export class FeatureTechnicalVisitController {
     ) {
         return await this.featureTechnicalVisitService.update(id, body);
     }
+    
     @Put("reschedule-technical-visit/:technicalVisitId")
     @UseGuards(JwtAccessTokenGuard)
     @ApiBearerAuth()
