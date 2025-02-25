@@ -38,7 +38,7 @@ async function bootstrap() {
     app.useGlobalInterceptors(new ResponseInterceptor(app.get(Reflector)));
     
 
-    if (configService.get(EnviromentVariablesEnum.ENABLE_CORS) === "true") {
+    //if (configService.get(EnviromentVariablesEnum.ENABLE_CORS) === "true") {
         const corsOptions: CorsOptions = {
             origin: "*",
             methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
@@ -50,13 +50,13 @@ async function bootstrap() {
         app.enableCors(corsOptions);
 
         logger.debug("CORS ENABLED");
-    }
+    //}
 
     const appVersion = configService.get(EnviromentVariablesEnum.APP_VERSION);
 
     const appName = "BID - API";
 
-    if (configService.get(EnviromentVariablesEnum.ENABLE_DOCS) === "true") {
+    //if (configService.get(EnviromentVariablesEnum.ENABLE_DOCS) === "true") {
         const swaggerOptions = new DocumentBuilder()
             .setTitle(
                 appName +
@@ -88,7 +88,7 @@ async function bootstrap() {
         });
 
         logger.debug("DOCS ENABLED");
-    }
+    //}
 
     const port = configService.get(EnviromentVariablesEnum.PORT) || 3000;
     await app.listen(port);
