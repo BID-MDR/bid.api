@@ -7,6 +7,7 @@ import { UserService } from "src/modules/backoffice/user/user.service";
 import { EncryptInterceptor } from "src/core/interceptors/encrypt.interceptor";
 import { CreateUserBackofficeDto } from "./dto/create-user-backoffice.dto";
 import { UserRegisterPasswordDto } from "./dto/user-register-password.dto";
+import { UserProgramTypeEnum } from "src/modules/data-interaction/database/enums/user-program-type.enum";
 
 
 @Controller("backoffice-user")
@@ -55,9 +56,6 @@ export class UserBackofficeController {
         return new ResponseDto(true, result, null);
     }
 
-
-
-
     @Get("authenticated")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
@@ -69,6 +67,20 @@ export class UserBackofficeController {
     @Post("")
     @UseInterceptors(new EncryptInterceptor())
     async create(@Body() body: CreateUserBackofficeDto) {
+        return await this.UserService.create(body);
+    }
+
+    @Post("Regmel")
+    @UseInterceptors(new EncryptInterceptor())
+    async createRegmel(@Body() body: CreateUserBackofficeDto) {
+        body.programType = UserProgramTypeEnum.REGMEL
+        return await this.UserService.create(body);
+    }
+
+    @Post("MinhaCasa")
+    @UseInterceptors(new EncryptInterceptor())
+    async createMinhaCasa(@Body() body: CreateUserBackofficeDto) {
+        body.programType = UserProgramTypeEnum.MINHA_CASA
         return await this.UserService.create(body);
     }
 
