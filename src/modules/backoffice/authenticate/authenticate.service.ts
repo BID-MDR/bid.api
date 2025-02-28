@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from 'bcrypt';
@@ -11,6 +11,7 @@ import { JwtPayloadBackoffice } from "src/core/interfaces/jwt-payload-backoffice
 import { UserBackofficeTypeEnum } from "../user/dto/userTypeEnum";
 import { UserRolesBackofficeEntity } from "src/modules/data-interaction/database/entitites/user-roles-backoffice.entity";
 import { UserProgramTypeEnum } from "src/modules/data-interaction/database/enums/user-program-type.enum";
+import { ResponseDto } from "src/core/dtos/response.dto";
 
 @Injectable()
 export class AuthenticateService {
@@ -24,6 +25,8 @@ export class AuthenticateService {
 
     const user = await this._userRepository.getByEmail(email);
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     if (user) {
       if (await bcrypt.compare(password, user.password)) return user;
     }
@@ -36,7 +39,17 @@ export class AuthenticateService {
   ): Promise<AuthenticateResponseDto> {
     const user = await this.validate(dto.email, dto.password);
 
-    if (!user) throw new NotFoundException('Invalid email and password!');
+    if (!user)  throw new HttpException(
+      new ResponseDto(false, null, ['E-mail ou senha incorreto!']),
+      HttpStatus.BAD_REQUEST
+    );
+
+    if (user.programType != UserProgramTypeEnum.REGMEL) {
+      throw new HttpException(
+        new ResponseDto(false, null, ['Tipo de programa incorreto']),
+        HttpStatus.BAD_REQUEST
+      );
+    }
 
     const token = this._createToken(user.id.toString(), user.email, user.roles);
 
@@ -44,7 +57,7 @@ export class AuthenticateService {
 
     if (verify.type === UserBackofficeTypeEnum.BACKOFFICE) {
       if (verify.programType === UserProgramTypeEnum.REGMEL) {
-        return new AuthenticateResponseDto(user.id,user.email, token.accessToken);
+        return new AuthenticateResponseDto(user.id, user.email, token.accessToken);
       }
     }
 
@@ -54,7 +67,7 @@ export class AuthenticateService {
       const dateCompare = lastAccessDate.getTime();
       const dateNow = new Date().getTime()
       if (dateCompare >= dateNow) {
-        return new AuthenticateResponseDto(user.id,user.email, token.accessToken, lastAccessDate);
+        return new AuthenticateResponseDto(user.id, user.email, token.accessToken, lastAccessDate);
       } else {
         throw new BadRequestException('Login não autorizado');
       }
@@ -62,10 +75,10 @@ export class AuthenticateService {
 
     const newDate = new Date()
 
-    
+
     const dateLastLogin = new Date(newDate.setMinutes(newDate.getMinutes() + verify.timeView));
     await this._userRepository.updateLastAccess(verify.id.toString(), new Date());
-    return new AuthenticateResponseDto(user.id,user.email, token.accessToken, dateLastLogin);
+    return new AuthenticateResponseDto(user.id, user.email, token.accessToken, dateLastLogin);
   }
 
   async authenticateMCMV(
@@ -75,14 +88,18 @@ export class AuthenticateService {
 
     if (!user) throw new NotFoundException('Invalid email and password!');
 
+    if (user.programType == UserProgramTypeEnum.REGMEL) {
+      throw new NotFoundException('Tipo de programa incorreto');
+    }
+    
     const token = this._createToken(user.id.toString(), user.email, user.roles);
 
     const verify = await this._userRepository.getById(user.id.toString());
 
     if (verify.type === UserBackofficeTypeEnum.BACKOFFICE) {
-      if (verify.programType === UserProgramTypeEnum.MINHA_CASA) {
-        return new AuthenticateResponseDto(user.id,user.email, token.accessToken);
-      }
+
+      return new AuthenticateResponseDto(user.id, user.email, token.accessToken);
+
     }
 
 
@@ -92,7 +109,7 @@ export class AuthenticateService {
       const dateCompare = lastAccessDate.getTime();
       const dateNow = new Date().getTime()
       if (dateCompare >= dateNow) {
-        return new AuthenticateResponseDto(user.id,user.email, token.accessToken, lastAccessDate);
+        return new AuthenticateResponseDto(user.id, user.email, token.accessToken, lastAccessDate);
       } else {
         throw new BadRequestException('Login não autorizado');
       }
@@ -100,14 +117,14 @@ export class AuthenticateService {
 
     const newDate = new Date()
 
-    
+
     const dateLastLogin = new Date(newDate.setMinutes(newDate.getMinutes() + verify.timeView));
     await this._userRepository.updateLastAccess(verify.id.toString(), new Date());
-    return new AuthenticateResponseDto(user.id,user.email, token.accessToken, dateLastLogin);
+    return new AuthenticateResponseDto(user.id, user.email, token.accessToken, dateLastLogin);
   }
 
   private _createToken(userId: string, email: string, roles: UserRolesBackofficeEntity[]) {
-    const user: JwtPayloadBackoffice = { userId, email, roles};
+    const user: JwtPayloadBackoffice = { userId, email, roles };
     const expiresIn = this._configService.get(
       EnviromentVariablesEnum.JWT_ACCESS_TOKEN_EXPIRATION,
     );

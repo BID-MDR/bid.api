@@ -17,29 +17,17 @@ export class AuthenticateController {
 
   @Post('/authenticate-bid')
   @HttpCode(200)
-  async authenticateBid(
-    @Body() dto: AuthenticateRequestDto,
-  ) {
-
+  async authenticateBid(@Body() dto: AuthenticateRequestDto) {
     try {
-
       const response = await this._authenticateService.authenticateBid(dto);
-
-      return new ResponseDto(
-        true,
-        response,
-        null,
-      );
-
+      return new ResponseDto(true, response, null);
     } catch (error) {
-
       this._logger.error(error.message);
-
+    
       throw new HttpException(
-        new ResponseDto(
-          false,
-          null,
-          [error.message]), HttpStatus.BAD_REQUEST);
+        new ResponseDto(false, error.response.errors[0], [error.response.errors[0]]),
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
 
