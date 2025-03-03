@@ -38,7 +38,6 @@ export class CreateUserBackofficeDto {
     status: UserStatusEnum;
 
     @ApiProperty({ enum: UserProgramTypeEnum })
-    @IsEnum(UserProgramTypeEnum)
     programType: UserProgramTypeEnum;
 
     @ApiProperty()
