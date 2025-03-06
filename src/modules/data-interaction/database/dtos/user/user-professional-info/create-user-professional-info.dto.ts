@@ -22,7 +22,8 @@ export class CreateUserProfessionalInfoDto {
     @IsEnum(PortifolioTypeEnum)
     portifolioType: PortifolioTypeEnum;
 
-    @ApiProperty({ example: 'https://www.linkedin.com/in/username' })
+    @ApiProperty({ example: 'https://www.linkedin.com/in/username', required: false, nullable: true })
+    @ValidateIf((o) => o.portifolioLink && o.portifolioLink.trim() !== '')
     @IsUrl({
         allow_fragments: true,
         require_protocol: true,

@@ -27,6 +27,7 @@ export class UserProfessionalInfoEntity extends BaseEntity {
     @Column({
         type: 'varchar',
         length: 100,
+        nullable: true,
     })
     portifolioLink: string;
 
