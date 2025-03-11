@@ -34,6 +34,10 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
 
   }
 
+  async getById(demandId: string) {
+    return await this.demandRepository.getById2(demandId);
+  }
+
   async countSustainability(document: string){
     return await this.demandRepository.countSustainabilityItems(document);
   }

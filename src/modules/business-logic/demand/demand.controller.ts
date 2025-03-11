@@ -59,7 +59,7 @@ export class DemandController {
         type: ResponseDemandDto,
     })
     async getById(@Param("id") id: string) {
-        return await this.demandService.findById(id);
+        return await this.demandService.getById(id);
     }
 
     @Get("get-by-workRequestId/:id")
