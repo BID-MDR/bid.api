@@ -29,17 +29,17 @@ export class DemandRepository extends BaseRepository<
     return query.getOne();
 }
 
-async getById2(_id: string) {
- return this.repository
-  .createQueryBuilder('demand')
-  .leftJoinAndSelect('demand.company', 'company')
-  .leftJoinAndSelect('demand.workRequest', 'workRequest')
-  .leftJoinAndSelect('workRequest.room', 'room')
-  .leftJoinAndSelect('room.roomSolutions', 'room_solution')
-  .where("demand.id = :id", { id: _id })
-  .getOne()
-}
-
+  async getById2(_id: string) {
+  return this.repository
+    .createQueryBuilder('demand')
+    .innerJoinAndSelect("demand.beneficiary", "beneficiary")
+    .leftJoinAndSelect('demand.company', 'company')
+    .leftJoinAndSelect('demand.workRequest', 'workRequest')
+    .leftJoinAndSelect('workRequest.room', 'room')
+    .leftJoinAndSelect('room.roomSolutions', 'room_solution')
+    .where("demand.id = :id", { id: _id })
+    .getOne()
+  }
 
   async countSustainabilityItems(document: string | number) {
     const count = await this.repository
