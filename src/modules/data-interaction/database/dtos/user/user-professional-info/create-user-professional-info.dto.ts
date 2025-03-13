@@ -59,13 +59,11 @@ export class CreateUserProfessionalInfoDto {
     @ApiProperty({ type: CreateUserRestingDayDto, isArray: true, nullable: true })
     restingDays?: CreateUserRestingDayDto[];
 
-    @ApiProperty({ description: 'Horário militar', example: '08:00' })
-    @IsMilitaryTime()
-    worksFrom: string;
+    @ApiProperty({ description: 'Horário militar', example: '08:00', required: false })
+    worksFrom?: string;
 
-    @ApiProperty({ description: 'Horário militar', example: '18:00' })
-    @IsMilitaryTime()
-    worksTo: string;
+    @ApiProperty({ description: 'Horário militar', example: '18:00', required: false })
+    worksTo?: string;
 
     @ApiProperty({ type: CreateAddressDto, isArray: true })
     @ValidateNested({ each: true })
