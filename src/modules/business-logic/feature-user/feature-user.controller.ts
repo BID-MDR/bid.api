@@ -178,11 +178,14 @@ export class FeatureUserController {
     async create(@Body() body: CreateUserDto) {
       
         if(body.type == 'PROFISSIONAL'){
-            body.professionalUserInfo.restingDays = body.professionalUserInfo.restingDays.map((day) => {
-                const restingDay = new CreateUserRestingDayDto();
-                restingDay.day = day.day;
-                return restingDay;
-            });
+            if(body.programType == 'MINHA_CASA'){
+                body.professionalUserInfo.restingDays = body.professionalUserInfo.restingDays.map((day) => {
+                    const restingDay = new CreateUserRestingDayDto();
+                    restingDay.day = day.day;
+                    return restingDay;
+                });
+            }
+          
         }
        
         const user = await this.featureUserService.create(body);
