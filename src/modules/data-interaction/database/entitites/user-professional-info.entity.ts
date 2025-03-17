@@ -78,14 +78,16 @@ export class UserProfessionalInfoEntity extends BaseEntity {
     @Column({
         type: 'varchar',
         length: 5,
+        nullable: true,
     })
-    worksFrom: string;
+    worksFrom?: string;
 
     @Column({
         type: 'varchar',
         length: 5,
+        nullable: true,
     })
-    worksTo: string;
+    worksTo?: string;
 
     @OneToOne(() => UserEntity, (user) => user.professionalUserInfo)
     user: UserEntity;
