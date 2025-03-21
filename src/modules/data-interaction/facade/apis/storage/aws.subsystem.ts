@@ -14,7 +14,8 @@ export class AwsSubsystem {
         accessKeyId: configService.get(EnviromentVariablesEnum.AWS_BUCKET_ACCESS_KEY_ID),
         secretAccessKey: configService.get(EnviromentVariablesEnum.AWS_BUCKET_SECRET_ACCESS_KEY),
       },
-      endpoint: configService.get(EnviromentVariablesEnum.AWS_BUCKET_ENDPOINT),
+      endpoint: 'https://grumzjujmpu4.compat.objectstorage.sa-saopaulo-1.oraclecloud.com',
+      forcePathStyle: true,
     });
   }
 
@@ -34,9 +35,7 @@ export class AwsSubsystem {
     );
 
     return encodeURI(
-      `https://${this.configService.get(EnviromentVariablesEnum.AWS_BUCKET_NAME)}.s3.${this.configService.get(
-        EnviromentVariablesEnum.AWS_BUCKET_REGION
-      )}.amazonaws.com/${fileName}`
+      `https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grumzjujmpu4/b/${this.configService.get(EnviromentVariablesEnum.AWS_BUCKET_NAME)}/o/${fileName}`
     );
   }
 
@@ -61,9 +60,7 @@ export class AwsSubsystem {
     );
 
     return encodeURI(
-      `https://${this.configService.get(EnviromentVariablesEnum.AWS_BUCKET_NAME)}.s3.${this.configService.get(
-        EnviromentVariablesEnum.AWS_BUCKET_REGION
-      )}.amazonaws.com/${fileName}`
+      `https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grumzjujmpu4/b/${this.configService.get(EnviromentVariablesEnum.AWS_BUCKET_NAME)}/o/${fileName}`
     );
   }
 }
