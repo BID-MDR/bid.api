@@ -157,24 +157,13 @@ export class FeatureUserController {
     }
 
     @Post("")
-    @UseInterceptors(new EncryptInterceptor())
+    
     @ApiOperation({
         description:
             "Enpoint único para registrar beneficiário ou profissional.",
         summary: "Cria um usuário de ambos os tipos.",
     })
-    @ApiBodyEncripted({
-        type: CreateUserDto,
-        required: true,
-        description: "Usuário a ser criado.",
-    })
-    @ApiOkResponseDtoData({
-        type: SigninResponseDto,
-        description: "Token de acesso.",
-    })
-    @SerializeOptions({
-        type: SigninResponseDto,
-    })
+  
     async create(@Body() body: CreateUserDto) {
       
         if(body.type == 'PROFISSIONAL'){
