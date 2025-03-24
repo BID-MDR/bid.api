@@ -58,7 +58,6 @@ async getByBeneficary(beneficaryId: string) {
   if (!professional) throw new NotFoundException('Professional not found');
 
   const result = await this.repository.getByBeneficary(beneficaryId);
-  console.log('result', result)
   for(let i = 0; i < result.length ; i++) {
     if (result[i].workRequest.technicalVisit && result[i].workRequest.technicalVisit.length > 0) {
       result[i].workRequest.technicalVisit.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());

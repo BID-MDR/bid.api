@@ -135,8 +135,6 @@ export class DemandController {
     })
     async register(@Req() req: Request, @Body() dto: DemandRegisterRequestDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
-        console.log('userId', userId);
-        console.log('dto', dto);
         return await this.demandService.register(userId, dto);
     }
     @Post("register-single-demand")
