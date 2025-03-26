@@ -69,7 +69,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
 
     async create(data: CreateUserDto): Promise<UserEntity> {
         console.log('service');
-        data.password = await this.hashStringData(data.password);
+        data.password = bcrypt.hash(data.password, 13).toString();
         console.log('apos password');
         if (data.uploadedProfilePicture && typeof data.uploadedProfilePicture !== 'string') {    
             console.log('ddentro verificacao imagem');
