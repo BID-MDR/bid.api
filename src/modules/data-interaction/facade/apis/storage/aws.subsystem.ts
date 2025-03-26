@@ -9,10 +9,10 @@ export class AwsSubsystem {
 
   constructor(private readonly configService: ConfigService) {
     this.s3Client = new S3Client({
-      region: this.configService.get(EnviromentVariablesEnum.AWS_BUCKET_REGION),
+      region: 'sa-saopaulo-1',
       credentials: {
-        accessKeyId: configService.get(EnviromentVariablesEnum.AWS_BUCKET_ACCESS_KEY_ID),
-        secretAccessKey: configService.get(EnviromentVariablesEnum.AWS_BUCKET_SECRET_ACCESS_KEY),
+        accessKeyId: 'b66919a3701f48073ff4f1ca8002bf2ec709ec81',
+        secretAccessKey: '4WHlfgog0oZI65gWbqZD5mQqAOhAvs9FHlfYVsiy76s=',
       },
       endpoint: 'https://grumzjujmpu4.compat.objectstorage.sa-saopaulo-1.oraclecloud.com',
       forcePathStyle: true,
