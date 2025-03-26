@@ -158,14 +158,9 @@ export class FeatureUserController {
 
     @Post("")
     
-    @ApiOperation({
-        description:
-            "Enpoint único para registrar beneficiário ou profissional.",
-        summary: "Cria um usuário de ambos os tipos.",
-    })
-  
     async create(@Body() body: CreateUserDto) {
-      
+        console.log('inicio do cadastro de  ususario');
+        console.log('inicio do cadastro de  ususario body', body);
         if(body.type == 'PROFISSIONAL'){
             if(body.programType == 'MINHA_CASA'){
                 body.professionalUserInfo.restingDays = body.professionalUserInfo.restingDays.map((day) => {
