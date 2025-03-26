@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, DeleteObjectCommand, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { EnviromentVariablesEnum } from "src/core/enums/environment-variables.enum";
 
 @Injectable()
@@ -40,6 +40,13 @@ export class AwsSubsystem {
     console.log('fora do if ');
 
     try {
+      const response = await this.s3Client.send(new ListBucketsCommand({}));
+      console.log("🗂️ Buckets disponíveis:", response);
+  } catch (error) {
+      console.error("❌ Erro ao listar os buckets:", error);
+  }
+  
+    try {
       console.log('⏳ Enviando arquivo para S3...');
       
       const result = await this.s3Client.send(
@@ -61,7 +68,7 @@ export class AwsSubsystem {
         const localtion = `https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grumzjujmpu4/b/code-s3-001/o/${fileName}`;
     
         return localtion;
-        
+
   } catch (error) {
       console.error('❌ Erro ao enviar arquivo para S3:', error);
   }
