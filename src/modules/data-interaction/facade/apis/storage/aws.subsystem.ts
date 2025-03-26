@@ -39,7 +39,15 @@ export class AwsSubsystem {
   }
     console.log('fora do if ');
 
-   
+    console.log(this.s3Client.send(
+      new PutObjectCommand({
+        Bucket: 'code-s3-001',
+        Key: fileName,
+        Body: file,
+        ContentType: fileMimeType,
+        ACL: "public-read",
+      })));
+
     const result = await this.s3Client.send(
       new PutObjectCommand({
         Bucket: 'code-s3-001',
