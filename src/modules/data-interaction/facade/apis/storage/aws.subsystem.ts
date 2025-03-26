@@ -33,7 +33,7 @@ export class AwsSubsystem {
     console.log('EnviromentVariablesEnum.AWS_BUCKET_NAME',EnviromentVariablesEnum.AWS_BUCKET_NAME);
     await this.s3Client.send(
       new PutObjectCommand({
-        Bucket: this.configService.get(EnviromentVariablesEnum.AWS_BUCKET_NAME),
+        Bucket: 'code-s3-001',
         Key: fileName,
         Body: file,
         ContentType: fileMimeType,
