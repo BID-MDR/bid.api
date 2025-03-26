@@ -40,13 +40,6 @@ export class AwsSubsystem {
     console.log('fora do if ');
 
     try {
-      const response = await this.s3Client.send(new ListBucketsCommand({}));
-      console.log("🗂️ Buckets disponíveis:", response);
-    } catch (error) {
-      console.error("❌ Erro ao listar os buckets:", error);
-    }
-
-    try {
       console.log('⏳ Enviando arquivo para S3...');
 
       const result = await this.s3Client.send(
