@@ -39,32 +39,32 @@ export class AwsSubsystem {
   }
     console.log('fora do if ');
 
-    console.log('teste s3 client send',await this.s3Client.send(
-      new PutObjectCommand({
-        Bucket: 'code-s3-001',
-        Key: fileName,
-        Body: file,
-        ContentType: fileMimeType,
-        ACL: "public-read",
-      })));
-
-    const result = await this.s3Client.send(
-      new PutObjectCommand({
-        Bucket: 'code-s3-001',
-        Key: fileName,
-        Body: file,
-        ContentType: fileMimeType,
-        ACL: "public-read",
-      })
-    );
-
-    console.log('result',result);
-
-    if (result.$metadata.httpStatusCode !== 200) throw new Error('Error uploading file')
-
-      const localtion = `https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grumzjujmpu4/b/code-s3-001/o/${fileName}`;
+    try {
+      console.log('⏳ Enviando arquivo para S3...');
+      
+      const result = await this.s3Client.send(
+          new PutObjectCommand({
+              Bucket: 'code-s3-001',
+              Key: fileName,
+              Body: file,
+              ContentType: fileMimeType,
+              ACL: "public-read",
+          })
+      );
   
-      return localtion;
+      console.log('✅ Arquivo enviado com sucesso:', result);
+
+      console.log('result',result);
+
+      if (result.$metadata.httpStatusCode !== 200) throw new Error('Error uploading file')
+  
+        const localtion = `https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grumzjujmpu4/b/code-s3-001/o/${fileName}`;
+    
+        return localtion;
+        
+  } catch (error) {
+      console.error('❌ Erro ao enviar arquivo para S3:', error);
+  }
 
   }
 
