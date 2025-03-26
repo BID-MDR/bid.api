@@ -42,7 +42,7 @@ export class AwsSubsystem {
     );
 
     return encodeURI(
-      `https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grumzjujmpu4/b/${this.configService.get(EnviromentVariablesEnum.AWS_BUCKET_NAME)}/o/${fileName}`
+      `https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grumzjujmpu4/b/code-s3-001/o/${fileName}`
     );
   }
 
