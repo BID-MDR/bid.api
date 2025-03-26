@@ -42,9 +42,12 @@ export class AwsSubsystem {
 
     console.log('result',result);
 
-    return encodeURI(
-      `https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grumzjujmpu4/b/code-s3-001/o/${fileName}`
-    );
+    if (result.$metadata.httpStatusCode !== 200) throw new Error('Error uploading file')
+
+      const localtion = `https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grumzjujmpu4/b/code-s3-001/o/${fileName}`;
+  
+      return localtion;
+
   }
 
   async deleteMedia(fileName: string) {
