@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Get,
@@ -159,24 +160,36 @@ export class FeatureUserController {
     @Post("")
     
     async create(@Body() body: CreateUserDto) {
-        console.log('inicio do cadastro de  ususario');
-        console.log('inicio do cadastro de  ususario body', body);
-        if(body.type == 'PROFISSIONAL'){
-            if(body.programType == 'MINHA_CASA'){
-                body.professionalUserInfo.restingDays = body.professionalUserInfo.restingDays.map((day) => {
-                    const restingDay = new CreateUserRestingDayDto();
-                    restingDay.day = day.day;
-                    return restingDay;
-                });
-            }
-          
-        }
-       
-        const user = await this.featureUserService.create(body);
+        console.log('Início do cadastro de usuário');
+        console.log('Dados recebidos:', body);
     
-       
-        return await this.featureAuthService.signinFromCreateUser(user);
+        try {
+            if (body.type === 'PROFISSIONAL' && body.programType === 'MINHA_CASA') {
+                if (body.professionalUserInfo?.restingDays) {
+                    body.professionalUserInfo.restingDays = body.professionalUserInfo.restingDays.map((day) => {
+                        const restingDay = new CreateUserRestingDayDto();
+                        restingDay.day = day.day;
+                        return restingDay;
+                    });
+                }
+            }
+    
+            console.log(' Criando usuário no banco de dados...');
+            const user = await this.featureUserService.create(body);
+            console.log('Usuário criado com sucesso:', user);
+    
+            console.log('🔑 Gerando token de autenticação...');
+            const authResponse = await this.featureAuthService.signinFromCreateUser(user);
+            console.log('Token gerado com sucesso:', authResponse);
+    
+            return authResponse;
+        } catch (error) {
+            console.error('❌ Erro no cadastro de usuário:', error);
+    
+            throw new BadRequestException(error.message || 'Erro ao criar usuário');
+        }
     }
+    
 
     @Get("password/update/request")
     @UseGuards(JwtAccessTokenGuard)

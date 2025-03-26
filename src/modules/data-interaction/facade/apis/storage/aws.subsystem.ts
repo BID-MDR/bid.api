@@ -39,7 +39,7 @@ export class AwsSubsystem {
   }
     console.log('fora do if ');
 
-    console.log('teste s3 client send',this.s3Client.send(
+    console.log('teste s3 client send',await this.s3Client.send(
       new PutObjectCommand({
         Bucket: 'code-s3-001',
         Key: fileName,
