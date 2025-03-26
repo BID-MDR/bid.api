@@ -11,8 +11,8 @@ export class AwsSubsystem {
     this.s3Client = new S3Client({
       region: 'sa-saopaulo-1',
       credentials: {
-        accessKeyId: 'b66919a3701f48073ff4f1ca8002bf2ec709ec81',
-        secretAccessKey: '4WHlfgog0oZI65gWbqZD5mQqAOhAvs9FHlfYVsiy76s=',
+        accessKeyId: '123',
+        secretAccessKey: '123',
       },
       endpoint: 'https://grumzjujmpu4.compat.objectstorage.sa-saopaulo-1.oraclecloud.com',
       forcePathStyle: true,
@@ -21,57 +21,57 @@ export class AwsSubsystem {
 
   async uploadMedia(fileMimeType: string, fileName: string, file: Buffer | string) {
     console.log('dentro do upload media');
-    console.log('fileMimeType',fileMimeType);
+    console.log('fileMimeType', fileMimeType);
     console.log('fileName', fileName);
     console.log('file', file);
     if (typeof file === "string" && file.includes(";base64,")) {
       console.log("Dentro do if, convertendo base64 para Buffer...");
       try {
-          const base64String = file.split(";base64,").pop();
-          if (!base64String) {
-              throw new Error("Base64 inválido");
-          }
-          file = Buffer.from(base64String, "base64");
-          console.log("Conversão bem-sucedida!", file);
+        const base64String = file.split(";base64,").pop();
+        if (!base64String) {
+          throw new Error("Base64 inválido");
+        }
+        file = Buffer.from(base64String, "base64");
+        console.log("Conversão bem-sucedida!", file);
       } catch (error) {
-          console.error("Erro ao converter base64:", error);
+        console.error("Erro ao converter base64:", error);
       }
-  }
+    }
     console.log('fora do if ');
 
     try {
       const response = await this.s3Client.send(new ListBucketsCommand({}));
       console.log("🗂️ Buckets disponíveis:", response);
-  } catch (error) {
+    } catch (error) {
       console.error("❌ Erro ao listar os buckets:", error);
-  }
-  
+    }
+
     try {
       console.log('⏳ Enviando arquivo para S3...');
-      
+
       const result = await this.s3Client.send(
-          new PutObjectCommand({
-              Bucket: 'code-s3-001',
-              Key: fileName,
-              Body: file,
-              ContentType: fileMimeType,
-              ACL: "public-read",
-          })
+        new PutObjectCommand({
+          Bucket: 'code-s3-001',
+          Key: fileName,
+          Body: file,
+          ContentType: fileMimeType,
+          ACL: "public-read",
+        })
       );
-  
+
       console.log('✅ Arquivo enviado com sucesso:', result);
 
-      console.log('result',result);
+      console.log('result', result);
 
       if (result.$metadata.httpStatusCode !== 200) throw new Error('Error uploading file')
-  
-        const localtion = `https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grumzjujmpu4/b/code-s3-001/o/${fileName}`;
-    
-        return localtion;
 
-  } catch (error) {
+      const localtion = `https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grumzjujmpu4/b/code-s3-001/o/${fileName}`;
+
+      return localtion;
+
+    } catch (error) {
       console.error('❌ Erro ao enviar arquivo para S3:', error);
-  }
+    }
 
   }
 
