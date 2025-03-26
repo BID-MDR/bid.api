@@ -20,10 +20,17 @@ export class AwsSubsystem {
   }
 
   async uploadMedia(fileMimeType: string, fileName: string, file: Buffer | string) {
+    console.log('dentro do upload media');
+    console.log('fileMimeType',fileMimeType);
+    console.log('fileName', fileName);
+    console.log('file', file);
     if (typeof file === "string") {
+      console.log('dentro do if ');
       file = Buffer.from(file.split(";base64,").pop(), "base64");
     }
+    console.log('fora do if ');
 
+    console.log('EnviromentVariablesEnum.AWS_BUCKET_NAME',EnviromentVariablesEnum.AWS_BUCKET_NAME);
     await this.s3Client.send(
       new PutObjectCommand({
         Bucket: this.configService.get(EnviromentVariablesEnum.AWS_BUCKET_NAME),
