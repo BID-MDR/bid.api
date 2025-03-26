@@ -24,17 +24,28 @@ export class AwsSubsystem {
     console.log('fileMimeType',fileMimeType);
     console.log('fileName', fileName);
     console.log('file', file);
-    if (typeof file === "string") {
-      console.log('dentro do if ');
-      file = Buffer.from(file.split(";base64,").pop(), "base64");
-    }
+    if (typeof file === "string" && file.includes(";base64,")) {
+      console.log("Dentro do if, convertendo base64 para Buffer...");
+      try {
+          const base64String = file.split(";base64,").pop();
+          if (!base64String) {
+              throw new Error("Base64 inválido");
+          }
+          file = Buffer.from(base64String, "base64");
+          console.log("Conversão bem-sucedida!", file);
+      } catch (error) {
+          console.error("Erro ao converter base64:", error);
+      }
+  }
     console.log('fora do if ');
 
+   
     const result = await this.s3Client.send(
       new PutObjectCommand({
         Bucket: 'code-s3-001',
         Key: fileName,
         Body: file,
+        ContentType: fileMimeType,
         ACL: "public-read",
       })
     );
