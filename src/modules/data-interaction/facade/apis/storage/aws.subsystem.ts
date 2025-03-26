@@ -11,8 +11,8 @@ export class AwsSubsystem {
     this.s3Client = new S3Client({
       region: 'sa-saopaulo-1',
       credentials: {
-        accessKeyId: '123',
-        secretAccessKey: '123',
+        accessKeyId: 'b66919a3701f48073ff4f1ca8002bf2ec709ec81',
+        secretAccessKey: '4WHlfgog0oZI65gWbqZD5mQqAOhAvs9FHlfYVsiy76s=',
       },
       endpoint: 'https://grumzjujmpu4.compat.objectstorage.sa-saopaulo-1.oraclecloud.com',
       forcePathStyle: true,
