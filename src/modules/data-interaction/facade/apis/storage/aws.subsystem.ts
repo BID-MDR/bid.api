@@ -30,7 +30,6 @@ export class AwsSubsystem {
     }
     console.log('fora do if ');
 
-    console.log('EnviromentVariablesEnum.AWS_BUCKET_NAME',EnviromentVariablesEnum.AWS_BUCKET_NAME);
     const result = await this.s3Client.send(
       new PutObjectCommand({
         Bucket: 'code-s3-001',
