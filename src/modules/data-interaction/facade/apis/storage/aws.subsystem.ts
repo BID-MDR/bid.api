@@ -31,15 +31,16 @@ export class AwsSubsystem {
     console.log('fora do if ');
 
     console.log('EnviromentVariablesEnum.AWS_BUCKET_NAME',EnviromentVariablesEnum.AWS_BUCKET_NAME);
-    await this.s3Client.send(
+    const result = await this.s3Client.send(
       new PutObjectCommand({
         Bucket: 'code-s3-001',
         Key: fileName,
         Body: file,
-        ContentType: fileMimeType,
         ACL: "public-read",
       })
     );
+
+    console.log('result',result);
 
     return encodeURI(
       `https://objectstorage.sa-saopaulo-1.oraclecloud.com/n/grumzjujmpu4/b/code-s3-001/o/${fileName}`
