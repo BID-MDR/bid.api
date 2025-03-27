@@ -17,7 +17,7 @@ export class AwsSubsystem {
       endpoint: 'https://grumzjujmpu4.compat.objectstorage.sa-saopaulo-1.oraclecloud.com',
       forcePathStyle: true,
     });
-    this.validateConnection();
+    //this.validateConnection();
   }
 
   private async validateConnection() {
@@ -38,7 +38,7 @@ export class AwsSubsystem {
   }
 
   async uploadMedia(fileMimeType: string, fileName: string, file: Buffer | string) {
-    this.validateConnection();
+    //this.validateConnection();
     console.log('dentro do upload media');
     console.log('fileMimeType',fileMimeType);
     console.log('fileName', fileName);
