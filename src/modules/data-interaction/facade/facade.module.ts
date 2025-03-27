@@ -6,7 +6,7 @@ import { ConfeaModule } from './apis/gov/confea/confea.module';
 import { GovbrModule } from './apis/gov/govbr/govbr.module';
 
 @Module({
-    imports: [CaubModule, EmailModule, StorageModule, ConfeaModule, GovbrModule],
-    exports: [CaubModule, EmailModule, StorageModule, ConfeaModule, GovbrModule],
+    imports: [CaubModule, EmailModule, StorageModule, ConfeaModule, GovbrModule, StorageModule],
+    exports: [CaubModule, EmailModule, StorageModule, ConfeaModule, GovbrModule, StorageModule],
 })
 export class FacadeModule {}
