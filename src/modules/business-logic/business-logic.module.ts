@@ -24,6 +24,7 @@ import { UnavailabilityModule } from './unavailability/unavailability.module';
 import { TaskServiceModule } from './tasService/unavailability.module';
 import { NotificationMessageModule } from './notification-msg/notification-message.module';
 import { SeedModule } from './seed/seed.module';
+import { StorageModule } from '../data-interaction/facade/apis/storage/storage.module';
 @Module({
     imports: [
         FeatureUserModule,
@@ -50,6 +51,7 @@ import { SeedModule } from './seed/seed.module';
         UnavailabilityModule,
         TaskServiceModule,
         NotificationMessageModule,
+        StorageModule,
         SeedModule
     ],
 })

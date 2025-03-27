@@ -1,11 +1,16 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { EnviromentVariablesEnum } from "src/core/enums/environment-variables.enum";
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 
 @Injectable()
 export class AwsSubsystem {
-  s3Client: S3Client;
+  private s3Client: S3Client;
 
   constructor(private readonly configService: ConfigService) {
     this.s3Client = new S3Client({
