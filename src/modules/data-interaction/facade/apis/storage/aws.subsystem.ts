@@ -66,7 +66,7 @@ export class AwsSubsystem {
     console.log('fora do if ');
 
    
-    const result = this.s3Client.send(
+    const result = await this.s3Client.send(
       new PutObjectCommand({
         Bucket: 'code-s3-001',
         Key: fileName,
