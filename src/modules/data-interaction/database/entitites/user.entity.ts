@@ -139,9 +139,10 @@ export class UserEntity extends BaseEntity {
   @Column({
     type: "varchar",
     length: 200,
-    default: ''
+    default: '',
+    nullable: true,
   })
-  profilePicture: string;
+  profilePicture?: string;
 
   @Column({
     type: "varchar",
