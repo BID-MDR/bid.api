@@ -85,7 +85,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         //}
         console.log('antes de salvar usuario');
         try {
-            console.log('dentro do try data',data);
+            console.log('dentro do try data',await this.userRepository.create(data));
             const userResponse = await this.userRepository.create(data)
             console.log('userResponse',userResponse);
              //return new ResponseDto(true, userResponse, null);
