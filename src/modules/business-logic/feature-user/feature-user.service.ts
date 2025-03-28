@@ -34,6 +34,7 @@ import { ImprovementProjectRepository } from 'src/modules/data-interaction/datab
 import { RegisterWorkRepository } from 'src/modules/data-interaction/database/repositories/registerWork/registerWork.repository';
 import { ContractResignedRepository } from 'src/modules/data-interaction/database/repositories/contract-resigned/contract-resigned.repository';
 import { ContractRepository } from 'src/modules/data-interaction/database/repositories/contract/contract.repository';
+import { ResponseDto } from 'src/core/dtos/response.dto';
 
 @Injectable()
 export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -84,7 +85,10 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         //}
         console.log('antes de salvar usuario');
         try {
-            return await super.create(data);
+            const userResponse = await this.userRepository.create(data)
+             //return new ResponseDto(true, userResponse, null);
+             return userResponse
+           
         } catch (error) {
             console.error('❌ Erro ao criar registro:', error);
             throw new InternalServerErrorException('Erro ao criar registro');
