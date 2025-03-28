@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { totp } from 'otplib';
@@ -71,6 +71,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         console.log('service');
         data.password = bcrypt.hash(data.password, 13).toString();
         console.log('apos password');
+        data.profilePicture = ''
         //if (data.uploadedProfilePicture && typeof data.uploadedProfilePicture !== 'string') {    
         //    console.log('ddentro verificacao imagem');
         //    console.log('upload media');
@@ -82,7 +83,12 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         //    console.log('apos o upload');
         //}
         console.log('antes de salvar usuario');
-        return await super.create(data);
+        try {
+            return await super.create(data);
+        } catch (error) {
+            console.error('❌ Erro ao criar registro:', error);
+            throw new InternalServerErrorException('Erro ao criar registro');
+        }
     }
 
     async updateById(id: string, data: any) {
@@ -201,11 +207,11 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
 
     async updateAddress(dto: UpdateAddressDto) {
 
-        if(dto.id && dto.id !== '') {
-             delete dto.userId
+        if (dto.id && dto.id !== '') {
+            delete dto.userId
             const update = await this.addressRepository.update(dto.id, dto)
             return update
-        }else {
+        } else {
             delete dto.id
             const addressRes = await this.addressRepository.create(dto)
             const user = await this.userRepository.findById(dto.userId)
@@ -216,7 +222,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
             await user.save()
             return addressRes.reload()
         }
-   
+
     }
 
     async updateProfilePicture(userId: string, dto: MediaUploadDto) {
@@ -238,28 +244,28 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
             step: 300,
         };
         const token = totp.generate(this.configService.get(EnviromentVariablesEnum.OTP_TOKEN));
-    
+
         const user = await this.findById(userId);
         if (!user) {
             throw new Error('User not found');
         }
-    
+
         const otpRequest = new UserOtpRequestEntity();
         otpRequest.token = await this.hashStringData(token);
         otpRequest.user = user;
-    
+
         await otpRequest.save();
-    
+
         user.otpRequest = otpRequest;
         await user.save();
-    
+
         await this.emailFacade.sendPasswordResetCodeEmail(token, user.email);
     }
 
     async verifyToken(userId: string, token: string) {
         const user = await this.findById(userId);
 
-   
+
         totp.options = {
             digits: 6,
             step: 300,
@@ -316,22 +322,22 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         return await this.userRepository.list();
     }
 
-    async findNearbyEmployees( latitude: number,
+    async findNearbyEmployees(latitude: number,
         longitude: number) {
-        return await this.userRepository.findNearbyEmployees( latitude, longitude);
+        return await this.userRepository.findNearbyEmployees(latitude, longitude);
     }
 
-    async findNearbyBeneficiary( latitude: number,
+    async findNearbyBeneficiary(latitude: number,
         longitude: number,
         radiusInKm: number,) {
-        return await this.userRepository.findNearbyBeneficiary( latitude, longitude, radiusInKm);
+        return await this.userRepository.findNearbyBeneficiary(latitude, longitude, radiusInKm);
     }
 
-    async listBeneficiary(){
+    async listBeneficiary() {
         return await this.userRepository.listBeneficiary();
     }
 
-    async listBeneficiaryByMonth(month: number){
+    async listBeneficiaryByMonth(month: number) {
         return await this.userRepository.findMonth(month);
     }
 
@@ -355,29 +361,29 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         return await this.userRepository.getDashboardDataWithJoinProfessional(userId);
     }
 
-    async listAppoitmentByProfessionalId(professionalId: string){
+    async listAppoitmentByProfessionalId(professionalId: string) {
         const techVisitList = (await this.technicalVisitRepo.getByProfessionalAndStatus(professionalId))
-        .map(item => ({ ...item, source: 'TechnicalVisit' }));
-    const costEstimateList = (await this.costEstimateRepo.getByProfessionalAndStatus(professionalId))
-        .map(item => ({ ...item, source: 'CostEstimate' }));
-    const improvementProjectList = (await this.improvementProjectRepo.getByProfessionalAndStatus(professionalId))
-        .map(item => ({ ...item, source: 'ImprovementProject' }));
-    const registerWorkList = (await this.registerWorkRepo.getByProfessionalAndStatus(professionalId))
-        .map(item => ({ ...item, source: 'RegisterWork' }));
-    const contractResignedList = (await this.contractResignedRepo.getByProfessionalAndStatus(professionalId))
-        .map(item => ({ ...item, source: 'ContractResigned' }));
-    const contractList = (await this.contractRepo.getByProfessionalAndStatus(professionalId))
-        .map(item => ({ ...item, source: 'Contract' }));
-    
-    const allAppointments = [
-        ...techVisitList,
-        ...costEstimateList,
-        ...improvementProjectList,
-        ...registerWorkList,
-        ...contractResignedList,
-        ...contractList,
-    ];
-    return allAppointments
+            .map(item => ({ ...item, source: 'TechnicalVisit' }));
+        const costEstimateList = (await this.costEstimateRepo.getByProfessionalAndStatus(professionalId))
+            .map(item => ({ ...item, source: 'CostEstimate' }));
+        const improvementProjectList = (await this.improvementProjectRepo.getByProfessionalAndStatus(professionalId))
+            .map(item => ({ ...item, source: 'ImprovementProject' }));
+        const registerWorkList = (await this.registerWorkRepo.getByProfessionalAndStatus(professionalId))
+            .map(item => ({ ...item, source: 'RegisterWork' }));
+        const contractResignedList = (await this.contractResignedRepo.getByProfessionalAndStatus(professionalId))
+            .map(item => ({ ...item, source: 'ContractResigned' }));
+        const contractList = (await this.contractRepo.getByProfessionalAndStatus(professionalId))
+            .map(item => ({ ...item, source: 'Contract' }));
+
+        const allAppointments = [
+            ...techVisitList,
+            ...costEstimateList,
+            ...improvementProjectList,
+            ...registerWorkList,
+            ...contractResignedList,
+            ...contractList,
+        ];
+        return allAppointments
     }
 
 }
