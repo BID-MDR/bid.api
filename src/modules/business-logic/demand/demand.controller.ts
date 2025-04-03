@@ -30,7 +30,7 @@ import { EmployeeRoleEnum } from "../../data-interaction/database/enums/employee
 export class DemandController {
     private readonly _logger = new Logger(DemandController.name);
 
-    constructor(private demandService: DemandService) {}
+    constructor(private demandService: DemandService) { }
 
     @Get("")
     @ApiBearerAuth()
@@ -59,15 +59,12 @@ export class DemandController {
         type: ResponseDemandDto,
     })
     async getById(@Param("id") id: string) {
-        return await this.demandService.findById(id);
+        return await this.demandService.getById(id);
     }
 
     @Get("get-by-workRequestId/:id")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
-    @SerializeOptions({
-        type: ResponseDemandDto,
-    })
     async getByWorkRequesId(@Param("id") id: string) {
         return await this.demandService.getByWorkRequestId(id);
     }
@@ -124,8 +121,11 @@ export class DemandController {
 
     @Post("")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesGuard)
-    @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_demand])
+    @UseGuards(
+        JwtAccessTokenGuard,
+        // RolesGuard
+    )
+    // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_demand])
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
         description: "Pedido de demanda.",
@@ -136,6 +136,21 @@ export class DemandController {
     async register(@Req() req: Request, @Body() dto: DemandRegisterRequestDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
         return await this.demandService.register(userId, dto);
+    }
+    @Post("register-single-demand")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard, RolesGuard)
+    @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_demand])
+    @ApiOkResponseDtoData({
+        type: ResponseDemandDto,
+        description: "Pedido de demanda.",
+    })
+    @SerializeOptions({
+        type: ResponseDemandDto,
+    })
+    async registerSingleDemand(@Req() req: Request, @Body() dto: DemandRegisterRequestDto) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.demandService.registerSingleDemand(userId, dto);
     }
 
     @Delete("delete-by-id/:id")
@@ -159,6 +174,13 @@ export class DemandController {
     })
     async listByStatus(@Param('status') status: DemandStatusEnum) {
         return await this.demandService.listByStatus(status);
+    }
+
+    @Get('sustainability/:document')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async countSustainability(@Param('document') document: string) {
+        return await this.demandService.countSustainability(document);
     }
 
     @Put('confirm-conclusion/:id')

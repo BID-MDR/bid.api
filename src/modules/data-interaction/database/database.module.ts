@@ -55,6 +55,31 @@ import { SatisfactionResearchRepository } from './repositories/satisfaction-rese
 import { UserRolesBackofficeEntity } from './entitites/user-roles-backoffice.entity';
 import { UserRolesBackofficeRepository } from './repositories/backoffice/user/user-roles.repository';
 import { EmailRepository } from './repositories/backoffice/email/email.repository';
+import { MessageBackofficeEntity } from './entitites/message-backoffice.entity';
+import { MessageBackofficeRepository } from './repositories/backoffice/message/message.repository';
+import { SustainabilityItensEntity } from './entitites/sustainability-Itens.entity';
+import { SustainabilityItensRepository } from './repositories/work-request/sustainability-itens.repository';
+import { UserGeneratedMediaConclusionEntity } from './entitites/user-generated-media-conclusion.entity';
+import { UserGeneratedMediaConclusionRepository } from './repositories/user/user-generated-media-conclusion.repository';
+import { CostEstimateEntity } from './entitites/cost-estimate.entity';
+import { InterventionEntity } from './entitites/intervention.entity';
+import { InterventionRepository } from './repositories/intervention/intervention.repository';
+import { CostEstimateRepository } from './repositories/costEstimate/costEstimate.repository';
+import { ContractEntity } from './entitites/contract.entity';
+import { ContractRepository } from './repositories/contract/contract.repository';
+import { BidDocumentRepository } from './repositories/bidDocument/bidDocument.repository';
+import { BidDocumentEntity } from './entitites/bid-document.entity';
+import { ImprovementProjectEntity } from './entitites/improvement-project.entity';
+import { ImprovementProjectRepository } from './repositories/improvement-project/improvement-project.repository';
+import { RegisterWorkEntity } from './entitites/register-work.entity';
+import { RegisterWorkRepository } from './repositories/registerWork/registerWork.repository';
+import { ContractResignedEntity } from './entitites/contract-resigned.entity';
+import { ContractResignedRepository } from './repositories/contract-resigned/contract-resigned.repository';
+import { SurveyEntity } from './entitites/survey.entity';
+import { UnavailabilityEntity } from './entitites/unavailability.entity';
+import { UnavailabilityRepository } from './repositories/unavailability/unavailability.repository';
+import { NotificationMsgRepository } from './repositories/notification-msg/notification-msg.repository';
+import { NotificationMsgEntity } from './entitites/notification-msg.entity';
 
 const ENTITIES = [
     UserEntity,
@@ -84,7 +109,20 @@ const ENTITIES = [
     EmployeeRoleEntity,
     UserBackofficeEntity,
     SatisfactionResearchEntity,
-    UserRolesBackofficeEntity
+    UserRolesBackofficeEntity,
+    MessageBackofficeEntity,
+    SustainabilityItensEntity,
+    UserGeneratedMediaConclusionEntity,
+    CostEstimateEntity,
+    InterventionEntity,
+    ContractEntity,
+    BidDocumentEntity,
+    ImprovementProjectEntity,
+    RegisterWorkEntity,
+    ContractResignedEntity,
+    SurveyEntity,
+    UnavailabilityEntity,
+    NotificationMsgEntity
 ];
 const REPOSITORIES = [
     UserRepository,
@@ -112,7 +150,19 @@ const REPOSITORIES = [
     UserBackofficeRepository,
     SatisfactionResearchRepository,
     UserRolesBackofficeRepository,
-    EmailRepository
+    EmailRepository,
+    MessageBackofficeRepository,
+    SustainabilityItensRepository,
+    UserGeneratedMediaConclusionRepository,
+    InterventionRepository,
+    CostEstimateRepository,
+    ContractRepository,
+    BidDocumentRepository,
+    ImprovementProjectRepository,
+    RegisterWorkRepository,
+    ContractResignedRepository,
+    UnavailabilityRepository,
+    NotificationMsgRepository
 ];
 
 @Module({

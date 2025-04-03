@@ -8,6 +8,7 @@ import { ConstructionsRepository } from "../../data-interaction/database/reposit
 import { DemandRepository } from "../../data-interaction/database/repositories/user/demand.repository";
 import { DemandStatusEnum } from "../../data-interaction/database/enums/demand-status.enum";
 import { ConstructionsStatusEnum } from "src/modules/data-interaction/database/enums/constructions-stauts.enum";
+import { UserGeneratedMediaConclusionRepository } from "src/modules/data-interaction/database/repositories/user/user-generated-media-conclusion.repository";
 
 @Injectable()
 export class ConstructionsService {
@@ -16,10 +17,62 @@ export class ConstructionsService {
     private readonly constructionsRepository: ConstructionsRepository,
     private readonly roomSolutionService: RoomSolutionRepository,
     private readonly userGeneratedMediaRepository: UserGeneratedMediaRepository,
+    private readonly userGeneratedMediaConclusionRepository: UserGeneratedMediaConclusionRepository,
     private readonly S3: AwsSubsystem
   ) {}
 
   async firstStepPhotos(
+    roomSolutionId: string,
+    files: Array<Express.Multer.File>,
+    demandId: string,
+    companyId: string
+  ) {
+    if (!files.length) {
+      throw new BadRequestException("Files are required");
+    }
+
+    const demand = await this.demandRepository.getById2(demandId);
+
+    if (!demand) {
+      throw new BadRequestException("Demand not found");
+    }
+
+    if (demand.company?.id !== companyId) {
+      throw new BadRequestException("Not authorized to access this demand");
+    }
+    const roomSolutions = demand.workRequest.room
+      .map(room => room.roomSolutions)
+      .filter(a => !!a)
+      .flat();
+
+    if (!roomSolutions.some(roomSolution => roomSolution.id === roomSolutionId)) {
+      throw new BadRequestException("Room solution not found");
+    }
+
+    const roomSolution = await this.roomSolutionService.findById(roomSolutionId);
+    if (!roomSolution) {
+      throw new BadRequestException("Room solution not found");
+    }
+
+    for (const file of files) {
+      const name = "construction-" + new Date().getTime();
+      const url = await this.S3.uploadMediaBuffer(file.mimetype, name, file.buffer);
+      const userMidia = await this.userGeneratedMediaRepository.create({
+        url,
+        mimeType: file.mimetype,
+        type: MediaTypeEnum.FOTO,
+      });
+      roomSolution.picturesAndVideos.push(userMidia);
+    }
+    await roomSolution.save();
+
+    await demand.reload();
+
+    return demand;
+  }
+
+
+  async registerPhotosConclusion(
     roomSolutionId: string,
     files: Array<Express.Multer.File>,
     demandId: string,
@@ -56,12 +109,12 @@ export class ConstructionsService {
     for (const file of files) {
       const name = "construction-" + new Date().getTime();
       const url = await this.S3.uploadMediaBuffer(file.mimetype, name, file.buffer);
-      const userMidia = await this.userGeneratedMediaRepository.create({
+      const userMidia = await this.userGeneratedMediaConclusionRepository.create({
         url,
         mimeType: file.mimetype,
         type: MediaTypeEnum.FOTO,
       });
-      roomSolution.picturesAndVideos.push(userMidia);
+      roomSolution.picturesAndVideosConclusion.push(userMidia);
     }
     await roomSolution.save();
 
@@ -71,12 +124,11 @@ export class ConstructionsService {
   }
 
   async secondStepConstructions(dto: CreateConstructionsDto, demandId: string, companyId: string) {
-    const demand = await this.demandRepository.findById(demandId);
+    const demand = await this.demandRepository.getById2(demandId);
 
     if (!demand) {
       throw new BadRequestException("Demand not found");
     }
-
     if (demand.company.id !== companyId) {
       throw new BadRequestException("Not authorized to access this demand");
     }
@@ -155,6 +207,10 @@ export class ConstructionsService {
 
   async list() {
     return await this.constructionsRepository.findAll();
+  }
+
+  async listByMonth(month:number){
+    return await this.constructionsRepository.findMonth(month)
   }
 
   async getById(constructionsId: string) {

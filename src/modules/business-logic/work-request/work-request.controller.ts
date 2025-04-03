@@ -11,52 +11,68 @@ import { EmployeeRoleEnum } from "../../data-interaction/database/enums/employee
 import { WorkRequestService } from "./work-request.service";
 import { Request } from "express";
 import { JwtPayloadInterface } from "src/core/interfaces/jwt-payload.interface";
+import { SustainabilityItensRequestDto } from "src/modules/data-interaction/database/dtos/work-request/sustainability-itens-request.dto";
+import { FeatureUserService } from "../feature-user/feature-user.service";
 
 @Controller("work-request")
 @ApiTags("Work Request/Vistoria")
 export class WorkRequestController {
   private readonly _logger = new Logger(WorkRequestController.name);
-  constructor(private service: WorkRequestService) {}
+  constructor(private service: WorkRequestService) { }
 
   @Get("")
-  @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard)
-  @ApiOperation({
-    description: "Lista de vistorias.",
-    summary: "Listar vistorias.",
-  })
-  @ApiOkResponseDtoData({
-    type: ResponseWorkRequestDto,
-    description: "Lista de vistorias.",
-  })
-  @SerializeOptions({
-    type: ResponseWorkRequestDto,
-  })
+  // @ApiBearerAuth()
+  // @UseGuards(JwtAccessTokenGuard)
+  // @ApiOperation({
+  //   description: "Lista de vistorias.",
+  //   summary: "Listar vistorias.",
+  // })
+  // @ApiOkResponseDtoData({
+  //   type: ResponseWorkRequestDto,
+  //   description: "Lista de vistorias.",
+  // })
+  // @SerializeOptions({
+  //   type: ResponseWorkRequestDto,
+  // })
   async list() {
     return await this.service.list();
   }
 
   @Get("id/:id")
   @ApiBearerAuth()
-  @ApiOperation({
-    description: "Vistoria por ID.",
-    summary: "Vistoria por ID.",
-  })
-  @ApiOkResponseDtoData({
-    type: ResponseWorkRequestDto,
-    description: "Vistoria por ID.",
-  })
-  @SerializeOptions({
-    type: ResponseWorkRequestDto,
-  })
+
   async getById(@Param("id") id: string) {
-    return await this.service.findById(id);
+    return await this.service.getById(id);
+  }
+
+  @Get("user-id")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  @ApiOperation({
+    description: "Vistoria por usuario logado.",
+    summary: "Vistoria por usuario logado.",
+  })
+  async getByUserId(@Req() req: Request) {
+    const userId = (req.user as JwtPayloadInterface).userId;
+    return await this.service.getByUser(userId);
+  }
+
+
+  @Get("find/byBeneficiaryId/id/:id")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  @ApiOperation({
+    description: "Retorna a visita técnica.",
+    summary: "Retorna a visita técnica pelo ID do beneficiario.",
+  })
+  async findByBeneficiaryId(@Param("id") id: string) {
+    return await this.service.getByUser(id);
   }
 
   @Post("")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_inspection])
+  @UseGuards(JwtAccessTokenGuard)
+  // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_inspection, EmployeeRoleEnum.manager_demand])
   @ApiOperation({
     description: "Registrar vistoria.",
     summary: "Registrar vistoria.",
@@ -73,6 +89,28 @@ export class WorkRequestController {
   async create(@Body() dto: CreateWorkRequestDto, @Req() req: Request) {
     const companyId = (req.user as JwtPayloadInterface).companyId;
     return await this.service.register(dto, companyId);
+  }
+
+  @Post("beneficiary")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  //@Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_inspection, EmployeeRoleEnum.manager_demand,])
+  @ApiOperation({
+    description: "Registrar vistoria beneficiario.",
+    summary: "Registrar vistoria.",
+  })
+  @ApiOkResponseDtoData({
+    type: ResponseWorkRequestDto,
+    description: "Vistoria registrada.",
+  })
+  @ApiBody({
+    type: CreateWorkRequestDto,
+    required: true,
+    description: "Construção a ser criado.",
+  })
+  async createBeneficiary(@Body() dto: CreateWorkRequestDto, @Req() req: Request) {
+    const userId = (req.user as JwtPayloadInterface).userId;
+    return await this.service.registerBenefficiary(dto, userId);
   }
 
   @Put("id/:id")
@@ -101,17 +139,41 @@ export class WorkRequestController {
 
   @Put("carry-out/:id")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_inspection])
+  @UseGuards(JwtAccessTokenGuard)
+  // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_inspection])
+  //Retirei as roles, até ajustar o script do login.
   @ApiOkResponseDtoData({
     type: ResponseWorkRequestDto,
     description: "Pedido de demanda.",
-  })
-  @SerializeOptions({
-    type: ResponseWorkRequestDto,
   })
   async carryOut(@Param("id") id: string, @Req() req: Request) {
     const companyId = (req.user as JwtPayloadInterface).companyId;
     return await this.service.carryOut(id, companyId);
   }
+
+  @Post("sustainability-itens/:workRequestId")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard, RolesGuard)
+  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_inspection, EmployeeRoleEnum.manager_demand])
+  @ApiBody({
+    type: SustainabilityItensRequestDto,
+    required: true,
+  })
+  async createSustainabilityItens(@Body() dto: SustainabilityItensRequestDto, @Req() req: Request, @Param('workRequestId') workRequestId: string) {
+    const userId = (req.user as JwtPayloadInterface).companyId;
+    return await this.service.createSustainabilityItens(dto, userId, workRequestId);
+  }
+
+  @Get("look-for-beneficiary")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+
+  async getLookForBeneficiary( @Req() req: Request) {
+    const userId = (req.user as JwtPayloadInterface).userId;
+    const teste =await this.service.findNearbyBeneficiary(userId);
+   
+    return await this.service.findNearbyBeneficiary(userId)
+
+  }
+
 }

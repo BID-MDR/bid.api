@@ -9,38 +9,56 @@ import { UserRepository } from "src/modules/data-interaction/database/repositori
 import { CompanyRepository } from "../../data-interaction/database/repositories/company/company.repository";
 import { TechnicalVisitStatusEnum } from "../../data-interaction/database/enums/technical-visit-status.enum";
 import { ConstructionsStatusEnum } from "../../data-interaction/database/enums/constructions-stauts.enum";
+import { NotificationMessageService } from "../notification-msg/notification-message.service";
 
 @Injectable()
 export class DemandService extends BaseService<DemandEntity, DemandRegisterRequestDto, DemandRegisterRequestDto> {
   constructor(
     private demandRepository: DemandRepository,
     private companyRepository: CompanyRepository,
-    private readonly userRepository: UserRepository
+    private readonly userRepository: UserRepository,
+    private readonly notificationMsgService: NotificationMessageService
   ) {
     super(demandRepository);
   }
 
   async listByUser(userId: string) {
     const user = await this.userRepository.getById(userId);
-    const companyId = user.employee.company.id || user.companyAdministrator.id;
-    return await this.demandRepository.listByUser(userId, companyId);
+
+    if(user?.companyAdministrator?.id)
+      return await this.demandRepository.listByUser(userId, user.companyAdministrator.id);
+    if(user?.employee?.company?.id)
+      return await this.demandRepository.listByUser(userId, user.employee.company.id);
+
+    return await this.demandRepository.listByUser(userId);
+
+  }
+
+  async getById(demandId: string) {
+    return await this.demandRepository.getById2(demandId);
+  }
+
+  async countSustainability(document: string){
+    return await this.demandRepository.countSustainabilityItems(document);
   }
 
   async listForVisit(userId: string) {
     const user = await this.userRepository.getById(userId);
-    const companyId = user.employee.company.id || user.companyAdministrator.id;
-    return await this.demandRepository.listForVisit(companyId);
+    if(user?.companyAdministrator?.id)
+      return await this.demandRepository.listForVisit(user.companyAdministrator.id);
+    else if(user?.employee?.company?.id)
+      return await this.demandRepository.listForVisit(user.employee.company.id);
   }
 
   async listForConstructions(userId: string) {
     const user = await this.userRepository.getById(userId);
-    const companyId = user.employee.company.id || user.companyAdministrator.id;
+    const companyId = user?.companyAdministrator?.id || user?.employee?.company?.id;
     return await this.demandRepository.listForConstructions(companyId);
   }
 
   async listByUserImprovement(userId: string) {
     const user = await this.userRepository.getById(userId);
-    const companyId = user.employee.company.id || user.companyAdministrator.id;
+    const companyId = user?.companyAdministrator?.id || user?.employee?.company?.id;
     return await this.demandRepository.listByUserWaitImprove(companyId);
   }
 
@@ -49,7 +67,7 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
   }
 
   async updateStatus(id: string, dto: StatusDemandDto) {
-    const demand = await this.demandRepository.findById(id);
+    const demand = await this.demandRepository.getById(id);
 
     const { status } = dto;
 
@@ -78,7 +96,9 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
       throw new BadRequestException("Não é possível alterar para um status anterior.");
     }
 
+
     this.checkStatusForWorkRequest(demand, status);
+    console.log(demand)
     this.checkStatusForImprovement(demand, status);
     this.checkStatusForConstruction(demand, status);
 
@@ -89,27 +109,81 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
   async list() {
     return await this.demandRepository.list();
   }
-
+  async registerSingleDemand(userId: string, data: DemandRegisterRequestDto) {
+    try{
+      const professional = await this.userRepository.getById(userId);
+      if (!professional) {
+        throw new BadRequestException("Professional não encontrado.");
+      }
+  
+      data.company = await this.companyRepository.findById(professional.employee.company.id);
+      
+  
+      if (!data.company) {
+        throw new BadRequestException("Empresa não encontrada.");
+      }
+  
+      data.beneficiary = await this.userRepository.getByCpf(data.document);
+  
+      if (!data.beneficiary) {
+        throw new BadRequestException("Beneficiário não encontrado.");
+      }
+  
+      const demand = await super.create(data);
+      const msgDto = {
+        content: `${professional.name} cadastrou seu CPF e será responsável pela sua obra de melhoria`,
+  
+      }
+  
+      const msgProfessionalDto = {
+        content: `Você cadastrou o uma demanda para ${data.beneficiary.name}`,
+  
+      }
+      await this.notificationMsgService.register(data.beneficiary.id, msgDto)
+  
+      await this.notificationMsgService.register(professional.id, msgProfessionalDto)
+      return demand
+    } catch (error) {
+      
+    }
+  }
   async register(userId: string, data: DemandRegisterRequestDto) {
-    const professional = await this.userRepository.getById(userId);
-
-    if (!professional) {
-      throw new BadRequestException("Professional não encontrado.");
+    try{
+      const professional = await this.userRepository.getById(userId);
+      if (!professional) {
+        throw new BadRequestException("Professional não encontrado.");
+      }
+  
+      data.company = await this.companyRepository.findById(professional.employee.company.id);
+      
+  
+      if (!data.company) {
+        throw new BadRequestException("Empresa não encontrada.");
+      }
+  
+      data.beneficiary = await this.userRepository.getByCpf(data.document);
+  
+      if (!data.beneficiary) {
+        throw new BadRequestException("Beneficiário não encontrado.");
+      }
+  
+      const demand = await super.create(data);
+      const msgDto = {
+        content: `${professional.name} cadastrou seu CPF e será responsável pela sua obra de melhoria`,
+  
+      }
+  
+      const msgProfessionalDto = {
+        content: `Você cadastrou o uma demanda para ${data.beneficiary.name}`,
+  
+      }
+      await this.notificationMsgService.register(data.beneficiary.id, msgDto)
+  
+      await this.notificationMsgService.register(professional.id, msgProfessionalDto)
+      return demand
+    } catch (error) {
+      
     }
-
-    data.company = await this.companyRepository.findById(professional.employee.company.id);
-
-    if (!data.company) {
-      throw new BadRequestException("Empresa não encontrada.");
-    }
-
-    data.beneficiary = await this.userRepository.getByCpf(data.document);
-
-    if (!data.beneficiary) {
-      throw new BadRequestException("Beneficiário não encontrado.");
-    }
-
-    return await super.create(data);
   }
 
   async delete(demandId: string) {

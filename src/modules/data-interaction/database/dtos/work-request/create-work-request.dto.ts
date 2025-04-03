@@ -3,6 +3,7 @@ import {
     IsEnum,
     IsNotEmpty,
     IsNumber,
+    IsOptional,
     IsString,
     IsUUID,
     Max,
@@ -17,6 +18,10 @@ import { PrevalingConstructionMaterialsEnum } from "../../enums/prevailing-const
 import { Type } from "class-transformer";
 import { WelfareProgramEnum } from "../../enums/welfare-program.enum";
 import { CreateRoomDto } from "../room/create-room.dto";
+import { HouseTypeEnum } from "../../enums/house-type.enum";
+import { UserEntity } from "../../entitites/user.entity";
+import { MediaUploadDto } from "../media/media-upload.dto";
+import { SolvedProblemsEnum } from "../../enums/solved-problems.enum";
 
 class CreateWorkRequestWelfareProgramDto {
     @ApiProperty({ enum: WelfareProgramEnum })
@@ -27,18 +32,18 @@ class CreateWorkRequestWelfareProgramDto {
 
 export class CreateWorkRequestDto {
     @ApiProperty()
-    @IsUUID()
-    demandId: string;
-    demand: DemandEntity;
+    demandId?: string;
+    demand?: DemandEntity;
+
+    @ApiProperty()
+    beneficiary?: UserEntity;
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
     description: string;
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
     responsiblePersonName: string;
 
     @ApiProperty()
@@ -57,6 +62,9 @@ export class CreateWorkRequestDto {
     @IsNotEmpty()
     @IsEnum(PropertyTypeEnum)
     propertyType: PropertyTypeEnum;
+
+    @ApiProperty({ required: false, enum: HouseTypeEnum, nullable: true })
+    houseType?: HouseTypeEnum | null;
 
     @ApiProperty()
     @IsNotEmpty()
@@ -78,4 +86,20 @@ export class CreateWorkRequestDto {
     @Type(() => CreateRoomDto)
     room: CreateRoomDto[];
 
+
+    @ApiProperty({ type: [MediaUploadDto] })
+    @ValidateNested()
+    @Type(() => MediaUploadDto)
+    selectedFiles?: MediaUploadDto[];
+    
+
+    pictures?: string[];
+
+    @ApiProperty({ type: CreateRoomDto, isArray: true })
+    @ValidateNested({ each: true })
+    @Type(() => CreateRoomDto)
+    improvementRoom?: CreateRoomDto[];
+      
+    @ApiProperty({ isArray: true, enum: SolvedProblemsEnum })
+    solvedProblems?: SolvedProblemsEnum[];
 }

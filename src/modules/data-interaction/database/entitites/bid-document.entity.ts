@@ -1,0 +1,41 @@
+import { BaseEntity } from 'src/core/entities/base.entity';
+import { Column, Entity, JoinColumn, OneToOne} from 'typeorm';;
+import { BidDocumentEnum } from '../enums/bid-document.enum';
+import { ImprovementProjectEntity } from './improvement-project.entity';
+import { RegisterWorkEntity } from './register-work.entity';
+import { ContractResignedEntity } from './contract-resigned.entity';
+
+@Entity({ name: 'bid_document' })
+export class BidDocumentEntity extends BaseEntity {
+
+    @Column({
+        type: "varchar",
+        length: 255,
+    })
+    documentLink: string
+
+    @Column({
+        type: 'enum',
+        enum: BidDocumentEnum,
+    })
+    status: BidDocumentEnum;
+
+    @OneToOne(() => ImprovementProjectEntity, (bidDocument) => bidDocument.document, {
+        onDelete: 'CASCADE',
+    })
+    @JoinColumn()
+    project: ImprovementProjectEntity;
+
+    @OneToOne(() => RegisterWorkEntity, (contract) => contract.bidDocument, {
+    cascade: true, 
+    })
+    @JoinColumn()
+    registerWork: RegisterWorkEntity;
+
+    @OneToOne(() => ContractResignedEntity, (contract) => contract.bidDocument, {
+    cascade: true, 
+    })
+    @JoinColumn()
+    contractResigned: ContractResignedEntity;
+
+}

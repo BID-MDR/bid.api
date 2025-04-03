@@ -29,6 +29,13 @@ export class DemandBackofficeController {
         return await this.demandService.list();
     }
 
+    @Get("get-month/:month")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async getByMonth(@Param('month') month) {
+        return await this.demandService.getByMonth(month);
+    }
+
     @Get("id/:id")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
@@ -51,6 +58,42 @@ export class DemandBackofficeController {
     @Roles([FunctionTypeEnum.CONTROLE_DEMANDA])
     async getByProfessionalId(@Param("id") id: string) {
         return await this.demandService.listByUser(id);
+    }
+
+    @Get('sustainability/:document')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async countSustainability(@Param('document') document: string) {
+        return await this.demandService.countSustainability(document);
+    }
+
+    @Get('constructions/:document')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async countConstructions(@Param('document') document: string) {
+        return await this.demandService.countConstructions(document);
+    }
+
+    @Get('constructions-completed/:document')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async countConstructionsCompleted(@Param('document') document: string) {
+        return await this.demandService.countConstructionsCompleted(document);
+    }
+
+    @Get('technical-visit/:document')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async countTechnicalVisit(@Param('document') document: string) {
+        return await this.demandService.countTechnicalVisit(document);
+    }
+
+    @Get("get-by-company/:id")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA])
+    async getByCompany(@Param("id") id: string) {
+        return await this.demandService.listByCompany(id);
     }
 
     @Get("get-by-professionalId/improvement/:id")

@@ -8,7 +8,6 @@ export class CreateAddressDto {
     state: string;
 
     @ApiProperty({ required: false })
-    @Length(1, 100)
     @IsOptional()
     nickname?: string;
 
@@ -21,7 +20,6 @@ export class CreateAddressDto {
     zipcode: string;
 
     @ApiProperty()
-    @Length(1, 50)
     @IsOptional()
     complement: string;
 
@@ -35,7 +33,7 @@ export class CreateAddressDto {
     number: string;
 
     @ApiProperty()
-    @Length(1, 30)
+    @Length(1, 100)
     street: string;
 
     @ApiProperty({ example: '-23.000000' })

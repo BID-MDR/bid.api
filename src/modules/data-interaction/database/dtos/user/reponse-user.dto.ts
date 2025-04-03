@@ -13,8 +13,9 @@ class ProfessionalUserInfoResponseDto {
     @ApiProperty({ enum: PortifolioTypeEnum })
     portifolioType: PortifolioTypeEnum;
 
-    @ApiProperty()
-    portifolioLink: string;
+    @ApiProperty({ required: false })
+    @Transform(({ value }) => value ?? undefined)
+    portifolioLink?: string;
 
     @ApiProperty()
     confeaRegistrationNumber: string;

@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Get,
@@ -42,6 +43,7 @@ import { CreateAddressDto } from "src/modules/data-interaction/database/dtos/add
 import { UpdateAddressDto } from "src/modules/data-interaction/database/dtos/address/update-address.dto";
 import { CreateUserGeneratedMediaDto } from "src/modules/data-interaction/database/dtos/user/user-generated-media/create-user-generated-media.dto";
 import { MediaUploadDto } from "src/modules/data-interaction/database/dtos/media/media-upload.dto";
+import { CreateUserRestingDayDto } from "src/modules/data-interaction/database/dtos/user/user-resting-day/create-user-resting-day.dto";
 
 @Controller("user")
 @ApiTags("User/Usuário")
@@ -70,7 +72,23 @@ export class FeatureUserController {
     })
     async getLogged(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
-        const result = await this.featureUserService.findById(userId);
+        const result = await this.featureUserService.getById(userId);
+        return new ResponseDto(true, result, null);
+    }
+
+    @Get("get-beneficiary")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async getAllBeneficiary(@Req() req: Request) {
+        const result = await this.featureUserService.listBeneficiary();
+        return new ResponseDto(true, result, null);
+    }
+
+    @Get("get-month-beneficiary/:month")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async getBeneficiaryByMonth(@Param('month') month:number) {
+        const result = await this.featureUserService.listBeneficiaryByMonth(month);
         return new ResponseDto(true, result, null);
     }
 
@@ -95,33 +113,83 @@ export class FeatureUserController {
         type: UserResponseDto,
     })
     async getById(@Param("id") userId: string) {
-        const us = await this.featureUserService.findById(userId);
+        const us = await this.featureUserService.getById(userId);
         return new ResponseDto(true, us, false);
     }
 
-    @Post("")
-    @UseInterceptors(new EncryptInterceptor())
-    @ApiOperation({
-        description:
-            "Enpoint único para registrar beneficiário ou profissional.",
-        summary: "Cria um usuário de ambos os tipos.",
-    })
-    @ApiBodyEncripted({
-        type: CreateUserDto,
-        required: true,
-        description: "Usuário a ser criado.",
-    })
+    @Get("look-for-professional")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+   
     @ApiOkResponseDtoData({
-        type: SigninResponseDto,
-        description: "Token de acesso.",
+        type: UserResponseDto,
+        description: "Usuário logado que iniciou a requisição.",
     })
     @SerializeOptions({
-        type: SigninResponseDto,
+        type: UserResponseDto,
     })
-    async create(@Body() body: CreateUserDto) {
-        const user = await this.featureUserService.create(body);
-        return await this.featureAuthService.signinFromCreateUser(user);
+    async getLookForProfessional(@Req() req: Request) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        const resultUser = await this.featureUserService.findById(userId);
+        
+        const result = await this.featureUserService.findNearbyEmployees(Number(resultUser.address.latitude), Number(resultUser.address.longitude))
+      
+        return new ResponseDto(true, result, false);
     }
+
+    @Get("look-for-beneficiary")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+   
+    @ApiOkResponseDtoData({
+        type: UserResponseDto,
+        description: "Usuário logado que iniciou a requisição.",
+    })
+    @SerializeOptions({
+        type: UserResponseDto,
+    })
+    async getLookForBeneficiary(@Req() req: Request) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        const resultUser = await this.featureUserService.findById(userId);
+        
+        const result = await this.featureUserService.findNearbyBeneficiary(Number(resultUser.address.latitude), Number(resultUser.address.longitude), resultUser.address.maximumDistanceToWorks)
+
+        return new ResponseDto(true, result, false);
+    }
+
+    @Post("")
+    
+    async create(@Body() body: CreateUserDto) {
+        console.log('Início do cadastro de usuário');
+        console.log('Dados recebidos:', body);
+    
+        try {
+            if (body.type === 'PROFISSIONAL' && body.programType === 'MINHA_CASA') {
+                if (body.professionalUserInfo?.restingDays) {
+                    body.professionalUserInfo.restingDays = body.professionalUserInfo.restingDays.map((day) => {
+                        const restingDay = new CreateUserRestingDayDto();
+                        restingDay.day = day.day;
+                        return restingDay;
+                    });
+                }
+            }
+    
+            console.log(' Criando usuário no banco de dados...');
+            const user = await this.featureUserService.create(body);
+            console.log('Usuário criado com sucesso:', user);
+    
+            console.log('🔑 Gerando token de autenticação...');
+            const authResponse = await this.featureAuthService.signinFromCreateUser(user);
+            console.log('Token gerado com sucesso:', authResponse);
+    
+            return authResponse;
+        } catch (error) {
+            console.error('❌ Erro no cadastro de usuário:', error);
+    
+            throw new BadRequestException(error.message || 'Erro ao criar usuário');
+        }
+    }
+    
 
     @Get("password/update/request")
     @UseGuards(JwtAccessTokenGuard)
@@ -138,7 +206,6 @@ export class FeatureUserController {
     })
     async updatePasswordRequest(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
-        console.log('aq', userId)
 
         await this.featureUserService.updatePasswordRequest(userId);
     }
@@ -446,5 +513,10 @@ export class FeatureUserController {
     @Get("by-cpf/:cpf")
     async getByCpf(@Param("cpf") cpf: string) {
         return await this.featureUserService.getByCpf(cpf);
+    }
+
+    @Get("professional-appoitment/:professionalId")
+    async listAppoitmentByProfessionalId(@Param("professionalId") professionalId: string) {
+        return await this.featureUserService.listAppoitmentByProfessionalId(professionalId);
     }
 }

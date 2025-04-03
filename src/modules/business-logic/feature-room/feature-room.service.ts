@@ -10,6 +10,11 @@ import { CreateRoomSolutionDto } from 'src/modules/data-interaction/database/dto
 import { RoomSolutionEntity } from 'src/modules/data-interaction/database/entitites/room-solution.entity';
 import { RequestRoomSolutionDto } from 'src/modules/data-interaction/database/dtos/room-solution/request.dto';
 import { WorkRequestRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request.repository';
+import { RoomAddPhotoDto } from 'src/modules/data-interaction/database/dtos/room/room-add-photo.dto';
+import { StorageFacade } from 'src/modules/data-interaction/facade/apis/storage/storage.facade';
+import { MediaTypeEnum } from 'src/modules/data-interaction/database/enums/media-type.enum';
+import { AwsSubsystem } from 'src/modules/data-interaction/facade/apis/storage/aws.subsystem';
+import { UserGeneratedMediaRepository } from 'src/modules/data-interaction/database/repositories/user/user-generated-media.repository';
 
 @Injectable()
 export class FeatureRoomService extends BaseService<
@@ -20,7 +25,11 @@ export class FeatureRoomService extends BaseService<
     constructor(
         private roomRepository: RoomRepository,
         private roomSolutionRepository: RoomSolutionRepository,
-        private workRequestRepository: WorkRequestRepository
+        private workRequestRepository: WorkRequestRepository,
+        private readonly S3: AwsSubsystem,
+        private readonly userGeneratedMediaRepository: UserGeneratedMediaRepository,
+            
+        
 
     ) {
         super(roomRepository);
@@ -47,6 +56,63 @@ export class FeatureRoomService extends BaseService<
         return await super.update(id, room);
     }
 
+    async addStartPhoto(id: string, files: Array<Express.Multer.File>): Promise<RoomEntity> {
+         if (!files.length) {
+             throw new BadRequestException("Files are required");
+           }
+       
+           const room = await this.roomRepository.findById(id);
+       
+           if (!room) {
+             throw new BadRequestException("Room not found");
+           }
+       
+           for (const file of files) {
+             const name = "construction-" + new Date().getTime();
+             const url = await this.S3.uploadMediaBuffer(file.mimetype, name, file.buffer);
+             const userMidia = await this.userGeneratedMediaRepository.create({
+               url,
+               mimeType: file.mimetype,
+               type: MediaTypeEnum.FOTO,
+             });
+             room.startWorkPhotos.push(userMidia);
+           }
+           await room.save();
+       
+           await room.reload();
+       
+           return room;
+    }
+
+    async addEndPhoto(id: string, files: Array<Express.Multer.File>): Promise<RoomEntity> {
+        if (!files.length) {
+            throw new BadRequestException("Files are required");
+          }
+      
+          const room = await this.roomRepository.findById(id);
+      
+          if (!room) {
+            throw new BadRequestException("Room not found");
+          }
+      
+          for (const file of files) {
+            const name = "construction-" + new Date().getTime();
+            const url = await this.S3.uploadMediaBuffer(file.mimetype, name, file.buffer);
+            const userMidia = await this.userGeneratedMediaRepository.create({
+              url,
+              mimeType: file.mimetype,
+              type: MediaTypeEnum.FOTO,
+            });
+            room.endWorkPhotos.push(userMidia);
+          }
+          await room.save();
+      
+          await room.reload();
+      
+          return room;
+   }
+
+
 
     async createRoomSolution(data: CreateRoomSolutionDto): Promise<RoomSolutionEntity> {
         const room = await this.roomRepository.findById(data.roomId);
@@ -67,6 +133,13 @@ export class FeatureRoomService extends BaseService<
         return await this.roomSolutionRepository.findAllRoomWithSolution(id);
     }
 
+    async getRoomById(id: string){
+        const room = await this.roomRepository.findById(id);
+        if(!room)  throw new BadRequestException('Room não encontrado');
+        return room
+
+    }
+
     async selectAllByWorkRequest(id:string){
         return await this.roomRepository.findByWorkRequest(id);
     }
@@ -78,7 +151,9 @@ export class FeatureRoomService extends BaseService<
 
 
     async register(body: RequestRoomSolutionDto){
-        
+        if(body.room && Object.keys(body.room).length === 0) {
+            delete body.room
+        }
         if(body.workRequestId){
             body.workRequest = await this.workRequestRepository.findById(body.workRequestId);
         }

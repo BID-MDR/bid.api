@@ -1,0 +1,70 @@
+import { Injectable } from "@nestjs/common";
+import { BaseRepository } from "../../../../../core/repositories/base.repository";
+import { InjectRepository } from "@nestjs/typeorm";
+import { In, Not, Repository } from "typeorm";
+
+import { ContractResignedEntity } from "../../entitites/contract-resigned.entity";
+import { CreateContractResignedRequestDto } from "../../dtos/contract-resigned/contract-resigned-request.dto";
+import { CreateContractResignedUpdateStatusRequestDto } from "../../dtos/contract-resigned/contract-resigned-update-status-request.dto";
+import { ContractResignedStatusEnum } from "../../enums/contract-resigned-stauts.enum";
+
+@Injectable()
+export class ContractResignedRepository extends BaseRepository<
+  ContractResignedEntity,
+  CreateContractResignedRequestDto,
+  CreateContractResignedRequestDto
+> {
+  constructor(
+    @InjectRepository(ContractResignedEntity)
+    private repository: Repository<ContractResignedEntity>,
+  ) {
+    super(repository);
+  }
+
+  async findById(contractResignedId: string): Promise<ContractResignedEntity> {
+    return await this.repository.findOne({
+      where: { id: contractResignedId },
+      relations: [ 'workRequest', 'workRequest.room'],
+    });
+  }
+  async find(): Promise<ContractResignedEntity[]> {
+    return await this.repository.find({
+      relations: ['workRequest', 'workRequest.room'],
+    });
+  }
+  async getByProfessionalAndStatus(professionalId: string) {
+    return this.repository.find({
+      where: {
+        professional: { id: professionalId },
+        status: Not(In(['RESIGNED'])),
+      },
+      relations: ['professional', 'workRequest', 'workRequest.beneficiary'],
+    });
+  }  
+
+  async updateContractResignedStatus(contractResignedId: string, dto: CreateContractResignedUpdateStatusRequestDto) {
+
+    return await this.repository.update({ id: contractResignedId }, { status: dto.status});
+ 
+  }
+
+  async declineContract(contractResignedId: string) {
+
+    return await this.repository.update({ id: contractResignedId }, { status:ContractResignedStatusEnum.RESIGNED });
+ 
+  }
+
+  async updateContractResignedReason(contractResignedId: string, dto: CreateContractResignedUpdateStatusRequestDto) {
+
+      return await this.repository.update({ id: contractResignedId }, { reason: dto.reason });
+
+  }
+
+  async getByWorkRequestId(workRequestId: string): Promise<ContractResignedEntity[]> {
+    return this.repository.find({
+      where: { workRequest: { id: workRequestId } },
+      relations: ['workRequest', 'workRequest.beneficiary', 'professional', 'bidDocument'],
+    });
+  }
+  
+}

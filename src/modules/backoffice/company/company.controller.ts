@@ -30,6 +30,21 @@ export class CompanyBackofficeController {
     return await this.service.list();
   }
 
+  @Get("get-month/:month")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  async listByMonth(@Param('month') month) {
+    return await this.service.listByMonth(month);
+  }
+
+  @Get("by-id/:id")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+  @Roles([FunctionTypeEnum.GERIR_EMPRESAS])
+  async getById(@Param('id') id: string) {
+    return await this.service.getById(id);
+  }
+
   @Get("by-owner/:id")
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)

@@ -14,6 +14,12 @@ export class GovbrSubsystem {
 
     async login(code: string, codeVerifier: string) {
         return (
+            console.log(this.configService.get(EnviromentVariablesEnum.API_URL)),
+            console.log(`https://sso.staging.acesso.gov.br/token?grant_type=authorization_code&code=${code}&redirect_uri=${encodeURIComponent(
+                        this.configService.get(EnviromentVariablesEnum.API_URL) +
+                            this.configService.get(EnviromentVariablesEnum.SERVER_PATH_PREFIX) +
+                            '/govbr/sso',
+                    )}&code_verifier=${codeVerifier}`,),
             await firstValueFrom(
                 this.httpService.post<GovbrTokenPayloadDto>(
                     `https://sso.staging.acesso.gov.br/token?grant_type=authorization_code&code=${code}&redirect_uri=${encodeURIComponent(
