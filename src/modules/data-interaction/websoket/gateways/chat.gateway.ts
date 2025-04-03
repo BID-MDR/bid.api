@@ -31,7 +31,7 @@ import { MessageBackofficeService } from 'src/modules/backoffice/message/message
     },
     path: '/socket/chat',
 })
- @UseGuards(SocketGuard)
+// @UseGuards(SocketGuard)
 export class ChatGateway implements OnGatewayConnection {
     @WebSocketServer()
     server: Server;
