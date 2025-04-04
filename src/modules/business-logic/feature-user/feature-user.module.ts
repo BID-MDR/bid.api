@@ -7,7 +7,7 @@ import { FeatureAuthModule } from '../feature-auth/feature-auth.module';
 
 @Module({
     imports: [DatabaseModule, FacadeModule, FeatureAuthModule],
-    providers: [FeatureUserService],
     controllers: [FeatureUserController],
+    providers: [FeatureUserService],
 })
 export class FeatureUserModule {}

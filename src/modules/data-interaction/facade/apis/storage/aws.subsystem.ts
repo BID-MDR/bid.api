@@ -22,49 +22,21 @@ export class AwsSubsystem {
       endpoint: 'https://grumzjujmpu4.compat.objectstorage.sa-saopaulo-1.oraclecloud.com',
       forcePathStyle: true,
     });
-    this.validateConnection();
-  }
-
-  private async validateConnection() {
-    try {
-      await this.s3Client.send(
-        new PutObjectCommand({
-          Bucket: 'code-s3-001',
-          Key: 'healthcheck.txt',
-          Body: 'ok',
-          ContentType: 'text/plain',
-        })
-      );
-      console.log("✅ Conexão validada com bucket 'code-s3-001'.");
-    } catch (error) {
-      console.error("❌ Falha na validação com bucket S3:", error);
-      throw new Error("Não foi possível conectar ao bucket S3.");
-    }
   }
 
   async uploadMedia(fileMimeType: string, fileName: string, file: Buffer | string) {
-    this.validateConnection();
-    
-    console.log('dentro do upload media');
-    console.log('fileMimeType',fileMimeType);
-    console.log('fileName', fileName);
-    console.log('file', file);
     
     if (typeof file === "string" && file.includes(";base64,")) {
-      console.log("Dentro do if, convertendo base64 para Buffer...");
       try {
           const base64String = file.split(";base64,").pop();
           if (!base64String) {
               throw new Error("Base64 inválido");
           }
           file = Buffer.from(base64String, "base64");
-          console.log("Conversão bem-sucedida!", file);
       } catch (error) {
           console.error("Erro ao converter base64:", error);
       }
   }
-    console.log('fora do if ');
-
    
     const result = await this.s3Client.send(
       new PutObjectCommand({
@@ -75,8 +47,6 @@ export class AwsSubsystem {
         ACL: "public-read",
       })
     );
-
-    console.log('result',result);
 
     //if (result.$metadata.httpStatusCode !== 200) throw new Error('Error uploading file')
 

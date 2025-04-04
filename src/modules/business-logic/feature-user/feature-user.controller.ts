@@ -160,8 +160,6 @@ export class FeatureUserController {
     @Post("")
     
     async create(@Body() body: CreateUserDto) {
-        console.log('Início do cadastro de usuário');
-        console.log('Dados recebidos:', body);
     
         try {
             if (body.type === 'PROFISSIONAL' && body.programType === 'MINHA_CASA') {
@@ -174,7 +172,6 @@ export class FeatureUserController {
                 }
             }
     
-            console.log(' Criando usuário no banco de dados...');
             const user = await this.featureUserService.create(body);
             console.log('Usuário criado com sucesso:', user);
     

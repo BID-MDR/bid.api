@@ -30,6 +30,7 @@ import { RegisterWorkEntity } from "./register-work.entity";
 import { ContractResignedEntity } from "./contract-resigned.entity";
 import { ContractEntity } from "./contract.entity";
 
+
 @Entity({ name: "user" })
 export class UserEntity extends BaseEntity {
   @Column({
