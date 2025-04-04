@@ -70,18 +70,20 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
 
     async create(data: CreateUserDto): Promise<UserEntity> {
         data.password = bcrypt.hash(data.password, 13).toString();
-        if (data.uploadedProfilePicture && typeof data.uploadedProfilePicture !== 'string') {    
-            const urlImg = await this.storageFacade.uploadMedia(
-                data.uploadedProfilePicture.mimeType,
-                data.uploadedProfilePicture.fileName,
-                data.uploadedProfilePicture.data,
-            );
-            data.profilePicture = urlImg
-        }
         try {
+            console.log('antes de criar usuario');
             const userResponse = await this.userRepository.create(data)
-            console.log('userResponse',userResponse);
              //return new ResponseDto(true, userResponse, null);
+             console.log('antes de salvar imagem');
+             if (data.uploadedProfilePicture && typeof data.uploadedProfilePicture !== 'string') {    
+                const media = await this.storageFacade.uploadMedia(
+                    data.uploadedProfilePicture.mimeType,
+                    data.uploadedProfilePicture.fileName,
+                    data.uploadedProfilePicture.data,
+                );
+                console.log('upload feito, antes de salvar o profile picture no user');
+                const result = await this.userRepository.updateProfilePicture(userResponse.id, media)
+            }
              return userResponse
            
         } catch (error) {
