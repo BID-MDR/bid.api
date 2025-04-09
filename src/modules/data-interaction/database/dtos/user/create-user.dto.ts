@@ -31,66 +31,83 @@ import { UserProgramTypeEnum } from '../../enums/user-program-type.enum';
 
 export class CreateUserDto {
     @ApiProperty()
+    @IsOptional()
     name: string;
 
     @ApiProperty({ enum: UserTypeEnum })
-    type: UserTypeEnum;
-
-    @ApiProperty()
-    phone: string;
-
-    @ApiProperty()
-    email: string;
-
-    @ApiProperty()
-    cpf: string;
-
-    @ApiProperty({ type: CreateAddressDto })
-    address: CreateAddressDto;
+    @IsOptional()
+    type?: UserTypeEnum;
 
     @ApiProperty()
     @IsOptional()
-    age: number;
+    phone?: string;
+
+    @ApiProperty()
+    @IsOptional()
+    email?: string;
+
+    @ApiProperty()
+    @IsOptional()
+    cpf?: string;
+
+    @ApiProperty({ type: CreateAddressDto })
+    @IsOptional()
+    address?: CreateAddressDto;
+
+    @ApiProperty()
+    @IsOptional()
+    age?: number;
 
     @ApiProperty({ enum: UserBirthGenderEnum })
-    birthGender: UserBirthGenderEnum;
+    @IsOptional()
+    birthGender?: UserBirthGenderEnum;
 
     @ApiProperty({ example: '1999-12-31' })
-    birthDate: string;
+    @IsOptional()
+    birthDate?: string;
 
     @ApiProperty({ enum: UserGenderIdentityEnum })
-    genderIdentity: UserGenderIdentityEnum;
+    @IsOptional()
+    genderIdentity?: UserGenderIdentityEnum;
 
     @ApiProperty({ example: 'Boeing AH-64 Apache' })
     @IsOptional()
-    customGenderIdentity: string;
+    customGenderIdentity?: string;
 
     @ApiProperty({ enum: LevelOfEducationEnum })
-    levelOfEducation: LevelOfEducationEnum;
+    @IsOptional()
+    levelOfEducation?: LevelOfEducationEnum;
 
     @ApiProperty({ enum: MaritalStatusEnum })
-    maritalStatus: MaritalStatusEnum;
+    @IsOptional()
+    maritalStatus?: MaritalStatusEnum;
 
     @ApiProperty({ enum: UserMonthlyFamilyIncomeEnum })
     @IsOptional()
-    monthlyFamilyIncome: UserMonthlyFamilyIncomeEnum;
+    monthlyFamilyIncome?: UserMonthlyFamilyIncomeEnum;
 
     @ApiProperty({ enum: RaceEnum })
-    race: RaceEnum;
+    @IsOptional()
+    race?: RaceEnum;
 
     @ApiProperty({ type: MediaUploadDto })
+    @IsOptional()
     uploadedProfilePicture?: MediaUploadDto;
 
     @ApiProperty({ example: '1234' })
-    password: string;
+    @IsOptional()
+    password?: string;
 
     @ApiProperty({ type: CreateUserBeneficiaryInfoDto, required: false })
+    @IsOptional()
     beneficiaryUserInfo?: CreateUserBeneficiaryInfoDto;
 
     @ApiProperty({ type: CreateUserProfessionalInfoDto, required: false })
+    @IsOptional()
     professionalUserInfo?: CreateUserProfessionalInfoDto;
 
     profilePicture?: string;
     @ApiProperty({ enum: UserProgramTypeEnum })
+    @IsOptional()
     programType?: UserProgramTypeEnum
 }
