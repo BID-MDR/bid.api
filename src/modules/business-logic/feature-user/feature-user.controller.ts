@@ -158,10 +158,9 @@ export class FeatureUserController {
     }
 
     @Post("")
-    
     async create(@Body() body: CreateUserDto) {
-    
         try {
+            console.log('inicio da controlle body', body);
             if (body.type === 'PROFISSIONAL' && body.programType === 'MINHA_CASA') {
                 if (body.professionalUserInfo?.restingDays) {
                     body.professionalUserInfo.restingDays = body.professionalUserInfo.restingDays.map((day) => {
@@ -517,3 +516,4 @@ export class FeatureUserController {
         return await this.featureUserService.listAppoitmentByProfessionalId(professionalId);
     }
 }
+ 
