@@ -181,7 +181,6 @@ export class UserEntity extends BaseEntity {
   notificationUser: NotificationEntity[];
 
   @OneToOne(() => UserOtpRequestEntity, otpRequest => otpRequest.user, {
-    cascade: true,
     nullable: true,
   })
   @JoinColumn()
@@ -209,42 +208,36 @@ export class UserEntity extends BaseEntity {
   satisfaction: SatisfactionResearchEntity[];
 
   @OneToOne(() => WorkRequestEntity, workRequest => workRequest.demand, {
-    cascade: true,
     nullable: true,
   })
   @JoinColumn()
   workRequest?: WorkRequestEntity;
 
   @OneToOne(() => SurveyEntity, survey => survey.professional, {
-    cascade: true,
     nullable: true,
   })
   @JoinColumn()
   surveyProfessional: SurveyEntity;
   
   @OneToOne(() => SurveyEntity, survey => survey.beneficiary, {
-    cascade: true,
     nullable: true,
   })
   @JoinColumn()
   surveybeneficiary?: SurveyEntity;
 
   @OneToMany(() => ImprovementProjectEntity, workRequest => workRequest.professional, {
-    cascade: true,
     nullable: true,
   })
   @JoinColumn()
   projects?: ImprovementProjectEntity[];
 
   @OneToMany(() => CostEstimateEntity, costEstimate => costEstimate.professional, {
-    cascade: true,
     nullable: true,
   })
   @JoinColumn()
   costEstimate?: CostEstimateEntity[];
 
   @OneToMany(() => UnavailabilityEntity, unavailability => unavailability.user, {
-    cascade: true,
     nullable: true,
   })
   @JoinColumn()
