@@ -72,8 +72,6 @@ export class UserEntity extends BaseEntity {
   email: string;
 
   @OneToOne(() => AddressEntity, address => address.user, {
-    cascade: true,
-    eager: true,
   })
   @JoinColumn()
   address: AddressEntity;
@@ -152,41 +150,32 @@ export class UserEntity extends BaseEntity {
   password: string;
 
   @OneToOne(() => UserBeneficiaryInfoEntity, beneficiaryUserInfo => beneficiaryUserInfo.user, {
-    cascade: true,
-    eager: true,
   })
   @JoinColumn()
   beneficiaryUserInfo: UserBeneficiaryInfoEntity;
 
   @OneToOne(() => UserProfessionalInfoEntity, professionalUserInfo => professionalUserInfo.user, {
-    cascade: true,
-    eager: true,
     nullable: true,
   })
   @JoinColumn()
   professionalUserInfo: UserProfessionalInfoEntity;
 
   @OneToMany(() => TechnicalVisitEntity, technicalVisit => technicalVisit.professional, {
-    eager: true,
     nullable: true,
   })
   technicalVisitsAsProfessional: TechnicalVisitEntity[];
 
   @OneToMany(() => UserAppointmentEntity, appointment => appointment.user, {
-    eager: true,
-    cascade: true,
     nullable: true,
   })
   appointments: UserAppointmentEntity[];
 
   @OneToMany(() => TechnicalVisitEntity, technicalVisit => technicalVisit.beneficiary, {
-    eager: true,
     nullable: true,
   })
   technicalVisitsAsBeneficiary: TechnicalVisitEntity[];
 
   @OneToMany(() => NotificationEntity, notificationEntity => notificationEntity.user, {
-    eager: true,
     nullable: true,
   })
   notificationUser: NotificationEntity[];
@@ -261,12 +250,12 @@ export class UserEntity extends BaseEntity {
   @JoinColumn()
   unavailabilityList?: UnavailabilityEntity[];
 
-  @OneToMany(() => RegisterWorkEntity, (registerWork) => registerWork.professional, { cascade: true, eager: true, nullable: true })
+  @OneToMany(() => RegisterWorkEntity, (registerWork) => registerWork.professional, {  nullable: true })
   registerWorkList: RegisterWorkEntity[];
 
-  @OneToMany(() => ContractResignedEntity, (registerWork) => registerWork.professional, { cascade: true, eager: true, nullable: true })
+  @OneToMany(() => ContractResignedEntity, (registerWork) => registerWork.professional, {  nullable: true })
   contractResignedList: ContractResignedEntity[];
 
-  @OneToMany(() => ContractEntity, (contract) => contract.professional, { cascade: true, eager: true, nullable: true })
+  @OneToMany(() => ContractEntity, (contract) => contract.professional, {  nullable: true })
   contractList: ContractEntity[];
 }
