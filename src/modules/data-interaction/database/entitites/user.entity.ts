@@ -72,6 +72,7 @@ export class UserEntity extends BaseEntity {
   email: string;
 
   @OneToOne(() => AddressEntity, address => address.user, {
+    cascade: true
   })
   @JoinColumn()
   address: AddressEntity;
@@ -150,105 +151,114 @@ export class UserEntity extends BaseEntity {
   password: string;
 
   @OneToOne(() => UserBeneficiaryInfoEntity, beneficiaryUserInfo => beneficiaryUserInfo.user, {
+    cascade: true
   })
   @JoinColumn()
   beneficiaryUserInfo: UserBeneficiaryInfoEntity;
 
   @OneToOne(() => UserProfessionalInfoEntity, professionalUserInfo => professionalUserInfo.user, {
     nullable: true,
+    cascade: true
   })
   @JoinColumn()
   professionalUserInfo: UserProfessionalInfoEntity;
 
   @OneToMany(() => TechnicalVisitEntity, technicalVisit => technicalVisit.professional, {
     nullable: true,
+    cascade: true
   })
   technicalVisitsAsProfessional: TechnicalVisitEntity[];
 
   @OneToMany(() => UserAppointmentEntity, appointment => appointment.user, {
     nullable: true,
+    cascade: true
   })
   appointments: UserAppointmentEntity[];
 
   @OneToMany(() => TechnicalVisitEntity, technicalVisit => technicalVisit.beneficiary, {
     nullable: true,
+    cascade: true
   })
   technicalVisitsAsBeneficiary: TechnicalVisitEntity[];
 
   @OneToMany(() => NotificationEntity, notificationEntity => notificationEntity.user, {
     nullable: true,
+    cascade: true
   })
   notificationUser: NotificationEntity[];
 
   @OneToOne(() => UserOtpRequestEntity, otpRequest => otpRequest.user, {
+    cascade: true,
     nullable: true,
   })
   @JoinColumn()
   otpRequest: UserOtpRequestEntity;
 
-  @OneToMany(() => DemandEntity, demand => demand.beneficiary, {nullable: true,})
+  @OneToMany(() => DemandEntity, demand => demand.beneficiary, {nullable: true, cascade: true})
   demands?: DemandEntity[];
 
-  @OneToMany(() => MessageEntity, message => message.sender, {nullable: true,})
+  @OneToMany(() => MessageEntity, message => message.sender, {nullable: true, cascade: true})
   sentMessages: MessageEntity[];
 
-  @OneToMany(() => MessageEntity, message => message.receiver, {nullable: true,})
+  @OneToMany(() => MessageEntity, message => message.receiver, {nullable: true, cascade: true})
   receivedMessages: MessageEntity[];
 
-  @OneToMany(() => HelpEntity, help => help.user, {nullable: true,})
+  @OneToMany(() => HelpEntity, help => help.user, {nullable: true, cascade: true})
   helpRequests: HelpEntity[];
 
-  @OneToOne(() => CompanyEntity, company => company.userAdmin, { nullable: true })
+  @OneToOne(() => CompanyEntity, company => company.userAdmin, { nullable: true, cascade: true })
   companyAdministrator: CompanyEntity;
 
-  @OneToOne(() => EmployeeEntity, employee => employee.user, { nullable: true })
+  @OneToOne(() => EmployeeEntity, employee => employee.user, { nullable: true, cascade: true })
   employee: EmployeeEntity;
 
-  @OneToMany(() => SatisfactionResearchEntity, (satisfaction) => satisfaction.user, {nullable: true,})
+  @OneToMany(() => SatisfactionResearchEntity, (satisfaction) => satisfaction.user, {nullable: true, cascade: true})
   satisfaction: SatisfactionResearchEntity[];
 
   @OneToOne(() => WorkRequestEntity, workRequest => workRequest.demand, {
+    cascade: true,
     nullable: true,
   })
   @JoinColumn()
   workRequest?: WorkRequestEntity;
 
   @OneToOne(() => SurveyEntity, survey => survey.professional, {
+    cascade: true,
     nullable: true,
   })
   @JoinColumn()
   surveyProfessional: SurveyEntity;
   
   @OneToOne(() => SurveyEntity, survey => survey.beneficiary, {
+    cascade: true,
     nullable: true,
   })
-  @JoinColumn()
   surveybeneficiary?: SurveyEntity;
 
   @OneToMany(() => ImprovementProjectEntity, workRequest => workRequest.professional, {
+    cascade: true,
     nullable: true,
   })
-  @JoinColumn()
   projects?: ImprovementProjectEntity[];
 
   @OneToMany(() => CostEstimateEntity, costEstimate => costEstimate.professional, {
+    cascade: true,
     nullable: true,
   })
-  @JoinColumn()
   costEstimate?: CostEstimateEntity[];
 
   @OneToMany(() => UnavailabilityEntity, unavailability => unavailability.user, {
+    cascade: true,
     nullable: true,
   })
-  @JoinColumn()
   unavailabilityList?: UnavailabilityEntity[];
 
-  @OneToMany(() => RegisterWorkEntity, (registerWork) => registerWork.professional, {  nullable: true })
+  @OneToMany(() => RegisterWorkEntity, (registerWork) => registerWork.professional, { cascade: true, nullable: true })
   registerWorkList: RegisterWorkEntity[];
 
-  @OneToMany(() => ContractResignedEntity, (registerWork) => registerWork.professional, {  nullable: true })
+  @OneToMany(() => ContractResignedEntity, (registerWork) => registerWork.professional, { cascade: true,  nullable: true })
   contractResignedList: ContractResignedEntity[];
 
-  @OneToMany(() => ContractEntity, (contract) => contract.professional, {  nullable: true })
+  @OneToMany(() => ContractEntity, (contract) => contract.professional, { cascade: true,  nullable: true })
   contractList: ContractEntity[];
 }
