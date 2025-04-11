@@ -171,14 +171,14 @@ export class FeatureUserController {
                 }
             }
     
-            const user = await this.featureUserService.create(body);
+            const user = await this.featureUserService.createTeste(body);
             console.log('Usuário criado com sucesso:', user);
     
             console.log('🔑 Gerando token de autenticação...');
-            const authResponse = await this.featureAuthService.signinFromCreateUser(user);
-            console.log('Token gerado com sucesso:', authResponse);
+           // const authResponse = await this.featureAuthService.signinFromCreateUser(user);
+            //console.log('Token gerado com sucesso:', authResponse);
     
-            return authResponse;
+            return user;
         } catch (error) {
             console.error('❌ Erro no cadastro de usuário:', error);
     

@@ -35,6 +35,7 @@ import { RegisterWorkRepository } from 'src/modules/data-interaction/database/re
 import { ContractResignedRepository } from 'src/modules/data-interaction/database/repositories/contract-resigned/contract-resigned.repository';
 import { ContractRepository } from 'src/modules/data-interaction/database/repositories/contract/contract.repository';
 import { ResponseDto } from 'src/core/dtos/response.dto';
+import { UserTesteEntity } from 'src/modules/data-interaction/database/entitites/user-teste.entity';
 
 @Injectable()
 export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -68,7 +69,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         return this.confeaFacade.getProfessionalRegistrationStatusFromConfea(cpf);
     }
 
-    async create(data: CreateUserDto): Promise<UserEntity> {
+    async createTeste(data: CreateUserDto): Promise<UserTesteEntity> {
         data.password = bcrypt.hash(data.password, 13).toString();
         try {
             console.log('antes de criar usuario');
