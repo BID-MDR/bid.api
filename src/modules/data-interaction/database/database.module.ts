@@ -80,9 +80,12 @@ import { UnavailabilityEntity } from './entitites/unavailability.entity';
 import { UnavailabilityRepository } from './repositories/unavailability/unavailability.repository';
 import { NotificationMsgRepository } from './repositories/notification-msg/notification-msg.repository';
 import { NotificationMsgEntity } from './entitites/notification-msg.entity';
+import { UserTesteEntity } from './entitites/user-teste.entity';
+import { UserTesteRepository } from './repositories/user/userteste.repository';
 
 const ENTITIES = [
     UserEntity,
+    UserTesteEntity,
     UserRatingEntity,
     UserBeneficiaryInfoEntity,
     UserProfessionalInfoEntity,
@@ -126,6 +129,7 @@ const ENTITIES = [
 ];
 const REPOSITORIES = [
     UserRepository,
+    UserTesteRepository,
     UserAppointmentRepository,
     UserRatingRepository,
     UserBeneficiaryInfoRepository,

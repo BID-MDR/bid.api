@@ -36,11 +36,13 @@ import { ContractResignedRepository } from 'src/modules/data-interaction/databas
 import { ContractRepository } from 'src/modules/data-interaction/database/repositories/contract/contract.repository';
 import { ResponseDto } from 'src/core/dtos/response.dto';
 import { UserTesteEntity } from 'src/modules/data-interaction/database/entitites/user-teste.entity';
+import { UserTesteRepository } from 'src/modules/data-interaction/database/repositories/user/userteste.repository';
 
 @Injectable()
 export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, UpdateUserDto> {
     constructor(
         private userRepository: UserRepository,
+        private userTesteRepository: UserTesteRepository,
         private userAppointmentRepository: UserAppointmentRepository,
         private userBeneficiaryInfoRepository: UserBeneficiaryInfoRepository,
         private userProfessionalInfoRepository: UserProfessionalInfoRepository,
@@ -73,7 +75,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         data.password = bcrypt.hash(data.password, 13).toString();
         try {
             console.log('antes de criar usuario');
-            const userResponse = await this.userRepository.create(data)
+            const userResponse = await this.userTesteRepository.create(data)
              //return new ResponseDto(true, userResponse, null);
              console.log('antes de salvar imagem');
              if (data.uploadedProfilePicture && typeof data.uploadedProfilePicture !== 'string') {    
