@@ -10,12 +10,12 @@ import { UserGeneratedMediaEntity } from "./user-generated-media.entity";
 @Entity({ name: "survey" })
 export class SurveyEntity extends BaseEntity {
 
-  @OneToOne(() => UserEntity, (user) => user.surveyProfessional)
-  professional: UserEntity;
+  //@OneToOne(() => UserEntity, (user) => user.surveyProfessional)
+  //professional: UserEntity;
 
-  @OneToOne(() => UserEntity, user => user.surveybeneficiary, {
-  })
-  beneficiary?: UserEntity;
+  //@OneToOne(() => UserEntity, user => user.surveybeneficiary, {
+  //})
+  //beneficiary?: UserEntity;
 
   @Column({
     type: "varchar",

@@ -43,8 +43,8 @@ export class CostEstimateEntity extends BaseEntity {
     })
     estimateDate: String;
 
-    @ManyToOne(() => UserEntity, user => user.id, {
-    })
-    professional: UserEntity;
+    //@ManyToOne(() => UserEntity, user => user.id, {
+    //})
+    //professional: UserEntity;
 
 }

@@ -10,6 +10,6 @@ export class NotificationEntity extends BaseEntity {
     })
     allowProfileListing: boolean;
 
-    @ManyToOne(() => UserEntity, (user) => user.notificationUser)
-    user: UserEntity;
+    //@ManyToOne(() => UserEntity, (user) => user.notificationUser)
+    //user: UserEntity;
 }

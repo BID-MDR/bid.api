@@ -10,7 +10,7 @@ export class EmployeeEntity extends BaseEntity {
   @ManyToOne(() => CompanyEntity, company => company.employees)
   company: CompanyEntity;
 
-  @OneToOne(() => UserEntity, user => user.employee, { eager: true })
+  @OneToOne(() => UserEntity, user => user.employee,)
   @JoinColumn()
   user: UserEntity;
 
