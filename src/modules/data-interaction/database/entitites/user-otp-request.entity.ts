@@ -18,6 +18,6 @@ export class UserOtpRequestEntity extends BaseEntity {
     })
     status: UserOtpStatusEnum;
 
-    //@OneToOne(() => UserEntity, (user) => user.otpRequest)
-    //user: UserEntity;
+    @OneToOne(() => UserEntity, (user) => user.otpRequest)
+    user: UserEntity;
 }

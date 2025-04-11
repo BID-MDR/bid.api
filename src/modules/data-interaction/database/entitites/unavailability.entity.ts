@@ -17,10 +17,10 @@ export class UnavailabilityEntity extends BaseEntity {
     @Column({ type: 'text', nullable: true })
     reason: string;
   
-   //@ManyToOne(() => UserEntity, (usuario) => usuario.unavailabilityList, {
-   //  onDelete: 'CASCADE',
-   //})
-   //user: UserEntity;
+    @ManyToOne(() => UserEntity, (usuario) => usuario.unavailabilityList, {
+      onDelete: 'CASCADE',
+    })
+    user: UserEntity;
 
 
       @Column({

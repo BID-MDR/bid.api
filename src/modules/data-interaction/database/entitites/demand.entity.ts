@@ -83,9 +83,9 @@ export class DemandEntity extends BaseEntity {
   })
   conclusionDate: Date;
 
-  //@ManyToOne(() => UserEntity, user => user.demands, {
-  //})
-  //beneficiary: UserEntity;
+  @ManyToOne(() => UserEntity, user => user.demands, {
+  })
+  beneficiary: UserEntity;
 
   @ManyToOne(() => CompanyEntity, company => company.demands, {
   })

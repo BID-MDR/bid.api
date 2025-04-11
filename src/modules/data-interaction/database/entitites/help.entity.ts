@@ -6,8 +6,8 @@ import { UserProgramTypeEnum } from '../enums/user-program-type.enum';
 
 @Entity({ name: 'help' })
 export class HelpEntity extends BaseEntity {
-    //@ManyToOne(() => UserEntity, (user) => user.helpRequests, { eager: true })
-    //user: UserEntity;
+    @ManyToOne(() => UserEntity, (user) => user.helpRequests, { eager: true })
+    user: UserEntity;
 
     @Column({
         type: "text",

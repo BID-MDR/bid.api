@@ -83,8 +83,8 @@ export class ContractEntity extends BaseEntity {
     })
     technicalVisit: TechnicalVisitEntity;
 
-    //@ManyToOne(() => UserEntity, (profeesional) => profeesional.contractList)
-    //professional: UserEntity;
+    @ManyToOne(() => UserEntity, (profeesional) => profeesional.contractList)
+    professional: UserEntity;
     
 
 }

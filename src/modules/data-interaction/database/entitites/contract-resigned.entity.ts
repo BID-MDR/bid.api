@@ -24,8 +24,8 @@ export class ContractResignedEntity extends BaseEntity {
     @JoinColumn()
     bidDocument: BidDocumentEntity;
     
-    //@ManyToOne(() => UserEntity, (workRequest) => workRequest.contractResignedList)
-    //professional: UserEntity;
+    @ManyToOne(() => UserEntity, (workRequest) => workRequest.contractResignedList)
+    professional: UserEntity;
 
     @Column({
         type: "enum",

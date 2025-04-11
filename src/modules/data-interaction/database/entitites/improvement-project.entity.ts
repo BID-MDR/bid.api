@@ -26,9 +26,9 @@ export class ImprovementProjectEntity extends BaseEntity {
     })
     status: ImprovementProjectStatusEnum;
 
-    //@ManyToOne(() => UserEntity, user => user.projects, {
-    //})
-    //professional?: UserEntity;
+    @ManyToOne(() => UserEntity, user => user.projects, {
+    })
+    professional?: UserEntity;
 
     @OneToMany(() => TechnicalVisitEntity, technicalVisit => technicalVisit.improvementProject, {
     

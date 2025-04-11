@@ -5,11 +5,11 @@ import { ChatRoomEntity } from './chat-room.entity';
 
 @Entity({ name: 'messages' })
 export class MessageEntity extends BaseEntity {
-    //@ManyToOne(() => UserEntity, (user) => user.sentMessages, { eager: true })
-    //sender: UserEntity;
+    @ManyToOne(() => UserEntity, (user) => user.sentMessages, { eager: true })
+    sender: UserEntity;
 
-    //@ManyToOne(() => UserEntity, (user) => user.receivedMessages, { eager: true })
-    //receiver: UserEntity;
+    @ManyToOne(() => UserEntity, (user) => user.receivedMessages, { eager: true })
+    receiver: UserEntity;
 
     // @ManyToOne(() => ChatRoomEntity, (chatRoom) => chatRoom.messages, { eager: true })
     // chatRoom: ChatRoomEntity;

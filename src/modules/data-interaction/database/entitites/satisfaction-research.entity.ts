@@ -35,9 +35,9 @@ export class SatisfactionResearchEntity extends BaseEntity {
     })
     programType: UserProgramTypeEnum;
 
-    //@ManyToOne(() => UserEntity, (user) => user.satisfaction)
-    //@JoinColumn({ name: 'user_id' }) 
-    //user: UserEntity;
+    @ManyToOne(() => UserEntity, (user) => user.satisfaction)
+    @JoinColumn({ name: 'user_id' }) 
+    user: UserEntity;
 
     @ManyToOne(()=> WorkRequestEntity, (workRequest) => workRequest.satisfaction)
     @JoinColumn() 
