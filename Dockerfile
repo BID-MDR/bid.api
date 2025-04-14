@@ -12,7 +12,7 @@ COPY . .
 
 # Instale as dependências
 RUN npm install -g @nestjs/cli && \
-    npm i --force && \
+    yarn install --production && \
     ## Executando NEST BUILD Ignorando erros
     nest build || true
 
