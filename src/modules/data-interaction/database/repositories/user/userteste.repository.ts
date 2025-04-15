@@ -14,7 +14,7 @@ import { UserTesteEntity } from "../../entitites/user-teste.entity";
 
 @Injectable()
 export class UserTesteRepository extends BaseRepository<UserTesteEntity, CreateUserDto, UpdateUserDto> {
-  constructor(@InjectRepository(UserEntity) private repository: Repository<UserTesteEntity>) {
+  constructor(@InjectRepository(UserTesteEntity) private repository: Repository<UserTesteEntity>) {
     super(repository);
   }
 
