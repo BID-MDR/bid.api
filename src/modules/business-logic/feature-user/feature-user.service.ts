@@ -75,7 +75,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         data.password = bcrypt.hash(data.password, 13).toString();
         try {
             console.log('antes de criar usuario');
-            const userResponse = await this.userTesteRepository.create(data)
+            const userResponse = await super.create(data)
              //return new ResponseDto(true, userResponse, null);
              console.log('antes de salvar imagem');
              if (data.uploadedProfilePicture && typeof data.uploadedProfilePicture !== 'string') {    
