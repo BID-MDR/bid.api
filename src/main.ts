@@ -70,14 +70,14 @@ async function bootstrap() {
             })
             .build();
 
-        if (
-            configService.get(EnviromentVariablesEnum.NODE_ENV) !==
-            "development"
-        ) {
-            app.setGlobalPrefix(
-                configService.get(EnviromentVariablesEnum.SERVER_PATH_PREFIX),
-            );
-        }
+        //if (
+        //    configService.get(EnviromentVariablesEnum.NODE_ENV) !==
+        //    "development"
+        //) {
+        //    app.setGlobalPrefix(
+        //        configService.get(EnviromentVariablesEnum.SERVER_PATH_PREFIX),
+        //    );
+        //}
 
         const document = SwaggerModule.createDocument(app, swaggerOptions, {
             ignoreGlobalPrefix: false,
@@ -99,3 +99,11 @@ async function bootstrap() {
 }
 
 bootstrap();
+
+process.on('uncaughtException', (err) => {
+    console.error('🔥 Uncaught Exception:', err);
+  });
+  
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('🔥 Unhandled Rejection at:', promise, 'reason:', reason);
+  });
