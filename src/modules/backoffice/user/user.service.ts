@@ -60,7 +60,7 @@ export class UserService extends BaseService<UserBackofficeEntity, CreateUserBac
         const linkPaiel = await this.configService.get(EnviromentVariablesEnum.PAINEL_LINK);
         const linkUrl = `${linkPaiel}/auth/first-access/${user.id.toString()}`
         const message = `Seja bem vindo a plataforma, para realizar o cadastro de sua senha clique <a href="${linkUrl}" target="_blank">aqui</a>`
-        await this.emailRepository.send(user.email, 'BID', message, message);
+        //await this.emailRepository.send(user.email, 'BID', message, message);
         return user;
 
     }
