@@ -160,7 +160,7 @@ export class FeatureUserController {
     @Post("")
     async create(@Body() body: CreateUserDto) {
         try {
-            console.log('inicio da controlle body', body);
+        
             if (body.type === 'PROFISSIONAL' && body.programType === 'MINHA_CASA') {
                 if (body.professionalUserInfo?.restingDays) {
                     body.professionalUserInfo.restingDays = body.professionalUserInfo.restingDays.map((day) => {
@@ -171,12 +171,10 @@ export class FeatureUserController {
                 }
             }
     
-            const user = await this.featureUserService.createTeste(body);
-            console.log('Usuário criado com sucesso:', user);
-    
-            console.log('🔑 Gerando token de autenticação...');
-           // const authResponse = await this.featureAuthService.signinFromCreateUser(user);
-            //console.log('Token gerado com sucesso:', authResponse);
+            const user = await this.featureUserService.create(body);
+         
+            const authResponse = await this.featureAuthService.signinFromCreateUser(user);
+      
     
             return user;
         } catch (error) {

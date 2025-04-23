@@ -35,14 +35,11 @@ import { RegisterWorkRepository } from 'src/modules/data-interaction/database/re
 import { ContractResignedRepository } from 'src/modules/data-interaction/database/repositories/contract-resigned/contract-resigned.repository';
 import { ContractRepository } from 'src/modules/data-interaction/database/repositories/contract/contract.repository';
 import { ResponseDto } from 'src/core/dtos/response.dto';
-import { UserTesteEntity } from 'src/modules/data-interaction/database/entitites/user-teste.entity';
-import { UserTesteRepository } from 'src/modules/data-interaction/database/repositories/user/userteste.repository';
 
 @Injectable()
 export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, UpdateUserDto> {
     constructor(
         private userRepository: UserRepository,
-        private userTesteRepository: UserTesteRepository,
         private userAppointmentRepository: UserAppointmentRepository,
         private userBeneficiaryInfoRepository: UserBeneficiaryInfoRepository,
         private userProfessionalInfoRepository: UserProfessionalInfoRepository,
@@ -71,20 +68,17 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         return this.confeaFacade.getProfessionalRegistrationStatusFromConfea(cpf);
     }
 
-    async createTeste(data: CreateUserDto): Promise<UserTesteEntity> {
+    async create(data: CreateUserDto): Promise<UserEntity> {
         data.password = bcrypt.hash(data.password, 13).toString();
         try {
-            console.log('antes de criar usuario');
             const userResponse = await super.create(data)
-             //return new ResponseDto(true, userResponse, null);
-             console.log('antes de salvar imagem');
+       
              if (data.uploadedProfilePicture && typeof data.uploadedProfilePicture !== 'string') {    
                 const media = await this.storageFacade.uploadMedia(
                     data.uploadedProfilePicture.mimeType,
                     data.uploadedProfilePicture.fileName,
                     data.uploadedProfilePicture.data,
                 );
-                console.log('upload feito, antes de salvar o profile picture no user');
                 const result = await this.userRepository.updateProfilePicture(userResponse.id, media)
             }
              return userResponse

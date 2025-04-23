@@ -84,10 +84,11 @@ export class UserEntity extends BaseEntity {
   age: number;
 
   @Column({
-    type: "datetime",
+    type: "varchar",
+    length: 100,
     nullable: true,
   })
-  birthDate: Date;
+  birthDate: String;
 
   @Column({
     type: "enum",
