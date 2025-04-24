@@ -41,6 +41,9 @@ export class SeedService {
 
     const password = 'P@sw0rds';
 
+    const allRoles = await this.userRolesBackoffice.findAll();
+
+
     const dataMINHA_CASA = {
       name: 'Admin MINHA_CASA',
       email: 'adminMINHA_CASA@admin.com',
@@ -49,7 +52,8 @@ export class SeedService {
       lastAccess: null,
       timeView: null,
       status: UserStatusEnum.ACTIVE,
-      programType: UserProgramTypeEnum.MINHA_CASA
+      programType: UserProgramTypeEnum.MINHA_CASA,
+      roles: allRoles
     };
 
     const dataREGMEL = {
@@ -60,7 +64,8 @@ export class SeedService {
       lastAccess: null,
       timeView: null,
       status: UserStatusEnum.ACTIVE,
-      programType: UserProgramTypeEnum.REGMEL
+      programType: UserProgramTypeEnum.REGMEL,
+      roles: allRoles
     };
 
 
