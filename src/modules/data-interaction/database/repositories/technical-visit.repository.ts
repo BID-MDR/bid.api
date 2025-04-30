@@ -21,6 +21,7 @@ export class TechnicalVisitRepository extends BaseRepository<
         const relations = [
             'professional',
             'beneficiary',
+            'userCreate',
             'demand',
             'workRequest',
             'contract',
@@ -77,6 +78,7 @@ export class TechnicalVisitRepository extends BaseRepository<
             status: In(['AGENDADA', 'REAGENDADA', 'REALIZADA']),},
             relations: relations,
         });
+        console.log('teste',result);
         return result;
     }
     

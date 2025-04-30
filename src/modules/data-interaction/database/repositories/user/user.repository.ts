@@ -26,6 +26,7 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
       where: { id: _id },
       relations: {
         companyAdministrator: true,
+        address:true,
         employee: {
           company: true,
           roles: true,
