@@ -24,7 +24,7 @@ export class EmployeeRepository extends BaseRepository<EmployeeEntity, any, any>
   async listByCompany(companyId: string): Promise<EmployeeEntity[]> {
     return await this.repository.find({
       where: { company: { id: companyId } },
-      relations: ["company"],
+      relations: ["company","user"],
     });
   }
 }
