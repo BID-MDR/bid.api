@@ -130,8 +130,7 @@ export class FeatureUserController {
     })
     async getLookForProfessional(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
-        const resultUser = await this.featureUserService.findById(userId);
-        
+        const resultUser = await this.featureUserService.getById(userId);
         const result = await this.featureUserService.findNearbyEmployees(Number(resultUser.address.latitude), Number(resultUser.address.longitude))
       
         return new ResponseDto(true, result, false);
