@@ -37,7 +37,6 @@ export class AwsSubsystem {
           console.error("Erro ao converter base64:", error);
       }
   }
-   console.log('antes do envio de iamgem');
     const result = await this.s3Client.send(
       new PutObjectCommand({
         Bucket: 'code-s3-001',
