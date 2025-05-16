@@ -37,6 +37,7 @@ export class WorkRequestRepository extends BaseRepository<
       'contracts',
       'contractResignedList',
       'improvementRoom',
+      'welfare',
       'room'
   ];
 
