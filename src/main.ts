@@ -19,8 +19,8 @@ async function bootstrap() {
     const configService = app.get(ConfigService);
     const logger = new Logger("main");
 
-    app.use(bodyParser.json({ limit: "50mb" }));
-    app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+    app.use(bodyParser.json({ limit: "70mb" }));
+    app.use(bodyParser.urlencoded({ limit: "70mb", extended: true }));
 
     useContainer(app.select(AppModule), { fallbackOnErrors: true });
 

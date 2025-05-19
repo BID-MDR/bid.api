@@ -154,7 +154,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         }
 
         if (data.professionalUserInfo) {
-            user.professionalUserInfo = commonPropertyTransfer(data.professionalUserInfo, user.professionalUserInfo);
+            //user.professionalUserInfo = commonPropertyTransfer(data.professionalUserInfo, user.professionalUserInfo);
             if (data.professionalUserInfo.restingDays) {
                 const oldRestingDays = await this.userRestingdayRepository.findAllByUserProfessionalInfoId(
                     data.professionalUserInfo.id,

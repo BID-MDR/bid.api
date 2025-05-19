@@ -34,6 +34,7 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
         beneficiaryUserInfo: true,
         technicalVisitsAsBeneficiary: true,
         technicalVisitsAsProfessional: true,
+        professionalUserInfo: true
       },
     });
   }
