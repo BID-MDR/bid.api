@@ -9,6 +9,7 @@ import { EmployeeRepository } from "../../data-interaction/database/repositories
 import { DemandRepository } from "../../data-interaction/database/repositories/user/demand.repository";
 import { UserRepository } from "../../data-interaction/database/repositories/user/user.repository";
 import { EmployeeRoleRepository } from "src/modules/data-interaction/database/repositories/employee/employee-role.repository";
+import { CreateEmployeeRoleDto } from "src/modules/data-interaction/database/dtos/employee-role/employee-role-create.dto";
 
 @Injectable()
 export class EmployeeService extends BaseService<EmployeeEntity, any, any> {
@@ -78,7 +79,7 @@ export class EmployeeService extends BaseService<EmployeeEntity, any, any> {
     return employee;
   }
 
-  async updateRoleAndActive(employeeId: string, data: any, userId: string) {
+  async updateRoleAndActive(employeeId: string, userId: string) {
     const user = await this.userRepository.getById(userId);
   
     if (!user.companyAdministrator) {
@@ -90,11 +91,18 @@ export class EmployeeService extends BaseService<EmployeeEntity, any, any> {
     if (!employee) {
       throw new BadRequestException("Funcionário não encontrado.");
     }
-  
-    const role = await this.employeeRolesRepository.findById(data.roleId);
+
+    var newRole: any = {
+      description: 'Empregado Comum',
+      role: EmployeeRoleEnum.manager_demand,
+      employeeId,
+      active: true
+    };
+    
+    const role = await this.employeeRolesRepository.create(newRole);
   
     if (!role) {
-      throw new BadRequestException("Role não encontrada.");
+      throw new BadRequestException("Erro ao criar a Role.");
     }
   
     // Atualize o relacionamento

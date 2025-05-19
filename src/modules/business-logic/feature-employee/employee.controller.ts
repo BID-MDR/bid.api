@@ -37,9 +37,9 @@ export class EmployeeController {
   @Put("role-aproved/:id")
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard)
-  async updateRoleEmployeeAprove(@Param("id") id: string,@Body() roleId: any ,@Req() req: Request) {
+  async updateRoleEmployeeAprove(@Param("id") id: string,@Req() req: Request) {
     const userId = (req.user as JwtPayloadInterface).userId;
-    return await this.service.updateRoleAndActive(id,roleId, userId);
+    return await this.service.updateRoleAndActive(id, userId);
   }
 
   @Put("role-reject/:id")
