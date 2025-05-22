@@ -136,7 +136,7 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
   }
 
   async findNearbyBeneficiary(userId: string) {
-    const professional = await this.userRepository.findById(userId)
+    const professional = await this.userRepository.getById(userId)
     return await this.workRequestRepository.findNearbyBeneficiary(Number(professional.address.latitude), Number(professional.address.longitude), professional.address.maximumDistanceToWorks);
   }
 }
