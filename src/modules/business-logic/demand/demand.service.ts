@@ -154,17 +154,20 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
         throw new BadRequestException("Professional não encontrado.");
       }
   
-      data.company = await this.companyRepository.findById(professional.employee.company.id);
-      
+      if(professional?.employee?.company.id){
+        data.company = await this.companyRepository.findById(professional.employee.company.id);
+      }
+      else if(professional?.companyAdministrator){
+        data.company = await this.companyRepository.findById(professional.companyAdministrator.id);
+      }
   
       if (!data.company) {
         throw new BadRequestException("Empresa não encontrada.");
       }
   
-      data.beneficiary = await this.userRepository.getByCpf(data.document);
-  
-      if (!data.beneficiary) {
-        throw new BadRequestException("Beneficiário não encontrado.");
+      const beneficiary = await this.userRepository.getByCpf(data.document);
+      if(beneficiary){
+        data.beneficiary = beneficiary
       }
   
       const demand = await super.create(data);

@@ -85,7 +85,7 @@ export class DemandEntity extends BaseEntity {
 
   @ManyToOne(() => UserEntity, user => user.demands, {
   })
-  beneficiary: UserEntity;
+  beneficiary?: UserEntity;
 
   @ManyToOne(() => CompanyEntity, company => company.demands, {
   })

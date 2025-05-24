@@ -57,7 +57,7 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
 
   async registerBenefficiary(data: CreateWorkRequestDto, userId: string) {
     data.pictures = data.pictures || []; 
-    data.beneficiary = await this.userRepository.findById(userId)
+    data.beneficiary = await this.userRepository.getById(userId)
 
     if(data.selectedFiles){
       const uploadedFiles = await Promise.all(

@@ -135,8 +135,10 @@ export class DemandController {
     })
     async register(@Req() req: Request, @Body() dto: DemandRegisterRequestDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
+        
         return await this.demandService.register(userId, dto);
     }
+
     @Post("register-single-demand")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesGuard)
@@ -149,7 +151,9 @@ export class DemandController {
         type: ResponseDemandDto,
     })
     async registerSingleDemand(@Req() req: Request, @Body() dto: DemandRegisterRequestDto) {
+      
         const userId = (req.user as JwtPayloadInterface).userId;
+       
         return await this.demandService.registerSingleDemand(userId, dto);
     }
 
