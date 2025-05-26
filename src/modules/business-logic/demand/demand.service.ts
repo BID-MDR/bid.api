@@ -25,10 +25,11 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
   async listByUser(userId: string) {
     const user = await this.userRepository.getById(userId);
 
-    if(user?.companyAdministrator?.id)
-      return await this.demandRepository.listByUser(userId, user.companyAdministrator.id);
-    if(user?.employee?.company?.id)
-      return await this.demandRepository.listByUser(userId, user.employee.company.id);
+    return await this.demandRepository.listByUser(userId);
+
+  }
+
+  async listByBeneficiary(userId: string) {
 
     return await this.demandRepository.listByUser(userId);
 
