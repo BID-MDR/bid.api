@@ -29,7 +29,6 @@ export class CreateAddressDto {
 
     @ApiProperty()
     @Length(1, 10)
-    @IsNumberString()
     number: string;
 
     @ApiProperty()
