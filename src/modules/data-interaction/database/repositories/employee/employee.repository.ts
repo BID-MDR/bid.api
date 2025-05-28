@@ -21,10 +21,20 @@ export class EmployeeRepository extends BaseRepository<EmployeeEntity, any, any>
     });
   }
 
+  async listAll() {
+    return await this.repository.find({
+      relations: {
+        user: true,
+        company: true,
+        roles: true,
+      },
+    });
+  }
+
   async listByCompany(companyId: string): Promise<EmployeeEntity[]> {
     return await this.repository.find({
       where: { company: { id: companyId } },
-      relations: ["company","user"],
+      relations: ["company", "user"],
     });
   }
 }
