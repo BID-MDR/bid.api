@@ -37,7 +37,7 @@ export class ConstructionsRepository extends BaseRepository<ConstructionsEntity,
       pastDate: pastDate.toISOString(),
       now: now.toISOString(),
     })
-    .andWhere('help.programType = :programType', {programType: UserProgramTypeEnum.MINHA_CASA})
+    .andWhere('constructions.programType = :programType', {programType: UserProgramTypeEnum.MINHA_CASA})
     .getMany()
   }
 

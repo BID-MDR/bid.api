@@ -194,7 +194,7 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
         pastDate: pastDate.toISOString(),
         now: now.toISOString(),
       })
-      .andWhere('help.programType = :programType', { programType: UserProgramTypeEnum.MINHA_CASA })
+      .andWhere('user.programType = :programType', { programType: UserProgramTypeEnum.MINHA_CASA })
       .getMany()
 
 
