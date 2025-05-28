@@ -23,7 +23,7 @@ export class ConstructionsRepository extends BaseRepository<ConstructionsEntity,
       pastDate: pastDate.toISOString(),
       now: now.toISOString(),
     })
-    .andWhere('help.programType = :programType', {programType: UserProgramTypeEnum.REGMEL})
+    .andWhere('constructions.programType = :programType', {programType: UserProgramTypeEnum.REGMEL})
     .getMany()
   }
 
