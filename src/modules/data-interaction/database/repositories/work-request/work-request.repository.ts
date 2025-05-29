@@ -30,7 +30,6 @@ export class WorkRequestRepository extends BaseRepository<
   }
 
   async getByUserId(userId: string) {
-    console.log('userId',userId);
     const relations = [
       'beneficiary',
       'demand',
