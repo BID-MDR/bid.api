@@ -84,6 +84,13 @@ export class WorkRequestEntity extends BaseEntity {
   })
   prevailingConstructionMaterials: PrevalingConstructionMaterialsEnum;
 
+   @Column({
+    type: "varchar",
+    length: 100,
+    default: "",
+  })
+  othersMaterials?: string;
+
   @OneToMany(() => RoomEntity, room => room.workRequest, {
     cascade: true,
   })

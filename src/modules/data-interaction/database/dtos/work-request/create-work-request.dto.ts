@@ -76,6 +76,9 @@ export class CreateWorkRequestDto {
     @IsEnum(PrevalingConstructionMaterialsEnum)
     prevailingConstructionMaterials: PrevalingConstructionMaterialsEnum;
 
+    @ApiProperty()
+    othersMaterials?: string;
+
     @ApiProperty({ type: CreateWorkRequestWelfareProgramDto, isArray: true })
     @ValidateNested({ each: true })
     @Type(() => CreateWorkRequestWelfareProgramDto)
