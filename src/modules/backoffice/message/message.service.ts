@@ -15,6 +15,7 @@ import { MessageBackofficeEntity } from 'src/modules/data-interaction/database/e
 import { MessageBackofficeRegisterRequestDto } from '../help/dto/message-register.dto';
 import { UserWithLastMessageBackoffice } from '../help/interfaces/userWithLastMessage.interface';
 import { UserBackofficeEntity } from 'src/modules/data-interaction/database/entitites/user-backoffice.entity';
+import { MessageAppToBackofficeRegisterRequestDto } from '../help/dto/message-app-to-backoffice-register.dto';
 
 @Injectable()
 export class MessageBackofficeService extends BaseService<
@@ -38,49 +39,57 @@ export class MessageBackofficeService extends BaseService<
     }
 
     async listConversationByIdentifier(identifier: string) {
-        const msgList =  await this.messageRepository.listConversationByIdentifier(identifier);
+        const msgList = await this.messageRepository.listConversationByIdentifier(identifier);
         return msgList
     }
-    
+
     async listAllMsgByUser(userId: string): Promise<UserWithLastMessageBackoffice[]> {
         const user = await this.userRepository.getById(userId);
         const msgList = await this.messageRepository.listAllMsgByUser(user);
-        
+
         const userMessagesMap: { [key: string]: UserWithLastMessageBackoffice } = {};
-    
+
         msgList.forEach(msg => {
-            [msg.sender, msg.receiver].forEach(participant => {
-                if (participant instanceof UserBackofficeEntity && participant.id !== user.id) {
-                    if (!userMessagesMap[participant.id] || userMessagesMap[participant.id].lastMessageTime < msg.sentAt) {
-                        userMessagesMap[participant.id] = {
-                            user: participant,
-                            lastMessage: msg.content,
-                            lastMessageTime: msg.sentAt,
-                        };
-                    }
-                }
-            });
+            //[msg.sender, msg.receiver].forEach(participant => {
+            //    if (participant instanceof UserBackofficeEntity && participant.id !== user.id) {
+            //        if (!userMessagesMap[participant.id] || userMessagesMap[participant.id].lastMessageTime < msg.sentAt) {
+            //            userMessagesMap[participant.id] = {
+            //                user: participant,
+            //                lastMessage: msg.content,
+            //                lastMessageTime: msg.sentAt,
+            //            };
+            //        }
+            //    }
+            //});
         });
-    
+
         const usersInvolved = Object.values(userMessagesMap);
-        
+
         return usersInvolved;
     }
 
-    async register(user1: string, user2:string,data: MessageBackofficeRegisterRequestDto) {
-      
-        data.sender = await this.userBackofficeRepository.getById(user1);
+    async registerAppToBackoffice(user1: string, user2: string, data: MessageAppToBackofficeRegisterRequestDto) {
+        data.sender = await this.userRepository.getById(user1);
+        data.receiverBackoffice = await this.userBackofficeRepository.getById(user2);
+        data.identifier = data.sender.id.toString() + data.receiver.id.toString()
+        const newMsg = await super.create(data);
+        return newMsg
+    }
+
+    async register(user1: string, user2: string, data: MessageBackofficeRegisterRequestDto) {
+
+        data.senderBackoffice = await this.userBackofficeRepository.getById(user1);
         data.receiver = await this.userRepository.getById(user2);
         data.identifier = data.sender.id.toString() + data.receiver.id.toString()
-        const newMsg =  await super.create(data);
+        const newMsg = await super.create(data);
         return newMsg
     }
 
     async delete(messageId: string, userId: string) {
         const message = await this.messageRepository.findById(messageId);
         const sender = await this.userBackofficeRepository.findById(userId)
-        if (message.sender !== sender ) throw new Error('You did not send this menssage.')
+        //if (message.sender !== sender) throw new Error('You did not send this menssage.')
         return await this.messageRepository.hardDelete(messageId);
     }
-    
+
 }
