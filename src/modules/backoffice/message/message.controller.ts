@@ -14,31 +14,46 @@ import { MessageBackofficeRegisterRequestDto } from "../help/dto/message-registe
 export class MessageBackofficeController {
     private readonly _logger = new Logger(MessageBackofficeController.name);
 
-    constructor(private messageService: MessageBackofficeService) {}
+    constructor(private messageService: MessageBackofficeService) { }
 
     @Get('reciver/:id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
-    async getLogged(@Req() req: Request , @Param('id') id:string) {
+    async getLogged(@Req() req: Request, @Param('id') id: string) {
         const userId = (req.user as JwtPayloadInterface).userId
-         const messageList =  await this.messageService.listConversation(userId, id);
+        const messageList = await this.messageService.listConversation(userId, id);
         return new ResponseDto(true, messageList, false)
     }
 
     @Post('reciver/:id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
-    async register(@Req() req: Request, @Param('id') id:string,  @Body() dto: MessageBackofficeRegisterRequestDto) {
+    async register(@Req() req: Request, @Param('id') id: string, @Body() dto: MessageBackofficeRegisterRequestDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
         return await this.messageService.register(userId, id, dto);
+    }
+
+    @Post('backoffice-to-app/:id')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async registerBackofficeToApp(@Req() req: Request, @Param('id') id: string, @Body() dto: MessageBackofficeRegisterRequestDto) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.messageService.registerAppToBackoffice(userId, id, dto);
+    }
+
+    @Post('app-to-backoffice/:id')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async registerAppToBackoffice(@Req() req: Request, @Param('id') id: string, @Body() dto: MessageBackofficeRegisterRequestDto) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.messageService.registerAppToBackoffice(userId, id, dto);
     }
 
     @Get('all-user-conversation/:id')
     // @ApiBearerAuth()
     // @UseGuards(JwtAccessTokenGuard)
-    async listConversation(@Req() req: Request, @Param('id') id:string) {
-       // const userId = (req.user as JwtPayloadInterface).userId;
-       console.log(id)
+    async listConversation(@Req() req: Request, @Param('id') id: string) {
+        // const userId = (req.user as JwtPayloadInterface).userId;
         const msglist = await this.messageService.listAllMsgByUser(id);
         return new ResponseDto(true, msglist, false)
     }
