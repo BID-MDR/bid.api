@@ -148,7 +148,6 @@ export class ChatGateway implements OnGatewayConnection {
     @MessageBody() body: MessageBackofficeRegisterRequestDto,
   ) {
 
-    console.log('testes veririfca');
     if (body.content) {
       await this.messageServiceBackoffice.registerBackofficeToApp(body.client1, body.client2, body);
     }

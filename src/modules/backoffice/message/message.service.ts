@@ -34,17 +34,13 @@ export class MessageBackofficeService extends BaseService<
 
     async listConversation(user1: string, user2: string) {
         const userEntity1 = await this.userBackofficeRepository.getById(user1);
-        console.log('userEntity1',userEntity1);
         const userEntity2 = await this.userRepository.getById(user2);
-         console.log('userEntity2',userEntity2);
         return await this.messageRepository.listByConversation(userEntity1, userEntity2);
     }
 
      async listByConversationBackoffice(user1: string, user2: string) {
         const userEntity1 = await this.userBackofficeRepository.getById(user1);
-        console.log('userEntity1',userEntity1);
         const userEntity2 = await this.userRepository.getById(user2);
-         console.log('userEntity2',userEntity2);
         return await this.messageRepository.listByConversationBackoffice(userEntity1, userEntity2);
     }
 
@@ -58,7 +54,7 @@ export class MessageBackofficeService extends BaseService<
         const msgList = await this.messageRepository.listAllMsgByUserBackoffice(user);
 
         const userMessagesMap: { [key: string]: UserWithLastMessageBackoffice } = {};
-
+        
         msgList.forEach(msg => {
             [msg.sender, msg.receiver, msg.senderBackoffice, msg.receiverBackoffice].forEach(participant => {
                 if (participant instanceof UserBackofficeEntity && participant.id !== user.id) {
@@ -81,27 +77,23 @@ export class MessageBackofficeService extends BaseService<
     async registerAppToBackoffice(user1: string, user2: string, data: MessageAppToBackofficeRegisterRequestDto) {
         data.sender = await this.userRepository.getById(user1);
         data.receiverBackoffice = await this.userBackofficeRepository.getById(user2);
-        data.identifier = data.sender.id.toString() + data.receiver.id.toString()
+        data.identifier = data.receiverBackoffice.id.toString() + data.sender.id.toString()
         const newMsg = await super.create(data);
         return newMsg
     }
 
       async registerBackofficeToApp(user1: string, user2: string, data: MessageAppToBackofficeRegisterRequestDto) {
-        console.log('teste');
         data.senderBackoffice = await this.userBackofficeRepository.getById(user1);
-        console.log('data.senderBackoffice',data.senderBackoffice);
         data.receiver = await this.userRepository.getById(user2);
-        console.log('data.receiver',data.receiver);
         data.identifier = data.senderBackoffice.id.toString() + data.receiver.id.toString()
         const newMsg = await super.create(data);
         return newMsg
     }
 
     async register(user1: string, user2: string, data: MessageBackofficeRegisterRequestDto) {
-
-        data.senderBackoffice = await this.userBackofficeRepository.getById(user1);
-        data.receiver = await this.userRepository.getById(user2);
-        data.identifier = data.sender.id.toString() + data.receiver.id.toString()
+        data.sender = await this.userRepository.getById(user2);
+        data.receiverBackoffice = await this.userBackofficeRepository.getById(user1);
+        data.identifier = data.receiverBackoffice.id.toString() + data.sender.id.toString()
         const newMsg = await super.create(data);
         return newMsg
     }
