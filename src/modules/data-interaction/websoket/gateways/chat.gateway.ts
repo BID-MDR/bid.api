@@ -164,6 +164,7 @@ export class ChatGateway implements OnGatewayConnection {
     @ConnectedSocket() client: Socket,
     @MessageBody() dto: MessageListWebsocketDto,
   ) {
+    
     const result = await this.messageServiceBackoffice.listConversation(dto.client1, dto.client2);
 
     this.server.emit(
