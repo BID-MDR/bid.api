@@ -79,6 +79,7 @@ export class MessageBackofficeService extends BaseService<
         data.receiverBackoffice = await this.userBackofficeRepository.getById(user2);
         data.identifier = data.receiverBackoffice.id.toString() + data.sender.id.toString()
         const newMsg = await super.create(data);
+       
         return newMsg
     }
 
@@ -87,6 +88,7 @@ export class MessageBackofficeService extends BaseService<
         data.receiver = await this.userRepository.getById(user2);
         data.identifier = data.senderBackoffice.id.toString() + data.receiver.id.toString()
         const newMsg = await super.create(data);
+       
         return newMsg
     }
 
@@ -95,6 +97,7 @@ export class MessageBackofficeService extends BaseService<
         data.receiverBackoffice = await this.userBackofficeRepository.getById(user1);
         data.identifier = data.receiverBackoffice.id.toString() + data.sender.id.toString()
         const newMsg = await super.create(data);
+      
         return newMsg
     }
 

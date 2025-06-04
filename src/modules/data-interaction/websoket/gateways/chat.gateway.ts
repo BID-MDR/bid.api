@@ -126,19 +126,16 @@ export class ChatGateway implements OnGatewayConnection {
     @ConnectedSocket() client: Socket,
     @MessageBody() body: MessageBackofficeRegisterRequestDto,
   ) {
-
-
     if (body.content) {
       await this.messageServiceBackoffice.register(body.client1, body.client2, body);
     }
 
-    const result = await this.messageServiceBackoffice.listConversation(body.client1, body.client2);
+    const result = await this.messageServiceBackoffice.listConversationByIdentifier(body.identifier);
     const roomIdentifier = body.client1.toString() + body.client2.toString();
-
     client.join(roomIdentifier);
-    this.server.emit(
+    this.server.to(roomIdentifier).emit(
       ChatGatewayEventsEnum.RESPONSE_MESSAGE_IDENTIFIER_BACKOFFICE,
-      new ResponseDto(true, result, [])
+      new ResponseDto(true, result, []),
     );
   }
 
@@ -152,7 +149,7 @@ export class ChatGateway implements OnGatewayConnection {
       await this.messageServiceBackoffice.registerBackofficeToApp(body.client1, body.client2, body);
     }
 
-    const result = await this.messageServiceBackoffice.listConversation(body.client1, body.client2);
+    const result = await this.messageServiceBackoffice.listConversationByIdentifier(body.identifier);
     const roomIdentifier = body.client1.toString() + body.client2.toString();
 
     client.join(roomIdentifier);
