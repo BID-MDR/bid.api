@@ -115,8 +115,7 @@ export class WorkRequestController {
 
   @Put("id/:id")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_inspection])
+  @UseGuards(JwtAccessTokenGuard)
   @ApiOperation({
     description: "Atualizar vistoria.",
     summary: "Atualizar vistoria.",
