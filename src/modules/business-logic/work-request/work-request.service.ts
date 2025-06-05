@@ -79,7 +79,8 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
   }
 
   async update(workRequestId: string, data: UpdateWorkRequestDto) {
-    return await super.update(workRequestId, data);
+    
+    return await this.workRequestRepository.updateAll(workRequestId, data);
   }
 
   async updateStatus(workRequestId: string, status: TechnicalVisitStatusEnum) {

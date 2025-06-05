@@ -56,7 +56,6 @@ export class UpdateWorkRequestDto {
     @Type(() => CreateRoomDto)
     improvementRoom?: CreateRoomDto[];
 
-    @ApiProperty({ isArray: true, enum: SolvedProblemsEnum })
-    @IsEnum(SolvedProblemsEnum)
+   @ApiProperty({ isArray: true, enum: SolvedProblemsEnum })
     solvedProblems?: SolvedProblemsEnum[];
 }

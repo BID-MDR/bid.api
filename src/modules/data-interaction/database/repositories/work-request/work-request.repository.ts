@@ -6,6 +6,7 @@ import { Repository } from "typeorm";
 import { CreateWorkRequestDto } from "../../dtos/work-request/create-work-request.dto";
 import { UpdateWorkRequestDto } from "../../dtos/work-request/update-work-request.dto";
 import { WorkRequestContractStatusEnum } from "../../enums/work-request-contact-status.enum";
+import { RoomEntity } from "../../entitites/room.entity";
 
 @Injectable()
 export class WorkRequestRepository extends BaseRepository<
@@ -16,6 +17,8 @@ export class WorkRequestRepository extends BaseRepository<
   constructor(
     @InjectRepository(WorkRequestEntity)
     private repository: Repository<WorkRequestEntity>,
+    @InjectRepository(RoomEntity)
+    private roomRepository: Repository<RoomEntity>,
   ) {
     super(repository);
   }
@@ -28,6 +31,30 @@ export class WorkRequestRepository extends BaseRepository<
       relations,
     });
   }
+
+  async updateAll(workRequestId: string, dto: UpdateWorkRequestDto) {
+
+  const workRequest = await this.repository.findOne({
+    where: { id: workRequestId },
+    relations: ['improvementRoom'],
+  });
+
+
+  Object.assign(workRequest, dto);
+
+
+  if (dto.improvementRoom) {
+ 
+    workRequest.improvementRoom = dto.improvementRoom.map(roomDto =>
+      this.roomRepository.create({
+        ...roomDto,
+        workRequestImprovementRoom: workRequest,
+      }),
+    );
+  }
+
+  return await this.repository.save(workRequest);
+}
 
   async getByUserId(userId: string) {
     const relations = [
