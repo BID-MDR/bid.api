@@ -4,7 +4,7 @@ import { UserBackofficeEntity } from 'src/modules/data-interaction/database/enti
 import { UserEntity } from 'src/modules/data-interaction/database/entitites/user.entity';
 import { UserProgramTypeEnum } from 'src/modules/data-interaction/database/enums/user-program-type.enum';
 
-export class MessageBackofficeRegisterRequestDto {
+export class MessageAppToBackofficeRegisterRequestDto {
     @ApiProperty()
     @Length(1, 500)
     content: string;
@@ -20,8 +20,7 @@ export class MessageBackofficeRegisterRequestDto {
     sender: UserEntity;
 
     receiver: UserEntity;
-
-
+    
     @ApiProperty({ enum: UserProgramTypeEnum })
     @IsEnum(UserProgramTypeEnum)
     programType: UserProgramTypeEnum;

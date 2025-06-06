@@ -29,7 +29,6 @@ export class HelpBackofficeService extends BaseService<
     async register(clientId: string, data: HelpRegisterRequestDto) {
         data.user = await this.userRepository.getById(clientId);
         data.sentAt = new Date()
-        console.log('data', data)
         const help =  await super.create(data);
         return help
     }
