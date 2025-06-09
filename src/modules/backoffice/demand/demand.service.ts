@@ -115,6 +115,7 @@ export class DemandBackofficeService extends BaseService<DemandEntity, DemandReg
   }
 
   async register(userId: string, data: DemandRegisterRequestDto) {
+    data.document.replace(/\D/g, '');
     const professional = await this.userRepository.getById(userId);
 
     if (!professional) {
