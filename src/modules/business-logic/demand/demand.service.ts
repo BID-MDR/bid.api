@@ -111,6 +111,7 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
   }
   async registerSingleDemand(userId: string, data: DemandRegisterRequestDto) {
     try{
+      data.document.replace(/\D/g, '');
       const professional = await this.userRepository.getById(userId);
       if (!professional) {
         throw new BadRequestException("Professional não encontrado.");
@@ -149,6 +150,8 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
   }
   async register(userId: string, data: DemandRegisterRequestDto) {
     try{
+
+      data.document.replace(/\D/g, '');
       const professional = await this.userRepository.getById(userId);
       if (!professional) {
         throw new BadRequestException("Professional não encontrado.");
