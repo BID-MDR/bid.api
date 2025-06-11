@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { BaseRepository } from "src/core/repositories/base.repository";
-import { DeepPartial, Repository } from "typeorm";
+import { DeepPartial, In, Not, Repository } from "typeorm";
 import { DemandRegisterRequestDto } from "../../dtos/demand/register-demand.dto";
 import { DemandEntity } from "../../entitites/demand.entity";
 import { DemandStatusEnum } from "../../enums/demand-status.enum";
@@ -27,18 +27,18 @@ export class DemandRepository extends BaseRepository<
       .distinct(true);
 
     return query.getOne();
-}
+  }
 
   async getById2(_id: string) {
-  return this.repository
-    .createQueryBuilder('demand')
-    .innerJoinAndSelect("demand.beneficiary", "beneficiary")
-    .leftJoinAndSelect('demand.company', 'company')
-    .leftJoinAndSelect('demand.workRequest', 'workRequest')
-    .leftJoinAndSelect('workRequest.room', 'room')
-    .leftJoinAndSelect('room.roomSolutions', 'room_solution')
-    .where("demand.id = :id", { id: _id })
-    .getOne()
+    return this.repository
+      .createQueryBuilder('demand')
+      .innerJoinAndSelect("demand.beneficiary", "beneficiary")
+      .leftJoinAndSelect('demand.company', 'company')
+      .leftJoinAndSelect('demand.workRequest', 'workRequest')
+      .leftJoinAndSelect('workRequest.room', 'room')
+      .leftJoinAndSelect('room.roomSolutions', 'room_solution')
+      .where("demand.id = :id", { id: _id })
+      .getOne()
   }
 
   async countSustainabilityItems(document: string | number) {
@@ -48,7 +48,7 @@ export class DemandRepository extends BaseRepository<
       .where("demand.document = :document", { document })
       .select("COUNT(sustainabilityItens.id)", "count")
       .getRawOne();
-  
+
     return count.count;
   }
 
@@ -59,7 +59,7 @@ export class DemandRepository extends BaseRepository<
       .where("demand.document = :document", { document })
       .select("COUNT(constructions.id)", "count")
       .getRawOne();
-  
+
     return count.count;
   }
 
@@ -68,7 +68,7 @@ export class DemandRepository extends BaseRepository<
       .createQueryBuilder("demands")
       .select("COUNT(demands.id)", "count")
       .getRawOne();
-  
+
     return count.count;
   }
 
@@ -77,10 +77,10 @@ export class DemandRepository extends BaseRepository<
       .createQueryBuilder("demand")
       .leftJoin("demand.construction", "constructions")
       .where("demand.document = :document", { document })
-      .andWhere("demand.status = :status", {status: 'CONCLUIDO'})
+      .andWhere("demand.status = :status", { status: 'CONCLUIDO' })
       .select("COUNT(constructions.id)", "count")
       .getRawOne();
-  
+
     return count.count;
   }
 
@@ -91,18 +91,18 @@ export class DemandRepository extends BaseRepository<
       .where("demand.document = :document", { document })
       .select("COUNT(technicalVisit.id)", "count")
       .getRawOne();
-  
+
     return count.count;
   }
 
-  async countVistory(): Promise<any>{
+  async countVistory(): Promise<any> {
     const count = await this.repository
-    .createQueryBuilder("demands")
-    .where("demands.status = :status", {
-      status: DemandStatusEnum.ESPERANDO_MELHORIA,
-    })
-    .select("COUNT(demands.id)", "count")
-    .getRawOne();
+      .createQueryBuilder("demands")
+      .where("demands.status = :status", {
+        status: DemandStatusEnum.ESPERANDO_MELHORIA,
+      })
+      .select("COUNT(demands.id)", "count")
+      .getRawOne();
 
     return count.count;
   }
@@ -135,18 +135,16 @@ export class DemandRepository extends BaseRepository<
   }
 
   async listForVisit(companyId: string = ""): Promise<DemandEntity[]> {
-  
-    const query = this.getDefaultQuery()
-      .where("company.id = :companyId", { companyId })
-      .andWhere("demand.status IN (:...statuses)", {
-        statuses: [
-          DemandStatusEnum.RASCUNHO,
-          DemandStatusEnum.CADASTRADO_VISTORIA,
-          DemandStatusEnum.ESPERANDO_MELHORIA,
-        ],
-      })
+    return await this.repository.find({
+      where: {
+        company: { id: companyId },
+        status: (In([DemandStatusEnum.RASCUNHO,
+        DemandStatusEnum.CADASTRADO_VISTORIA,
+        DemandStatusEnum.ESPERANDO_MELHORIA,])),
+      },
+      relations: ['company', 'workRequest', 'beneficiary','technicalVisit', 'construction', 'sustainabilityItens'],
+    });
 
-    return await query.getMany();
   }
 
   async listForConstructions(companyId: string = ""): Promise<DemandEntity[]> {
@@ -186,19 +184,19 @@ export class DemandRepository extends BaseRepository<
 
     return await query.getMany();
   }
-  
+
 
   async getByWorkRequestId(workRequestId: string): Promise<DemandEntity> {
     const query = this.getDefaultQuery()
-      .leftJoinAndSelect("workRequest.room", "roomsAlias") 
+      .leftJoinAndSelect("workRequest.room", "roomsAlias")
       .leftJoinAndSelect("roomsAlias.interventions", "interventionsAlias")
       .leftJoinAndSelect("roomsAlias.roomSolutions", "roomSolutionsAlias")
       .leftJoinAndSelect("roomSolutionsAlias.picturesAndVideos", "picturesAndVideosAlias")
 
       .where("workRequest.id = :workRequestId", { workRequestId });
-  
+
     return await query.getOne();
-  }  
+  }
 
   async getByConstructionId(constructionId: string): Promise<DemandEntity> {
     const query = this.getDefaultQuery().where("constructions.id = :constructionId", { constructionId });
@@ -211,22 +209,22 @@ export class DemandRepository extends BaseRepository<
     return query.getMany();
   }
 
-  async countList(){
+  async countList() {
     return this.repository.count()
   }
 
-  
+
   async findMonth(month: number) {
     const now = new Date();
     const pastDate = addMonths(now, -month);
 
 
     return this.repository.createQueryBuilder('demand')
-    .where('demand.createdAt BETWEEN :pastDate AND :now', {
-      pastDate: pastDate.toISOString(),
-      now: now.toISOString(),
-    })
-    .getMany()
+      .where('demand.createdAt BETWEEN :pastDate AND :now', {
+        pastDate: pastDate.toISOString(),
+        now: now.toISOString(),
+      })
+      .getMany()
   }
 
   private getDefaultQuery() {
