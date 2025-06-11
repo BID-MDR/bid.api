@@ -19,7 +19,6 @@ import { SolvedProblemsEnum } from "../../enums/solved-problems.enum";
 export class UpdateWorkRequestDto {
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
     description: string;
 
     @ApiProperty()
