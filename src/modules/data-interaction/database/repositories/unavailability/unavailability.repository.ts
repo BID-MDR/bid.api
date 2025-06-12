@@ -19,6 +19,31 @@ export class UnavailabilityRepository extends BaseRepository<UnavailabilityEntit
       .getMany(); 
   }
 
+  async find(): Promise<UnavailabilityEntity[]> {
+    return this.repository
+      .createQueryBuilder('unavailability')
+      .leftJoinAndSelect('unavailability.user', 'user') 
+      .getMany(); 
+  }
+
+async findByDate(initDate: string, endDate: string): Promise<UnavailabilityEntity[]> {
+
+  const startOfDay = new Date(initDate);
+  const endOfDay = new Date(endDate);
+  endOfDay.setHours(23, 59, 59, 999); 
+
+  const query = this.repository
+    .createQueryBuilder('unavailability')
+    .leftJoinAndSelect('unavailability.user', 'user')
+    .where('unavailability.startDate <= :endDate AND unavailability.finishDate >= :startDate', {
+      startDate: startOfDay.toISOString(),
+      endDate: endOfDay.toISOString(),
+    });
+
+  return query.getMany();
+}
+
+
   async findOlderThanAWeek(): Promise<UnavailabilityEntity[]> {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
