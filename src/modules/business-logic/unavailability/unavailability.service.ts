@@ -15,7 +15,13 @@ export class UnavailabilityService extends BaseService<UnavailabilityEntity, Una
   }
 
   async list() {
-    const list =  await this.repository.findAll();
+    const list =  await this.repository.find();
+    return list
+  }
+
+
+  async listByDate(initDate: string, endDate: string) {
+    const list =  await this.repository.findByDate(initDate, endDate);
     return list
   }
 
