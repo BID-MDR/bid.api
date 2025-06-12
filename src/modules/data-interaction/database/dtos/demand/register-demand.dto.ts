@@ -39,4 +39,5 @@ export class DemandRegisterRequestDto {
     beneficiary: UserEntity
 
     company: CompanyEntity;
+    
 }
