@@ -75,7 +75,18 @@ export class WorkRequestRepository extends BaseRepository<
   }
 
   async findById2(id: string) {
-    const relations = this.repository.metadata.relations.map((rel) => rel.propertyPath);
+    // const relations = this.repository.metadata.relations.map((rel) => rel.propertyPath);
+
+      const relations = [
+        'beneficiary',
+        'demand',
+        'contracts',
+        'contractResignedList',
+        'improvementRoom',
+        'welfare',
+        'room',
+        'beneficiary.address' 
+      ];
     return await this.repository.findOne({
       where: { id: id },
       relations,
