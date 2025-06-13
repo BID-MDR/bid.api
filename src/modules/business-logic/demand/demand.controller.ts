@@ -107,6 +107,7 @@ export class DemandController {
     })
     async listVisit(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
+        let teste = await this.demandService.listForVisit(userId);
         return await this.demandService.listForVisit(userId);
     }
 
