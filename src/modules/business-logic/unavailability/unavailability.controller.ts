@@ -27,6 +27,11 @@ export class UnavailabilityController {
     return await this.service.findById(id);
   }
 
+  @Get("by-date/:initDate/:endDate")
+  @ApiBearerAuth()
+  async getByDate(@Param("initDate") initDate: string, @Param("initDate") endDate: string) {
+    return await this.service.listByDate(initDate,endDate);
+  }
  
   @Post("")
   @ApiBearerAuth()
