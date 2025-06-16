@@ -169,7 +169,6 @@ export class WorkRequestController {
 
   async getLookForBeneficiary( @Req() req: Request) {
     const userId = (req.user as JwtPayloadInterface).userId;
-    const teste =await this.service.findNearbyBeneficiary(userId);
    
     return await this.service.findNearbyBeneficiary(userId)
 
