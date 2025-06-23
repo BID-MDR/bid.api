@@ -1,5 +1,5 @@
 # Use a imagem base Node.js Alpine
-FROM node:20.18.0-alpine
+FROM node:24.2.0-alpine
 
 # Configuração padrão de ENV
 ENV NODE_ENV="dev"
