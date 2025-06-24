@@ -32,7 +32,7 @@ export class DemandRepository extends BaseRepository<
   async getById2(_id: string) {
     return this.repository
       .createQueryBuilder('demand')
-      .innerJoinAndSelect("demand.beneficiary", "beneficiary")
+    .leftJoinAndSelect('demand.beneficiary', 'beneficiary')
       .leftJoinAndSelect('demand.company', 'company')
       .leftJoinAndSelect('demand.workRequest', 'workRequest')
       .leftJoinAndSelect('workRequest.room', 'room')
