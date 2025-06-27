@@ -10,6 +10,10 @@ import { CompanyRepository } from "../../data-interaction/database/repositories/
 import { TechnicalVisitStatusEnum } from "../../data-interaction/database/enums/technical-visit-status.enum";
 import { ConstructionsStatusEnum } from "../../data-interaction/database/enums/constructions-stauts.enum";
 import { NotificationMessageService } from "../notification-msg/notification-message.service";
+import { AwsSubsystem } from "src/modules/data-interaction/facade/apis/storage/aws.subsystem";
+import { RoomSolutionRepository } from "src/modules/data-interaction/database/repositories/room/room-solution.repository";
+import { UserGeneratedMediaRepository } from "src/modules/data-interaction/database/repositories/user/user-generated-media.repository";
+import { MediaTypeEnum } from "src/modules/data-interaction/database/enums/media-type.enum";
 
 @Injectable()
 export class DemandService extends BaseService<DemandEntity, DemandRegisterRequestDto, DemandRegisterRequestDto> {
@@ -17,7 +21,12 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
     private demandRepository: DemandRepository,
     private companyRepository: CompanyRepository,
     private readonly userRepository: UserRepository,
-    private readonly notificationMsgService: NotificationMessageService
+    private readonly notificationMsgService: NotificationMessageService,
+    private readonly S3: AwsSubsystem,
+    private readonly roomSolutionService: RoomSolutionRepository,
+    private readonly userGeneratedMediaRepository: UserGeneratedMediaRepository
+
+    
   ) {
     super(demandRepository);
   }
@@ -294,4 +303,33 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
 
     return statusOrder.indexOf(status) <= statusOrder.indexOf(newStatus);
   }
+    async firstStepPhotos(
+      roomSolutionId: string,
+      files: Array<Express.Multer.File>,
+    ) {
+      if (!files.length) {
+        throw new BadRequestException("Files are required");
+      }
+  
+      const roomSolution = await this.roomSolutionService.findById(roomSolutionId);
+      if (!roomSolution) {
+        throw new BadRequestException("Room solution not found");
+      }
+  
+      for (const file of files) {
+        const name = "construction-" + new Date().getTime();
+        const url = await this.S3.uploadMediaBuffer(file.mimetype, name, file.buffer);
+        const userMidia = await this.userGeneratedMediaRepository.create({
+          url,
+          mimeType: file.mimetype,
+          type: MediaTypeEnum.FOTO,
+        });
+        roomSolution.picturesAndVideos.push(userMidia);
+      }
+      await roomSolution.save();
+  
+      await roomSolution.reload();
+  
+      return roomSolution;
+    }
 }
