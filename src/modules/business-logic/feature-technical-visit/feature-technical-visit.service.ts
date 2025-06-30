@@ -82,7 +82,7 @@ export class FeatureTechnicalVisitService extends BaseService<
         const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
         dto.workRequest = workRequest;
         dto.type = TechnicalVisitTypeEnum.VISITA_TECNICA
-        dto.status = dto.status ?? TechnicalVisitStatusEnum.AGENDADA;
+        dto.status = dto.status ?? TechnicalVisitStatusEnum.SOLICITACAO;
         const technicalVisit = await this.technicalVisitRepository.create(dto)
         this.registerWorkRepo.updateStatus(dto.registerWorkId, ConstructionsStatusEnum.REGISTRATION_SCHEDULE)
     
@@ -115,7 +115,7 @@ export class FeatureTechnicalVisitService extends BaseService<
         technicalVisit.from = dto.from
         technicalVisit.to = dto.to
         technicalVisit.duration = dto.duration ? dto.duration : technicalVisit.duration
-        technicalVisit.status = TechnicalVisitStatusEnum.REAGENDADA
+        technicalVisit.status = TechnicalVisitStatusEnum.AGENDADA
         await technicalVisit.save()
         return await technicalVisit.reload()
     }
