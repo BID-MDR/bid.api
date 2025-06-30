@@ -23,7 +23,9 @@ export class CostEstimateRepository extends BaseRepository<
   async requestAdjust(costEstimateId: string, adjustDetail: string) {
     return await this.repository.update({ id: costEstimateId }, {adjustDetails: adjustDetail, type: CostEstimateStatusEnum.CHANGE_SOLICITATION});
   }
-
+  async reproveById(costEstimateId: string) {
+    return await this.repository.update({ id: costEstimateId }, { type: CostEstimateStatusEnum.REPROVED_ESTIMATION});
+  }
   async findById(costEstimateId: string): Promise<CostEstimateEntity> {
     return await this.repository.findOne({
       where: { id: costEstimateId },

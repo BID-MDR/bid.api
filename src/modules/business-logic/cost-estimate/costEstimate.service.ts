@@ -143,7 +143,12 @@ async update(costEstimateId: string, data: CreateCostEstimateRequestDto) {
     const workRequest = await this.workRequestRepo.findByIdAndBringBeneficiary(data.workRequestId)
     if(!workRequest) throw new NotFoundException('Workrequest not found!')
     if(!workRequest.beneficiary) throw new NotFoundException('Beneficary not found!')
+      if(data.adjustDetails) {
     await this.repository.requestAdjust(costEstimateId, data.adjustDetails)
+
+      } else {
+        await this.repository.reproveById(costEstimateId)
+      }
     const msg = {
       content: 'Ajuste solicitado na estimativa de custo com sucesso'
     }
