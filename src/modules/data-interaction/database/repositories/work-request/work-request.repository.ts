@@ -33,15 +33,15 @@ export class WorkRequestRepository extends BaseRepository<
   }
 
   async updateAll(workRequestId: string, dto: UpdateWorkRequestDto) {
-
+console.log('id', workRequestId)
   const workRequest = await this.repository.findOne({
     where: { id: workRequestId },
     relations: ['improvementRoom'],
   });
+  console.log('workRequest', workRequest)
 
 
   Object.assign(workRequest, dto);
-
 
   if (dto.improvementRoom) {
  
