@@ -9,9 +9,11 @@ import {
     Put,
     Req,
     SerializeOptions,
-    UseGuards
+    UploadedFiles,
+    UseGuards,
+    UseInterceptors
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { Request } from "express";
 import { ApiOkResponseDtoData } from "src/core/decorators/swagger/api-ok-response-dto.decorator";
 import { JwtAccessTokenGuard } from "src/core/guards/jwt-access-token.guard";
@@ -24,6 +26,7 @@ import { StatusDemandDto } from "src/modules/data-interaction/database/dtos/dema
 import { Roles } from "../../../core/decorators/roles.decorator";
 import { RolesGuard } from "../../../core/guards/roles.guard";
 import { EmployeeRoleEnum } from "../../data-interaction/database/enums/employee-role.enum";
+import { FilesInterceptor } from "@nestjs/platform-express";
 
 @Controller("demand")
 @ApiTags("Demand/Pedido de demanda")
@@ -210,4 +213,35 @@ export class DemandController {
         const userId = (req.user as JwtPayloadInterface).userId;
         return await this.demandService.confirmConclusion(id, userId);
     }
+      @Post("room-solution-step-photos")
+      @ApiBearerAuth()
+    //   @UseGuards(JwtAccessTokenGuard, RolesGuard)
+    //   @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction, EmployeeRoleEnum.manager_demand])
+      @UseInterceptors(FilesInterceptor("files"))
+      @ApiConsumes("multipart/form-data")
+      @ApiBody({
+        schema: {
+          type: "object",
+          properties: {
+            files: {
+              type: "array",
+              items: {
+                type: "string",
+                format: "binary",
+              },
+            },
+            roomSolutionId: { type: "string" },
+          },
+        },
+      })
+      async firstStepPhotos(
+        // @Param("demandId") demandId: string,
+        @Body() dto: { roomSolutionId: string },
+        @UploadedFiles() files: Array<Express.Multer.File>,
+        @Req() req: Request
+      ) {
+        const user = req.user as JwtPayloadInterface;
+        return await this.demandService.firstStepPhotos(dto.roomSolutionId, files);
+      }
+    
 }
