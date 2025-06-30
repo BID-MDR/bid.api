@@ -78,7 +78,7 @@ export class TechnicalVisitRepository extends BaseRepository<
         const result = await this.repository.find({
             where: { professional: { id: professionalId },
             type: TechnicalVisitTypeEnum.VISITA_TECNICA, 
-            status: In(['AGENDADA', 'REAGENDADA', 'REALIZADA']),},
+            status: In(['AGENDADA', 'REAGENDADA', 'REALIZADA', 'CANCELADA']),},
             relations: relations,
         });
         return result;
