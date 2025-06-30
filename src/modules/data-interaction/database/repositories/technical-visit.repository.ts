@@ -6,6 +6,7 @@ import { CreateTechnicalVisitDto } from '../dtos/technical-visit/create-technica
 import { UpdateTechnicalVisitDto } from '../dtos/technical-visit/update-technical-visit.dto';
 import { TechnicalVisitEntity } from '../entitites/technical-visit.entity';
 import { TechnicalVisitTypeEnum } from '../enums/technical-visit-type.enum';
+import { TechnicalVisitStatusEnum } from '../enums/technical-visit-status.enum';
 
 @Injectable()
 export class TechnicalVisitRepository extends BaseRepository<
@@ -129,5 +130,10 @@ export class TechnicalVisitRepository extends BaseRepository<
         relations: ['professional', 'beneficiary', 'workRequest', 'workRequest.beneficiary'],
       });
     }
+    async updateStatusToFinishById(
+  id: string,
+) {
+  return this.repository.update({ id }, { status: TechnicalVisitStatusEnum.REALIZADA });
+}
 
 }

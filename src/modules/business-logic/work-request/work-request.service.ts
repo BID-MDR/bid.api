@@ -11,15 +11,21 @@ import { SustainabilityItensRequestDto } from "src/modules/data-interaction/data
 import { SustainabilityItensRepository } from "src/modules/data-interaction/database/repositories/work-request/sustainability-itens.repository";
 import { UserRepository } from "src/modules/data-interaction/database/repositories/user/user.repository";
 import { StorageFacade } from "src/modules/data-interaction/facade/apis/storage/storage.facade";
+import { TechnicalVisitRepository } from "src/modules/data-interaction/database/repositories/technical-visit.repository";
+import { CostEstimateRepository } from "src/modules/data-interaction/database/repositories/costEstimate/costEstimate.repository";
+import { CostEstimateService } from "../cost-estimate/costEstimate.service";
 
 @Injectable()
 export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWorkRequestDto, UpdateWorkRequestDto> {
   constructor(
     private workRequestRepository: WorkRequestRepository,
     private demandRepository: DemandRepository,
+    private tecVisitRepository: TechnicalVisitRepository,
     private userRepository: UserRepository,
+    private costEstimateRepo: CostEstimateService,
     private sustainabilityItensRepository: SustainabilityItensRepository,
     private readonly storageFacade: StorageFacade,
+
   ) {
     super(workRequestRepository);
   }
@@ -78,9 +84,32 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
     return result;
   }
 
-  async update(workRequestId: string, data: UpdateWorkRequestDto) {
-    
-    return await this.workRequestRepository.updateAll(workRequestId, data);
+  async update(workRequestId: string, data: UpdateWorkRequestDto, tecvisitId?:string, userId?:string) {
+
+        if(data.selectedFiles){
+         await Promise.all(
+        data.selectedFiles.map(async (picture) => {
+          const imageUrl = await this.storageFacade.uploadMedia(
+            picture.mimeType,
+            picture.fileName,
+            picture.data
+          );
+          if(!data.pictures){
+            data.pictures = []
+          }
+          data.pictures.push(imageUrl)
+        })
+      );
+    }
+    const wkRequest = await this.workRequestRepository.updateAll(workRequestId, data);
+    if(tecvisitId){
+       await this.tecVisitRepository.updateStatusToFinishById(tecvisitId)
+
+      const professional = await this.userRepository.getById(userId)
+      if(!professional)throw new BadRequestException("Professional not found!");
+     const costEstimate =  await this.costEstimateRepo.create({workRequest: wkRequest, professional: professional})
+    }
+    return wkRequest
   }
 
   async updateStatus(workRequestId: string, status: TechnicalVisitStatusEnum) {

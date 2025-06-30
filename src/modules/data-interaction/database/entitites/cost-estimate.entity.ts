@@ -19,6 +19,8 @@ export class CostEstimateEntity extends BaseEntity {
     @Column({
         type: "varchar",
         length: 255,
+        default: ''
+
     })
     total: string;
 
