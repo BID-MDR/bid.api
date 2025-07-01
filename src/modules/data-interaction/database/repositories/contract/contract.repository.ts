@@ -38,7 +38,7 @@ export class ContractRepository extends BaseRepository<
       where: {
         professional: { id: professionalId }, 
       },
-      relations: ['professional', 'workRequest', 'workRequest.room', 'workRequest.beneficiary'],
+      relations: ['professional', 'workRequest', 'workRequest.room', 'workRequest.beneficiary', 'workRequest.beneficiary.address'],
     });
   }
 
