@@ -51,7 +51,7 @@ export class ImprovementProjectRepository extends BaseRepository<
       where: {
         professional: { id: professionalId },
       },
-        relations: ['workRequest','workRequest.beneficiary', 'workRequest.technicalVisit', 'workRequest.beneficiary.address'],
+        relations: ['workRequest','workRequest.beneficiary', 'workRequest.beneficiary.address', 'workRequest.technicalVisit'],
         
       });
   }  

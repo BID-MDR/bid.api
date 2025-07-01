@@ -135,6 +135,35 @@ export class WorkRequestController {
   async update(@Param("id") id: string, @Body() dto: UpdateWorkRequestDto) {
     return await this.service.update(id, dto);
   }
+  @Put("id/:id/tec-visit/:tecvisitId")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  @ApiOperation({
+    description: "Atualizar vistoria.",
+    summary: "Atualizar vistoria.",
+  })
+  @ApiOkResponseDtoData({
+    type: ResponseWorkRequestDto,
+    description: "Vistoria atualizada.",
+  })
+  @ApiBody({
+    type: UpdateWorkRequestDto,
+    required: true,
+    description: "Construção a ser atualizado.",
+  })
+  @SerializeOptions({
+    type: ResponseWorkRequestDto,
+  })
+  async updateAndUpdateTecVisit(
+    @Param("id") id: string,
+    @Param("tecvisitId") tecvisitId: string,
+    @Body() dto: UpdateWorkRequestDto,
+    @Req() req: Request
+  ) {
+    const userId = (req.user as JwtPayloadInterface).userId;
+
+    return await this.service.update(id, dto, tecvisitId, userId);
+  }
 
   @Put("carry-out/:id")
   @ApiBearerAuth()
