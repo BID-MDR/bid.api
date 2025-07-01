@@ -89,6 +89,22 @@ export class FeatureTechnicalVisitService extends BaseService<
         return technicalVisit
     }
 
+    async scheduleStatusReport(userId: string ,dto: CreateTechnicalVisitDto) {
+        const userCreate = await this.userRepository.findById(userId)
+        dto.userCreate = userCreate;
+        const beneficiary = await this.userRepository.getById(dto.beneficiaryId);
+        dto.beneficiary = beneficiary;
+        const professional = await this.userRepository.getById(dto.professionalId);
+        dto.professional = professional;
+        const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
+        dto.workRequest = workRequest;
+        dto.type = dto.type
+        dto.status = dto.status;
+        const technicalVisit = await this.technicalVisitRepository.create(dto)
+
+        return technicalVisit
+    }
+
     async scheduleTechnicalVisitAndUpdateImprovementProject(dto: CreateTechnicalVisitUpdateImprovementProjectDto) {
         const userCreate = await this.userRepository.findById(dto.professionalId)
         if(!userCreate) throw new NotFoundException('User not found!')

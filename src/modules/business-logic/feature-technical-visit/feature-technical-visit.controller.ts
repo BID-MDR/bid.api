@@ -129,6 +129,23 @@ export class FeatureTechnicalVisitController {
         return new ResponseDto(true, result, null);
     }
 
+    @Post("status-report")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOperation({
+        description: "Cria uma visita técnica caso tenha realizado uma intervenção.",
+        summary: "Cria uma visita técnica caso tenha realizado uma intervenção.",
+    })
+    @ApiBody({
+        type: CreateTechnicalVisitDto,
+        description: "Visita técnica a ser criada caso tenha realizado uma intervenção.",
+    })
+    async scheduleStatusReport(@Req() req: Request, @Body() body: CreateTechnicalVisitDto) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        const result = await this.featureTechnicalVisitService.scheduleStatusReport(userId, body);
+        return new ResponseDto(true, result, null);
+    }
+
     @Post("register-work-technicalVisit")
     @UseInterceptors(new EncryptInterceptor())
     @ApiOperation({
