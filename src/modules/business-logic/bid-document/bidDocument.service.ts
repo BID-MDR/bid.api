@@ -42,6 +42,7 @@ export class BidDocumentService extends BaseService<BidDocumentEntity, BidDocume
     await this.notificationMsgService.register(prof.id, msg)
     delete data.professionalId
   }
+  
     return await this.repository.create(data);
 }
 

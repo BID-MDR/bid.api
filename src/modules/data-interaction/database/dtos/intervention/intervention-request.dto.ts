@@ -1,7 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
-import {IsString} from "class-validator";
+import {IsString, ValidateNested} from "class-validator";
 import { RoomEntity } from "../../entitites/room.entity";
 import { InterventionStatusEnum } from "../../enums/intervention-status.enum";
+import { MediaUploadDto } from "../media/media-upload.dto";
+import { Type } from "class-transformer";
 
 
 export class CreateInterventionRequestDto {
@@ -13,17 +15,17 @@ export class CreateInterventionRequestDto {
 
     
     @ApiProperty()
-    @IsString()
+    // @IsString()
     value: string;
 
     @ApiProperty()
-    @IsString()
+    // @IsString()
     toDo: string;
 
     @ApiProperty({
       example: 'COST_ESTIMATE,CONTRACT',
     })
-    @IsString()
+    // @IsString()
     step: string;
 
     @ApiProperty({
@@ -34,4 +36,17 @@ export class CreateInterventionRequestDto {
 
     @ApiProperty()
     interventiondescription?: string;
+
+    @ApiProperty({ type: [MediaUploadDto] })
+    @ValidateNested()
+    @Type(() => MediaUploadDto)
+    selectedFilesBeginning?: MediaUploadDto[];
+
+    @ApiProperty({ type: [MediaUploadDto] })
+    @ValidateNested()
+    @Type(() => MediaUploadDto)
+    selectedFilesEnding?: MediaUploadDto[];
+
+    endingPicture?: string[];
+  beginningPicture?: string[];
 }

@@ -44,4 +44,10 @@ export class InterventionEntity extends BaseEntity {
         default: ''
     })
     step: string;
+
+     @Column("simple-array", { nullable: true })
+    beginningPicture: string[];
+    
+    @Column("simple-array", { nullable: true })
+    endingPicture: string[];
 }

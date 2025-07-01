@@ -31,6 +31,7 @@ export class ContractResignedService extends BaseService<ContractResignedEntity,
 
 
   async register(data: CreateContractResignedRequestDto) {
+    console.log('data', data)
     const workRequest = await this.workRequestRepo.findById(data.workRequestId);
     if (!workRequest) throw new NotFoundException('WorkRequest not found!');
     data.workRequest = workRequest;
