@@ -42,7 +42,6 @@ export class RegisterWorkService extends BaseService<RegisterWorkEntity, Registe
   }
   async updateByWorkRequestId(workRequestId: string, dto: UpdateRegisterWorkDto) {
     const registerWork = await this.repository.getByWorkRequestId(workRequestId);
-    
     return await this.repository.updateTypeAreaDesc(registerWork.id, dto.type, dto.area, dto.description)
      
   }
@@ -50,7 +49,7 @@ export class RegisterWorkService extends BaseService<RegisterWorkEntity, Registe
     const registerWK = await this.repository.getByWorkRequestId(registerWorkId);
     const request = await this.sustainabilityItensRepository.create(dto);
     registerWK.sustainabilityItens = request;
-
+    const up = await this.repository.concludedRegisterWork(registerWK.id)
     return await registerWK.save();
   }
   async getByProfessional(professionalId: string) {

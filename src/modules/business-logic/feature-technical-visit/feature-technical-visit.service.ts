@@ -81,10 +81,13 @@ export class FeatureTechnicalVisitService extends BaseService<
         dto.professional = professional;
         const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
         dto.workRequest = workRequest;
-        dto.type = TechnicalVisitTypeEnum.VISITA_TECNICA
-        dto.status = dto.status ?? TechnicalVisitStatusEnum.SOLICITACAO;
+        dto.type = dto.type ? dto.type : TechnicalVisitTypeEnum.VISITA_TECNICA
+        dto.status = dto.status ? dto.status : TechnicalVisitStatusEnum.SOLICITACAO;
         const technicalVisit = await this.technicalVisitRepository.create(dto)
-        this.registerWorkRepo.updateStatus(dto.registerWorkId, ConstructionsStatusEnum.REGISTRATION_SCHEDULE)
+        if(dto.type === TechnicalVisitTypeEnum.CONCLUSAO_DE_OBRA) {
+        this.registerWorkRepo.updateStatus(dto.registerWorkId, ConstructionsStatusEnum.WORK_CONCLUSION)
+
+        }
     
         return technicalVisit
     }
