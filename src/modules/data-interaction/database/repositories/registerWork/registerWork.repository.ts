@@ -6,6 +6,7 @@ import { RegisterWorkEntity } from "../../entitites/register-work.entity";
 import { RegisterWorkCreateDto } from "../../dtos/register-work/register-work.dto";
 import { RegisterWorkStatusEnum } from "../../enums/register-work.enum";
 import { ConstructionsStatusEnum } from "../../enums/constructions-stauts.enum";
+import { ConstructionsTypeEnum } from "../../enums/constructions-type.status";
 
 @Injectable()
 export class RegisterWorkRepository extends BaseRepository<
@@ -24,6 +25,11 @@ export class RegisterWorkRepository extends BaseRepository<
     return await this.repository.findOne({
       where: { id: costEstimateId },
      relations: [ 'professional', 'workRequest.contractResignedList', 'workRequest.beneficiary', 'workRequest.room', 'workRequest.contracts'],
+    });
+  }
+  async getByWorkRequestId(workRequestId: string): Promise<RegisterWorkEntity> {
+    return this.repository.findOne({
+      where: { workRequest: { id: workRequestId } },
     });
   }
   async find(): Promise<RegisterWorkEntity[]> {
@@ -79,6 +85,11 @@ export class RegisterWorkRepository extends BaseRepository<
   async updateStatus(registerWorkId: string, statusUpdate:ConstructionsStatusEnum ) {
     return await this.repository.update({ id: registerWorkId }, { status: statusUpdate});
   }
+  async updateTypeAreaDesc(registerWorkId: string, typeItem:ConstructionsTypeEnum, area: number, descr: string) {
+    return await this.repository.update({ id: registerWorkId }, { type: typeItem, area: area, description: descr, status:ConstructionsStatusEnum.CONCLUDED, concludedDate: new Date()});
+  }
+
+  
   async endRegisterWork(registerWorkId: string, ) {
     return await this.repository.update({ id: registerWorkId }, {concludedDate: new Date(), status: ConstructionsStatusEnum.FINALIZADA});
   }
