@@ -10,6 +10,7 @@ import { UserProgramTypeEnum } from '../enums/user-program-type.enum';
 import { ConstructionsTypeEnum } from '../enums/constructions-type.status';
 import { TechnicalVisitEntity } from './technical-visit.entity';
 import { UserEntity } from './user.entity';
+import { SustainabilityItensEntity } from './sustainability-Itens.entity';
 
 @Entity({ name: 'register_work' })
 export class RegisterWorkEntity extends BaseEntity {
@@ -91,5 +92,13 @@ export class RegisterWorkEntity extends BaseEntity {
       eager: true,
       })
       closureTechnicalVisit: TechnicalVisitEntity;
+
+      
+      @OneToOne(() => SustainabilityItensEntity, c => c.registerWork, {
+          nullable: true,
+          cascade: true,
+        })
+        @JoinColumn()
+        sustainabilityItens?: SustainabilityItensEntity;
 
 }

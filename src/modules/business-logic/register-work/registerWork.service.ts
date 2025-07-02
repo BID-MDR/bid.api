@@ -12,6 +12,8 @@ import { ConstructionsStatusEnum } from "src/modules/data-interaction/database/e
 import { BidDocumentRequestDto } from "src/modules/data-interaction/database/dtos/bidDocument/bid-document-create.dto";
 import { BidDocumentService } from "../bid-document/bidDocument.service";
 import { RegisterWorkFinishDto } from "src/modules/data-interaction/database/dtos/register-work/finish-register-work.dto";
+import { SustainabilityItensRequestDto } from "src/modules/data-interaction/database/dtos/work-request/sustainability-itens-request.dto";
+import { SustainabilityItensRepository } from "src/modules/data-interaction/database/repositories/work-request/sustainability-itens.repository";
 
 @Injectable()
 export class RegisterWorkService extends BaseService<RegisterWorkEntity, RegisterWorkCreateDto, RegisterWorkCreateDto> {
@@ -21,7 +23,8 @@ export class RegisterWorkService extends BaseService<RegisterWorkEntity, Registe
     private bidDocumentRepo: BidDocumentRepository,
     private userRepo: UserRepository,
     private notiMsgService: NotificationMessageService,
-    private bidDocumentService: BidDocumentService
+    private bidDocumentService: BidDocumentService,
+    private sustainabilityItensRepository: SustainabilityItensRepository
   ) {
     super(repository);
   }
@@ -34,13 +37,27 @@ export class RegisterWorkService extends BaseService<RegisterWorkEntity, Registe
   async getById(workRequestId: string) {
     return await this.repository.findById(workRequestId);
   }
+    async getByWorkRequestId(workRequestId: string) {
+    return await this.repository.getByWorkRequestId(workRequestId);
+  }
+  async updateByWorkRequestId(workRequestId: string, dto: UpdateRegisterWorkDto) {
+    const registerWork = await this.repository.getByWorkRequestId(workRequestId);
+    
+    return await this.repository.updateTypeAreaDesc(registerWork.id, dto.type, dto.area, dto.description)
+     
+  }
+  async createSustainabilityItens(dto: SustainabilityItensRequestDto, registerWorkId: string) {
+    const registerWK = await this.repository.getByWorkRequestId(registerWorkId);
+    const request = await this.sustainabilityItensRepository.create(dto);
+    registerWK.sustainabilityItens = request;
 
+    return await registerWK.save();
+  }
   async getByProfessional(professionalId: string) {
     const professional = await this.userRepo.findById(professionalId);
     if (!professional) throw new NotFoundException('Professional not found');
 
     const result = await this.repository.getByProfessional(professionalId);
-    console.log('result', result)
     for(let i = 0; i < result.length ; i++) {
       if (result[i].workRequest.technicalVisit && result[i].workRequest.technicalVisit.length > 0) {
         result[i].workRequest.technicalVisit.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());

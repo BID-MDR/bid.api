@@ -1,6 +1,7 @@
 import { Column, Entity, OneToOne } from "typeorm";
 import { DemandEntity } from "./demand.entity";
 import { BaseEntity } from "../../../../core/entities/base.entity";
+import { RegisterWorkEntity } from "./register-work.entity";
 
 @Entity({ name: "sustainabilityItens" })
 export class SustainabilityItensEntity extends BaseEntity {
@@ -36,5 +37,10 @@ export class SustainabilityItensEntity extends BaseEntity {
 
     @Column({ type: "boolean" })
     NDA: boolean;
+
+    @OneToOne(() => RegisterWorkEntity, registerWork => registerWork.sustainabilityItens, {
+          nullable: true,
+        })
+    registerWork?: RegisterWorkEntity;
     
 }

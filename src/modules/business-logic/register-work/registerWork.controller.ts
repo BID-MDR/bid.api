@@ -13,6 +13,7 @@ import { ResponseDto } from "src/core/dtos/response.dto";
 import { UpdateRegisterWorkDto } from "src/modules/data-interaction/database/dtos/register-work/update-register-work.dto";
 import { BidDocumentRequestDto } from "src/modules/data-interaction/database/dtos/bidDocument/bid-document-create.dto";
 import { RegisterWorkFinishDto } from "src/modules/data-interaction/database/dtos/register-work/finish-register-work.dto";
+import { SustainabilityItensRequestDto } from "src/modules/data-interaction/database/dtos/work-request/sustainability-itens-request.dto";
 
 @Controller("register-work")
 @ApiTags("register-work")
@@ -69,6 +70,16 @@ export class RegisterWorkController {
   async update(@Param("id") id: string, @Body() dto: RegisterWorkCreateDto) {
     return await this.service.update(id, dto);
   }
+  @Put("by-work-request-id/:wkrequestId")
+  @ApiBearerAuth()
+  async updateByWorkRequestId(@Param("wkrequestId") wkrequestId: string, @Body() dto: UpdateRegisterWorkDto) {
+    return await this.service.updateByWorkRequestId(wkrequestId, dto);
+  }
+  @Get("by-work-request-id/:wkrequestId")
+  @ApiBearerAuth()
+  async getByWorkRequestId(@Param("wkrequestId") wkrequestId: string) {
+    return await this.service.getByWorkRequestId(wkrequestId);
+  }
 
   @Put("update-register-work-from-professional")
   @ApiBearerAuth()
@@ -94,5 +105,14 @@ export class RegisterWorkController {
     return await this.service.endRegisterWork(id);
   }
 
+   @Post("sustainability-itens/:registerWkId")
+   @ApiBearerAuth()
+   @ApiBody({
+     type: SustainabilityItensRequestDto,
+     required: true,
+   })
+   async createSustainabilityItens(@Body() dto: SustainabilityItensRequestDto, @Param('registerWkId') registerWkId: string) {
+     return await this.service.createSustainabilityItens(dto, registerWkId);
+   }
  
 }
