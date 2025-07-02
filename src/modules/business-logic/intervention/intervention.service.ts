@@ -6,6 +6,7 @@ import { RoomRepository } from "src/modules/data-interaction/database/repositori
 import { BaseService } from "../../../core/services/base.service";
 import { ContractService } from "../../contract/contract.service";
 import { CostEstimateService } from "../cost-estimate/costEstimate.service";
+import { StorageFacade } from "src/modules/data-interaction/facade/apis/storage/storage.facade";
 
 @Injectable()
 export class InterventionService extends BaseService<
@@ -18,6 +19,8 @@ export class InterventionService extends BaseService<
     private roomRepo: RoomRepository,
     private contractService: ContractService,
     private costEstimateService: CostEstimateService,
+    private readonly storageFacade: StorageFacade,
+    
   ) {
     super(repository);
   }
@@ -58,7 +61,41 @@ export class InterventionService extends BaseService<
         data.step = currentStep;
       }
     }
-
+       if(data.selectedFilesBeginning){
+         await Promise.all(
+        data.selectedFilesBeginning.map(async (picture) => {
+          const imageUrl = await this.storageFacade.uploadMedia(
+            picture.mimeType,
+            picture.fileName,
+            picture.data
+          );
+          if(!data.beginningPicture){
+            data.beginningPicture = []
+          }
+          data.beginningPicture.push(imageUrl)
+          delete data.selectedFilesBeginning
+        })
+      );
+      
+    }
+    
+       if(data.selectedFilesEnding){
+         await Promise.all(
+        data.selectedFilesEnding.map(async (picture) => {
+          const imageUrl = await this.storageFacade.uploadMedia(
+            picture.mimeType,
+            picture.fileName,
+            picture.data
+          );
+          if(!data.endingPicture){
+            data.endingPicture = []
+          }
+          data.endingPicture.push(imageUrl)
+          delete data.selectedFilesEnding
+        })
+      );
+      
+    }
     return await super.update(interventionId, data);
   }
 
