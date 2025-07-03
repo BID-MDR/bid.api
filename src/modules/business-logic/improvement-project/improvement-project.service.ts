@@ -64,11 +64,11 @@ export class ImpromentProjectService extends BaseService<ImprovementProjectEntit
    const workRequest = await this.workRequestRepo.findByIdAndBringBeneficiary(data.workRequestId)
    data.workRequest = workRequest
    if (!workRequest) throw new NotFoundException('Work request not found')
-  if (data.documentId || data.documentId !== ''){
-    const document = await this.bidDocumentRepo.findById(data.documentId)
-    if(!document) throw new NotFoundException('Document not found!')
-    data.document = document
-  }
+  // if (data.documentId || data.documentId !== ''){
+  //   const document = await this.bidDocumentRepo.findById(data.documentId)
+  //   if(!document) throw new NotFoundException('Document not found!')
+  //   data.document = document
+  // }
   const professional  = await this.userRepository.findById(data.professionalId)
   if (!professional) throw new NotFoundException('Professional not found!')
   data.professional = professional
