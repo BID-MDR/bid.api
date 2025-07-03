@@ -30,6 +30,10 @@ export class ImpromentProjectService extends BaseService<ImprovementProjectEntit
   async getById(workRequestId: string) {
     return await this.improvementProjectRepository.findById(workRequestId);
   }
+  async findWorkRequest(workRequestId: string) {
+    console.log('1')
+    return await this.improvementProjectRepository.getByWorkRequest(workRequestId);
+  }
 
   async getByProfessional(professionalId: string) {
     const professional = await this.userRepository.findById(professionalId);
