@@ -51,7 +51,7 @@ export class ImprovementProjectRepository extends BaseRepository<
       where: {
         professional: { id: professionalId },
       },
-        relations: ['workRequest','workRequest.beneficiary', 'workRequest.beneficiary.address', 'workRequest.technicalVisit'],
+        relations: ['workRequest', 'workRequest.technicalVisit' ,'workRequest.beneficiary', 'workRequest.beneficiary.address', 'workRequest.technicalVisit'],
         
       });
   }  
@@ -63,7 +63,7 @@ export class ImprovementProjectRepository extends BaseRepository<
           beneficiary: { id: beneficiaryId }, 
         },
       },
-      relations: ['workRequest', 'workRequest.beneficiary', 'document', 'professional'],
+      relations: ['workRequest', 'workRequest.beneficiary', 'workRequest.technicalVisit' ,'document', 'professional'],
     });
   }
 
