@@ -86,10 +86,18 @@ export class RegisterWorkRepository extends BaseRepository<
     return await this.repository.update({ id: registerWorkId }, { status: statusUpdate});
   }
   async updateTypeAreaDesc(registerWorkId: string, typeItem:ConstructionsTypeEnum, area: number, descr: string) {
-    return await this.repository.update({ id: registerWorkId }, { type: typeItem, area: area, description: descr, status:ConstructionsStatusEnum.CONCLUDED, concludedDate: new Date()});
+    return await this.repository.update({ id: registerWorkId }, { type: typeItem, area: area, description: descr, status:ConstructionsStatusEnum.TO_SCHEDULE_CONCLUSION, startedDate: new Date()});
   }
 
-  
+async concludedRegisterWork(registerWorkId: string): Promise<RegisterWorkEntity> {
+  const reg = await this.repository.findOne({ where: { id: registerWorkId } });
+
+
+  reg.concludedDate = new Date();
+  reg.status = ConstructionsStatusEnum.CONCLUDED;
+
+  return this.repository.save(reg);
+}
   async endRegisterWork(registerWorkId: string, ) {
     return await this.repository.update({ id: registerWorkId }, {concludedDate: new Date(), status: ConstructionsStatusEnum.FINALIZADA});
   }
