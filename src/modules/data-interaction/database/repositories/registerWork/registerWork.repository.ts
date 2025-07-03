@@ -61,7 +61,6 @@ export class RegisterWorkRepository extends BaseRepository<
       .getMany();
   }
   async getByBeneficary(beneficaryId: string) {
-    console.log('Beneficiary ID:', beneficaryId);
   
     return this.repository
       .createQueryBuilder('registerWork')

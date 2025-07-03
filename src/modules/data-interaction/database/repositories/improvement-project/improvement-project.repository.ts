@@ -21,12 +21,25 @@ export class ImprovementProjectRepository extends BaseRepository<
     super(repository);
   }
 
-  async findById(costEstimateId: string): Promise<ImprovementProjectEntity> {
-    return await this.repository.findOne({
-      where: { id: costEstimateId },
-   //   relations: [ 'workRequest', 'workRequest.room'],
-    });
-  }
+async findById(costEstimateId: string): Promise<ImprovementProjectEntity> {
+//  const meta = this.repository.metadata;
+  const relations: string[] = ['professional', 'workRequest', 'workRequest.beneficiary', 'workRequest.beneficiary.address'];
+
+  // if (meta.findRelationWithPropertyPath('workRequest')) {
+  //   relations.push('workRequest');
+  //   if (meta.findRelationWithPropertyPath('workRequest.room')) {
+  //     relations.push('workRequest.room');
+  //   }
+  //      if (meta.findRelationWithPropertyPath('workRequest.beneficiary')) {
+  //     relations.push('workRequest.beneficiary');
+  //   }
+  // }
+
+  return this.repository.findOne({
+    where: { id: costEstimateId },
+    relations,      
+  });
+}
   async find(): Promise<ImprovementProjectEntity[]> {
     return await this.repository.find({
       //relations: ['workRequest', 'workRequest.room'],
@@ -75,6 +88,14 @@ export class ImprovementProjectRepository extends BaseRepository<
   }
   async updateStatusProjectDelivery(projectId: string){
     return await this.repository.update({id: projectId}, {status: ImprovementProjectStatusEnum.PROJECT_DELIVERY})
+  }
+    async getByWorkRequest(wkRequestId: string): Promise<ImprovementProjectEntity[]> {
+    return this.repository.find({
+      where: {
+        workRequest: { id: wkRequestId }
+      },
+      relations: ['workRequest', 'workRequest.beneficiary', 'workRequest.technicalVisit' ,'document', 'professional'],
+    });
   }
 
   async updateStatus(projectId: string, data: ImprovementProjectUpdateStatusRequestDto){

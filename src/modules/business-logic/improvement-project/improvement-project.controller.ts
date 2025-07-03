@@ -18,7 +18,11 @@ export class ImprovementProjectController {
 
   @Get("id/:id")
   async getById(@Param("id") id: string) {
-    return await this.service.findById(id);
+    return await this.service.getById(id);
+  }
+    @Get("by-work-request-id/:id")
+  async getByWkRequestId(@Param("id") id: string) {
+    return await this.service.findWorkRequest(id);
   }
 
   @Get("get-by-professional-id/:professionalId")
