@@ -86,7 +86,9 @@ export class FeatureTechnicalVisitService extends BaseService<
         const technicalVisit = await this.technicalVisitRepository.create(dto)
         if(dto.type === TechnicalVisitTypeEnum.CONCLUSAO_DE_OBRA) {
         this.registerWorkRepo.updateStatus(dto.registerWorkId, ConstructionsStatusEnum.WORK_CONCLUSION)
-
+        }
+        if(dto.type === TechnicalVisitTypeEnum.CADASTRO_DE_OBRA) {
+        this.registerWorkRepo.updateStatus(dto.registerWorkId, ConstructionsStatusEnum.WORK_REGISTRATION)
         }
     
         return technicalVisit
