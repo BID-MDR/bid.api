@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { BaseService } from 'src/core/services/base.service';
 import { CreateTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/create-technical-visit.dto';
 import { UpdateTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/update-technical-visit.dto';
@@ -72,13 +72,28 @@ export class FeatureTechnicalVisitService extends BaseService<
     }
 
     async scheduleTechnicalVisit(userId: string ,dto: CreateTechnicalVisitDto) {
-
+       
         const userCreate = await this.userRepository.findById(userId)
         dto.userCreate = userCreate;
         const beneficiary = await this.userRepository.getById(dto.beneficiaryId);
         dto.beneficiary = beneficiary;
         const professional = await this.userRepository.getById(dto.professionalId);
         dto.professional = professional;
+        const restingDays = professional
+                .professionalUserInfo
+                ?.restingDays
+                .map(r => r.day.toUpperCase())   
+                ?? [];
+
+            const dayName = new Date(dto.from)
+                .toLocaleDateString('pt-BR', { weekday: 'long' })
+                .toUpperCase();    
+
+            if (restingDays.includes(dayName)) {
+                throw new BadRequestException(
+                `Não é possível agendar em ${dayName.toLowerCase()}, dia de descanso do profissional.`
+                );
+            }
         const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
         dto.workRequest = workRequest;
         dto.type = dto.type ? dto.type : TechnicalVisitTypeEnum.VISITA_TECNICA
@@ -88,7 +103,9 @@ export class FeatureTechnicalVisitService extends BaseService<
         this.registerWorkRepo.updateStatus(dto.registerWorkId, ConstructionsStatusEnum.WORK_CONCLUSION)
 
         }
-    
+        const hasTechVisit = await this.technicalVisitRepository.getByProfessionalAndDateVisitaTecnicaAgendada(dto.professionalId, dto.from, dto.to)
+        if (hasTechVisit && hasTechVisit.length > 0) throw new BadRequestException('O professional tem uma visita no horário selecionado')
+        
         return technicalVisit
     }
 

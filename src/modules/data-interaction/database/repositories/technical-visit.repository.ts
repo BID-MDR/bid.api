@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseRepository } from 'src/core/repositories/base.repository';
-import { In, Not, Repository } from 'typeorm';
+import { In, LessThanOrEqual, MoreThanOrEqual, Not, Repository } from 'typeorm';
 import { CreateTechnicalVisitDto } from '../dtos/technical-visit/create-technical-visit.dto';
 import { UpdateTechnicalVisitDto } from '../dtos/technical-visit/update-technical-visit.dto';
 import { TechnicalVisitEntity } from '../entitites/technical-visit.entity';
@@ -104,6 +104,29 @@ export class TechnicalVisitRepository extends BaseRepository<
         
         return result;
     }
+    async getByProfessionalAndDateVisitaTecnicaAgendada(
+  professionalId: string,
+  from: Date,
+  to: Date
+): Promise<TechnicalVisitEntity[]> {
+     return this.repository.createQueryBuilder('tv')
+    .leftJoinAndSelect('tv.professional', 'prof')
+    .leftJoinAndSelect('tv.beneficiary', 'ben')
+    .where('prof.id = :professionalId', { professionalId: "987e142d-33ce-4428-8704-2de3a43a2246" })
+    .andWhere('tv.type = :type', { type: TechnicalVisitTypeEnum.VISITA_TECNICA })
+    .andWhere('tv.status IN (:...status)', {
+      status: [
+        TechnicalVisitStatusEnum.AGENDADA,
+        TechnicalVisitStatusEnum.REAGENDADA,
+        TechnicalVisitStatusEnum.REALIZADA,
+        TechnicalVisitStatusEnum.CANCELADA,
+      ],
+    })
+    .andWhere('tv.from <= :to', { to })
+    .andWhere('tv.to >= :from', { from })
+    .getMany();
+  
+}
 
     async getByBeneficiary(beneficiaryId: string){
           
@@ -135,5 +158,8 @@ export class TechnicalVisitRepository extends BaseRepository<
 ) {
   return this.repository.update({ id }, { status: TechnicalVisitStatusEnum.REALIZADA });
 }
+
+
+
 
 }
