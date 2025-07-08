@@ -74,7 +74,6 @@ export class DemandBackofficeService extends BaseService<DemandEntity, DemandReg
 
   async updateStatus(id: string, dto: StatusDemandDto) {
     const demand = await this.demandRepository.findById(id);
-
     const { status } = dto;
 
     if (!demand) {
@@ -103,7 +102,8 @@ export class DemandBackofficeService extends BaseService<DemandEntity, DemandReg
     }
 
     this.checkStatusForWorkRequest(demand, status);
-    this.checkStatusForImprovement(demand, status);
+
+    // this.checkStatusForImprovement(demand, status);
     this.checkStatusForConstruction(demand, status);
 
     demand.status = status;

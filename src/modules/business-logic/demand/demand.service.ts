@@ -108,7 +108,7 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
 
 
     this.checkStatusForWorkRequest(demand, status);
-    this.checkStatusForImprovement(demand, status);
+    // this.checkStatusForImprovement(demand, status);
     this.checkStatusForConstruction(demand, status);
 
     demand.status = status;

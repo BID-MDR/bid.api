@@ -125,7 +125,6 @@ export class ConstructionsService {
 
   async secondStepConstructions(dto: CreateConstructionsDto, demandId: string, companyId: string) {
     const demand = await this.demandRepository.getById2(demandId);
-
     if (!demand) {
       throw new BadRequestException("Demand not found");
     }

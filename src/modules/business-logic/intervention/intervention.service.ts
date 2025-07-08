@@ -27,7 +27,6 @@ export class InterventionService extends BaseService<
 
   async list() {
     const list = await this.repository.findAll();
-    console.log("lis", list);
     return list;
   }
 
