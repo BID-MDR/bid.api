@@ -173,17 +173,17 @@ async getByBeneficary(beneficaryId: string) {
     const regWorkToReturn = await this.repository.endRegisterWork(registerWorkId);
     const beneficiario = await this.workRequestRepo.findByIdAndBringBeneficiary(registerWork.workRequest.id)
     if(!beneficiario) throw new NotFoundException('Register work concluded but msg not sended, beneficiary not found!')
-    const msg = {
-    content: 'Conclusão da obra realizada. Responda a pesquisa de satisfação para ver o relatório de conclusão da obra'
-    }
-    await this.notiMsgService.register(beneficiario.id, msg)
-    if(registerWork.professional) {
-      const msgProf = {
-        content: 'Conclusão da obra realizada com sucesso'
-        }
-      await this.notiMsgService.register(registerWork.professional.id, msgProf)
+    // const msg = {
+    // content: 'Conclusão da obra realizada. Responda a pesquisa de satisfação para ver o relatório de conclusão da obra'
+    // }
+    // await this.notiMsgService.register(beneficiario.id, msg)
+    // if(registerWork.professional) {
+    //   const msgProf = {
+    //     content: 'Conclusão da obra realizada com sucesso'
+    //     }
+    //   await this.notiMsgService.register(registerWork.professional.id, msgProf)
 
-    }
+    // }
 
     return regWorkToReturn
   }
