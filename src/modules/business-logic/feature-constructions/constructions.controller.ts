@@ -46,8 +46,8 @@ export class ConstructionsController {
 
   @Post("first-step-photos/:demandId")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction, EmployeeRoleEnum.manager_demand])
+  @UseGuards(JwtAccessTokenGuard)
+  // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction, EmployeeRoleEnum.manager_demand])
   @UseInterceptors(FilesInterceptor("files"))
   @ApiConsumes("multipart/form-data")
   @ApiBody({
@@ -77,8 +77,8 @@ export class ConstructionsController {
 
   @Post("first-step-photos-conclusion/:demandId")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction, EmployeeRoleEnum.manager_demand])
+  @UseGuards(JwtAccessTokenGuard)
+  // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction, EmployeeRoleEnum.manager_demand])
   @UseInterceptors(FilesInterceptor("files"))
   @ApiConsumes("multipart/form-data")
   @ApiBody({
@@ -108,8 +108,8 @@ export class ConstructionsController {
 
   @Post("second-step-constructions/:demandId")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction, EmployeeRoleEnum.manager_demand])
+  @UseGuards(JwtAccessTokenGuard)
+//  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction, EmployeeRoleEnum.manager_demand])
   async secondStepConstructions(
     @Param("demandId") demandId: string,
     @Body() dto: CreateConstructionsDto,
@@ -121,8 +121,8 @@ export class ConstructionsController {
 
   @Put("update-constructions/:demandId")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
+  @UseGuards(JwtAccessTokenGuard)
+  // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
   async update(@Param("demandId") demandId: string, @Body() dto: CreateConstructionsDto, @Req() req: Request) {
     const user = req.user as JwtPayloadInterface;
     return await this.constructionsService.update(dto, demandId, user.companyId);
@@ -130,16 +130,16 @@ export class ConstructionsController {
 
   @Delete("photo/:demandId/:photoId")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
+  @UseGuards(JwtAccessTokenGuard)
+  // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
   async deletePhoto(@Param("demandId") demandId: string, @Param("photoId") photoId: string) {
     return await this.constructionsService.deletePhoto(demandId, photoId);
   }
 
   @Put("finish-constructions/:demandId")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
+  @UseGuards(JwtAccessTokenGuard)
+  // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
   async finishConstructions(@Param("demandId") demandId: string, @Req() req: Request) {
     const user = req.user as JwtPayloadInterface;
     return await this.constructionsService.conclude(demandId, user.companyId);

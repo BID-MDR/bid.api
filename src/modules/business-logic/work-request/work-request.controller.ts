@@ -181,8 +181,7 @@ export class WorkRequestController {
 
   @Post("sustainability-itens/:workRequestId")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_inspection, EmployeeRoleEnum.manager_demand])
+  @UseGuards(JwtAccessTokenGuard)
   @ApiBody({
     type: SustainabilityItensRequestDto,
     required: true,
