@@ -98,7 +98,7 @@ async concludedRegisterWork(registerWorkId: string): Promise<RegisterWorkEntity>
   return this.repository.save(reg);
 }
   async endRegisterWork(registerWorkId: string, ) {
-    return await this.repository.update({ id: registerWorkId }, {concludedDate: new Date(), status: ConstructionsStatusEnum.FINALIZADA});
+    return await this.repository.update({ id: registerWorkId }, {concludedDate: new Date(), status: ConstructionsStatusEnum.CONCLUDED});
   }
 
 }
