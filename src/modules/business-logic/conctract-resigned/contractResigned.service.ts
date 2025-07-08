@@ -31,16 +31,15 @@ export class ContractResignedService extends BaseService<ContractResignedEntity,
 
 
   async register(data: CreateContractResignedRequestDto) {
-    console.log('data', data)
     const workRequest = await this.workRequestRepo.findById(data.workRequestId);
     if (!workRequest) throw new NotFoundException('WorkRequest not found!');
     data.workRequest = workRequest;
     const professional = await this.userRepo.findById(data.professionalId)
     if(!professional) throw new NotFoundException('Professional not found!')
     data.professional = professional
-    const bidDocument = await this.bidDocumentRepo.findById(data.bidDocumentId)
-    if(!bidDocument) throw new NotFoundException('Document not found!')
-    data.bidDocument = bidDocument
+    // const bidDocument = await this.bidDocumentRepo.findById(data.bidDocumentId)
+    // if(!bidDocument) throw new NotFoundException('Document not found!')
+    // data.bidDocument = bidDocument
 
     return await this.repository.create(data);
   }
