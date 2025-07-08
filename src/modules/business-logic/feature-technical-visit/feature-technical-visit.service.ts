@@ -16,6 +16,7 @@ import { TechnicalVisitStatusEnum } from 'src/modules/data-interaction/database/
 import { ContractRepository } from 'src/modules/data-interaction/database/repositories/contract/contract.repository';
 import { CreateTechnicalVisitUpdateImprovementProjectDto } from 'src/modules/data-interaction/database/dtos/technical-visit/create-technical-visit-update-improvement-project.dto';
 import { ImprovementProjectRepository } from 'src/modules/data-interaction/database/repositories/improvement-project/improvement-project.repository';
+import { UnavailabilityRepository } from 'src/modules/data-interaction/database/repositories/unavailability/unavailability.repository';
 
 @Injectable()
 export class FeatureTechnicalVisitService extends BaseService<
@@ -30,7 +31,8 @@ export class FeatureTechnicalVisitService extends BaseService<
         private registerWorkRepo: RegisterWorkRepository,
         private contractRepository: ContractRepository,
         private notifcationMsgService: NotificationMessageService,
-        private improvementProjectRepo: ImprovementProjectRepository
+        private improvementProjectRepo: ImprovementProjectRepository,
+        private unaVailabilityRepo: UnavailabilityRepository
     ) {
         super(technicalVisitRepository);
     }
@@ -94,6 +96,10 @@ export class FeatureTechnicalVisitService extends BaseService<
                 `Não é possível agendar em ${dayName.toLowerCase()}, dia de descanso do profissional.`
                 );
             }
+        const hasTechVisit = await this.technicalVisitRepository.getByProfessionalAndDateVisitaTecnicaAgendada(dto.professionalId, dto.from, dto.to)
+        if (hasTechVisit && hasTechVisit.length > 0) throw new BadRequestException('O profissional tem uma visita no horário selecionado')
+        const hasUnavailability = await this.unaVailabilityRepo.findByUserAndDateRange(dto.professionalId, dto.from, dto.to)
+        if(hasUnavailability) throw new BadRequestException('O profissional está indisponível nesse horário')
         const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
         dto.workRequest = workRequest;
         dto.type = dto.type ? dto.type : TechnicalVisitTypeEnum.VISITA_TECNICA
@@ -103,9 +109,7 @@ export class FeatureTechnicalVisitService extends BaseService<
         this.registerWorkRepo.updateStatus(dto.registerWorkId, ConstructionsStatusEnum.WORK_CONCLUSION)
 
         }
-        const hasTechVisit = await this.technicalVisitRepository.getByProfessionalAndDateVisitaTecnicaAgendada(dto.professionalId, dto.from, dto.to)
-        if (hasTechVisit && hasTechVisit.length > 0) throw new BadRequestException('O professional tem uma visita no horário selecionado')
-        
+
         return technicalVisit
     }
 

@@ -112,7 +112,7 @@ export class TechnicalVisitRepository extends BaseRepository<
      return this.repository.createQueryBuilder('tv')
     .leftJoinAndSelect('tv.professional', 'prof')
     .leftJoinAndSelect('tv.beneficiary', 'ben')
-    .where('prof.id = :professionalId', { professionalId: "987e142d-33ce-4428-8704-2de3a43a2246" })
+    .where('prof.id = :professionalId', { professionalId: professionalId})
     .andWhere('tv.type = :type', { type: TechnicalVisitTypeEnum.VISITA_TECNICA })
     .andWhere('tv.status IN (:...status)', {
       status: [
