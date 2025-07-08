@@ -53,4 +53,18 @@ async findByDate(initDate: string, endDate: string): Promise<UnavailabilityEntit
     });
   }
 
+    async findByUserAndDateRange(
+    userId: string,
+    from: Date,
+    to: Date
+  ): Promise<UnavailabilityEntity[]> {
+    return this.repository
+      .createQueryBuilder('unavailability')
+      .leftJoin('unavailability.user', 'user')
+      .where('user.id = :userId', { userId })
+      .andWhere('unavailability.startDate <= :to', { to: to.toISOString() })
+      .andWhere('unavailability.finishDate >= :from', { from: from.toISOString() })
+      .getMany();
+  }
+
 }
