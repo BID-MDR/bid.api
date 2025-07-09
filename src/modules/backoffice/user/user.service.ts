@@ -4,29 +4,21 @@ import { ConfigService } from "@nestjs/config";
 import { BaseService } from "src/core/services/base.service";
 import { UserBackofficeEntity } from "src/modules/data-interaction/database/entitites/user-backoffice.entity";
 import { UserBackofficeRepository } from "src/modules/data-interaction/database/repositories/backoffice/user/user.repository";
-import { EmailFacade } from "src/modules/data-interaction/facade/apis/email/email.facade";
-import { CaubFacade } from "src/modules/data-interaction/facade/apis/gov/caubr/caub.facade";
-import { ConfeaFacade } from "src/modules/data-interaction/facade/apis/gov/confea/confea.facade";
-import { StorageFacade } from "src/modules/data-interaction/facade/apis/storage/storage.facade";
+
 import { CreateUserBackofficeDto } from "./dto/create-user-backoffice.dto";
 import { UserRolesBackofficeRepository } from "src/modules/data-interaction/database/repositories/backoffice/user/user-roles.repository";
 import { JwtPayloadBackoffice } from "src/core/interfaces/jwt-payload-backoffice.interface";
 import { EnviromentVariablesEnum } from "src/core/enums/environment-variables.enum";
-import { EmailRepository } from "src/modules/data-interaction/database/repositories/backoffice/email/email.repository";
 import { UserRegisterPasswordDto } from "./dto/user-register-password.dto";
+import { UserRepository } from "src/modules/data-interaction/database/repositories/user/user.repository";
 
 @Injectable()
 export class UserService extends BaseService<UserBackofficeEntity, CreateUserBackofficeDto, any> {
     constructor(
         private userBackofficeRepository: UserBackofficeRepository,
         private userRoleBackofficeRepository: UserRolesBackofficeRepository,
-
-        private readonly caubFacade: CaubFacade,
-        private readonly confeaFacade: ConfeaFacade,
-        private readonly emailFacade: EmailFacade,
-        private readonly emailRepository: EmailRepository,
-        private readonly storageFacade: StorageFacade,
         private readonly configService: ConfigService,
+        private readonly userProfessionalRepo: UserRepository
     ) {
         super(userBackofficeRepository);
     }
@@ -37,6 +29,9 @@ export class UserService extends BaseService<UserBackofficeEntity, CreateUserBac
 
     async findAllMinhaCasa(): Promise<any[]>{
         return await this.userBackofficeRepository.getMinhaCasa()
+    }
+        async findProfessionalBackofficeMinhaCasa(): Promise<any[]>{
+        return await this.userProfessionalRepo.findProfessionalBackoffice()
     }
 
     async create(data: CreateUserBackofficeDto): Promise<any> {

@@ -28,6 +28,14 @@ export class UserBackofficeController {
         const result = await this.UserService.findAllRegmel();
         return new ResponseDto(true, result, null);
     }
+    @Get("professional-minha-casa")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async getProfessionalBackofficeMinhaCasa() {
+
+        const result = await this.UserService.findProfessionalBackofficeMinhaCasa();
+        return new ResponseDto(true, result, null);
+    }
 
     @Get("list-mcmv")
     @ApiBearerAuth()
