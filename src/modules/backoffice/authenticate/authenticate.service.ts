@@ -95,32 +95,36 @@ export class AuthenticateService {
     const token = this._createToken(user.id.toString(), user.email, user.roles);
 
     const verify = await this._userRepository.getById(user.id.toString());
-
+    const lastLogin = verify.lastAccess
+    await this._userRepository.updateLastAccess(verify.id.toString(), new Date());
     if (verify.type === UserBackofficeTypeEnum.BACKOFFICE) {
 
       return new AuthenticateResponseDto(user.id, user.email, token.accessToken);
 
     }
 
+    return new AuthenticateResponseDto(user.id, user.email, token.accessToken, lastLogin);
+  
+  
 
-    if (verify.lastAccess) {
-      const lastAccessDate = new Date(verify.lastAccess);
-      lastAccessDate.setMinutes(lastAccessDate.getMinutes() + verify.timeView);
-      const dateCompare = lastAccessDate.getTime();
-      const dateNow = new Date().getTime()
-      if (dateCompare >= dateNow) {
-        return new AuthenticateResponseDto(user.id, user.email, token.accessToken, lastAccessDate);
-      } else {
-        throw new BadRequestException('Login não autorizado');
-      }
-    }
+    // if (verify.lastAccess) {
+    //   const lastAccessDate = new Date(verify.lastAccess);
+    //   lastAccessDate.setMinutes(lastAccessDate.getMinutes() + verify.timeView);
+    //   const dateCompare = lastAccessDate.getTime();
+    //   const dateNow = new Date().getTime()
+    //   if (dateCompare >= dateNow) {
+    //     return new AuthenticateResponseDto(user.id, user.email, token.accessToken, lastAccessDate);
+    //   } else {
+    //     throw new BadRequestException('Login não autorizado');
+    //   }
+    // }
 
-    const newDate = new Date()
+    // const newDate = new Date()
 
 
-    const dateLastLogin = new Date(newDate.setMinutes(newDate.getMinutes() + verify.timeView));
-    await this._userRepository.updateLastAccess(verify.id.toString(), new Date());
-    return new AuthenticateResponseDto(user.id, user.email, token.accessToken, dateLastLogin);
+    // const dateLastLogin = new Date(newDate.setMinutes(newDate.getMinutes() + verify.timeView));
+    // await this._userRepository.updateLastAccess(verify.id.toString(), new Date());
+    // return new AuthenticateResponseDto(user.id, user.email, token.accessToken, dateLastLogin);
   }
 
   private _createToken(userId: string, email: string, roles: UserRolesBackofficeEntity[]) {
