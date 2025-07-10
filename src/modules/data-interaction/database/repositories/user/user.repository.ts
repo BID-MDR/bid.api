@@ -199,4 +199,23 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
 
 
   }
+async findProfessionalBackoffice(): Promise<UserEntity[]> {
+  return this.repository
+    .createQueryBuilder('user')
+    .leftJoinAndSelect('user.address', 'address')
+        .leftJoinAndSelect('user.registerWorkList', 'registerWorkList')
+    .leftJoinAndSelect('registerWorkList.sustainabilityItens', 'sustainabilityItens')
+
+    .leftJoinAndSelect('user.professionalUserInfo', 'profInfo')
+    .where('user.programType = :programType', {
+      programType: UserProgramTypeEnum.MINHA_CASA,
+    })
+    .andWhere('user.type IN (:...types)', {
+      types: [
+        UserTypeEnum.PROFISSIONAL,
+        UserTypeEnum.ARQUITETO,
+      ],
+    })
+    .getMany();
+}
 }
