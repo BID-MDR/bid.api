@@ -88,16 +88,20 @@ export class UserService extends BaseService<UserBackofficeEntity, CreateUserBac
     async getByEmail(email: string){
         return await this.userBackofficeRepository.getByEmail(email)
     }
-    async update(id: string, data: any): Promise<any> {
+    async update(id: string, data: CreateUserBackofficeDto): Promise<any> {
 
         const user = await this.userBackofficeRepository.getById(id);
 
-        user.roles = []
+        user.email = data.email;
+        user.name = data.name;
+        user.status = data.status;
+        user.timeView = data.timeView;
 
         await user.save();
 
-
+        if(data.rolesId) {
         for(let i =0; i< data.rolesId.length ; i++){
+               user.roles = []
             let role = await this.userRoleBackofficeRepository.findById(data.rolesId[i]);
             if(role){
                 user.roles.push(role);
@@ -105,7 +109,8 @@ export class UserService extends BaseService<UserBackofficeEntity, CreateUserBac
             else
                 throw new BadRequestException("Role não encontrada.");
         }
-        
+        }
+
         return await user.save();
     }
 }

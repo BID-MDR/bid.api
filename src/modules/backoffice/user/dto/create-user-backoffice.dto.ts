@@ -16,8 +16,8 @@ export class CreateUserBackofficeDto {
     name: string;
 
     @ApiProperty({ enum: UserBackofficeTypeEnum })
-    @IsEnum(UserBackofficeTypeEnum)
-    type: UserBackofficeTypeEnum;
+    @IsOptional()
+    type?: UserBackofficeTypeEnum;
 
     @ApiProperty({ example: 'test@email.com' })
     @IsEmail()
