@@ -20,7 +20,14 @@ export class ContractRepository extends BaseRepository<
   ) {
     super(repository);
   }
-
+  async listWithRelations() {
+    return this.repository.find({
+      where: {
+     
+      },
+      relations: ['technicalVisit','technicalVisit.beneficiary', 'professional'],
+    });
+  }
   // async requestAdjust(costEstimateId: string, adjustDetail: string) {
   //   return await this.repository.update({ id: costEstimateId }, {adjustDetails: adjustDetail, type: CostEstimateStatusEnum.CHANGE_SOLICITATION});
   // }

@@ -9,6 +9,7 @@ import { HelpBackofficeModule } from "./help/help.module";
 import { SatisfactionResearchBackofficeModule } from "./satisfaction-research/satisfaction-research.module";
 import { DashboardBackofficeModule } from "./dashboard/dashboard.module";
 import { MessageBackofficeModule } from "./message/message.module";
+import { ContractBackofficeModule } from "./contracts/contract.module";
 
 @Module({
     imports: [
@@ -21,7 +22,8 @@ import { MessageBackofficeModule } from "./message/message.module";
         HelpBackofficeModule,
         SatisfactionResearchBackofficeModule,
         DashboardBackofficeModule,
-        MessageBackofficeModule
+        MessageBackofficeModule,
+        ContractBackofficeModule
     ],
 })
 export class BackofficeModule {}
