@@ -67,6 +67,15 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
   async listBeneficiary() {
     return this.repository.find({ where: { type: UserTypeEnum.BENEFICIARIO } });
   }
+  async listProgramTypeMCMVBENEFICIARIO() {
+    return this.repository.find({ where: { programType: UserProgramTypeEnum.MINHA_CASA, type:UserTypeEnum.BENEFICIARIO } });
+  }
+    async listProgramTypeMCMVPROFESSIONAL() {
+    return this.repository.find({ where: { programType: UserProgramTypeEnum.MINHA_CASA, type:UserTypeEnum.PROFISSIONAL || UserTypeEnum.ARQUITETO } });
+  }
+    async listProgramTypeREGMEL() {
+    return this.repository.find({ where: { programType: UserProgramTypeEnum.REGMEL } });
+  }
 
   async findMonth(month: number) {
     const now = new Date();
@@ -203,8 +212,6 @@ async findProfessionalBackoffice(): Promise<UserEntity[]> {
   return this.repository
     .createQueryBuilder('user')
     .leftJoinAndSelect('user.address', 'address')
-        .leftJoinAndSelect('user.registerWorkList', 'registerWorkList')
-    .leftJoinAndSelect('registerWorkList.sustainabilityItens', 'sustainabilityItens')
 
     .leftJoinAndSelect('user.professionalUserInfo', 'profInfo')
     .where('user.programType = :programType', {

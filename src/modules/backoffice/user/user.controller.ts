@@ -115,4 +115,13 @@ export class UserBackofficeController {
         return await this.UserService.hardDelete(id);
     }
 
+    @Get("get-programs-numbers")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async searchDataForResearchManagerPage() {
+
+        const result = await this.UserService.getDataForResearchManagerPage();
+        return new ResponseDto(true, result, null);
+    }
+
 }
