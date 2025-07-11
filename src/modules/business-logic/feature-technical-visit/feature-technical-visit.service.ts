@@ -97,9 +97,11 @@ export class FeatureTechnicalVisitService extends BaseService<
                 );
             }
         const hasTechVisit = await this.technicalVisitRepository.getByProfessionalAndDateVisitaTecnicaAgendada(dto.professionalId, dto.from, dto.to)
-        if (hasTechVisit && hasTechVisit.length > 0) throw new BadRequestException('O profissional tem uma visita no horário selecionado')
+        console.log('has', hasTechVisit)
+        if (hasTechVisit && hasTechVisit.length > 0) return 'O profissional tem uma visita no horário selecionado'
         const hasUnavailability = await this.unaVailabilityRepo.findByUserAndDateRange(dto.professionalId, dto.from, dto.to)
-        if(hasUnavailability) throw new BadRequestException('O profissional está indisponível nesse horário')
+        console.log('hasUnavailability', hasUnavailability)
+        if(hasUnavailability && hasUnavailability.length > 0) return 'O profissional está indisponível nesse horário'
         const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
         dto.workRequest = workRequest;
         dto.type = dto.type ? dto.type : TechnicalVisitTypeEnum.VISITA_TECNICA
