@@ -131,5 +131,27 @@ export class SatisfactionResearchRepository extends BaseRepository<SatisfactionR
     .getMany()
   }
 
+async listBeneficiaryMinhaCasa(): Promise<SatisfactionResearchEntity[]> {
+  return this.repository
+    .createQueryBuilder('sr')
+    .leftJoinAndSelect('sr.user', 'user')
+    .where('user.type = :type', { type: UserTypeEnum.BENEFICIARIO })
+    .andWhere('user.programType = :programType', {
+      programType: UserProgramTypeEnum.MINHA_CASA,
+    })
+    .getMany();
+}
 
+async listProfessionalMinhaCasa(): Promise<SatisfactionResearchEntity[]> {
+  return this.repository
+    .createQueryBuilder('sr')
+    .leftJoinAndSelect('sr.user', 'user')
+    .where('user.type IN (:...types)', {
+      types: [UserTypeEnum.PROFISSIONAL, UserTypeEnum.ARQUITETO],
+    })
+    .andWhere('user.programType = :programType', {
+      programType: UserProgramTypeEnum.MINHA_CASA,
+    })
+    .getMany();
+}
 }
