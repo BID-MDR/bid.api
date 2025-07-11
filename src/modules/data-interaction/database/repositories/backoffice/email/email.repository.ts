@@ -33,6 +33,7 @@ export class EmailRepository {
     longitude: number | string;
   }) {
     const { neighborhood, city, state, latitude, longitude } = params;
+
     const subject = 'App Melhoria - Profissional não localizado';
     const text = [
       'Foi identificada demanda para atendimento no endereço a seguir:',
@@ -41,12 +42,14 @@ export class EmailRepository {
       `Longitude: ${longitude}`,
       'Não foram localizados profissionais cadastrados na região.',
     ].join('\n');
+
     const html = `
-      <p>Foi identificada demanda para atendimento no endereço a seguir:</p>
-      <p><strong>${neighborhood}, ${city} - ${state}</strong></p>
-      <p>Latitude: ${latitude}<br>Longitude: ${longitude}</p>
-      <p><em>Não foram localizados profissionais cadastrados na região.</em></p>
-    `;
+    <p>Foi identificada demanda para atendimento no endereço a seguir:</p>
+    <p><strong>${neighborhood}, ${city} - ${state}</strong></p>
+    <p>Latitude: ${latitude}<br>Longitude: ${longitude}</p>
+    <p><em>Não foram localizados profissionais cadastrados na região.</em></p>
+  `;
+
     await this.send(
       ['pmh@caubr.gov.br', 'moradia@confea.org.br'],
       subject,
