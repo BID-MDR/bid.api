@@ -11,6 +11,8 @@ import { JwtPayloadBackoffice } from "src/core/interfaces/jwt-payload-backoffice
 import { EnviromentVariablesEnum } from "src/core/enums/environment-variables.enum";
 import { UserRegisterPasswordDto } from "./dto/user-register-password.dto";
 import { UserRepository } from "src/modules/data-interaction/database/repositories/user/user.repository";
+import { SatisfactionResearchRepository } from "src/modules/data-interaction/database/repositories/satisfaction-research/satisfaction-research.repository";
+import { SatisfactionResearchEntity } from "src/modules/data-interaction/database/entitites/satisfaction-research.entity";
 
 @Injectable()
 export class UserService extends BaseService<UserBackofficeEntity, CreateUserBackofficeDto, any> {
@@ -18,7 +20,8 @@ export class UserService extends BaseService<UserBackofficeEntity, CreateUserBac
         private userBackofficeRepository: UserBackofficeRepository,
         private userRoleBackofficeRepository: UserRolesBackofficeRepository,
         private readonly configService: ConfigService,
-        private readonly userProfessionalRepo: UserRepository
+        private readonly userProfessionalRepo: UserRepository,
+        private satisfactionResearchRepo: SatisfactionResearchRepository
     ) {
         super(userBackofficeRepository);
     }
@@ -113,4 +116,31 @@ export class UserService extends BaseService<UserBackofficeEntity, CreateUserBac
 
         return await user.save();
     }
+async getDataForResearchManagerPage(): Promise<{
+  beneficiarioCount: { program: number; plataform: number; iteration: number };
+  professionalCount: { program: number; plataform: number; iteration: number };
+  list: SatisfactionResearchEntity[];
+}> {
+  const beneficiaryData = await this.satisfactionResearchRepo.listBeneficiaryMinhaCasa();
+  const professionalData = await this.satisfactionResearchRepo.listProfessionalMinhaCasa();
+  const avg = (arr: SatisfactionResearchEntity[], key: keyof SatisfactionResearchEntity) =>
+    arr.length > 0
+      ? arr.reduce((sum, item) => sum + (item[key] as unknown as number), 0) / arr.length
+      : 0;
+
+  return {
+    beneficiarioCount: {
+      program:   avg(beneficiaryData, 'programGrade'),
+      plataform: avg(beneficiaryData, 'plataformGrade'),
+      iteration: avg(beneficiaryData, 'professionalGrade'),
+    },
+    professionalCount: {
+      program:   avg(professionalData, 'programGrade'),
+      plataform: avg(professionalData, 'plataformGrade'),
+      iteration: avg(professionalData, 'professionalGrade'),
+    },
+    list: [...beneficiaryData, ...professionalData],
+  };
+}
+
 }
