@@ -22,4 +22,35 @@ export class SendGridSubsystem {
 
         return this.sendGridClient.send(message);
     }
+
+    async sendProfessionalNotFoundEmail(params: {
+        neighborhood: string;
+        city: string;
+        state: string;
+        latitude: number | string;
+        longitude: number | string;
+    }) {
+        const { neighborhood, city, state, latitude, longitude } = params;
+        const message = {
+            to: ['pmh@caubr.gov.br', 'moradia@confea.org.br'],
+            from: this.configService.get(
+                EnviromentVariablesEnum.SENDGRID_EMAIL_SENDER,
+            ),
+            subject: 'App Melhoria - Profissional não localizado',
+            text: [
+                'Foi identificada demanda para atendimento no endereço a seguir:',
+                `${neighborhood}, ${city} - ${state}`,
+                `Latitude: ${latitude}`,
+                `Longitude: ${longitude}`,
+                'Não foram localizados profissionais cadastrados na região.',
+            ].join('\n'),
+            html: `
+      <p>Foi identificada demanda para atendimento no endereço a seguir:</p>
+      <p><strong>${neighborhood}, ${city} - ${state}</strong></p>
+      <p>Latitude: ${latitude}<br>Longitude: ${longitude}</p>
+      <p><em>Não foram localizados profissionais cadastrados na região.</em></p>
+    `,
+        };
+        await this.sendGridClient.send(message);
+    }
 }

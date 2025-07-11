@@ -1,10 +1,11 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { totp } from 'otplib';
 import { EnviromentVariablesEnum } from 'src/core/enums/environment-variables.enum';
 import { BaseService } from 'src/core/services/base.service';
-import { commonPropertyTransfer } from 'src/core/utils/common-property-transfer.util';
+import { UpdateAddressDto } from 'src/modules/data-interaction/database/dtos/address/update-address.dto';
+import { MediaUploadDto } from 'src/modules/data-interaction/database/dtos/media/media-upload.dto';
 import { CreateUserDto } from 'src/modules/data-interaction/database/dtos/user/create-user.dto';
 import { UpdateUserProgramTypeDto } from 'src/modules/data-interaction/database/dtos/user/update-user-program-type.dto';
 import { UpdateUserDto } from 'src/modules/data-interaction/database/dtos/user/update-user.dto';
@@ -13,6 +14,12 @@ import { UserOtpRequestEntity } from 'src/modules/data-interaction/database/enti
 import { UserEntity } from 'src/modules/data-interaction/database/entitites/user.entity';
 import { UserOtpStatusEnum } from 'src/modules/data-interaction/database/enums/user-otp.enum';
 import { AddressRepository } from 'src/modules/data-interaction/database/repositories/address.repository';
+import { ContractResignedRepository } from 'src/modules/data-interaction/database/repositories/contract-resigned/contract-resigned.repository';
+import { ContractRepository } from 'src/modules/data-interaction/database/repositories/contract/contract.repository';
+import { CostEstimateRepository } from 'src/modules/data-interaction/database/repositories/costEstimate/costEstimate.repository';
+import { ImprovementProjectRepository } from 'src/modules/data-interaction/database/repositories/improvement-project/improvement-project.repository';
+import { RegisterWorkRepository } from 'src/modules/data-interaction/database/repositories/registerWork/registerWork.repository';
+import { TechnicalVisitRepository } from 'src/modules/data-interaction/database/repositories/technical-visit.repository';
 import { UserAppointmentRepository } from 'src/modules/data-interaction/database/repositories/user/user-appointment.repository';
 import { UserBeneficiaryInfoRepository } from 'src/modules/data-interaction/database/repositories/user/user-beneficiary-info.repository';
 import { UserProfessionalInfoRepository } from 'src/modules/data-interaction/database/repositories/user/user-professional-info.repository';
@@ -24,17 +31,7 @@ import { ConfeaFacade } from 'src/modules/data-interaction/facade/apis/gov/confe
 import { StorageFacade } from 'src/modules/data-interaction/facade/apis/storage/storage.facade';
 import { ConfirmPasswordUpdateRequestDto } from './dtos/confirm-password-update.request.dto';
 import { ProfessionalCouncilRegistrationResponseDto } from './dtos/professional-council-resgistration-reponse.dto';
-import { CreateAddressDto } from 'src/modules/data-interaction/database/dtos/address/create-address.dto';
-import { UpdateAddressDto } from 'src/modules/data-interaction/database/dtos/address/update-address.dto';
-import { CreateUserGeneratedMediaDto } from 'src/modules/data-interaction/database/dtos/user/user-generated-media/create-user-generated-media.dto';
-import { MediaUploadDto } from 'src/modules/data-interaction/database/dtos/media/media-upload.dto';
-import { TechnicalVisitRepository } from 'src/modules/data-interaction/database/repositories/technical-visit.repository';
-import { CostEstimateRepository } from 'src/modules/data-interaction/database/repositories/costEstimate/costEstimate.repository';
-import { ImprovementProjectRepository } from 'src/modules/data-interaction/database/repositories/improvement-project/improvement-project.repository';
-import { RegisterWorkRepository } from 'src/modules/data-interaction/database/repositories/registerWork/registerWork.repository';
-import { ContractResignedRepository } from 'src/modules/data-interaction/database/repositories/contract-resigned/contract-resigned.repository';
-import { ContractRepository } from 'src/modules/data-interaction/database/repositories/contract/contract.repository';
-import { ResponseDto } from 'src/core/dtos/response.dto';
+import { ProfessionalNotFoundRequestDto } from './dtos/professional-not-found.request.dto';
 
 @Injectable()
 export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -72,8 +69,8 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         data.password = bcrypt.hash(data.password, 13).toString();
         try {
             const userResponse = await super.create(data)
-       
-             if (data.uploadedProfilePicture && typeof data.uploadedProfilePicture !== 'string') {    
+
+            if (data.uploadedProfilePicture && typeof data.uploadedProfilePicture !== 'string') {
                 const media = await this.storageFacade.uploadMedia(
                     data.uploadedProfilePicture.mimeType,
                     data.uploadedProfilePicture.fileName,
@@ -81,8 +78,8 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
                 );
                 const result = await this.userRepository.updateProfilePicture(userResponse.id, media)
             }
-             return userResponse
-           
+            return userResponse
+
         } catch (error) {
             console.error('❌ Erro ao criar registro:', error);
             throw new InternalServerErrorException('Erro ao criar registro');
@@ -382,6 +379,12 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
             ...contractList,
         ];
         return allAppointments
+    }
+
+    async notifyProfessionalNotFound(
+        dto: ProfessionalNotFoundRequestDto,
+    ): Promise<void> {
+        await this.emailFacade.sendProfessionalNotFoundEmail(dto);
     }
 
 }

@@ -3,8 +3,6 @@ import {
     Body,
     Controller,
     Get,
-    HttpException,
-    HttpStatus,
     Logger,
     Param,
     Post,
@@ -12,38 +10,36 @@ import {
     Req,
     SerializeOptions,
     UseGuards,
-    UseInterceptors,
+    UseInterceptors
 } from "@nestjs/common";
 import {
     ApiBearerAuth,
     ApiOperation,
     ApiParam,
-    ApiTags,
+    ApiTags
 } from "@nestjs/swagger";
 import { Request } from "express";
 import { ApiBodyEncripted } from "src/core/decorators/swagger/api-body-encripted.decorator";
 import { ApiOkResponseDtoData } from "src/core/decorators/swagger/api-ok-response-dto.decorator";
+import { ResponseDto } from "src/core/dtos/response.dto";
 import { JwtAccessTokenGuard } from "src/core/guards/jwt-access-token.guard";
 import { EncryptInterceptor } from "src/core/interceptors/encrypt.interceptor";
 import { JwtPayloadInterface } from "src/core/interfaces/jwt-payload.interface";
+import { UpdateAddressDto } from "src/modules/data-interaction/database/dtos/address/update-address.dto";
+import { MediaUploadDto } from "src/modules/data-interaction/database/dtos/media/media-upload.dto";
 import { CreateUserDto } from "src/modules/data-interaction/database/dtos/user/create-user.dto";
 import { UserResponseDto } from "src/modules/data-interaction/database/dtos/user/reponse-user.dto";
+import { UpdateUserProgramTypeDto } from "src/modules/data-interaction/database/dtos/user/update-user-program-type.dto";
 import { UpdateUserDto } from "src/modules/data-interaction/database/dtos/user/update-user.dto";
+import { CreateUserRestingDayDto } from "src/modules/data-interaction/database/dtos/user/user-resting-day/create-user-resting-day.dto";
+import { FeatureAuthService } from "../feature-auth/feature-auth.service";
 import { ConfirmPasswordUpdateRequestDto } from "./dtos/confirm-password-update.request.dto";
 import { ProfessionalCouncilRegistrationResponseDto } from "./dtos/professional-council-resgistration-reponse.dto";
 import { ProfessionalCouncilRegistrationRequestDto } from "./dtos/professional-council-resgistration-request.dto";
+import { ProfessionalNotFoundRequestDto } from "./dtos/professional-not-found.request.dto";
 import { TokenVerifyParamsDto } from "./dtos/token-verify-params.dto";
 import { TokenVerifyReponseDto } from "./dtos/token-verify-reponse.dto";
 import { FeatureUserService } from "./feature-user.service";
-import { FeatureAuthService } from "../feature-auth/feature-auth.service";
-import { SigninResponseDto } from "../feature-auth/dtos/signin-response.dto";
-import { UpdateUserProgramTypeDto } from "src/modules/data-interaction/database/dtos/user/update-user-program-type.dto";
-import { ResponseDto } from "src/core/dtos/response.dto";
-import { CreateAddressDto } from "src/modules/data-interaction/database/dtos/address/create-address.dto";
-import { UpdateAddressDto } from "src/modules/data-interaction/database/dtos/address/update-address.dto";
-import { CreateUserGeneratedMediaDto } from "src/modules/data-interaction/database/dtos/user/user-generated-media/create-user-generated-media.dto";
-import { MediaUploadDto } from "src/modules/data-interaction/database/dtos/media/media-upload.dto";
-import { CreateUserRestingDayDto } from "src/modules/data-interaction/database/dtos/user/user-resting-day/create-user-resting-day.dto";
 
 @Controller("user")
 @ApiTags("User/Usuário")
@@ -87,7 +83,7 @@ export class FeatureUserController {
     @Get("get-month-beneficiary/:month")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
-    async getBeneficiaryByMonth(@Param('month') month:number) {
+    async getBeneficiaryByMonth(@Param('month') month: number) {
         const result = await this.featureUserService.listBeneficiaryByMonth(month);
         return new ResponseDto(true, result, null);
     }
@@ -120,7 +116,7 @@ export class FeatureUserController {
     @Get("look-for-professional")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
-   
+
     @ApiOkResponseDtoData({
         type: UserResponseDto,
         description: "Usuário logado que iniciou a requisição.",
@@ -132,14 +128,14 @@ export class FeatureUserController {
         const userId = (req.user as JwtPayloadInterface).userId;
         const resultUser = await this.featureUserService.getById(userId);
         const result = await this.featureUserService.findNearbyEmployees(Number(resultUser.address.latitude), Number(resultUser.address.longitude))
-      
+
         return new ResponseDto(true, result, false);
     }
 
     @Get("look-for-beneficiary")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
-   
+
     @ApiOkResponseDtoData({
         type: UserResponseDto,
         description: "Usuário logado que iniciou a requisição.",
@@ -150,7 +146,7 @@ export class FeatureUserController {
     async getLookForBeneficiary(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
         const resultUser = await this.featureUserService.findById(userId);
-        
+
         const result = await this.featureUserService.findNearbyBeneficiary(Number(resultUser.address.latitude), Number(resultUser.address.longitude), resultUser.address.maximumDistanceToWorks)
 
         return new ResponseDto(true, result, false);
@@ -159,7 +155,7 @@ export class FeatureUserController {
     @Post("")
     async create(@Body() body: CreateUserDto) {
         try {
-        
+
             if (body.type === 'PROFISSIONAL' && body.programType === 'MINHA_CASA') {
                 if (body.professionalUserInfo?.restingDays) {
                     body.professionalUserInfo.restingDays = body.professionalUserInfo.restingDays.map((day) => {
@@ -169,20 +165,20 @@ export class FeatureUserController {
                     });
                 }
             }
-    
+
             const user = await this.featureUserService.create(body);
-         
+
             const authResponse = await this.featureAuthService.signinFromCreateUser(user);
-      
-    
+
+
             return user;
         } catch (error) {
             console.error('❌ Erro no cadastro de usuário:', error);
-    
+
             throw new BadRequestException(error.message || 'Erro ao criar usuário');
         }
     }
-    
+
 
     @Get("password/update/request")
     @UseGuards(JwtAccessTokenGuard)
@@ -512,5 +508,12 @@ export class FeatureUserController {
     async listAppoitmentByProfessionalId(@Param("professionalId") professionalId: string) {
         return await this.featureUserService.listAppoitmentByProfessionalId(professionalId);
     }
+
+    @Post('look-for-professional/confirm')
+    async confirmProfessionalNotFound(
+        @Body() dto: ProfessionalNotFoundRequestDto,
+    ): Promise<ResponseDto<null>> {
+        await this.featureUserService.notifyProfessionalNotFound(dto);
+        return new ResponseDto(true, null, null);
+    }
 }
- 
