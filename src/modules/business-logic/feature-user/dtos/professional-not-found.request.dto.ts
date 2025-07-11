@@ -1,9 +1,9 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class ProfessionalNotFoundRequestDto {
   @IsString() neighborhood: string;
   @IsString() city: string;
   @IsString() state: string;
-  @IsNumber() latitude: number;
-  @IsNumber() longitude: number;
+  @IsString() latitude: string;
+  @IsString() longitude: string;
 }
