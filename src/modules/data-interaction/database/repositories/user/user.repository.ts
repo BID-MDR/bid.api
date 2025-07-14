@@ -214,6 +214,8 @@ async findProfessionalBackoffice(): Promise<UserEntity[]> {
     .leftJoinAndSelect('user.address', 'address')
 
     .leftJoinAndSelect('user.professionalUserInfo', 'profInfo')
+        .leftJoinAndSelect('profInfo.addresses', 'addresses')
+
     .where('user.programType = :programType', {
       programType: UserProgramTypeEnum.MINHA_CASA,
     })
