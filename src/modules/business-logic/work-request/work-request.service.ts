@@ -43,8 +43,8 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
   }
 
   async register(data: CreateWorkRequestDto, companyId: string) {
-
-    const demand = await this.demandRepository.getById(data.demandId);
+    console.log('data', data)
+    const demand = await this.demandRepository.findById(data.demandId);
 
     if (demand.company && demand.company.id !== companyId) throw new BadRequestException("Não autorizado a acessar essa demanda.");
 
