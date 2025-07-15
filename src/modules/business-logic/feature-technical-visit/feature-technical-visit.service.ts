@@ -87,7 +87,8 @@ export class FeatureTechnicalVisitService extends BaseService<
                 .map(r => r.day.toUpperCase())   
                 ?? [];
 
-            const dayName = new Date(dto.from)
+        if(dto.from) {
+        const dayName = new Date(dto.from)
                 .toLocaleDateString('pt-BR', { weekday: 'long' })
                 .toUpperCase();    
 
@@ -96,12 +97,15 @@ export class FeatureTechnicalVisitService extends BaseService<
                 `Não é possível agendar em ${dayName.toLowerCase()}, dia de descanso do profissional.`
                 );
             }
+        }
+    
         const hasTechVisit = await this.technicalVisitRepository.getByProfessionalAndDateVisitaTecnicaAgendada(dto.professionalId, dto.from, dto.to)
-        console.log('has', hasTechVisit)
         if (hasTechVisit && hasTechVisit.length > 0) return 'O profissional tem uma visita no horário selecionado'
-        const hasUnavailability = await this.unaVailabilityRepo.findByUserAndDateRange(dto.professionalId, dto.from, dto.to)
-        console.log('hasUnavailability', hasUnavailability)
-        if(hasUnavailability && hasUnavailability.length > 0) return 'O profissional está indisponível nesse horário'
+        if(dto.from && dto.to){
+            const hasUnavailability = await this.unaVailabilityRepo.findByUserAndDateRange(dto.professionalId, dto.from, dto.to)
+            if(hasUnavailability && hasUnavailability.length > 0) return 'O profissional está indisponível nesse horário'
+        }
+ 
         const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
         dto.workRequest = workRequest;
         dto.type = dto.type ? dto.type : TechnicalVisitTypeEnum.VISITA_TECNICA
