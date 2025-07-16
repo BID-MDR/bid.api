@@ -44,6 +44,8 @@ export class CompanyBackofficeService extends BaseService<CompanyEntity, any, an
   }
 
   async getById(companyId:string): Promise<CompanyEntity>{
-    return await this.companyRepository.findById(companyId);
+    const company = await this.companyRepository.getCompanyById(companyId);
+    console.log('compa', company)
+    return company
   }
 }

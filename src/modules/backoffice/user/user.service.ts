@@ -123,11 +123,46 @@ async getDataForResearchManagerPage(): Promise<{
 }> {
   const beneficiaryData = await this.satisfactionResearchRepo.listBeneficiaryMinhaCasa();
   const professionalData = await this.satisfactionResearchRepo.listProfessionalMinhaCasa();
-  const avg = (arr: SatisfactionResearchEntity[], key: keyof SatisfactionResearchEntity) =>
-    arr.length > 0
-      ? arr.reduce((sum, item) => sum + (item[key] as unknown as number), 0) / arr.length
-      : 0;
+ const avg = (
+    arr: SatisfactionResearchEntity[],
+    key: keyof SatisfactionResearchEntity
+  ): number => {
+    if (arr.length === 0) return 0;
+    const sum = arr.reduce((total, item) => total + (item[key] as unknown as number), 0);
+    const value = sum / arr.length;
+    return Number(value.toFixed(2));
+  };
 
+  return {
+    beneficiarioCount: {
+      program:   avg(beneficiaryData, 'programGrade'),
+      plataform: avg(beneficiaryData, 'plataformGrade'),
+      iteration: avg(beneficiaryData, 'professionalGrade'),
+    },
+    professionalCount: {
+      program:   avg(professionalData, 'programGrade'),
+      plataform: avg(professionalData, 'plataformGrade'),
+      iteration: avg(professionalData, 'professionalGrade'),
+    },
+    list: [...beneficiaryData, ...professionalData],
+  };
+}
+async getDataForResearchManagerPageREGMEL(): Promise<{
+  beneficiarioCount: { program: number; plataform: number; iteration: number };
+  professionalCount: { program: number; plataform: number; iteration: number };
+  list: SatisfactionResearchEntity[];
+}> {
+  const beneficiaryData = await this.satisfactionResearchRepo.listBeneficiaryREGMEL();
+  const professionalData = await this.satisfactionResearchRepo.listProfessionalREGMEL();
+ const avg = (
+    arr: SatisfactionResearchEntity[],
+    key: keyof SatisfactionResearchEntity
+  ): number => {
+    if (arr.length === 0) return 0;
+    const sum = arr.reduce((total, item) => total + (item[key] as unknown as number), 0);
+    const value = sum / arr.length;
+    return Number(value.toFixed(2));
+  };
   return {
     beneficiarioCount: {
       program:   avg(beneficiaryData, 'programGrade'),

@@ -17,7 +17,13 @@ export class CompanyRepository extends BaseRepository<CompanyEntity, any, any> {
     });
 
   }
+  async getCompanyById(id: string) {
+    return this.repository.findOne({
+        where: { id:  id  },
+        relations: ['employees', 'demands', 'userAdmin'],
+    });
 
+  }
   async findMonth(month: number) {
     const now = new Date();
     const pastDate = addMonths(now, -month);
