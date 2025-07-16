@@ -123,5 +123,13 @@ export class UserBackofficeController {
         const result = await this.UserService.getDataForResearchManagerPage();
         return new ResponseDto(true, result, null);
     }
+        @Get("get-programs-numbers-regmel")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async searchDataForResearchManagerPageRegmel() {
+
+        const result = await this.UserService.getDataForResearchManagerPageREGMEL();
+        return new ResponseDto(true, result, null);
+    }
 
 }
