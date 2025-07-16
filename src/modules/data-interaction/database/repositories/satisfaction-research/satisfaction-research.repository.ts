@@ -154,4 +154,28 @@ async listProfessionalMinhaCasa(): Promise<SatisfactionResearchEntity[]> {
     })
     .getMany();
 }
+//---
+async listBeneficiaryREGMEL(): Promise<SatisfactionResearchEntity[]> {
+  return this.repository
+    .createQueryBuilder('sr')
+    .leftJoinAndSelect('sr.user', 'user')
+    .where('user.type = :type', { type: UserTypeEnum.BENEFICIARIO })
+    .andWhere('user.programType = :programType', {
+      programType: UserProgramTypeEnum.REGMEL,
+    })
+    .getMany();
+}
+
+async listProfessionalREGMEL(): Promise<SatisfactionResearchEntity[]> {
+  return this.repository
+    .createQueryBuilder('sr')
+    .leftJoinAndSelect('sr.user', 'user')
+    .where('user.type IN (:...types)', {
+      types: [UserTypeEnum.PROFISSIONAL, UserTypeEnum.ARQUITETO],
+    })
+    .andWhere('user.programType = :programType', {
+      programType: UserProgramTypeEnum.REGMEL,
+    })
+    .getMany();
+}
 }
