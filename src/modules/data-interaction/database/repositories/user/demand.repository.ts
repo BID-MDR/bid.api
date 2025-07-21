@@ -117,8 +117,8 @@ export class DemandRepository extends BaseRepository<
   async listByUserWaitImprove(companyId: string): Promise<DemandEntity[]> {
     const query = this.repository
       .createQueryBuilder("demand")
-      .innerJoinAndSelect("demand.beneficiary", "beneficiary")
       .innerJoinAndSelect("demand.company", "company")
+      .leftJoinAndSelect("demand.beneficiary", "beneficiary")
       .leftJoinAndSelect("demand.workRequest", "workRequest")
       .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
       .leftJoinAndSelect("workRequest.room", "room")
@@ -230,7 +230,7 @@ export class DemandRepository extends BaseRepository<
   private getDefaultQuery() {
     return this.repository
       .createQueryBuilder("demand")
-      .innerJoinAndSelect("demand.beneficiary", "beneficiary")
+      .leftJoinAndSelect("demand.beneficiary", "beneficiary")
       .innerJoinAndSelect("demand.company", "company")
       .leftJoinAndSelect("company.employees", "employees")
       .leftJoinAndSelect("demand.workRequest", "workRequest")
