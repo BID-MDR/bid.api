@@ -22,7 +22,7 @@ export class ConstructionsEntity extends BaseEntity {
     type: "varchar",
     length: 255,
   })
-  description: string;
+  description?: string;
 
   @Column({
     type: "decimal",
