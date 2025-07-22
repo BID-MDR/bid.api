@@ -128,9 +128,10 @@ export class ConstructionsService {
     if (!demand) {
       throw new BadRequestException("Demand not found");
     }
-    if (demand.company.id !== companyId) {
-      throw new BadRequestException("Not authorized to access this demand");
-    }
+
+    // if (demand.company.id !== companyId) {
+    //   throw new BadRequestException("Not authorized to access this demand");
+    // }
 
     const constructions = await this.constructionsRepository.create({
       type: dto.type,
