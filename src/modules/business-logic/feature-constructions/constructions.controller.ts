@@ -103,7 +103,7 @@ export class ConstructionsController {
     @Req() req: Request
   ) {
     const user = req.user as JwtPayloadInterface;
-    return await this.constructionsService.registerPhotosConclusion(dto.roomSolutionId, files, demandId, user.companyId);
+    return await this.constructionsService.registerPhotosConclusion(dto.roomSolutionId, files, demandId);
   }
 
   @Post("second-step-constructions/:demandId")
