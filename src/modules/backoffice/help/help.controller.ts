@@ -28,7 +28,7 @@ import { FunctionTypeEnum } from '../user/dto/functionTypeEnum';
 export class HelpBackofficeController {
     private readonly _logger = new Logger(HelpBackofficeController.name);
 
-    constructor(private helpService: HelpBackofficeService) {}
+    constructor(private helpService: HelpBackofficeService) { }
 
     @Post('')
     @ApiBearerAuth()
@@ -36,15 +36,15 @@ export class HelpBackofficeController {
     @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA])
     async register(@Req() req: Request, @Body() dto: HelpRegisterRequestDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
-        const help =  await this.helpService.register(userId, dto);
+        const help = await this.helpService.register(userId, dto);
         return new ResponseDto(true, help, false)
     }
 
     @Get('get-by-id/:id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA])
-    async GetById(@Param('id') id:string) {
+    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA, FunctionTypeEnum.VISUALIZADOR])
+    async GetById(@Param('id') id: string) {
         const help = await this.helpService.getById(id);
         return new ResponseDto(true, help, false)
     }
@@ -52,7 +52,7 @@ export class HelpBackofficeController {
     @Get('')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA])
+    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA, FunctionTypeEnum.VISUALIZADOR])
     async list() {
         const help = await this.helpService.list();
         return new ResponseDto(true, help, false)
@@ -70,7 +70,7 @@ export class HelpBackofficeController {
     @Get('user/:id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA])
+    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA, FunctionTypeEnum.VISUALIZADOR])
     async listByUser(@Param('id') id: string) {
         const help = await this.helpService.listByUser(id);
         return new ResponseDto(true, help, false)
@@ -104,7 +104,7 @@ export class HelpBackofficeController {
     @Get('list-mcmv')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA])
+    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA, FunctionTypeEnum.VISUALIZADOR])
     async listMcmv() {
         const help = await this.helpService.listMcmv();
         return new ResponseDto(true, help, false)
