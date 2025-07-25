@@ -13,28 +13,28 @@ import { FunctionTypeEnum } from "../user/dto/functionTypeEnum";
 @ApiTags("Employee Backoffice")
 export class EmployeeBackofficeController {
   private readonly _logger = new Logger(EmployeeBackofficeController.name);
-  constructor(private service: EmployeeBackofficeService) {}
+  constructor(private service: EmployeeBackofficeService) { }
 
-//   @Post("register")
-//   @ApiBearerAuth()
-//   @UseGuards(JwtAccessTokenGuard)
-//   async register(@Body() dto: EmployeeRegisterRequestDto, @Req() req: Request) {
-//     const userId = (req.user as JwtPayloadInterface).userId;
-//     return await this.service.register(dto, userId);
-//   }
+  //   @Post("register")
+  //   @ApiBearerAuth()
+  //   @UseGuards(JwtAccessTokenGuard)
+  //   async register(@Body() dto: EmployeeRegisterRequestDto, @Req() req: Request) {
+  //     const userId = (req.user as JwtPayloadInterface).userId;
+  //     return await this.service.register(dto, userId);
+  //   }
 
-//   @Put("active/:id")
-//   @ApiBearerAuth()
-//   @UseGuards(JwtAccessTokenGuard)
-//   async activeEmployee(@Param("id") id: string, @Req() req: Request) {
-//     const userId = (req.user as JwtPayloadInterface).userId;
-//     return await this.service.activeEmployee(id, userId);
-//   }
+  //   @Put("active/:id")
+  //   @ApiBearerAuth()
+  //   @UseGuards(JwtAccessTokenGuard)
+  //   async activeEmployee(@Param("id") id: string, @Req() req: Request) {
+  //     const userId = (req.user as JwtPayloadInterface).userId;
+  //     return await this.service.activeEmployee(id, userId);
+  //   }
 
   @Get("")
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_AGENTE_PROMOTOR])
+  @Roles([FunctionTypeEnum.GERIR_AGENTE_PROMOTOR, FunctionTypeEnum.VISUALIZADOR])
   async list() {
     return await this.service.list();
   }
@@ -42,7 +42,7 @@ export class EmployeeBackofficeController {
   @Get("by-id/:id")
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_AGENTE_PROMOTOR])
+  @Roles([FunctionTypeEnum.GERIR_AGENTE_PROMOTOR, FunctionTypeEnum.VISUALIZADOR])
   async getById(@Param('id') id: string) {
     return await this.service.getById(id);
   }

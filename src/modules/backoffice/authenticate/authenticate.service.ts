@@ -22,9 +22,7 @@ export class AuthenticateService {
   ) { }
 
   private async validate(email: string, password: string): Promise<UserBackofficeEntity> {
-
     const user = await this._userRepository.getByEmail(email);
-
     const hashedPassword = await bcrypt.hash(password, 10);
 
     if (user) {
@@ -39,7 +37,7 @@ export class AuthenticateService {
   ): Promise<AuthenticateResponseDto> {
     const user = await this.validate(dto.email, dto.password);
 
-    if (!user)  throw new HttpException(
+    if (!user) throw new HttpException(
       new ResponseDto(false, null, ['E-mail ou senha incorreto!']),
       HttpStatus.BAD_REQUEST
     );
@@ -91,7 +89,7 @@ export class AuthenticateService {
     if (user.programType == UserProgramTypeEnum.REGMEL) {
       throw new NotFoundException('Tipo de programa incorreto');
     }
-    
+
     const token = this._createToken(user.id.toString(), user.email, user.roles);
 
     const verify = await this._userRepository.getById(user.id.toString());
@@ -104,8 +102,8 @@ export class AuthenticateService {
     }
 
     return new AuthenticateResponseDto(user.id, user.email, token.accessToken, lastLogin);
-  
-  
+
+
 
     // if (verify.lastAccess) {
     //   const lastAccessDate = new Date(verify.lastAccess);
