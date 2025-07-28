@@ -34,18 +34,23 @@ export class HelpRepository extends BaseRepository<HelpEntity, any, any> {
         return this.repository.find({where: {programType: UserProgramTypeEnum.MINHA_CASA}});
     }
 
-    async findMonth(month: number) {
+    async findMonth(month?: number) {
         const now = new Date();
-        const pastDate = addMonths(now, -month);
-    
-    
-        return this.repository.createQueryBuilder('help')
-        .where('help.createdAt BETWEEN :pastDate AND :now', {
-          pastDate: pastDate.toISOString(),
-          now: now.toISOString(),
-        })
-        .andWhere('help.programType = :programType', {programType: UserProgramTypeEnum.REGMEL})
-        .getMany()
+
+        const query = this.repository.createQueryBuilder('help')
+            .where('help.programType = :programType', {
+            programType: UserProgramTypeEnum.REGMEL,
+            });
+
+        if (month && month > 0) {
+            const pastDate = addMonths(now, -month);
+            query.andWhere('help.createdAt BETWEEN :pastDate AND :now', {
+            pastDate: pastDate.toISOString(),
+            now: now.toISOString(),
+            });
+        }
+
+        return query.getMany();
     }
 
     async findMonthMcmv(month: number) {
