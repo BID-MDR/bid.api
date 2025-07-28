@@ -77,21 +77,26 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
     return this.repository.find({ where: { programType: UserProgramTypeEnum.REGMEL } });
   }
 
-  async findMonth(month: number) {
+  async findMonth(month?: number) {
     const now = new Date();
-    const pastDate = addMonths(now, -month);
 
-
-    return this.repository.createQueryBuilder('user')
+    const query = this.repository.createQueryBuilder('user')
       .where('user.type = :type', { type: UserTypeEnum.BENEFICIARIO })
-      .andWhere('user.createdAt BETWEEN :pastDate AND :now', {
+      .andWhere('user.programType = :programType', {
+        programType: UserProgramTypeEnum.REGMEL,
+      });
+
+    if (month && month > 0) {
+      const pastDate = addMonths(now, -month);
+      query.andWhere('user.createdAt BETWEEN :pastDate AND :now', {
         pastDate: pastDate.toISOString(),
         now: now.toISOString(),
-      })
-      .getMany()
+      });
+    }
 
-
+    return query.getMany();
   }
+
 
   async getByCpf(cpf: string) {
     return this.repository.findOne({ where: { cpf } });

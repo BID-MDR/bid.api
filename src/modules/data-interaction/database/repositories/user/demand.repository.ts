@@ -214,18 +214,22 @@ export class DemandRepository extends BaseRepository<
   }
 
 
-  async findMonth(month: number) {
+  async findMonth(month?: number) {
     const now = new Date();
-    const pastDate = addMonths(now, -month);
 
+    const query = this.repository.createQueryBuilder('demand');
 
-    return this.repository.createQueryBuilder('demand')
-      .where('demand.createdAt BETWEEN :pastDate AND :now', {
+    if (month && month > 0) {
+      const pastDate = addMonths(now, -month);
+      query.where('demand.createdAt BETWEEN :pastDate AND :now', {
         pastDate: pastDate.toISOString(),
         now: now.toISOString(),
-      })
-      .getMany()
+      });
+    }
+
+    return query.getMany();
   }
+
 
   private getDefaultQuery() {
     return this.repository

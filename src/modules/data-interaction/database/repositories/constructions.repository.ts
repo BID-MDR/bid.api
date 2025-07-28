@@ -13,19 +13,22 @@ export class ConstructionsRepository extends BaseRepository<ConstructionsEntity,
     super(repository);
   }
 
-  async findMonth(month: number) {
+  async findMonth(month?: number) {
     const now = new Date();
-    const pastDate = addMonths(now, -month);
 
+    const query = this.repository.createQueryBuilder('constructions');
 
-    return this.repository.createQueryBuilder('constructions')
-    .where('constructions.createdAt BETWEEN :pastDate AND :now', {
-      pastDate: pastDate.toISOString(),
-      now: now.toISOString(),
-    })
-    .andWhere('constructions.programType = :programType', {programType: UserProgramTypeEnum.REGMEL})
-    .getMany()
+    if (month && month > 0) {
+      const pastDate = addMonths(now, -month);
+      query.where('constructions.createdAt BETWEEN :pastDate AND :now', {
+        pastDate: pastDate.toISOString(),
+        now: now.toISOString(),
+      });
+    }
+
+    return query.getMany();
   }
+
 
   async findMonthMcmv(month: number) {
     const now = new Date();

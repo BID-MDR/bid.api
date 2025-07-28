@@ -24,18 +24,23 @@ export class CompanyRepository extends BaseRepository<CompanyEntity, any, any> {
     });
 
   }
-  async findMonth(month: number) {
+  
+  async findMonth(month?: number) {
     const now = new Date();
-    const pastDate = addMonths(now, -month);
 
+    const query = this.repository.createQueryBuilder('company');
 
-    return this.repository.createQueryBuilder('company')
-    .where('company.createdAt BETWEEN :pastDate AND :now', {
-      pastDate: pastDate.toISOString(),
-      now: now.toISOString(),
-    })
-    .getMany()
+    if (month && month > 0) {
+      const pastDate = addMonths(now, -month);
+      query.where('company.createdAt BETWEEN :pastDate AND :now', {
+        pastDate: pastDate.toISOString(),
+        now: now.toISOString(),
+      });
+    }
+
+    return query.getMany();
   }
+
 
   async getByEmployee(userId: string){
     return  this.repository.createQueryBuilder("company")
