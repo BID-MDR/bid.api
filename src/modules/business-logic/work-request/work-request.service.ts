@@ -10,7 +10,6 @@ import { TechnicalVisitStatusEnum } from "src/modules/data-interaction/database/
 import { SustainabilityItensRequestDto } from "src/modules/data-interaction/database/dtos/work-request/sustainability-itens-request.dto";
 import { SustainabilityItensRepository } from "src/modules/data-interaction/database/repositories/work-request/sustainability-itens.repository";
 import { UserRepository } from "src/modules/data-interaction/database/repositories/user/user.repository";
-import { StorageFacade } from "src/modules/data-interaction/facade/apis/storage/storage.facade";
 import { TechnicalVisitRepository } from "src/modules/data-interaction/database/repositories/technical-visit.repository";
 import { CostEstimateRepository } from "src/modules/data-interaction/database/repositories/costEstimate/costEstimate.repository";
 import { CostEstimateService } from "../cost-estimate/costEstimate.service";
@@ -24,7 +23,6 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
     private userRepository: UserRepository,
     private costEstimateRepo: CostEstimateService,
     private sustainabilityItensRepository: SustainabilityItensRepository,
-    private readonly storageFacade: StorageFacade,
 
   ) {
     super(workRequestRepository);
@@ -62,44 +60,31 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
   }
 
   async registerBenefficiary(data: CreateWorkRequestDto, userId: string) {
-    data.pictures = data.pictures || []; 
-    data.beneficiary = await this.userRepository.getById(userId)
+    data.pictures = data.pictures || [];
+    data.beneficiary = await this.userRepository.getById(userId);
 
-    if(data.selectedFiles){
-      const uploadedFiles = await Promise.all(
-        data.selectedFiles.map(async (picture) => {
-          const imageUrl = await this.storageFacade.uploadMedia(
-            picture.mimeType,
-            picture.fileName,
-            picture.data
-          );
-          data.pictures.push(imageUrl)
-        })
-      );
+    if (data.selectedFiles) {
+      const base64Array = data.selectedFiles.map((picture) => {
+        const parts = picture.data.split(",");
+        return parts.length > 1 ? parts[1] : picture.data;
+      });
+      data.pictures.push(...base64Array);
+      delete data.selectedFiles;
     }
-  
-   
+
     const result = await super.create(data);
 
     return result;
   }
 
   async update(workRequestId: string, data: UpdateWorkRequestDto, tecvisitId?:string, userId?:string) {
-
-        if(data.selectedFiles){
-         await Promise.all(
-        data.selectedFiles.map(async (picture) => {
-          const imageUrl = await this.storageFacade.uploadMedia(
-            picture.mimeType,
-            picture.fileName,
-            picture.data
-          );
-          if(!data.pictures){
-            data.pictures = []
-          }
-          data.pictures.push(imageUrl)
-        })
-      );
+    if (data.selectedFiles) {
+      const base64Array = data.selectedFiles.map((picture) => {
+        const parts = picture.data.split(",");
+        return parts.length > 1 ? parts[1] : picture.data;
+      });
+      data.pictures = [...(data.pictures || []), ...base64Array];
+      delete data.selectedFiles;
     }
     const wkRequest = await this.workRequestRepository.updateAll(workRequestId, data);
     if(tecvisitId){
