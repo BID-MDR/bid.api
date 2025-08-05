@@ -14,18 +14,23 @@ import { StorageFacade } from "src/modules/data-interaction/facade/apis/storage/
 import { TechnicalVisitRepository } from "src/modules/data-interaction/database/repositories/technical-visit.repository";
 import { CostEstimateRepository } from "src/modules/data-interaction/database/repositories/costEstimate/costEstimate.repository";
 import { CostEstimateService } from "../cost-estimate/costEstimate.service";
+import { NotificationMessageService } from "../notification-msg/notification-message.service";
 
 @Injectable()
-export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWorkRequestDto, UpdateWorkRequestDto> {
+export class WorkRequestService extends BaseService<
+  WorkRequestEntity,
+  CreateWorkRequestDto,
+  UpdateWorkRequestDto
+> {
   constructor(
     private workRequestRepository: WorkRequestRepository,
     private demandRepository: DemandRepository,
     private tecVisitRepository: TechnicalVisitRepository,
     private userRepository: UserRepository,
+    private readonly notificationMsgService: NotificationMessageService,
     private costEstimateRepo: CostEstimateService,
     private sustainabilityItensRepository: SustainabilityItensRepository,
-    private readonly storageFacade: StorageFacade,
-
+    private readonly storageFacade: StorageFacade
   ) {
     super(workRequestRepository);
   }
@@ -43,14 +48,28 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
   }
 
   async register(data: CreateWorkRequestDto, companyId: string) {
-    console.log('data', data)
+    console.log("data", data);
     const demand = await this.demandRepository.findById(data.demandId);
 
-    if (demand.company && demand.company.id !== companyId) throw new BadRequestException("Não autorizado a acessar essa demanda.");
+    if (demand.company && demand.company.id !== companyId)
+      throw new BadRequestException("Não autorizado a acessar essa demanda.");
 
     data.demand = demand;
 
     const result = await super.create(data);
+    const msgDto = {
+      content: `Vistoria realizada. Siga para a fase de projeto de melhoria`,
+    };
+
+    const msgProfessionalDto = {
+      content: `Vistoria realizada. Siga para a fase de projeto de melhoria`,
+    };
+    await this.notificationMsgService.register(data.beneficiary.id, msgDto);
+
+    await this.notificationMsgService.register(
+      data.professional?.id, // or the correct professional id if available
+      msgProfessionalDto
+    );
 
     demand.workRequest = result;
     demand.status = DemandStatusEnum.ESPERANDO_MELHORIA;
@@ -58,14 +77,13 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
     await demand.save();
 
     return result;
-
   }
 
   async registerBenefficiary(data: CreateWorkRequestDto, userId: string) {
-    data.pictures = data.pictures || []; 
-    data.beneficiary = await this.userRepository.getById(userId)
+    data.pictures = data.pictures || [];
+    data.beneficiary = await this.userRepository.getById(userId);
 
-    if(data.selectedFiles){
+    if (data.selectedFiles) {
       const uploadedFiles = await Promise.all(
         data.selectedFiles.map(async (picture) => {
           const imageUrl = await this.storageFacade.uploadMedia(
@@ -73,43 +91,53 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
             picture.fileName,
             picture.data
           );
-          data.pictures.push(imageUrl)
+          data.pictures.push(imageUrl);
         })
       );
     }
-  
-   
+
     const result = await super.create(data);
 
     return result;
   }
 
-  async update(workRequestId: string, data: UpdateWorkRequestDto, tecvisitId?:string, userId?:string) {
-
-        if(data.selectedFiles){
-         await Promise.all(
+  async update(
+    workRequestId: string,
+    data: UpdateWorkRequestDto,
+    tecvisitId?: string,
+    userId?: string
+  ) {
+    if (data.selectedFiles) {
+      await Promise.all(
         data.selectedFiles.map(async (picture) => {
           const imageUrl = await this.storageFacade.uploadMedia(
             picture.mimeType,
             picture.fileName,
             picture.data
           );
-          if(!data.pictures){
-            data.pictures = []
+          if (!data.pictures) {
+            data.pictures = [];
           }
-          data.pictures.push(imageUrl)
+          data.pictures.push(imageUrl);
         })
       );
     }
-    const wkRequest = await this.workRequestRepository.updateAll(workRequestId, data);
-    if(tecvisitId){
-       await this.tecVisitRepository.updateStatusToFinishById(tecvisitId)
+    const wkRequest = await this.workRequestRepository.updateAll(
+      workRequestId,
+      data
+    );
+    if (tecvisitId) {
+      await this.tecVisitRepository.updateStatusToFinishById(tecvisitId);
 
-      const professional = await this.userRepository.getById(userId)
-      if(!professional)throw new BadRequestException("Professional not found!");
-     const costEstimate =  await this.costEstimateRepo.create({workRequest: wkRequest, professional: professional})
+      const professional = await this.userRepository.getById(userId);
+      if (!professional)
+        throw new BadRequestException("Profissional não ecnotnrado!");
+      const costEstimate = await this.costEstimateRepo.create({
+        workRequest: wkRequest,
+        professional: professional,
+      });
     }
-    return wkRequest
+    return wkRequest;
   }
 
   async updateStatus(workRequestId: string, status: TechnicalVisitStatusEnum) {
@@ -133,9 +161,11 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
 
     workRequest.status = TechnicalVisitStatusEnum.REALIZADA;
 
-    const demand = await this.demandRepository.getByWorkRequestId(workRequestId);
+    const demand =
+      await this.demandRepository.getByWorkRequestId(workRequestId);
 
-    if (demand.company.id !== companyId) throw new BadRequestException("Não autorizado a acessar essa demanda.");
+    if (demand.company.id !== companyId)
+      throw new BadRequestException("Não autorizado a acessar essa demanda.");
 
     demand.status = DemandStatusEnum.ESPERANDO_MELHORIA;
     await demand.save();
@@ -148,7 +178,8 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
 
     workRequest.status = TechnicalVisitStatusEnum.CANCELADA;
 
-    const demand = await this.demandRepository.getByWorkRequestId(workRequestId);
+    const demand =
+      await this.demandRepository.getByWorkRequestId(workRequestId);
 
     demand.status = DemandStatusEnum.CANCELADO;
     await demand.save();
@@ -156,16 +187,25 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
     return await workRequest.save();
   }
 
-  async createSustainabilityItens(dto: SustainabilityItensRequestDto, companyId: string, workRequestId: string) {
-    const demand = await this.demandRepository.getByWorkRequestId(workRequestId);
+  async createSustainabilityItens(
+    dto: SustainabilityItensRequestDto,
+    companyId: string,
+    workRequestId: string
+  ) {
+    const demand =
+      await this.demandRepository.getByWorkRequestId(workRequestId);
     const request = await this.sustainabilityItensRepository.create(dto);
     demand.sustainabilityItens = request;
-    demand.status = DemandStatusEnum.CONCLUIDO
+    demand.status = DemandStatusEnum.CONCLUIDO;
     return await demand.save();
   }
 
   async findNearbyBeneficiary(userId: string) {
-    const professional = await this.userRepository.getById(userId)
-    return await this.workRequestRepository.findNearbyBeneficiary(Number(professional.address.latitude), Number(professional.address.longitude), professional.address.maximumDistanceToWorks);
+    const professional = await this.userRepository.getById(userId);
+    return await this.workRequestRepository.findNearbyBeneficiary(
+      Number(professional.address.latitude),
+      Number(professional.address.longitude),
+      professional.address.maximumDistanceToWorks
+    );
   }
 }
