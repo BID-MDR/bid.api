@@ -2,6 +2,7 @@ import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateAddressDto } from './create-address.dto';
 import { IsLatitude, IsLongitude, IsNumberString, IsOptional, IsPositive, IsUUID, Length } from 'class-validator';
 import { IsCEP } from 'brazilian-class-validator';
+import { Transform } from 'class-transformer';
 
 export class UpdateAddressDto extends PartialType(CreateAddressDto) {
     @ApiProperty()
@@ -25,10 +26,11 @@ export class UpdateAddressDto extends PartialType(CreateAddressDto) {
     @IsCEP()
     zipcode: string;
 
-    @ApiProperty()
+    @ApiProperty({ required: false })
+    @Transform(({ value }) => (value === '' ? undefined : value))
     @Length(1, 50)
     @IsOptional()
-    complement: string;
+    complement?: string;
 
     @ApiProperty()
     @Length(1, 50)
