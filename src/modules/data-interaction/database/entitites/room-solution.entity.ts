@@ -7,7 +7,7 @@ import { UserGeneratedMediaConclusionEntity } from './user-generated-media-concl
 
 @Entity({ name: 'room_solution' })
 export class RoomSolutionEntity extends BaseEntity {
-    @ManyToOne(() => RoomEntity, (room) => room.roomSolutions)
+    @ManyToOne(() => RoomEntity, (room) => room.roomSolutions, { nullable: false })
     room: RoomEntity;
 
     @Column({

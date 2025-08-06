@@ -152,33 +152,32 @@ export class FeatureRoomService extends BaseService<
 
     async register(body: RequestRoomSolutionDto){
         if(body.room && Object.keys(body.room).length === 0) {
-            delete body.room
+            delete body.room;
         }
-        if(body.workRequestId){
-            body.workRequest = await this.workRequestRepository.findById(body.workRequestId);
-        }
+
+        let room: RoomEntity | null = null;
 
         if(body.roomId){
-           
-            const RoomEntity =  await this.roomRepository.findById(body.roomId)
-
-            body.solution.forEach( async(element) => {
-                let room =  new CreateRoomSolutionDto({ room: RoomEntity, solution: element});
-                return await this.roomSolutionRepository.create(room);
-                
-            });
-        }
-
-        if(body.room){
-            const result = await super.create({...body.room, workRequest: body.workRequest});
-            if(result.id){
-                body.solution.forEach( async(element) => {
-                    let room =  new CreateRoomSolutionDto({ room: result, solution: element});
-                    return await this.roomSolutionRepository.create(room);
-                    
-                });
+            room = await this.roomRepository.findById(body.roomId);
+            if(!room){
+                throw new BadRequestException('Room não encontrado');
             }
+        }else if(body.room){
+            let workRequest = undefined;
+            if(body.workRequestId){
+                workRequest = await this.workRequestRepository.findById(body.workRequestId);
+            }
+            room = await super.create({...body.room, workRequest});
+        }else{
+            throw new BadRequestException('RoomId ou dados do room são obrigatórios');
         }
+
+        await Promise.all(
+            body.solution.map(async(element) => {
+                const roomSolution = new CreateRoomSolutionDto({ room, solution: element });
+                return await this.roomSolutionRepository.create(roomSolution);
+            })
+        );
     }
 
    async getRoomByRoomSolutionId(roomSolutionId: string) {
