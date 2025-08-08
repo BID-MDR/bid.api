@@ -23,7 +23,7 @@ export class DemandBackofficeController {
 
     @Get("")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @UseGuards(JwtAccessTokenGuard)
 
     async getLogged() {
         return await this.demandService.list();
@@ -38,7 +38,7 @@ export class DemandBackofficeController {
 
     @Get("id/:id")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @UseGuards(JwtAccessTokenGuard)
 
     async getById(@Param("id") id: string) {
         return await this.demandService.findById(id);
@@ -46,7 +46,7 @@ export class DemandBackofficeController {
 
     @Get("get-by-workRequestId/:id")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @UseGuards(JwtAccessTokenGuard)
 
     async getByWorkRequesId(@Param("id") id: string) {
         return await this.demandService.getByWorkRequestId(id);
@@ -54,7 +54,7 @@ export class DemandBackofficeController {
 
     @Get("get-by-professionalId/:id")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @UseGuards(JwtAccessTokenGuard)
 
     async getByProfessionalId(@Param("id") id: string) {
         return await this.demandService.listByUser(id);
@@ -90,28 +90,28 @@ export class DemandBackofficeController {
 
     @Get("get-by-company/:id")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @UseGuards(JwtAccessTokenGuard)
     async getByCompany(@Param("id") id: string) {
         return await this.demandService.listByCompany(id);
     }
 
     @Get("get-by-professionalId/improvement/:id")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @UseGuards(JwtAccessTokenGuard)
     async getByProfessionalIdImprovement(@Param("id") id: string) {
         return await this.demandService.listByUserImprovement(id);
     }
 
     @Put("changeStatus/:id")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @UseGuards(JwtAccessTokenGuard)
     async changeStatus(@Param("id") id: string, @Body() status: StatusDemandDto) {
         return await this.demandService.updateStatus(id, status);
     }
 
     @Get("visit")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @UseGuards(JwtAccessTokenGuard)
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
         isArray: true,
@@ -124,7 +124,7 @@ export class DemandBackofficeController {
 
     @Get('constructions')
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @UseGuards(JwtAccessTokenGuard)
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
         isArray: true,
@@ -140,7 +140,7 @@ export class DemandBackofficeController {
 
     @Post("")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @UseGuards(JwtAccessTokenGuard)
     @Roles([FunctionTypeEnum.CONTROLE_DEMANDA])
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
@@ -156,7 +156,7 @@ export class DemandBackofficeController {
 
     @Delete("delete-by-id/:id")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @UseGuards(JwtAccessTokenGuard)
     @Roles([FunctionTypeEnum.CONTROLE_DEMANDA])
     async delete(@Param("id") id: string) {
         return await this.demandService.delete(id);
@@ -164,7 +164,7 @@ export class DemandBackofficeController {
 
     @Get('status/:status')
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @UseGuards(JwtAccessTokenGuard)
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
         isArray: true,
@@ -179,7 +179,7 @@ export class DemandBackofficeController {
 
     @Put('confirm-conclusion/:id')
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @UseGuards(JwtAccessTokenGuard)
     @Roles([FunctionTypeEnum.CONTROLE_DEMANDA])
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
