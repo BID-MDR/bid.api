@@ -26,7 +26,6 @@ export class UpdateAddressDto extends PartialType(CreateAddressDto) {
     zipcode: string;
 
     @ApiProperty()
-    @Length(1, 50)
     @IsOptional()
     complement: string;
 
