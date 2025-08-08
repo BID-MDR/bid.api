@@ -150,36 +150,40 @@ export class FeatureRoomService extends BaseService<
     }
 
 
-    async register(body: RequestRoomSolutionDto){
-        if(body.room && Object.keys(body.room).length === 0) {
-            delete body.room
-        }
-        if(body.workRequestId){
-            body.workRequest = await this.workRequestRepository.findById(body.workRequestId);
-        }
+async register(body: RequestRoomSolutionDto) {
+  if (body?.room && Object.keys(body.room).length === 0) delete body.room;
 
-        if(body.roomId){
-           
-            const RoomEntity =  await this.roomRepository.findById(body.roomId)
+  if (body.workRequestId) {
+    body.workRequest = await this.workRequestRepository.findById(body.workRequestId);
+  }
 
-            body.solution.forEach( async(element) => {
-                let room =  new CreateRoomSolutionDto({ room: RoomEntity, solution: element});
-                return await this.roomSolutionRepository.create(room);
-                
-            });
-        }
+  let roomEntity = null;
 
-        if(body.room){
-            const result = await super.create({...body.room, workRequest: body.workRequest});
-            if(result.id){
-                body.solution.forEach( async(element) => {
-                    let room =  new CreateRoomSolutionDto({ room: result, solution: element});
-                    return await this.roomSolutionRepository.create(room);
-                    
-                });
-            }
-        }
-    }
+  if (body.roomId) {
+    roomEntity = await this.roomRepository.findById(body.roomId);
+    if (!roomEntity) throw new BadRequestException('roomId inválido ou não encontrado.');
+  } else  {
+    roomEntity = await this.roomRepository.create({
+      name: body.room.name,
+      type: body.room.type,
+
+    });
+  } 
+
+
+
+  const solutions = Array.isArray(body.solution) ? body.solution : [];
+  await Promise.all(
+    solutions.map((element) =>
+      this.roomSolutionRepository.create(
+        new CreateRoomSolutionDto({ room: roomEntity, solution: element })
+      )
+    )
+  );
+
+  return { roomId: roomEntity.id, createdSolutions: solutions.length };
+}
+
 
    async getRoomByRoomSolutionId(roomSolutionId: string) {
        return await this.roomRepository.getRoomByRoomSolutionId(roomSolutionId)
