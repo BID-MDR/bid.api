@@ -47,12 +47,13 @@ export class WorkRequestService extends BaseService<
     return await this.workRequestRepository.getByUserId(userId);
   }
 
-  async register(data: CreateWorkRequestDto, companyId: string) {
+  async register(data: CreateWorkRequestDto, userId: string) {
     console.log("data", data);
-    const demand = await this.demandRepository.getById(data.demandId);
+    const demand = await this.demandRepository.getById2(data.demandId);
+    console.log("demand", demand);
 
-    if (demand.company && demand.company.id !== companyId)
-      throw new BadRequestException("Não autorizado a acessar essa demanda.");
+    // if (demand.company && demand.company.id !== companyId)
+    //   throw new BadRequestException("Não autorizado a acessar essa demanda.");
 
     data.demand = demand;
 
@@ -64,12 +65,16 @@ export class WorkRequestService extends BaseService<
     const msgProfessionalDto = {
       content: `Vistoria realizada. Siga para a fase de projeto de melhoria`,
     };
-    await this.notificationMsgService.register(data.beneficiary.id, msgDto);
 
-    const professionalId = demand.technicalVisit?.professional?.id;
-    if (professionalId) {
+    const beneficiaryId = demand.beneficiary.id;
+    if (beneficiaryId) {
+      await this.notificationMsgService.register(beneficiaryId, msgDto);
+    }
+
+    const professional = await this.userRepository.getById(userId);
+    if (professional) {
       await this.notificationMsgService.register(
-        professionalId,
+        professional.id,
         msgProfessionalDto
       );
     }

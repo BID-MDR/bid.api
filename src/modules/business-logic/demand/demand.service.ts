@@ -200,7 +200,7 @@ export class DemandService extends BaseService<
       };
 
       const msgProfessionalDto = {
-        content: `Você cadastrou o uma demanda para ${data.beneficiary.name}`,
+        content: `Você cadastrou uma demanda para ${data.beneficiary.name}`,
       };
       await this.notificationMsgService.register(data.beneficiary.id, msgDto);
 
