@@ -193,6 +193,7 @@ export class FeatureTechnicalVisitController {
         @Param("id") id: string,
         @Body() body: UpdateTechnicalVisitDto
     ) {
+        console.log('body', body)
         return await this.featureTechnicalVisitService.update(id, body);
     }
     

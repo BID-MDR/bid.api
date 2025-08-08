@@ -6,8 +6,8 @@ import { UserEntity } from '../../entitites/user.entity';
 
 export class UpdateTechnicalVisitDto extends PickType(PartialType(CreateTechnicalVisitDto), ['to', 'from']) {
 
-    @ApiProperty()
-    id: string;
+    @ApiProperty({required: false})
+    id?: string;
 
     @ApiProperty()
     duration?: number;
@@ -19,7 +19,7 @@ export class UpdateTechnicalVisitDto extends PickType(PartialType(CreateTechnica
     @IsEnum(TechnicalVisitStatusEnum)
     status: TechnicalVisitStatusEnum;
 
-    @ApiProperty()
-    professionalId: string;
-    professional: UserEntity;
+    @ApiProperty({required: false})
+    professionalId?: string;
+    professional?: UserEntity;
 }
