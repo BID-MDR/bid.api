@@ -49,7 +49,7 @@ export class WorkRequestService extends BaseService<
 
   async register(data: CreateWorkRequestDto, companyId: string) {
     console.log("data", data);
-    const demand = await this.demandRepository.findById(data.demandId);
+    const demand = await this.demandRepository.getById(data.demandId);
 
     if (demand.company && demand.company.id !== companyId)
       throw new BadRequestException("Não autorizado a acessar essa demanda.");
@@ -66,10 +66,13 @@ export class WorkRequestService extends BaseService<
     };
     await this.notificationMsgService.register(data.beneficiary.id, msgDto);
 
-    await this.notificationMsgService.register(
-      data.professional?.id, // or the correct professional id if available
-      msgProfessionalDto
-    );
+    const professionalId = demand.technicalVisit?.professional?.id;
+    if (professionalId) {
+      await this.notificationMsgService.register(
+        professionalId,
+        msgProfessionalDto
+      );
+    }
 
     demand.workRequest = result;
     demand.status = DemandStatusEnum.ESPERANDO_MELHORIA;
