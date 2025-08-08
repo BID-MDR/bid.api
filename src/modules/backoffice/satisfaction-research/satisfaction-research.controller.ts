@@ -17,7 +17,7 @@ export class SatisfactionResearchBackofficeController {
   @Post("register/:workRequestId")
   @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.PESQUISAS])
+    
   async register(@Body() dto: any, @Req() req: Request, @Param('workRequestId') workRequestId: string) {
     const userId = (req.user as JwtPayloadInterface).userId;
     return await this.service.register(dto, userId, workRequestId);
@@ -26,7 +26,7 @@ export class SatisfactionResearchBackofficeController {
   @Get('')
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.PESQUISAS])
+  
   async list(){
     return await this.service.list()
   }
@@ -34,7 +34,7 @@ export class SatisfactionResearchBackofficeController {
   @Get('beneficiary')
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.PESQUISAS])
+  
   async listBeneficiary(){
     return await this.service.listBeneficiary()
   }
@@ -42,7 +42,7 @@ export class SatisfactionResearchBackofficeController {
   @Get('beneficiary/:month')
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.PESQUISAS])
+  
   async listBeneficiaryMonth(@Param('month') month: number){
     return await this.service.listBeneficiaryMonth(month)
   }
@@ -50,7 +50,7 @@ export class SatisfactionResearchBackofficeController {
   @Get('professional')
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.PESQUISAS])
+  
   async listProfessional(){
     return await this.service.listProfessional()
   }
@@ -58,7 +58,7 @@ export class SatisfactionResearchBackofficeController {
   @Get('professional/:month')
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.PESQUISAS])
+  
   async listProfessionalMonth(@Param('month') month: number){
     return await this.service.listProfessionalMonth(month)
   }
@@ -69,7 +69,7 @@ export class SatisfactionResearchBackofficeController {
   @Delete('delete-by-id/:id')
   @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.PESQUISAS])
+    
   async delete(@Param('id') id: string){
     return await this.service.hardDelete(id)
   }
@@ -81,7 +81,7 @@ export class SatisfactionResearchBackofficeController {
   @Get('list-mcmv')
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.PESQUISAS])
+  
   async listMcmv(){
     return await this.service.listMcmv()
   }
@@ -89,7 +89,7 @@ export class SatisfactionResearchBackofficeController {
   @Get('beneficiary-mcmv')
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.PESQUISAS])
+  
   async listBeneficiaryMcmv(){
     return await this.service.listBeneficiaryMcmv()
   }
@@ -97,7 +97,7 @@ export class SatisfactionResearchBackofficeController {
   @Get('beneficiary-mcmv/:month')
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.PESQUISAS])
+  
   async listBeneficiaryMonthMcmv(@Param('month') month: number){
     return await this.service.listBeneficiaryMonthMcmv(month)
   }
@@ -105,7 +105,7 @@ export class SatisfactionResearchBackofficeController {
   @Get('professional-mcmv')
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.PESQUISAS])
+  
   async listProfessionalMcmv(){
     return await this.service.listProfessionalMcmv()
   }
@@ -113,7 +113,7 @@ export class SatisfactionResearchBackofficeController {
   @Get('professional-mcmv/:month')
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.PESQUISAS])
+  
   async listProfessionalMonthMcmv(@Param('month') month: number){
     return await this.service.listProfessionalMonthMcmv(month)
   }

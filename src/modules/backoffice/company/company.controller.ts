@@ -26,7 +26,6 @@ export class CompanyBackofficeController {
   @Get("")
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_EMPRESAS, FunctionTypeEnum.VISUALIZADOR])
   async list() {
     return await this.service.list();
   }
@@ -41,7 +40,6 @@ export class CompanyBackofficeController {
   @Get("by-id/:id")
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_EMPRESAS, FunctionTypeEnum.VISUALIZADOR])
   async getById(@Param('id') id: string) {
     return await this.service.getById(id);
   }
@@ -49,7 +47,6 @@ export class CompanyBackofficeController {
   @Get("by-owner/:id")
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_EMPRESAS, FunctionTypeEnum.VISUALIZADOR])
   async getByOwner(@Param('id') id: string) {
     return await this.service.getByOwner(id);
   }
@@ -57,7 +54,6 @@ export class CompanyBackofficeController {
   @Get("by-employee/:id")
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_EMPRESAS, FunctionTypeEnum.VISUALIZADOR])
   async getByEmployee(@Param('id') id: string) {
     return await this.service.getByEmployee(id);
   }
