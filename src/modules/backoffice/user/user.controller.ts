@@ -43,7 +43,7 @@ export class UserBackofficeController {
     async getMcmv() {
 
         const result = await this.UserService.findAllMinhaCasa();
-        return new ResponseDto(true, result, null);
+        return new ResponseDto(true, result, null)
     }
 
     @Get("by-id/:id")
