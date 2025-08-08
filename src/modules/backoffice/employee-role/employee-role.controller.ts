@@ -17,14 +17,14 @@ export class EmployeeRoleBackofficeController {
 
   @Post("register")
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_AGENTE_PROMOTOR])
+  
   async register(@Body() dto: CreateEmployeeRoleDto) {
     return await this.service.register(dto);
   }
 
   @Get('')
   @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_AGENTE_PROMOTOR])
+  
   async list(){
     return await this.service.list()
   }

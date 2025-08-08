@@ -24,7 +24,7 @@ export class DemandBackofficeController {
     @Get("")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA, FunctionTypeEnum.VISUALIZADOR])
+
     async getLogged() {
         return await this.demandService.list();
     }
@@ -39,7 +39,7 @@ export class DemandBackofficeController {
     @Get("id/:id")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA, FunctionTypeEnum.VISUALIZADOR])
+
     async getById(@Param("id") id: string) {
         return await this.demandService.findById(id);
     }
@@ -47,7 +47,7 @@ export class DemandBackofficeController {
     @Get("get-by-workRequestId/:id")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA, FunctionTypeEnum.VISUALIZADOR])
+
     async getByWorkRequesId(@Param("id") id: string) {
         return await this.demandService.getByWorkRequestId(id);
     }
@@ -55,7 +55,7 @@ export class DemandBackofficeController {
     @Get("get-by-professionalId/:id")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA, FunctionTypeEnum.VISUALIZADOR])
+
     async getByProfessionalId(@Param("id") id: string) {
         return await this.demandService.listByUser(id);
     }
@@ -91,7 +91,6 @@ export class DemandBackofficeController {
     @Get("get-by-company/:id")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA, FunctionTypeEnum.VISUALIZADOR])
     async getByCompany(@Param("id") id: string) {
         return await this.demandService.listByCompany(id);
     }
@@ -99,7 +98,6 @@ export class DemandBackofficeController {
     @Get("get-by-professionalId/improvement/:id")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA, FunctionTypeEnum.VISUALIZADOR])
     async getByProfessionalIdImprovement(@Param("id") id: string) {
         return await this.demandService.listByUserImprovement(id);
     }
@@ -107,7 +105,6 @@ export class DemandBackofficeController {
     @Put("changeStatus/:id")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA, FunctionTypeEnum.VISUALIZADOR])
     async changeStatus(@Param("id") id: string, @Body() status: StatusDemandDto) {
         return await this.demandService.updateStatus(id, status);
     }
@@ -115,7 +112,6 @@ export class DemandBackofficeController {
     @Get("visit")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA, FunctionTypeEnum.VISUALIZADOR])
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
         isArray: true,
@@ -129,7 +125,6 @@ export class DemandBackofficeController {
     @Get('constructions')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA, FunctionTypeEnum.VISUALIZADOR])
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
         isArray: true,
@@ -170,7 +165,6 @@ export class DemandBackofficeController {
     @Get('status/:status')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA, FunctionTypeEnum.VISUALIZADOR])
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
         isArray: true,

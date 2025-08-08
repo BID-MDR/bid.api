@@ -33,7 +33,7 @@ export class HelpBackofficeController {
     @Post('')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA])
+    
     async register(@Req() req: Request, @Body() dto: HelpRegisterRequestDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
         const help = await this.helpService.register(userId, dto);
@@ -43,7 +43,7 @@ export class HelpBackofficeController {
     @Get('get-by-id/:id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA, FunctionTypeEnum.VISUALIZADOR])
+    
     async GetById(@Param('id') id: string) {
         const help = await this.helpService.getById(id);
         return new ResponseDto(true, help, false)
@@ -52,7 +52,7 @@ export class HelpBackofficeController {
     @Get('')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA, FunctionTypeEnum.VISUALIZADOR])
+    
     async list() {
         const help = await this.helpService.list();
         return new ResponseDto(true, help, false)
@@ -70,7 +70,7 @@ export class HelpBackofficeController {
     @Get('user/:id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA, FunctionTypeEnum.VISUALIZADOR])
+    
     async listByUser(@Param('id') id: string) {
         const help = await this.helpService.listByUser(id);
         return new ResponseDto(true, help, false)
@@ -79,7 +79,7 @@ export class HelpBackofficeController {
     @Put('update/:id/:status')
     @ApiBearerAuth()
     // @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    // @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA])
+    // 
     async updateOpen(@Param('id') id: string, @Param('status') status: string) {
         const help = await this.helpService.updateStatus(id, status);
         return new ResponseDto(true, help, false)
@@ -88,7 +88,7 @@ export class HelpBackofficeController {
     @Delete('delete-by-id/:id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA])
+    
     async delete(@Param('id') id: string) {
         return await this.helpService.delete(id);
     }
@@ -104,7 +104,6 @@ export class HelpBackofficeController {
     @Get('list-mcmv')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA, FunctionTypeEnum.VISUALIZADOR])
     async listMcmv() {
         const help = await this.helpService.listMcmv();
         return new ResponseDto(true, help, false)
