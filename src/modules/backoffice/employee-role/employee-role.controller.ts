@@ -16,14 +16,14 @@ export class EmployeeRoleBackofficeController {
   constructor(private service: EmployeeRoleBackofficeService) {}
 
   @Post("register")
-  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+  @UseGuards(JwtAccessTokenGuard)
   
   async register(@Body() dto: CreateEmployeeRoleDto) {
     return await this.service.register(dto);
   }
 
   @Get('')
-  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+  @UseGuards(JwtAccessTokenGuard)
   
   async list(){
     return await this.service.list()
