@@ -17,8 +17,6 @@ export class WorkRequestRepository extends BaseRepository<
   constructor(
     @InjectRepository(WorkRequestEntity)
     private repository: Repository<WorkRequestEntity>,
-    @InjectRepository(RoomEntity)
-    private roomRepository: Repository<RoomEntity>,
   ) {
     super(repository);
   }
@@ -33,28 +31,27 @@ export class WorkRequestRepository extends BaseRepository<
   }
 
   async updateAll(workRequestId: string, dto: UpdateWorkRequestDto) {
-console.log('id', workRequestId)
-  const workRequest = await this.repository.findOne({
-    where: { id: workRequestId },
-    relations: ['improvementRoom'],
-  });
-  console.log('workRequest', workRequest)
+    return await this.repository.manager.transaction(async (manager) => {
+      const workRequest = await manager.findOne(WorkRequestEntity, {
+        where: { id: workRequestId },
+        relations: ['improvementRoom'],
+      });
 
+      Object.assign(workRequest, dto);
 
-  Object.assign(workRequest, dto);
+      if (dto.improvementRoom) {
+        const roomRepository = manager.getRepository(RoomEntity);
+        workRequest.improvementRoom = dto.improvementRoom.map((roomDto) =>
+          roomRepository.create({
+            ...roomDto,
+            workRequestImprovementRoom: workRequest,
+          }),
+        );
+      }
 
-  if (dto.improvementRoom) {
- 
-    workRequest.improvementRoom = dto.improvementRoom.map(roomDto =>
-      this.roomRepository.create({
-        ...roomDto,
-        workRequestImprovementRoom: workRequest,
-      }),
-    );
+      return await manager.save(workRequest);
+    });
   }
-
-  return await this.repository.save(workRequest);
-}
 
   async getByUserId(userId: string) {
     const relations = [
