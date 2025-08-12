@@ -218,6 +218,9 @@ async findProfessionalBackoffice(): Promise<UserEntity[]> {
     .createQueryBuilder('user')
     .leftJoinAndSelect('user.address', 'address')
 
+    .leftJoinAndSelect('user.registerWorkList', 'registerWorkList')
+    .leftJoinAndSelect('registerWorkList.sustainabilityItens', 'sustainabilityItens')
+
     .leftJoinAndSelect('user.professionalUserInfo', 'profInfo')
         .leftJoinAndSelect('profInfo.addresses', 'addresses')
 
