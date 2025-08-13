@@ -40417,7 +40417,7 @@ var VERSION4 = new Version("17.2.2");
 
 // src/app/environment/environment.dev.ts
 var environment = {
-  apiUrl: "http://admin-appmelhoriashabitacionais.cidades.gov.br/",
+  apiUrl: "https://admin-appmelhoriashabitacionais.cidades.gov.br/",
   appUrl: "https://www.appmelhoriashabitacionais.cidades.gov.br/",
   encryptKey: "8[v(<~*JJN!@1n^?=nwqI8ofFE96npT5",
   domain: "https://www.appmelhoriashabitacionais.cidades.gov.br/"
