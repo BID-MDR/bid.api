@@ -40417,10 +40417,10 @@ var VERSION4 = new Version("17.2.2");
 
 // src/app/environment/environment.dev.ts
 var environment = {
-  apiUrl: "https://admin-appmelhoriashabitacionais.cidades.gov.br/",
-  appUrl: "https://www.appmelhoriashabitacionais.cidades.gov.br/",
+  apiUrl: "https://validacao.codefabrik.dev/",
+  appUrl: "https://bid-app-mtbc.vercel.app/",
   encryptKey: "8[v(<~*JJN!@1n^?=nwqI8ofFE96npT5",
-  domain: "https://www.appmelhoriashabitacionais.cidades.gov.br/"
+  domain: "https://bid-app-mtbc.vercel.app/"
   //domain: "bidapp.com://"
 };
 
