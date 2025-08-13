@@ -21,10 +21,10 @@ export class CostEstimateRepository extends BaseRepository<
   }
 
   async requestAdjust(costEstimateId: string, adjustDetail: string) {
-    return await this.repository.update({ id: costEstimateId }, {adjustDetails: adjustDetail, type: CostEstimateStatusEnum.CHANGE_SOLICITATION});
+    return await this.repository.update({ id: costEstimateId }, { adjustDetails: adjustDetail, type: CostEstimateStatusEnum.CHANGE_SOLICITATION });
   }
   async reproveById(costEstimateId: string) {
-    return await this.repository.update({ id: costEstimateId }, { type: CostEstimateStatusEnum.REPROVED_ESTIMATION});
+    return await this.repository.update({ id: costEstimateId }, { type: CostEstimateStatusEnum.REPROVED_ESTIMATION });
   }
   async findById(costEstimateId: string): Promise<CostEstimateEntity> {
     return await this.repository.findOne({
@@ -47,43 +47,53 @@ export class CostEstimateRepository extends BaseRepository<
 
   async findByProfessional(professionalId: any): Promise<CostEstimateEntity[]> {
     return await this.repository
-    .createQueryBuilder('costEstimate')
-    .leftJoinAndSelect('costEstimate.professional', 'professional')
-    .leftJoinAndSelect('costEstimate.rooms', 'rooms')
-    .leftJoinAndSelect('costEstimate.workRequest', 'workRequest')
-    .leftJoinAndSelect('workRequest.beneficiary', 'beneficiary')
-    .leftJoinAndSelect('beneficiary.address', 'address')
-    .leftJoinAndSelect('workRequest.room', 'room')
-    .where('costEstimate.professional = :professionalId', { professionalId })
-    .getMany();
+      .createQueryBuilder('costEstimate')
+      .leftJoinAndSelect('costEstimate.professional', 'professional')
+      .leftJoinAndSelect('costEstimate.rooms', 'rooms')
+      .leftJoinAndSelect('costEstimate.workRequest', 'workRequest')
+      .leftJoinAndSelect('workRequest.beneficiary', 'beneficiary')
+      .leftJoinAndSelect('beneficiary.address', 'address')
+      .leftJoinAndSelect('workRequest.room', 'room')
+      .where('costEstimate.professional = :professionalId', { professionalId })
+      .getMany();
   }
 
   async findByBeneficary(beneficiaryId: any): Promise<CostEstimateEntity[]> {
     return await this.repository
-    .createQueryBuilder('costEstimate')
-    .leftJoinAndSelect('costEstimate.professional', 'professional')
-    .leftJoinAndSelect('costEstimate.rooms', 'rooms')
-    .leftJoinAndSelect('costEstimate.workRequest', 'workRequest')
-    .leftJoinAndSelect('workRequest.beneficiary', 'beneficiary')
-    .leftJoinAndSelect('beneficiary.address', 'address')
-    .leftJoinAndSelect('workRequest.room', 'room')
-    .where('workRequest.beneficiary = :beneficiaryId', { beneficiaryId })
-    .getMany();
+      .createQueryBuilder('costEstimate')
+      .leftJoinAndSelect('costEstimate.professional', 'professional')
+      .leftJoinAndSelect('costEstimate.rooms', 'rooms')
+      .leftJoinAndSelect('costEstimate.workRequest', 'workRequest')
+      .leftJoinAndSelect('workRequest.beneficiary', 'beneficiary')
+      .leftJoinAndSelect('beneficiary.address', 'address')
+      .leftJoinAndSelect('workRequest.room', 'room')
+      .where('workRequest.beneficiary = :beneficiaryId', { beneficiaryId })
+      .getMany();
   }
 
-      async getByProfessionalAndStatus(professionalId: string) {
-        return this.repository.find({
-          where: {
-            professional: { id: professionalId },
-            type: Not(In(['REPROVED_ESTIMATION', 'APPROVED_ESTIMATION'])),
-          },
-          relations: ['professional', 'workRequest', 'workRequest.beneficiary'],
-        });
-      }   
+  async getByProfessionalAndStatus(professionalId: string) {
+    return this.repository.find({
+      where: {
+        professional: { id: professionalId },
+        type: Not(In(['REPROVED_ESTIMATION', 'APPROVED_ESTIMATION'])),
+      },
+      relations: ['professional', 'workRequest', 'workRequest.beneficiary'],
+    });
+  }
 
   async updateStatus(costEstimateId: string, status: CostEstimateAproveReproveRequestDto) {
-    return await this.repository.update({ id: costEstimateId }, { type: status.type});
+    return await this.repository.update({ id: costEstimateId }, { type: status.type });
   }
 
+  async countCostEstimates() {
+    const count = await this.repository.createQueryBuilder('costEstimate')
+      .where('costEstimate.type NOT IN (:...type)', {
+        type: [CostEstimateStatusEnum.APPROVED_ESTIMATION, CostEstimateStatusEnum.REPROVED_ESTIMATION],
+      })
+      .select('COUNT(costEstimate.id)', 'count')
+      .getRawOne();
+
+    return Number(count.count)
+  }
 
 }
