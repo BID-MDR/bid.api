@@ -17,6 +17,7 @@ import * as dotenv from 'dotenv';
 import { join } from 'path';
 import { WebsoketModule } from 'src/modules/data-interaction/websoket/websoket.module';
 import { BackofficeModule } from 'src/modules/backoffice/backoffice.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 dotenv.config();
 
@@ -31,13 +32,22 @@ dotenv.config();
             imports: [ConfigModule],
             inject: [ConfigService],
             useFactory: (configService: ConfigService): ServeStaticModuleOptions[] => {
+                const rootPath = join(
+                    __dirname,
+                    '..',
+                    '..',
+                    '..', 
+                    'src',
+                    'client', 
+                    'govbr-sso', 
+                    'development',
+                );
+        
+                console.log(rootPath);
+        
                 return [
                     {
-                        rootPath: join(
-                            __dirname,
-                            '..',
-                            'client/govbr-sso/' + configService.get(EnviromentVariablesEnum.NODE_ENV),
-                        ),
+                        rootPath: rootPath,
                         renderPath: '/govbr/sso',
                         exclude: ['/api/(.*)'],
                     },
@@ -45,6 +55,7 @@ dotenv.config();
             },
         }),
         EventEmitterModule.forRoot(),
+        ScheduleModule.forRoot(),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
             useFactory: (configService: ConfigService): TypeOrmModuleOptions => ({
@@ -74,4 +85,4 @@ dotenv.config();
         },
     ],
 })
-export class AppModule {}
+export class AppModule { }

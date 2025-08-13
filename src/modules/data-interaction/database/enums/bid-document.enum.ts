@@ -1,0 +1,7 @@
+export enum BidDocumentEnum {
+  ART='ART',
+  RRT ='RRT',
+  ART_BAIXADO ='ART_BAIXADO',
+  RRT_BAIXADO ='RRT_BAIXADO',
+  TERMO_DE_ACEITACAO = 'TERMO_DE_ACEITACAO'
+}

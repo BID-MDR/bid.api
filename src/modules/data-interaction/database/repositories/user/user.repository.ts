@@ -7,6 +7,9 @@ import { UpdateUserDto } from "../../dtos/user/update-user.dto";
 import { UserEntity } from "../../entitites/user.entity";
 import { UserTypeEnum } from "../../enums/user-type.enum";
 import { UserProgramTypeEnum } from "../../enums/user-program-type.enum";
+import { addMonths } from "date-fns";
+import { UpdateAddressDto } from "../../dtos/address/update-address.dto";
+import { AddressEntity } from "../../entitites/address.entity";
 
 @Injectable()
 export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -23,6 +26,7 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
       where: { id: _id },
       relations: {
         companyAdministrator: true,
+        address:true,
         employee: {
           company: true,
           roles: true,
@@ -30,6 +34,7 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
         beneficiaryUserInfo: true,
         technicalVisitsAsBeneficiary: true,
         technicalVisitsAsProfessional: true,
+        professionalUserInfo: true
       },
     });
   }
@@ -51,9 +56,47 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
     return this.repository.update(_id, { programType });
   }
 
+  async addAddress(_id: string, addressId: AddressEntity) {
+    return this.repository.update(_id, { address: addressId });
+  }
+
   async list() {
     return this.repository.find();
   }
+
+  async listBeneficiary() {
+    return this.repository.find({ where: { type: UserTypeEnum.BENEFICIARIO } });
+  }
+  async listProgramTypeMCMVBENEFICIARIO() {
+    return this.repository.find({ where: { programType: UserProgramTypeEnum.MINHA_CASA, type:UserTypeEnum.BENEFICIARIO } });
+  }
+    async listProgramTypeMCMVPROFESSIONAL() {
+    return this.repository.find({ where: { programType: UserProgramTypeEnum.MINHA_CASA, type:UserTypeEnum.PROFISSIONAL || UserTypeEnum.ARQUITETO } });
+  }
+    async listProgramTypeREGMEL() {
+    return this.repository.find({ where: { programType: UserProgramTypeEnum.REGMEL } });
+  }
+
+  async findMonth(month?: number) {
+    const now = new Date();
+
+    const query = this.repository.createQueryBuilder('user')
+      .where('user.type = :type', { type: UserTypeEnum.BENEFICIARIO })
+      .andWhere('user.programType = :programType', {
+        programType: UserProgramTypeEnum.REGMEL,
+      });
+
+    if (month && month > 0) {
+      const pastDate = addMonths(now, -month);
+      query.andWhere('user.createdAt BETWEEN :pastDate AND :now', {
+        pastDate: pastDate.toISOString(),
+        now: now.toISOString(),
+      });
+    }
+
+    return query.getMany();
+  }
+
 
   async getByCpf(cpf: string) {
     return this.repository.findOne({ where: { cpf } });
@@ -105,4 +148,94 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
       .where("user.id = :userId", { userId })
       .getOne();
   }
+
+  async findNearbyEmployees(latitude: number, longitude: number) {
+    const result = await this.repository
+      .createQueryBuilder('u')
+      .innerJoinAndSelect('u.professionalUserInfo', 'pui')
+      .innerJoinAndSelect('pui.addresses', 'addr')
+      .addSelect(
+        `ST_Distance_Sphere(POINT(addr.longitude, addr.latitude), POINT(:longitude, :latitude))`,
+        'distanceInMeters',
+      )
+      .where('u.type IN (:...types)', { types: ['PROFISSIONAL', 'ARQUITETO'] })
+      .andWhere(
+        `ST_Distance_Sphere(POINT(addr.longitude, addr.latitude), POINT(:longitude, :latitude)) <= addr.maximumDistanceToWorks * 1000`,
+      )
+      .setParameters({ longitude, latitude })
+      .getRawAndEntities();
+  
+    const employees = result.entities;
+    const rawData = result.raw;
+  
+    return employees.map((employee, index) => {
+      return {
+        ...employee,
+        distanceInMeters: rawData[index].distanceInMeters,
+      };
+    });
+  }
+
+  async findNearbyBeneficiary(
+    latitude: number,
+    longitude: number,
+    radiusInKm: number,
+  ) {
+    const radiusInMeters = radiusInKm * 1000;
+
+    const query = `
+    SELECT u.*
+    FROM user u
+    INNER JOIN address a ON a.id = u.addressId
+    WHERE u.type = 'BENEFICIARIO'
+      AND ST_Distance_Sphere(
+        point(a.longitude, a.latitude),
+        point(?, ?)
+      ) <= ?
+  `;
+
+    return this.repository.query(query, [longitude, latitude, radiusInMeters]);
+  }
+
+  async findMonthMcmv(month: number) {
+    const now = new Date();
+
+    const query = this.repository.createQueryBuilder('user')
+      .where('user.type = :type', { type: UserTypeEnum.BENEFICIARIO })
+      .andWhere('user.programType = :programType', {
+        programType: UserProgramTypeEnum.MINHA_CASA,
+      });
+
+    if (month && month > 0) {
+      const pastDate = addMonths(now, -month);
+      query.andWhere('user.createdAt BETWEEN :pastDate AND :now', {
+        pastDate: pastDate.toISOString(),
+        now: now.toISOString(),
+      });
+    }
+
+    return query.getMany();
+  }
+async findProfessionalBackoffice(): Promise<UserEntity[]> {
+  return this.repository
+    .createQueryBuilder('user')
+    .leftJoinAndSelect('user.address', 'address')
+
+    .leftJoinAndSelect('user.registerWorkList', 'registerWorkList')
+    .leftJoinAndSelect('registerWorkList.sustainabilityItens', 'sustainabilityItens')
+
+    .leftJoinAndSelect('user.professionalUserInfo', 'profInfo')
+        .leftJoinAndSelect('profInfo.addresses', 'addresses')
+
+    .where('user.programType = :programType', {
+      programType: UserProgramTypeEnum.MINHA_CASA,
+    })
+    .andWhere('user.type IN (:...types)', {
+      types: [
+        UserTypeEnum.PROFISSIONAL,
+        UserTypeEnum.ARQUITETO,
+      ],
+    })
+    .getMany();
+}
 }

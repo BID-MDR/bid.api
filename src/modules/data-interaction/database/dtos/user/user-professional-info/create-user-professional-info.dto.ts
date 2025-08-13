@@ -22,7 +22,8 @@ export class CreateUserProfessionalInfoDto {
     @IsEnum(PortifolioTypeEnum)
     portifolioType: PortifolioTypeEnum;
 
-    @ApiProperty({ example: 'https://www.linkedin.com/in/username' })
+    @ApiProperty({ example: 'https://www.linkedin.com/in/username', required: false, nullable: true })
+    @ValidateIf((o) => o.portifolioLink && o.portifolioLink.trim() !== '')
     @IsUrl({
         allow_fragments: true,
         require_protocol: true,
@@ -55,19 +56,14 @@ export class CreateUserProfessionalInfoDto {
     @ValidateIf((o) => !o.confeaRegistrationNumber)
     cauRegistrationNumber: string;
 
-    @ApiProperty({ type: CreateUserRestingDayDto, isArray: true })
-    @ValidateNested({ each: true })
-    @Type(() => CreateUserRestingDayDto)
-    @IsDefined()
-    restingDays: CreateUserRestingDayDto[];
+    @ApiProperty({ type: CreateUserRestingDayDto, isArray: true, nullable: true })
+    restingDays?: CreateUserRestingDayDto[];
 
-    @ApiProperty({ description: 'Horário militar', example: '08:00' })
-    @IsMilitaryTime()
-    worksFrom: string;
+    @ApiProperty({ description: 'Horário militar', example: '08:00', required: false })
+    worksFrom?: string;
 
-    @ApiProperty({ description: 'Horário militar', example: '18:00' })
-    @IsMilitaryTime()
-    worksTo: string;
+    @ApiProperty({ description: 'Horário militar', example: '18:00', required: false })
+    worksTo?: string;
 
     @ApiProperty({ type: CreateAddressDto, isArray: true })
     @ValidateNested({ each: true })

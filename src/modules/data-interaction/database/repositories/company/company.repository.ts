@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { BaseRepository } from "../../../../../core/repositories/base.repository";
 import { CompanyEntity } from "../../entitites/company.entity";
+import { addMonths } from "date-fns";
 
 @Injectable()
 export class CompanyRepository extends BaseRepository<CompanyEntity, any, any> {
@@ -16,6 +17,30 @@ export class CompanyRepository extends BaseRepository<CompanyEntity, any, any> {
     });
 
   }
+  async getCompanyById(id: string) {
+    return this.repository.findOne({
+        where: { id:  id  },
+        relations: ['employees', 'demands', 'userAdmin'],
+    });
+
+  }
+  
+  async findMonth(month?: number) {
+    const now = new Date();
+
+    const query = this.repository.createQueryBuilder('company');
+
+    if (month && month > 0) {
+      const pastDate = addMonths(now, -month);
+      query.where('company.createdAt BETWEEN :pastDate AND :now', {
+        pastDate: pastDate.toISOString(),
+        now: now.toISOString(),
+      });
+    }
+
+    return query.getMany();
+  }
+
 
   async getByEmployee(userId: string){
     return  this.repository.createQueryBuilder("company")
@@ -32,5 +57,18 @@ export class CompanyRepository extends BaseRepository<CompanyEntity, any, any> {
     .leftJoinAndSelect("employees.user", "user")
     .getMany();
     
+  }
+
+  async updateUserAdmin(companyId: string, userAdminId: string): Promise<CompanyEntity> {
+    await this.repository.createQueryBuilder()
+      .update(CompanyEntity)
+      .set({ userAdmin: { id: userAdminId } })
+      .where("id = :companyId", { companyId })
+      .execute();
+  
+    return this.repository.findOne({
+      where: { id: companyId },
+      relations: ['userAdmin'],
+    });
   }
 }

@@ -6,16 +6,17 @@ import { CreateCompanyDto } from "src/modules/data-interaction/database/dtos/com
 import { RolesBackofficeGuard } from "src/core/guards/roles-backoffice.guard";
 import { FunctionTypeEnum } from "../user/dto/functionTypeEnum";
 import { Roles } from "src/core/decorators/roles-backoffice.decorator";
+import { UserBackofficeTypeEnum } from "src/modules/backoffice/user/dto/userTypeEnum";
 
 @Controller("company-backoffice")
 @ApiTags("Company Backoffice")
 export class CompanyBackofficeController {
   private readonly _logger = new Logger(CompanyBackofficeController.name);
-  constructor(private service: CompanyBackofficeService) {}
+  constructor(private service: CompanyBackofficeService) { }
 
   @Post("register")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+  @UseGuards(JwtAccessTokenGuard)
   @Roles([FunctionTypeEnum.GERIR_EMPRESAS])
   async register(@Body() dto: CreateCompanyDto) {
     return await this.service.register(dto);
@@ -24,31 +25,42 @@ export class CompanyBackofficeController {
 
   @Get("")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_EMPRESAS])
+  @UseGuards(JwtAccessTokenGuard)
   async list() {
     return await this.service.list();
   }
 
+  @Get("get-month/:month")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  async listByMonth(@Param('month') month) {
+    return await this.service.listByMonth(month);
+  }
+
+  @Get("by-id/:id")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  async getById(@Param('id') id: string) {
+    return await this.service.getById(id);
+  }
+
   @Get("by-owner/:id")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_EMPRESAS])
+  @UseGuards(JwtAccessTokenGuard)
   async getByOwner(@Param('id') id: string) {
     return await this.service.getByOwner(id);
   }
 
   @Get("by-employee/:id")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_EMPRESAS])
+  @UseGuards(JwtAccessTokenGuard)
   async getByEmployee(@Param('id') id: string) {
     return await this.service.getByEmployee(id);
   }
 
   @Delete("by-id/:id")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+  @UseGuards(JwtAccessTokenGuard)
   @Roles([FunctionTypeEnum.GERIR_EMPRESAS])
   async delete(@Param('id') id: string) {
     return await this.service.delete(id);

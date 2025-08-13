@@ -1,10 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { totp } from 'otplib';
 import { EnviromentVariablesEnum } from 'src/core/enums/environment-variables.enum';
 import { BaseService } from 'src/core/services/base.service';
-import { commonPropertyTransfer } from 'src/core/utils/common-property-transfer.util';
+import { UpdateAddressDto } from 'src/modules/data-interaction/database/dtos/address/update-address.dto';
+import { MediaUploadDto } from 'src/modules/data-interaction/database/dtos/media/media-upload.dto';
 import { CreateUserDto } from 'src/modules/data-interaction/database/dtos/user/create-user.dto';
 import { UpdateUserProgramTypeDto } from 'src/modules/data-interaction/database/dtos/user/update-user-program-type.dto';
 import { UpdateUserDto } from 'src/modules/data-interaction/database/dtos/user/update-user.dto';
@@ -13,6 +14,12 @@ import { UserOtpRequestEntity } from 'src/modules/data-interaction/database/enti
 import { UserEntity } from 'src/modules/data-interaction/database/entitites/user.entity';
 import { UserOtpStatusEnum } from 'src/modules/data-interaction/database/enums/user-otp.enum';
 import { AddressRepository } from 'src/modules/data-interaction/database/repositories/address.repository';
+import { ContractResignedRepository } from 'src/modules/data-interaction/database/repositories/contract-resigned/contract-resigned.repository';
+import { ContractRepository } from 'src/modules/data-interaction/database/repositories/contract/contract.repository';
+import { CostEstimateRepository } from 'src/modules/data-interaction/database/repositories/costEstimate/costEstimate.repository';
+import { ImprovementProjectRepository } from 'src/modules/data-interaction/database/repositories/improvement-project/improvement-project.repository';
+import { RegisterWorkRepository } from 'src/modules/data-interaction/database/repositories/registerWork/registerWork.repository';
+import { TechnicalVisitRepository } from 'src/modules/data-interaction/database/repositories/technical-visit.repository';
 import { UserAppointmentRepository } from 'src/modules/data-interaction/database/repositories/user/user-appointment.repository';
 import { UserBeneficiaryInfoRepository } from 'src/modules/data-interaction/database/repositories/user/user-beneficiary-info.repository';
 import { UserProfessionalInfoRepository } from 'src/modules/data-interaction/database/repositories/user/user-professional-info.repository';
@@ -24,10 +31,7 @@ import { ConfeaFacade } from 'src/modules/data-interaction/facade/apis/gov/confe
 import { StorageFacade } from 'src/modules/data-interaction/facade/apis/storage/storage.facade';
 import { ConfirmPasswordUpdateRequestDto } from './dtos/confirm-password-update.request.dto';
 import { ProfessionalCouncilRegistrationResponseDto } from './dtos/professional-council-resgistration-reponse.dto';
-import { CreateAddressDto } from 'src/modules/data-interaction/database/dtos/address/create-address.dto';
-import { UpdateAddressDto } from 'src/modules/data-interaction/database/dtos/address/update-address.dto';
-import { CreateUserGeneratedMediaDto } from 'src/modules/data-interaction/database/dtos/user/user-generated-media/create-user-generated-media.dto';
-import { MediaUploadDto } from 'src/modules/data-interaction/database/dtos/media/media-upload.dto';
+import { ProfessionalNotFoundRequestDto } from './dtos/professional-not-found.request.dto';
 
 @Injectable()
 export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, UpdateUserDto> {
@@ -43,6 +47,12 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         private readonly emailFacade: EmailFacade,
         private readonly storageFacade: StorageFacade,
         private readonly configService: ConfigService,
+        private readonly technicalVisitRepo: TechnicalVisitRepository,
+        private readonly costEstimateRepo: CostEstimateRepository,
+        private readonly improvementProjectRepo: ImprovementProjectRepository,
+        private readonly registerWorkRepo: RegisterWorkRepository,
+        private readonly contractResignedRepo: ContractResignedRepository,
+        private readonly contractRepo: ContractRepository
     ) {
         super(userRepository);
     }
@@ -56,16 +66,24 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
     }
 
     async create(data: CreateUserDto): Promise<UserEntity> {
-        data.password = await this.hashStringData(data.password);
-        if (typeof data.profilePicture !== 'string') {
-            data.profilePicture = await this.storageFacade.uploadMedia(
-                data.uploadedProfilePicture.mimeType,
-                data.uploadedProfilePicture.fileName,
-                data.uploadedProfilePicture.data,
-            );
-        }
+        data.password = bcrypt.hash(data.password, 13).toString();
+        try {
+            const userResponse = await super.create(data)
 
-        return await super.create(data);
+            if (data.uploadedProfilePicture && typeof data.uploadedProfilePicture !== 'string') {
+                const media = await this.storageFacade.uploadMedia(
+                    data.uploadedProfilePicture.mimeType,
+                    data.uploadedProfilePicture.fileName,
+                    data.uploadedProfilePicture.data,
+                );
+                const result = await this.userRepository.updateProfilePicture(userResponse.id, media)
+            }
+            return userResponse
+
+        } catch (error) {
+            console.error('❌ Erro ao criar registro:', error);
+            throw new InternalServerErrorException('Erro ao criar registro');
+        }
     }
 
     async updateById(id: string, data: any) {
@@ -133,7 +151,7 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         }
 
         if (data.professionalUserInfo) {
-            user.professionalUserInfo = commonPropertyTransfer(data.professionalUserInfo, user.professionalUserInfo);
+            //user.professionalUserInfo = commonPropertyTransfer(data.professionalUserInfo, user.professionalUserInfo);
             if (data.professionalUserInfo.restingDays) {
                 const oldRestingDays = await this.userRestingdayRepository.findAllByUserProfessionalInfoId(
                     data.professionalUserInfo.id,
@@ -183,8 +201,23 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
 
 
     async updateAddress(dto: UpdateAddressDto) {
-        const update = await this.addressRepository.update(dto.id, dto)
-        return update
+
+        if (dto.id && dto.id !== '') {
+            delete dto.userId
+            const update = await this.addressRepository.update(dto.id, dto)
+            return update
+        } else {
+            delete dto.id
+            const addressRes = await this.addressRepository.create(dto)
+            const user = await this.userRepository.findById(dto.userId)
+
+            addressRes.user = user
+            user.address = addressRes
+            await addressRes.save()
+            await user.save()
+            return addressRes.reload()
+        }
+
     }
 
     async updateProfilePicture(userId: string, dto: MediaUploadDto) {
@@ -206,28 +239,28 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
             step: 300,
         };
         const token = totp.generate(this.configService.get(EnviromentVariablesEnum.OTP_TOKEN));
-    
+
         const user = await this.findById(userId);
         if (!user) {
             throw new Error('User not found');
         }
-    
+
         const otpRequest = new UserOtpRequestEntity();
         otpRequest.token = await this.hashStringData(token);
         otpRequest.user = user;
-    
+
         await otpRequest.save();
-    
+
         user.otpRequest = otpRequest;
         await user.save();
-    
+
         await this.emailFacade.sendPasswordResetCodeEmail(token, user.email);
     }
 
     async verifyToken(userId: string, token: string) {
         const user = await this.findById(userId);
 
-   
+
         totp.options = {
             digits: 6,
             step: 300,
@@ -236,7 +269,6 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
 
         try {
             const valid = totp.check(token, this.configService.get(EnviromentVariablesEnum.OTP_TOKEN));
-            console.log(valid, '<--')
             if (valid) {
                 user.otpRequest.status = UserOtpStatusEnum.VERIFIED;
                 await user.otpRequest.save();
@@ -285,8 +317,31 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
         return await this.userRepository.list();
     }
 
+    async findNearbyEmployees(latitude: number,
+        longitude: number) {
+        return await this.userRepository.findNearbyEmployees(latitude, longitude);
+    }
+
+    async findNearbyBeneficiary(latitude: number,
+        longitude: number,
+        radiusInKm: number,) {
+        return await this.userRepository.findNearbyBeneficiary(latitude, longitude, radiusInKm);
+    }
+
+    async listBeneficiary() {
+        return await this.userRepository.listBeneficiary();
+    }
+
+    async listBeneficiaryByMonth(month: number) {
+        return await this.userRepository.findMonth(month);
+    }
+
     async getByCpf(cpf: string) {
         return await this.userRepository.findByCpf(cpf);
+    }
+
+    async getById(id: string) {
+        return await this.userRepository.getById(id);
     }
 
     private async hashStringData(stringData: string): Promise<string> {
@@ -299,6 +354,37 @@ export class FeatureUserService extends BaseService<UserEntity, CreateUserDto, U
     async getDashboardDataWithJoinProfessional(userId: string) {
         // Example of performing a join to fetch additional data from other tables
         return await this.userRepository.getDashboardDataWithJoinProfessional(userId);
+    }
+
+    async listAppoitmentByProfessionalId(professionalId: string) {
+        const techVisitList = (await this.technicalVisitRepo.getByProfessionalAndStatus(professionalId))
+            .map(item => ({ ...item, source: 'TechnicalVisit' }));
+        const costEstimateList = (await this.costEstimateRepo.getByProfessionalAndStatus(professionalId))
+            .map(item => ({ ...item, source: 'CostEstimate' }));
+        const improvementProjectList = (await this.improvementProjectRepo.getByProfessionalAndStatus(professionalId))
+            .map(item => ({ ...item, source: 'ImprovementProject' }));
+        const registerWorkList = (await this.registerWorkRepo.getByProfessionalAndStatus(professionalId))
+            .map(item => ({ ...item, source: 'RegisterWork' }));
+        const contractResignedList = (await this.contractResignedRepo.getByProfessionalAndStatus(professionalId))
+            .map(item => ({ ...item, source: 'ContractResigned' }));
+        const contractList = (await this.contractRepo.getByProfessionalAndStatus(professionalId))
+            .map(item => ({ ...item, source: 'Contract' }));
+
+        const allAppointments = [
+            ...techVisitList,
+            ...costEstimateList,
+            ...improvementProjectList,
+            ...registerWorkList,
+            ...contractResignedList,
+            ...contractList,
+        ];
+        return allAppointments
+    }
+
+    async notifyProfessionalNotFound(
+        dto: ProfessionalNotFoundRequestDto,
+    ): Promise<void> {
+        await this.emailFacade.sendProfessionalNotFoundEmail(dto);
     }
 
 }

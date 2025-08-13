@@ -1,0 +1,6 @@
+export enum SurveyStatusEnum {
+    REALIZADA = 'REALIZADA',
+    CANCELADA = 'CANCELADA',
+    NAO_REALIZADA = 'NAO_REALIZADA',
+    PENDENTE = 'PENDENTE',
+}

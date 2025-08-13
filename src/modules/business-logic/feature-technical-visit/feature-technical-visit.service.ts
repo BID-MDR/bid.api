@@ -1,10 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { BaseService } from 'src/core/services/base.service';
 import { CreateTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/create-technical-visit.dto';
 import { UpdateTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/update-technical-visit.dto';
 import { TechnicalVisitEntity } from 'src/modules/data-interaction/database/entitites/technical-visit.entity';
+import { TechnicalVisitRegisterWorkEnum } from 'src/modules/data-interaction/database/enums/technical-visit-register-work-type.enum';
+import { RegisterWorkRepository } from 'src/modules/data-interaction/database/repositories/registerWork/registerWork.repository';
 import { TechnicalVisitRepository } from 'src/modules/data-interaction/database/repositories/technical-visit.repository';
 import { UserRepository } from 'src/modules/data-interaction/database/repositories/user/user.repository';
+import { WorkRequestRepository } from 'src/modules/data-interaction/database/repositories/work-request/work-request.repository';
+import { NotificationMessageService } from '../notification-msg/notification-message.service';
+import { ConstructionsStatusEnum } from 'src/modules/data-interaction/database/enums/constructions-stauts.enum';
+import { TechnicalVisitTypeEnum } from 'src/modules/data-interaction/database/enums/technical-visit-type.enum';
+import { RescheduleTechnicalVisitDto } from 'src/modules/data-interaction/database/dtos/technical-visit/reschedule-technical-visit.dto';
+import { TechnicalVisitStatusEnum } from 'src/modules/data-interaction/database/enums/technical-visit-status.enum';
+import { ContractRepository } from 'src/modules/data-interaction/database/repositories/contract/contract.repository';
+import { CreateTechnicalVisitUpdateImprovementProjectDto } from 'src/modules/data-interaction/database/dtos/technical-visit/create-technical-visit-update-improvement-project.dto';
+import { ImprovementProjectRepository } from 'src/modules/data-interaction/database/repositories/improvement-project/improvement-project.repository';
+import { UnavailabilityRepository } from 'src/modules/data-interaction/database/repositories/unavailability/unavailability.repository';
 
 @Injectable()
 export class FeatureTechnicalVisitService extends BaseService<
@@ -15,28 +27,197 @@ export class FeatureTechnicalVisitService extends BaseService<
     constructor(
         private technicalVisitRepository: TechnicalVisitRepository,
         private readonly userRepository: UserRepository,
+        private workRequestRepository: WorkRequestRepository,
+        private registerWorkRepo: RegisterWorkRepository,
+        private contractRepository: ContractRepository,
+        private notifcationMsgService: NotificationMessageService,
+        private improvementProjectRepo: ImprovementProjectRepository,
+        private unaVailabilityRepo: UnavailabilityRepository
     ) {
         super(technicalVisitRepository);
     }
 
     async getByProfessional(professionalId: string) {
+        const professional = await this.userRepository.findById(professionalId)
+        if (!professional) throw new NotFoundException('Professional not found!')
+
         return await this.technicalVisitRepository.getByProfessional(professionalId);
     }
+     
+    async getById(id: string) {
+        return await this.technicalVisitRepository.getById(id);
+    }
+    
+    async getByProfessionalVisitaTecnicaAgendada(professionalId: string) {
+        const professional = await this.userRepository.findById(professionalId)
+        if (!professional) throw new NotFoundException('Professional not found!')
 
-    async schedule(dto: CreateTechnicalVisitDto) {
+        return await this.technicalVisitRepository.getByProfessionalVisitaTecnicaAgendada(professionalId);
+    }
+
+    async schedule(userId: string ,dto: CreateTechnicalVisitDto) {
+
+        const userCreate = await this.userRepository.findById(userId)
+        dto.userCreate = userCreate;
         const beneficiary = await this.userRepository.getById(dto.beneficiaryId);
         dto.beneficiary = beneficiary;
         const professional = await this.userRepository.getById(dto.professionalId);
-        dto.professional= professional;
-        // const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
-        // dto.workRequest = workRequest;
-
-        return await this.technicalVisitRepository.create(dto)
+        dto.professional = professional;
+        const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
+        dto.workRequest = workRequest;
+        dto.type = TechnicalVisitTypeEnum.CADASTRO_DE_OBRA
+        dto.status = !dto.status ? dto.status : TechnicalVisitStatusEnum.AGENDADA
+        const technicalVisit = await this.technicalVisitRepository.create(dto)
+        this.registerWorkRepo.updateStatus(dto.registerWorkId, ConstructionsStatusEnum.REGISTRATION_SCHEDULE)
+    
+        return technicalVisit
     }
 
-    // async findByUserId(userId: string) {
-    //     return await this.workRequestRepository.findByUserId(userId);
-    // }
+    async scheduleTechnicalVisit(userId: string ,dto: CreateTechnicalVisitDto) {
+       
+        const userCreate = await this.userRepository.findById(userId)
+        dto.userCreate = userCreate;
+        const beneficiary = await this.userRepository.getById(dto.beneficiaryId);
+        dto.beneficiary = beneficiary;
+        const professional = await this.userRepository.getById(dto.professionalId);
+        dto.professional = professional;
+        const restingDays = professional
+                .professionalUserInfo
+                ?.restingDays
+                .map(r => r.day.toUpperCase())   
+                ?? [];
+
+        if(dto.from) {
+        const dayName = new Date(dto.from)
+                .toLocaleDateString('pt-BR', { weekday: 'long' })
+                .toUpperCase();    
+
+            if (restingDays.includes(dayName)) {
+                throw new BadRequestException(
+                `Não é possível agendar em ${dayName.toLowerCase()}, dia de descanso do profissional.`
+                );
+            }
+        }
+    
+        const hasTechVisit = await this.technicalVisitRepository.getByProfessionalAndDateVisitaTecnicaAgendada(dto.professionalId, dto.from, dto.to)
+        if (hasTechVisit && hasTechVisit.length > 0) return 'O profissional tem uma visita no horário selecionado'
+        if(dto.from && dto.to){
+            const hasUnavailability = await this.unaVailabilityRepo.findByUserAndDateRange(dto.professionalId, dto.from, dto.to)
+            if(hasUnavailability && hasUnavailability.length > 0) return 'O profissional está indisponível nesse horário'
+        }
+ 
+        const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
+        dto.workRequest = workRequest;
+        dto.type = dto.type ? dto.type : TechnicalVisitTypeEnum.VISITA_TECNICA
+        dto.status = dto.status ? dto.status : TechnicalVisitStatusEnum.SOLICITACAO;
+        const technicalVisit = await this.technicalVisitRepository.create(dto)
+        if(dto.type === TechnicalVisitTypeEnum.CONCLUSAO_DE_OBRA) {
+        this.registerWorkRepo.updateStatus(dto.registerWorkId, ConstructionsStatusEnum.WORK_CONCLUSION)
+        }
+        if(dto.type === TechnicalVisitTypeEnum.CADASTRO_DE_OBRA) {
+        this.registerWorkRepo.updateStatus(dto.registerWorkId, ConstructionsStatusEnum.WORK_REGISTRATION)
+        }
+
+        return technicalVisit
+    }
+
+    async scheduleStatusReport(userId: string ,dto: CreateTechnicalVisitDto) {
+        const userCreate = await this.userRepository.findById(userId)
+        dto.userCreate = userCreate;
+        const beneficiary = await this.userRepository.getById(dto.beneficiaryId);
+        dto.beneficiary = beneficiary;
+        const professional = await this.userRepository.getById(dto.professionalId);
+        dto.professional = professional;
+        const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
+        dto.workRequest = workRequest;
+        dto.type = dto.type
+        dto.status = dto.status;
+        const technicalVisit = await this.technicalVisitRepository.create(dto)
+
+        return technicalVisit
+    }
+
+    async scheduleTechnicalVisitAndUpdateImprovementProject(dto: CreateTechnicalVisitUpdateImprovementProjectDto) {
+        const userCreate = await this.userRepository.findById(dto.professionalId)
+        if(!userCreate) throw new NotFoundException('User not found!')
+        dto.userCreate = userCreate;
+        const beneficiary = await this.userRepository.getById(dto.beneficiaryId);
+        if(!beneficiary) throw new NotFoundException(' Beneficiary not found!')
+        dto.beneficiary = beneficiary;
+        const professional = await this.userRepository.getById(dto.professionalId);
+        if(!professional) throw new NotFoundException(' Professional not found!')
+        dto.professional = professional;
+        const workRequest = await this.workRequestRepository.findById2(dto.workRequestId);
+        if(!workRequest) throw new NotFoundException(' WorkRequest not found!!!')
+        dto.workRequest = workRequest;
+        const improvement_project = await this.improvementProjectRepo.findWorkRequest(dto.workRequestId)
+        if(!improvement_project) throw new NotFoundException(' Project not found!')
+        await this.improvementProjectRepo.updateStatusProjectDelivery(improvement_project.id)
+        return await this.technicalVisitRepository.create(dto)
+        
+    }
+    async reScheduleVisit(technicalVisitId: string ,dto: RescheduleTechnicalVisitDto) {
+        const technicalVisit = await this.technicalVisitRepository.findById(technicalVisitId)
+        if(!technicalVisit) throw new NotFoundException('Technical visit not found!')
+        delete dto.registerWorkId
+        technicalVisit.from = dto.from
+        technicalVisit.to = dto.to
+        technicalVisit.duration = dto.duration ? dto.duration : technicalVisit.duration
+        technicalVisit.status = TechnicalVisitStatusEnum.AGENDADA
+        await technicalVisit.save()
+        return await technicalVisit.reload()
+    }
+
+    async scheduleRegistertWorkTechnicalVisit(dto: CreateTechnicalVisitDto) {
+        const beneficiary = await this.userRepository.getById(dto.beneficiaryId);
+        dto.beneficiary = beneficiary;
+        const professional = await this.userRepository.getById(dto.professionalId);
+        dto.professional = professional;
+        const workRequest = await this.workRequestRepository.findById(dto.workRequestId);
+        dto.workRequest = workRequest;
+        const contract = await this.contractRepository.findById(dto.contractId);
+        dto.contract = contract;
+        if (dto.beginningOrEnd) {
+            if (dto.beginningOrEnd === TechnicalVisitRegisterWorkEnum.BEGINNING) {
+                const registerWork = await this.registerWorkRepo.findById(dto.registerWorkBeginningId);
+                dto.registerWorkBeginning = registerWork;
+            } else {
+                const registerWork = await this.registerWorkRepo.findById(dto.registerWorkClosureId);
+                dto.reregisterWorkClosure = registerWork;
+            }
+           
+        }
+        const techVisit = await this.technicalVisitRepository.create(dto)
+        if(dto.msgType && dto.msgType !== '') {
+            if(beneficiary) {
+                const msg = {
+                    content: ''
+                }
+            if(dto.msgType === 'PROJETO_DE_MELHORIA') {
+                msg.content = `${professional.name} solicitou a entrega e assinatura do contrato para o dia ${dto.to}`
+                await this.notifcationMsgService.register(beneficiary.id, msg)
+
+            } else if (dto.msgType === 'CADASTRO_DE_OBRA') {
+                msg.content = `${professional.name} solicitou o cadastro da obra para o dia ${dto.to}`
+                await this.notifcationMsgService.register(beneficiary.id, msg)
+
+            } else if (dto.msgType === 'CONCLUSÃO_DE_OBRA') {
+                msg.content = `${professional.name} solicitou a conclusão da obra para o dia${dto.to}`
+                await this.notifcationMsgService.register(beneficiary.id, msg)
+
+            }else {
+                throw new NotFoundException('To send a msg sucessfuly, property msgType must be  CADASTRO_DE_OBRA , CONCLUSÃO_DE_OBRA or PROJETO_DE_MELHORIA')
+            }
+            }
+        }
+
+
+        return techVisit
+    }
+
+    async findByBeneficiaryId(beneficiaryId: string) {
+        return await this.technicalVisitRepository.getByBeneficiary(beneficiaryId);
+    }
 
     // async create(data: CreateTechnicalVisitDto) {
     //     for (const iterator of data.picturesAndVideos) {

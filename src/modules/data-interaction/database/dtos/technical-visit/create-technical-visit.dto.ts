@@ -1,18 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsUUID } from 'class-validator';
+import { IsDate, IsEnum, IsUUID } from 'class-validator';
 import { UserEntity } from '../../entitites/user.entity';
 import { Type } from 'class-transformer';
+import { WorkRequestEntity } from '../../entitites/work-request.entity';
+import { TechnicalVisitStatusEnum } from '../../enums/technical-visit-status.enum';
+import { TechnicalVisitTypeEnum } from '../../enums/technical-visit-type.enum';
+import { RegisterWorkEntity } from '../../entitites/register-work.entity';
+import { TechnicalVisitRegisterWorkEnum } from '../../enums/technical-visit-register-work-type.enum';
+import { ContractEntity } from '../../entitites/contract.entity';
 
 export class CreateTechnicalVisitDto {
     @ApiProperty()
-    @IsDate()
     @Type(() => Date)
     from: Date;
 
-    @ApiProperty()
-    @IsDate()
+    @ApiProperty({ required: false })
     @Type(() => Date)
-    to: Date;
+    to?: Date;
 
     @ApiProperty()
     @IsUUID()
@@ -20,7 +24,48 @@ export class CreateTechnicalVisitDto {
     professional: UserEntity;
 
     @ApiProperty()
+    userCreateId?: string;
+    userCreate?: UserEntity;
+
+    @ApiProperty({ required: false })
+    beneficiaryId?: string;
+    beneficiary?: UserEntity;
+
+    @ApiProperty({ required: false })
+    contractId?: string;
+    contract?: ContractEntity;
+
+    @ApiProperty()
     @IsUUID()
-    beneficiaryId: string;
-    beneficiary: UserEntity;
+    workRequestId?: string;
+    workRequest?: WorkRequestEntity;
+    
+    @ApiProperty()
+    type?: TechnicalVisitTypeEnum;
+
+    @ApiProperty()
+    status?: TechnicalVisitStatusEnum;
+
+    @ApiProperty()
+    duration?: number;
+
+    @ApiProperty()
+    distanceInMeters?: number;
+
+    @ApiProperty()
+    registerWorkBeginningId?: string;
+    registerWorkBeginning?: RegisterWorkEntity;
+
+    @ApiProperty()
+    registerWorkClosureId?: string;
+    reregisterWorkClosure?: RegisterWorkEntity;
+
+    @ApiProperty({ enum: TechnicalVisitRegisterWorkEnum })
+    beginningOrEnd?: TechnicalVisitRegisterWorkEnum;
+
+    @ApiProperty({example: 'CADASTRO_DE_OBRA || PROJETO_DE_MELHORIA | CONCLUSÃO_DE_OBRA'  })
+    msgType?: string;
+
+    registerWorkId?: string;
+
 }

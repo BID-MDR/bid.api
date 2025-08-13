@@ -9,38 +9,66 @@ import { UserRepository } from "src/modules/data-interaction/database/repositori
 import { CompanyRepository } from "../../data-interaction/database/repositories/company/company.repository";
 import { TechnicalVisitStatusEnum } from "../../data-interaction/database/enums/technical-visit-status.enum";
 import { ConstructionsStatusEnum } from "../../data-interaction/database/enums/constructions-stauts.enum";
+import { NotificationMessageService } from "../notification-msg/notification-message.service";
+import { AwsSubsystem } from "src/modules/data-interaction/facade/apis/storage/aws.subsystem";
+import { RoomSolutionRepository } from "src/modules/data-interaction/database/repositories/room/room-solution.repository";
+import { UserGeneratedMediaRepository } from "src/modules/data-interaction/database/repositories/user/user-generated-media.repository";
+import { MediaTypeEnum } from "src/modules/data-interaction/database/enums/media-type.enum";
 
 @Injectable()
 export class DemandService extends BaseService<DemandEntity, DemandRegisterRequestDto, DemandRegisterRequestDto> {
   constructor(
     private demandRepository: DemandRepository,
     private companyRepository: CompanyRepository,
-    private readonly userRepository: UserRepository
+    private readonly userRepository: UserRepository,
+    private readonly notificationMsgService: NotificationMessageService,
+    private readonly S3: AwsSubsystem,
+    private readonly roomSolutionService: RoomSolutionRepository,
+    private readonly userGeneratedMediaRepository: UserGeneratedMediaRepository
+
+    
   ) {
     super(demandRepository);
   }
 
   async listByUser(userId: string) {
     const user = await this.userRepository.getById(userId);
-    const companyId = user.employee.company.id || user.companyAdministrator.id;
-    return await this.demandRepository.listByUser(userId, companyId);
+
+    return await this.demandRepository.listByUser(userId);
+
+  }
+
+  async listByBeneficiary(userId: string) {
+
+    return await this.demandRepository.listByUser(userId);
+
+  }
+
+  async getById(demandId: string) {
+    return await this.demandRepository.getById2(demandId);
+  }
+
+  async countSustainability(document: string){
+    return await this.demandRepository.countSustainabilityItems(document);
   }
 
   async listForVisit(userId: string) {
     const user = await this.userRepository.getById(userId);
-    const companyId = user.employee.company.id || user.companyAdministrator.id;
-    return await this.demandRepository.listForVisit(companyId);
+    if(user?.companyAdministrator?.id)
+      return await this.demandRepository.listForVisit(user.companyAdministrator.id);
+    else if(user?.employee?.company?.id)
+      return await this.demandRepository.listForVisit(user.employee.company.id);
   }
 
   async listForConstructions(userId: string) {
     const user = await this.userRepository.getById(userId);
-    const companyId = user.employee.company.id || user.companyAdministrator.id;
+    const companyId = user?.companyAdministrator?.id || user?.employee?.company?.id;
     return await this.demandRepository.listForConstructions(companyId);
   }
 
   async listByUserImprovement(userId: string) {
     const user = await this.userRepository.getById(userId);
-    const companyId = user.employee.company.id || user.companyAdministrator.id;
+    const companyId = user?.companyAdministrator?.id || user?.employee?.company?.id;
     return await this.demandRepository.listByUserWaitImprove(companyId);
   }
 
@@ -49,7 +77,7 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
   }
 
   async updateStatus(id: string, dto: StatusDemandDto) {
-    const demand = await this.demandRepository.findById(id);
+    const demand = await this.demandRepository.getById(id);
 
     const { status } = dto;
 
@@ -78,8 +106,9 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
       throw new BadRequestException("Não é possível alterar para um status anterior.");
     }
 
+
     this.checkStatusForWorkRequest(demand, status);
-    this.checkStatusForImprovement(demand, status);
+    // this.checkStatusForImprovement(demand, status);
     this.checkStatusForConstruction(demand, status);
 
     demand.status = status;
@@ -89,27 +118,88 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
   async list() {
     return await this.demandRepository.list();
   }
-
+  async registerSingleDemand(userId: string, data: DemandRegisterRequestDto) {
+    try{
+      data.document = data.document.replace(/\D/g, '');
+      const professional = await this.userRepository.getById(userId);
+      if (!professional) {
+        throw new BadRequestException("Professional não encontrado.");
+      }
+  
+      data.company = await this.companyRepository.findById(professional.employee.company.id);
+      
+  
+      if (!data.company) {
+        throw new BadRequestException("Empresa não encontrada.");
+      }
+  
+      data.beneficiary = await this.userRepository.getByCpf(data.document);
+  
+      if (!data.beneficiary) {
+        throw new BadRequestException("Beneficiário não encontrado.");
+      }
+  
+      const demand = await super.create(data);
+      const msgDto = {
+        content: `${professional.name} cadastrou seu CPF e será responsável pela sua obra de melhoria`,
+  
+      }
+  
+      const msgProfessionalDto = {
+        content: `Você cadastrou o uma demanda para ${data.beneficiary.name}`,
+  
+      }
+      await this.notificationMsgService.register(data.beneficiary.id, msgDto)
+  
+      await this.notificationMsgService.register(professional.id, msgProfessionalDto)
+      return demand
+    } catch (error) {
+      
+    }
+  }
   async register(userId: string, data: DemandRegisterRequestDto) {
-    const professional = await this.userRepository.getById(userId);
+    try{
 
-    if (!professional) {
-      throw new BadRequestException("Professional não encontrado.");
+     data.document =  data.document.replace(/\D/g, '');
+      
+      const professional = await this.userRepository.getById(userId);
+      if (!professional) {
+        throw new BadRequestException("Professional não encontrado.");
+      }
+  
+      if(professional?.employee?.company.id){
+        data.company = await this.companyRepository.findById(professional.employee.company.id);
+      }
+      else if(professional?.companyAdministrator){
+        data.company = await this.companyRepository.findById(professional.companyAdministrator.id);
+      }
+  
+      if (!data.company) {
+        throw new BadRequestException("Empresa não encontrada.");
+      }
+  
+      const beneficiary = await this.userRepository.getByCpf(data.document);
+      if(beneficiary){
+        data.beneficiary = beneficiary
+      }
+  
+      const demand = await super.create(data);
+      const msgDto = {
+        content: `${professional.name} cadastrou seu CPF e será responsável pela sua obra de melhoria`,
+  
+      }
+  
+      const msgProfessionalDto = {
+        content: `Você cadastrou o uma demanda para ${data.beneficiary.name}`,
+  
+      }
+      await this.notificationMsgService.register(data.beneficiary.id, msgDto)
+  
+      await this.notificationMsgService.register(professional.id, msgProfessionalDto)
+      return demand
+    } catch (error) {
+      
     }
-
-    data.company = await this.companyRepository.findById(professional.employee.company.id);
-
-    if (!data.company) {
-      throw new BadRequestException("Empresa não encontrada.");
-    }
-
-    data.beneficiary = await this.userRepository.getByCpf(data.document);
-
-    if (!data.beneficiary) {
-      throw new BadRequestException("Beneficiário não encontrado.");
-    }
-
-    return await super.create(data);
   }
 
   async delete(demandId: string) {
@@ -213,4 +303,33 @@ export class DemandService extends BaseService<DemandEntity, DemandRegisterReque
 
     return statusOrder.indexOf(status) <= statusOrder.indexOf(newStatus);
   }
+    async firstStepPhotos(
+      roomSolutionId: string,
+      files: Array<Express.Multer.File>,
+    ) {
+      if (!files.length) {
+        throw new BadRequestException("Files are required");
+      }
+  
+      const roomSolution = await this.roomSolutionService.findById(roomSolutionId);
+      if (!roomSolution) {
+        throw new BadRequestException("Room solution not found");
+      }
+  
+      for (const file of files) {
+        const name = "construction-" + new Date().getTime();
+        const url = await this.S3.uploadMediaBuffer(file.mimetype, name, file.buffer);
+        const userMidia = await this.userGeneratedMediaRepository.create({
+          url,
+          mimeType: file.mimetype,
+          type: MediaTypeEnum.FOTO,
+        });
+        roomSolution.picturesAndVideos.push(userMidia);
+      }
+      await roomSolution.save();
+  
+      await roomSolution.reload();
+  
+      return roomSolution;
+    }
 }

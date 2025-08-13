@@ -20,27 +20,27 @@ export class UpdateUserDto extends OmitType(PartialType(CreateUserDto), [
     @ValidateNested({ each: true })
     @Type(() => CreateUserAppointmentDto)
     @IsOptional()
-    newAppointments: CreateUserAppointmentDto[];
+    newAppointments?: CreateUserAppointmentDto[];
 
     @ApiProperty({ type: UpdateUserAppointmentDto, isArray: true })
     @ValidateNested({ each: true })
     @Type(() => UpdateUserAppointmentDto)
     @IsOptional()
-    updateAppointments: UpdateUserAppointmentDto[];
+    updateAppointments?: UpdateUserAppointmentDto[];
 
     @ApiProperty({ type: UpdateUserBeneficiaryInfoDto, required: false })
     @ValidateNested({ each: true })
     @Type(() => UpdateUserBeneficiaryInfoDto)
     @ValidateIf((o) => o.type === UserTypeEnum.BENEFICIARIO)
     @IsDefined()
-    beneficiaryUserInfo: UpdateUserBeneficiaryInfoDto;
+    beneficiaryUserInfo?: UpdateUserBeneficiaryInfoDto;
 
     @ApiProperty({ type: UpdateUserProfessionalInfoDto, required: false })
     @ValidateNested({ each: true })
     @Type(() => UpdateUserProfessionalInfoDto)
     @ValidateIf((o) => o.type === UserTypeEnum.PROFISSIONAL)
     @IsDefined()
-    professionalUserInfo: UpdateUserProfessionalInfoDto;
+    professionalUserInfo?: UpdateUserProfessionalInfoDto;
 
     @ApiProperty({ type: UpdateAddressDto })
     @ValidateNested()

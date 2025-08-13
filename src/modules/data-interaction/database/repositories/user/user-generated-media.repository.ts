@@ -15,3 +15,5 @@ export class UserGeneratedMediaRepository extends BaseRepository<
         super(repository);
     }
 }
+
+

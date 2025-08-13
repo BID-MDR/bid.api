@@ -18,12 +18,17 @@ export class CompanyBackofficeService extends BaseService<CompanyEntity, any, an
 
   async register(dto: CreateCompanyDto): Promise<CompanyEntity> {
     const admin = await this.userRepository.getByCpf(dto.ownerCpf)
-    if(!admin)  throw new BadRequestException("Admin não encontrado(a).");
-    dto.userAdmin = admin
+    if(admin){
+      dto.userAdmin = admin
+    }
     return await this.companyRepository.create(dto)
   }
   async list(): Promise<CompanyEntity[]>{
-    return await this.companyRepository.find()
+    return await this.companyRepository.findAll()
+  }
+
+  async listByMonth(month: number): Promise<CompanyEntity[]>{
+    return await this.companyRepository.findMonth(month)
   }
 
   async getByOwner(id:string):Promise<CompanyEntity[]>{
@@ -36,5 +41,11 @@ export class CompanyBackofficeService extends BaseService<CompanyEntity, any, an
 
   async delete(companyId: string): Promise<void>{
     return await this.companyRepository.hardDelete(companyId)
+  }
+
+  async getById(companyId:string): Promise<CompanyEntity>{
+    const company = await this.companyRepository.getCompanyById(companyId);
+    console.log('compa', company)
+    return company
   }
 }

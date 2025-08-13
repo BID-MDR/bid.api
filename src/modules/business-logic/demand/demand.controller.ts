@@ -9,9 +9,11 @@ import {
     Put,
     Req,
     SerializeOptions,
-    UseGuards
+    UploadedFiles,
+    UseGuards,
+    UseInterceptors
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { Request } from "express";
 import { ApiOkResponseDtoData } from "src/core/decorators/swagger/api-ok-response-dto.decorator";
 import { JwtAccessTokenGuard } from "src/core/guards/jwt-access-token.guard";
@@ -24,13 +26,14 @@ import { StatusDemandDto } from "src/modules/data-interaction/database/dtos/dema
 import { Roles } from "../../../core/decorators/roles.decorator";
 import { RolesGuard } from "../../../core/guards/roles.guard";
 import { EmployeeRoleEnum } from "../../data-interaction/database/enums/employee-role.enum";
+import { FilesInterceptor } from "@nestjs/platform-express";
 
 @Controller("demand")
 @ApiTags("Demand/Pedido de demanda")
 export class DemandController {
     private readonly _logger = new Logger(DemandController.name);
 
-    constructor(private demandService: DemandService) {}
+    constructor(private demandService: DemandService) { }
 
     @Get("")
     @ApiBearerAuth()
@@ -59,15 +62,12 @@ export class DemandController {
         type: ResponseDemandDto,
     })
     async getById(@Param("id") id: string) {
-        return await this.demandService.findById(id);
+        return await this.demandService.getById(id);
     }
 
     @Get("get-by-workRequestId/:id")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
-    @SerializeOptions({
-        type: ResponseDemandDto,
-    })
     async getByWorkRequesId(@Param("id") id: string) {
         return await this.demandService.getByWorkRequestId(id);
     }
@@ -77,6 +77,13 @@ export class DemandController {
     @UseGuards(JwtAccessTokenGuard)
     async getByProfessionalId(@Param("id") id: string) {
         return await this.demandService.listByUser(id);
+    }
+
+    @Get("get-by-beneficiaryId/:id")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async getByBeneficiaryId(@Param("id") id: string) {
+        return await this.demandService.listByBeneficiary(id);
     }
 
     @Get("get-by-professionalId/improvement/:id")
@@ -103,6 +110,7 @@ export class DemandController {
     })
     async listVisit(@Req() req: Request) {
         const userId = (req.user as JwtPayloadInterface).userId;
+        let teste = await this.demandService.listForVisit(userId);
         return await this.demandService.listForVisit(userId);
     }
 
@@ -124,8 +132,11 @@ export class DemandController {
 
     @Post("")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesGuard)
-    @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_demand])
+    @UseGuards(
+        JwtAccessTokenGuard,
+        // RolesGuard
+    )
+    // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_demand])
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
         description: "Pedido de demanda.",
@@ -135,7 +146,26 @@ export class DemandController {
     })
     async register(@Req() req: Request, @Body() dto: DemandRegisterRequestDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
+        
         return await this.demandService.register(userId, dto);
+    }
+
+    @Post("register-single-demand")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard, RolesGuard)
+    @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_demand])
+    @ApiOkResponseDtoData({
+        type: ResponseDemandDto,
+        description: "Pedido de demanda.",
+    })
+    @SerializeOptions({
+        type: ResponseDemandDto,
+    })
+    async registerSingleDemand(@Req() req: Request, @Body() dto: DemandRegisterRequestDto) {
+      
+        const userId = (req.user as JwtPayloadInterface).userId;
+       
+        return await this.demandService.registerSingleDemand(userId, dto);
     }
 
     @Delete("delete-by-id/:id")
@@ -161,6 +191,13 @@ export class DemandController {
         return await this.demandService.listByStatus(status);
     }
 
+    @Get('sustainability/:document')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async countSustainability(@Param('document') document: string) {
+        return await this.demandService.countSustainability(document);
+    }
+
     @Put('confirm-conclusion/:id')
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
@@ -176,4 +213,35 @@ export class DemandController {
         const userId = (req.user as JwtPayloadInterface).userId;
         return await this.demandService.confirmConclusion(id, userId);
     }
+      @Post("room-solution-step-photos")
+      @ApiBearerAuth()
+    //   @UseGuards(JwtAccessTokenGuard, RolesGuard)
+    //   @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction, EmployeeRoleEnum.manager_demand])
+      @UseInterceptors(FilesInterceptor("files"))
+      @ApiConsumes("multipart/form-data")
+      @ApiBody({
+        schema: {
+          type: "object",
+          properties: {
+            files: {
+              type: "array",
+              items: {
+                type: "string",
+                format: "binary",
+              },
+            },
+            roomSolutionId: { type: "string" },
+          },
+        },
+      })
+      async firstStepPhotos(
+        // @Param("demandId") demandId: string,
+        @Body() dto: { roomSolutionId: string },
+        @UploadedFiles() files: Array<Express.Multer.File>,
+        @Req() req: Request
+      ) {
+        const user = req.user as JwtPayloadInterface;
+        return await this.demandService.firstStepPhotos(dto.roomSolutionId, files);
+      }
+    
 }

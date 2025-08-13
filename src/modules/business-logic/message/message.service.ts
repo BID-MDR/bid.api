@@ -34,6 +34,10 @@ export class MessageService extends BaseService<
         const msgList =  await this.messageRepository.listConversationByIdentifier(identifier);
         return msgList
     }
+    async listAllMsg() {
+        const msgList =  await this.messageRepository.findAll();
+        return msgList
+    }
     
     async listAllMsgByUser(userId: string): Promise<UserWithLastMessage[]> {
         const user = await this.userRepository.getById(userId);

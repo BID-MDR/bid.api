@@ -1,20 +1,51 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
+import { SustainabilityItensRequestDto } from "src/modules/data-interaction/database/dtos/work-request/sustainability-itens-request.dto";
+import { TechnicalVisitStatusEnum } from "src/modules/data-interaction/database/enums/technical-visit-status.enum";
+import { TechnicalVisitRepository } from "src/modules/data-interaction/database/repositories/technical-visit.repository";
+import { UserRepository } from "src/modules/data-interaction/database/repositories/user/user.repository";
+import { SustainabilityItensRepository } from "src/modules/data-interaction/database/repositories/work-request/sustainability-itens.repository";
+import { StorageFacade } from "src/modules/data-interaction/facade/apis/storage/storage.facade";
 import { BaseService } from "../../../core/services/base.service";
 import { CreateWorkRequestDto } from "../../data-interaction/database/dtos/work-request/create-work-request.dto";
 import { UpdateWorkRequestDto } from "../../data-interaction/database/dtos/work-request/update-work-request.dto";
 import { WorkRequestEntity } from "../../data-interaction/database/entitites/work-request.entity";
-import { WorkRequestRepository } from "../../data-interaction/database/repositories/work-request/work-request.repository";
-import { DemandRepository } from "../../data-interaction/database/repositories/user/demand.repository";
 import { DemandStatusEnum } from "../../data-interaction/database/enums/demand-status.enum";
-import { TechnicalVisitStatusEnum } from "src/modules/data-interaction/database/enums/technical-visit-status.enum";
+import { DemandRepository } from "../../data-interaction/database/repositories/user/demand.repository";
+import { WorkRequestRepository } from "../../data-interaction/database/repositories/work-request/work-request.repository";
+import { CostEstimateService } from "../cost-estimate/costEstimate.service";
 
 @Injectable()
 export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWorkRequestDto, UpdateWorkRequestDto> {
   constructor(
     private workRequestRepository: WorkRequestRepository,
-    private demandRepository: DemandRepository
+    private demandRepository: DemandRepository,
+    private tecVisitRepository: TechnicalVisitRepository,
+    private userRepository: UserRepository,
+    private costEstimateRepo: CostEstimateService,
+    private sustainabilityItensRepository: SustainabilityItensRepository,
+    private readonly storageFacade: StorageFacade,
   ) {
     super(workRequestRepository);
+  }
+
+  private async attachPicturesFromSelectedFiles(
+    data: CreateWorkRequestDto | UpdateWorkRequestDto,
+  ): Promise<void> {
+    data.pictures = data.pictures ?? [];
+
+    if (Array.isArray((data as any).selectedFiles) && (data as any).selectedFiles.length) {
+      await Promise.all(
+        (data as any).selectedFiles.map(async (picture: { mimeType: string; fileName: string; data: string }) => {
+          const imageUrl = await this.storageFacade.uploadMedia(
+            picture.mimeType,
+            picture.fileName,
+            picture.data,
+          );
+          data.pictures!.push(imageUrl);
+        }),
+      );
+      delete (data as any).selectedFiles;
+    }
   }
 
   async list() {
@@ -22,30 +53,55 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
   }
 
   async getById(workRequestId: string) {
-    return await this.workRequestRepository.findById(workRequestId);
+    return await this.workRequestRepository.findById2(workRequestId);
+  }
+
+  async getByUser(userId: string) {
+    return await this.workRequestRepository.getByUserId(userId);
   }
 
   async register(data: CreateWorkRequestDto, companyId: string) {
-    const demand = await this.demandRepository.getById(data.demandId);
+    await this.attachPicturesFromSelectedFiles(data);
 
-    if (!demand) throw new BadRequestException("Demanda não encontrada.");
-
-    if (demand.company.id !== companyId) throw new BadRequestException("Não autorizado a acessar essa demanda.");
+    const demand = await this.demandRepository.findById(data.demandId);
+    if (demand.company && demand.company.id !== companyId) {
+      throw new BadRequestException("Não autorizado a acessar essa demanda.");
+    }
 
     data.demand = demand;
 
     const result = await super.create(data);
-
     demand.workRequest = result;
-    demand.status = DemandStatusEnum.CADASTRADO_VISTORIA;
-
+    demand.status = DemandStatusEnum.ESPERANDO_MELHORIA;
     await demand.save();
 
     return result;
   }
 
-  async update(workRequestId: string, data: UpdateWorkRequestDto) {
-    return await super.update(workRequestId, data);
+  async registerBenefficiary(data: CreateWorkRequestDto, userId: string) {
+    data.beneficiary = await this.userRepository.getById(userId);
+
+    await this.attachPicturesFromSelectedFiles(data);
+
+    const result = await super.create(data);
+    return result;
+  }
+
+  async update(workRequestId: string, data: UpdateWorkRequestDto, tecvisitId?: string, userId?: string) {
+    await this.attachPicturesFromSelectedFiles(data);
+
+    const wkRequest = await this.workRequestRepository.updateAll(workRequestId, data);
+
+    if (tecvisitId) {
+      await this.tecVisitRepository.updateStatusToFinishById(tecvisitId);
+
+      const professional = await this.userRepository.getById(userId);
+      if (!professional) throw new BadRequestException("Professional not found!");
+
+      await this.costEstimateRepo.create({ workRequest: wkRequest, professional });
+    }
+
+    return wkRequest;
   }
 
   async updateStatus(workRequestId: string, status: TechnicalVisitStatusEnum) {
@@ -90,5 +146,18 @@ export class WorkRequestService extends BaseService<WorkRequestEntity, CreateWor
     await demand.save();
 
     return await workRequest.save();
+  }
+
+  async createSustainabilityItens(dto: SustainabilityItensRequestDto, companyId: string, workRequestId: string) {
+    const demand = await this.demandRepository.getByWorkRequestId(workRequestId);
+    const request = await this.sustainabilityItensRepository.create(dto);
+    demand.sustainabilityItens = request;
+    demand.status = DemandStatusEnum.CONCLUIDO
+    return await demand.save();
+  }
+
+  async findNearbyBeneficiary(userId: string) {
+    const professional = await this.userRepository.getById(userId)
+    return await this.workRequestRepository.findNearbyBeneficiary(Number(professional.address.latitude), Number(professional.address.longitude), professional.address.maximumDistanceToWorks);
   }
 }

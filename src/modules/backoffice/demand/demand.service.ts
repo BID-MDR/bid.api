@@ -26,6 +26,30 @@ export class DemandBackofficeService extends BaseService<DemandEntity, DemandReg
     return await this.demandRepository.listByUser(userId, companyId);
   }
 
+  async listByCompany(companyId: string) {
+    return await this.demandRepository.listByCompany(companyId);
+  }
+
+  async getByMonth(month: number){
+    return await this.demandRepository.findMonth(month);
+  }
+
+  async countSustainability(document: string){
+    return await this.demandRepository.countSustainabilityItems(document);
+  }
+
+  async countConstructions(document: string){
+    return await this.demandRepository.countConstructions(document);
+  }
+
+  async countConstructionsCompleted(document: string){
+    return await this.demandRepository.countConstructionsCompleted(document);
+  }
+
+  async countTechnicalVisit(document: string){
+    return await this.demandRepository.countTechnicalVisit(document);
+  }
+
   async listForVisit(userId: string) {
     const user = await this.userRepository.getById(userId);
     const companyId = user.employee.company.id || user.companyAdministrator.id;
@@ -50,7 +74,6 @@ export class DemandBackofficeService extends BaseService<DemandEntity, DemandReg
 
   async updateStatus(id: string, dto: StatusDemandDto) {
     const demand = await this.demandRepository.findById(id);
-
     const { status } = dto;
 
     if (!demand) {
@@ -79,7 +102,8 @@ export class DemandBackofficeService extends BaseService<DemandEntity, DemandReg
     }
 
     this.checkStatusForWorkRequest(demand, status);
-    this.checkStatusForImprovement(demand, status);
+
+    // this.checkStatusForImprovement(demand, status);
     this.checkStatusForConstruction(demand, status);
 
     demand.status = status;
@@ -91,6 +115,10 @@ export class DemandBackofficeService extends BaseService<DemandEntity, DemandReg
   }
 
   async register(userId: string, data: DemandRegisterRequestDto) {
+
+    
+    data.document = data.document.replace(/\D/g, '');
+
     const professional = await this.userRepository.getById(userId);
 
     if (!professional) {

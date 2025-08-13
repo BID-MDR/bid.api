@@ -30,6 +30,8 @@ import { TechnicalVisitResponseDto } from "src/modules/data-interaction/database
 import { UpdateTechnicalVisitDto } from "src/modules/data-interaction/database/dtos/technical-visit/update-technical-visit.dto";
 import { FeatureTechnicalVisitService } from "./feature-technical-visit.service";
 import { ResponseDto } from "src/core/dtos/response.dto";
+import { RescheduleTechnicalVisitDto } from "src/modules/data-interaction/database/dtos/technical-visit/reschedule-technical-visit.dto";
+import { CreateTechnicalVisitUpdateImprovementProjectDto } from "src/modules/data-interaction/database/dtos/technical-visit/create-technical-visit-update-improvement-project.dto";
 
 @Controller("technical-visit")
 @ApiTags("Technical Visit/Visita Técnica")
@@ -70,24 +72,81 @@ export class FeatureTechnicalVisitController {
         description: "Retorna a visita técnica.",
         summary: "Retorna a visita técnica pelo ID.",
     })
-    @ApiParam({
-        name: "id",
-        description: "ID da visita técnica.",
-        required: true,
-        allowEmptyValue: false,
-    })
-    @ApiOkResponseDtoData({
-        type: TechnicalVisitResponseDto,
-        description: "Visita técnica.",
-    })
-    @SerializeOptions({
-        type: TechnicalVisitResponseDto,
-    })
     async getById(@Param("id") id: string) {
-        return await this.featureTechnicalVisitService.findById(id);
+        return await this.featureTechnicalVisitService.getById(id);
+    }
+
+    @Get("beneficiary")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOperation({
+        description: "Retorna a visita técnica.",
+        summary: "Retorna a visita técnica pelo ID do beneficiario.",
+    })
+    async getByBeneficiary(@Req() req: Request) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.featureTechnicalVisitService.findByBeneficiaryId(userId);
+    }
+
+    @Get("professional")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOperation({
+        description: "Retorna a visita técnica.",
+        summary: "Retorna a visita técnica pelo ID do profissional.",
+    })
+    async getByProfessional(@Req() req: Request) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.featureTechnicalVisitService.getByProfessional(userId);
+    }
+
+    @Get("professionalTechnicalVisit")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOperation({
+        description: "Retorna a visita técnica.",
+        summary: "Retorna a visita técnica pelo ID do profissional.",
+    })
+    async getByProfessionalVisitaTecnicaAgendada(@Req() req: Request) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.featureTechnicalVisitService.getByProfessionalVisitaTecnicaAgendada(userId);
     }
 
     @Post("")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOperation({
+        description: "Cria uma visita técnica.",
+        summary: "Cria uma visita técnica.",
+    })
+    @ApiBody({
+        type: CreateTechnicalVisitDto,
+        description: "Visita técnica a ser criada.",
+    })
+    async create(@Req() req: Request, @Body() body: CreateTechnicalVisitDto) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        const result = await this.featureTechnicalVisitService.scheduleTechnicalVisit(userId, body);
+        return new ResponseDto(true, result, null);
+    }
+
+    @Post("status-report")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiOperation({
+        description: "Cria uma visita técnica caso tenha realizado uma intervenção.",
+        summary: "Cria uma visita técnica caso tenha realizado uma intervenção.",
+    })
+    @ApiBody({
+        type: CreateTechnicalVisitDto,
+        description: "Visita técnica a ser criada caso tenha realizado uma intervenção.",
+    })
+    async scheduleStatusReport(@Req() req: Request, @Body() body: CreateTechnicalVisitDto) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        const result = await this.featureTechnicalVisitService.scheduleStatusReport(userId, body);
+        return new ResponseDto(true, result, null);
+    }
+
+    @Post("register-work-technicalVisit")
     @UseInterceptors(new EncryptInterceptor())
     @ApiOperation({
         description: "Cria uma visita técnica.",
@@ -105,12 +164,47 @@ export class FeatureTechnicalVisitController {
     @SerializeOptions({
         type: TechnicalVisitResponseDto,
     })
-    async create(@Body() body: CreateTechnicalVisitDto) {
-        const result = await this.featureTechnicalVisitService.schedule(body);
+    async scheduleRegistertWorkTechnicalVisit(@Body() body: CreateTechnicalVisitDto) {
+        const result = await this.featureTechnicalVisitService.scheduleRegistertWorkTechnicalVisit(body);
+        return new ResponseDto(true, result, null);
+    }
+    @Post("create-technicalvisit-update-improvement-project")
+    @UseInterceptors(new EncryptInterceptor())
+    async scheduleTechnicalVisitAndUpdateImprovementProject( @Body() body: CreateTechnicalVisitUpdateImprovementProjectDto) {
+      
+        const result = await this.featureTechnicalVisitService.scheduleTechnicalVisitAndUpdateImprovementProject(body);
         return new ResponseDto(true, result, null);
     }
 
-    @Put("")
+
+    @Put(":id")
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiBearerAuth()
+    @ApiOperation({
+        description: "Atualiza uma visita técnica pelo ID.",
+        summary: "Atualiza uma visita técnica.",
+    })
+    @ApiBody({
+        type: UpdateTechnicalVisitDto,
+        required: true,
+        description: "Dados da visita técnica a serem atualizados.",
+    })
+    async update(
+        @Param("id") id: string,
+        @Body() body: UpdateTechnicalVisitDto
+    ) {
+        console.log('body', body)
+        return await this.featureTechnicalVisitService.update(id, body);
+    }
+    
+    @Put("reschedule-technical-visit/:technicalVisitId")
+    @UseGuards(JwtAccessTokenGuard)
+    @ApiBearerAuth()
+    async reSchedule(@Param('technicalVisitId') technicalVisitId: string   , @Body() body: RescheduleTechnicalVisitDto) {
+        return await this.featureTechnicalVisitService.reScheduleVisit(technicalVisitId, body);
+    }
+
+    @Put("update")
     @UseGuards(JwtAccessTokenGuard)
     @ApiBearerAuth()
     @ApiOperation({
@@ -122,16 +216,7 @@ export class FeatureTechnicalVisitController {
         required: true,
         description: "Visita técnica a ser atualizada.",
     })
-    @ApiOkResponseDtoData({
-        type: TechnicalVisitResponseDto,
-        description: "Visita técnica atualizada.",
-    })
-    @SerializeOptions({
-        type: TechnicalVisitResponseDto,
-    })
-    async update(@Req() req: Request, @Body() body: UpdateTechnicalVisitDto) {
-        const userId = (req.user as JwtPayloadInterface).userId;
-
-        return await this.featureTechnicalVisitService.update(userId, body);
+    async updateById(@Body() body: UpdateTechnicalVisitDto) {
+        return await this.featureTechnicalVisitService.update(body.id, body);
     }
 }

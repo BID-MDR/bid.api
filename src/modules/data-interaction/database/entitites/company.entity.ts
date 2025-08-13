@@ -26,15 +26,20 @@ export class CompanyEntity extends BaseEntity {
   })
   status: CompanyStatusEnum;
 
-  @OneToOne(() => AddressEntity, address => address.company, { eager: true, cascade: true })
+  @Column({
+    type: "varchar",
+  })
+  ownerCpf: string;
+
+  @OneToOne(() => AddressEntity, address => address.company, {  cascade: true })
   @JoinColumn()
   addresses: AddressEntity;
 
-  @OneToOne(() => UserEntity, user => user.companyAdministrator, { eager: true })
+  @OneToOne(() => UserEntity, user => user.companyAdministrator, {  nullable: true  })
   @JoinColumn()
   userAdmin: UserEntity;
 
-  @OneToMany(() => EmployeeEntity, employee => employee.company, { eager: true, cascade: true })
+  @OneToMany(() => EmployeeEntity, employee => employee.company, { cascade: true })
   employees: EmployeeEntity[];
 
   @OneToMany(()=> DemandEntity, demand => demand.company)

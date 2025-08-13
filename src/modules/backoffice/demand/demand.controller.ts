@@ -19,60 +19,99 @@ import { Request } from "express";
 export class DemandBackofficeController {
     private readonly _logger = new Logger(DemandBackofficeController.name);
 
-    constructor(private demandService: DemandBackofficeService) {}
+    constructor(private demandService: DemandBackofficeService) { }
 
     @Get("")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA])
+    @UseGuards(JwtAccessTokenGuard)
+
     async getLogged() {
         return await this.demandService.list();
     }
 
+    @Get("get-month/:month")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async getByMonth(@Param('month') month) {
+        return await this.demandService.getByMonth(month);
+    }
+
     @Get("id/:id")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA])
+    @UseGuards(JwtAccessTokenGuard)
+
     async getById(@Param("id") id: string) {
         return await this.demandService.findById(id);
     }
 
     @Get("get-by-workRequestId/:id")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA])
+    @UseGuards(JwtAccessTokenGuard)
+
     async getByWorkRequesId(@Param("id") id: string) {
         return await this.demandService.getByWorkRequestId(id);
     }
 
     @Get("get-by-professionalId/:id")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA])
+    @UseGuards(JwtAccessTokenGuard)
+
     async getByProfessionalId(@Param("id") id: string) {
         return await this.demandService.listByUser(id);
     }
 
+    @Get('sustainability/:document')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async countSustainability(@Param('document') document: string) {
+        return await this.demandService.countSustainability(document);
+    }
+
+    @Get('constructions/:document')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async countConstructions(@Param('document') document: string) {
+        return await this.demandService.countConstructions(document);
+    }
+
+    @Get('constructions-completed/:document')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async countConstructionsCompleted(@Param('document') document: string) {
+        return await this.demandService.countConstructionsCompleted(document);
+    }
+
+    @Get('technical-visit/:document')
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async countTechnicalVisit(@Param('document') document: string) {
+        return await this.demandService.countTechnicalVisit(document);
+    }
+
+    @Get("get-by-company/:id")
+    @ApiBearerAuth()
+    @UseGuards(JwtAccessTokenGuard)
+    async getByCompany(@Param("id") id: string) {
+        return await this.demandService.listByCompany(id);
+    }
+
     @Get("get-by-professionalId/improvement/:id")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA])
+    @UseGuards(JwtAccessTokenGuard)
     async getByProfessionalIdImprovement(@Param("id") id: string) {
         return await this.demandService.listByUserImprovement(id);
     }
 
     @Put("changeStatus/:id")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA])
+    @UseGuards(JwtAccessTokenGuard)
     async changeStatus(@Param("id") id: string, @Body() status: StatusDemandDto) {
         return await this.demandService.updateStatus(id, status);
     }
 
     @Get("visit")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA])
+    @UseGuards(JwtAccessTokenGuard)
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
         isArray: true,
@@ -85,8 +124,7 @@ export class DemandBackofficeController {
 
     @Get('constructions')
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA])
+    @UseGuards(JwtAccessTokenGuard)
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
         isArray: true,
@@ -102,7 +140,7 @@ export class DemandBackofficeController {
 
     @Post("")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @UseGuards(JwtAccessTokenGuard)
     @Roles([FunctionTypeEnum.CONTROLE_DEMANDA])
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
@@ -118,7 +156,7 @@ export class DemandBackofficeController {
 
     @Delete("delete-by-id/:id")
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @UseGuards(JwtAccessTokenGuard)
     @Roles([FunctionTypeEnum.CONTROLE_DEMANDA])
     async delete(@Param("id") id: string) {
         return await this.demandService.delete(id);
@@ -126,8 +164,7 @@ export class DemandBackofficeController {
 
     @Get('status/:status')
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.CONTROLE_DEMANDA])
+    @UseGuards(JwtAccessTokenGuard)
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,
         isArray: true,
@@ -142,7 +179,7 @@ export class DemandBackofficeController {
 
     @Put('confirm-conclusion/:id')
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+    @UseGuards(JwtAccessTokenGuard)
     @Roles([FunctionTypeEnum.CONTROLE_DEMANDA])
     @ApiOkResponseDtoData({
         type: ResponseDemandDto,

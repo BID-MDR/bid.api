@@ -5,6 +5,11 @@ import { AuthenticateModule } from "./authenticate/authenticate.module";
 import { DemandBackofficeModule } from "./demand/demand.module";
 import { CompanyBackofficeModule } from "./company/company.module";
 import { EmployeeBackofficeModule } from "./employee/employee.module";
+import { HelpBackofficeModule } from "./help/help.module";
+import { SatisfactionResearchBackofficeModule } from "./satisfaction-research/satisfaction-research.module";
+import { DashboardBackofficeModule } from "./dashboard/dashboard.module";
+import { MessageBackofficeModule } from "./message/message.module";
+import { ContractBackofficeModule } from "./contracts/contract.module";
 
 @Module({
     imports: [
@@ -13,7 +18,12 @@ import { EmployeeBackofficeModule } from "./employee/employee.module";
         AuthenticateModule,
         DemandBackofficeModule,
         CompanyBackofficeModule,
-        EmployeeBackofficeModule
+        EmployeeBackofficeModule,
+        HelpBackofficeModule,
+        SatisfactionResearchBackofficeModule,
+        DashboardBackofficeModule,
+        MessageBackofficeModule,
+        ContractBackofficeModule
     ],
 })
 export class BackofficeModule {}

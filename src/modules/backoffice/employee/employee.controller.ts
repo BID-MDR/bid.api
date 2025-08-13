@@ -13,30 +13,44 @@ import { FunctionTypeEnum } from "../user/dto/functionTypeEnum";
 @ApiTags("Employee Backoffice")
 export class EmployeeBackofficeController {
   private readonly _logger = new Logger(EmployeeBackofficeController.name);
-  constructor(private service: EmployeeBackofficeService) {}
+  constructor(private service: EmployeeBackofficeService) { }
 
-//   @Post("register")
-//   @ApiBearerAuth()
-//   @UseGuards(JwtAccessTokenGuard)
-//   async register(@Body() dto: EmployeeRegisterRequestDto, @Req() req: Request) {
-//     const userId = (req.user as JwtPayloadInterface).userId;
-//     return await this.service.register(dto, userId);
-//   }
+  //   @Post("register")
+  //   @ApiBearerAuth()
+  //   @UseGuards(JwtAccessTokenGuard)
+  //   async register(@Body() dto: EmployeeRegisterRequestDto, @Req() req: Request) {
+  //     const userId = (req.user as JwtPayloadInterface).userId;
+  //     return await this.service.register(dto, userId);
+  //   }
 
-//   @Put("active/:id")
-//   @ApiBearerAuth()
-//   @UseGuards(JwtAccessTokenGuard)
-//   async activeEmployee(@Param("id") id: string, @Req() req: Request) {
-//     const userId = (req.user as JwtPayloadInterface).userId;
-//     return await this.service.activeEmployee(id, userId);
-//   }
+  //   @Put("active/:id")
+  //   @ApiBearerAuth()
+  //   @UseGuards(JwtAccessTokenGuard)
+  //   async activeEmployee(@Param("id") id: string, @Req() req: Request) {
+  //     const userId = (req.user as JwtPayloadInterface).userId;
+  //     return await this.service.activeEmployee(id, userId);
+  //   }
 
   @Get("")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_AGENTE_PROMOTOR])
-  async list() {
+  @UseGuards(JwtAccessTokenGuard)
+    async list() {
     return await this.service.list();
   }
+
+  @Get("by-id/:id")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+    async getById(@Param('id') id: string) {
+    return await this.service.getById(id);
+  }
+
+  @Get("by-id-full/:id")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+    async getByIdFull(@Param('id') id: string) {
+    return await this.service.getByIdFull(id);
+  }
+
 
 }

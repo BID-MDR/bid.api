@@ -5,6 +5,7 @@ import { Repository } from "typeorm";
 import { CreateRoomDto } from "../../dtos/room/create-room.dto";
 import { UpdateRoomDto } from "../../dtos/room/update-room.dto";
 import { RoomEntity } from "../../entitites/room.entity";
+import { RoomAddPhotoDto } from "../../dtos/room/room-add-photo.dto";
 
 @Injectable()
 export class RoomRepository extends BaseRepository<RoomEntity, CreateRoomDto, UpdateRoomDto> {
@@ -18,6 +19,14 @@ export class RoomRepository extends BaseRepository<RoomEntity, CreateRoomDto, Up
       .where("workRequestId = :workRequestId", { workRequestId })
       .execute();
   }
+
+    async getById(workRequestId: string): Promise<RoomEntity> {
+      
+      return await this.repository.findOne({
+        where: { id: workRequestId },
+      });
+    }
+    
 
   async findRoomAndSolutions(workRequestId: string): Promise<any[]> {
     return await this.repository
@@ -35,4 +44,6 @@ export class RoomRepository extends BaseRepository<RoomEntity, CreateRoomDto, Up
       .where("roomSolution.id = :roomSolutionId", { roomSolutionId })
       .getOne();
   }
+
+
 }

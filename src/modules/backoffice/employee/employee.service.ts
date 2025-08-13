@@ -8,6 +8,7 @@ import { CompanyRepository } from "../../data-interaction/database/repositories/
 import { EmployeeRepository } from "../../data-interaction/database/repositories/employee/employee.repository";
 import { DemandRepository } from "../../data-interaction/database/repositories/user/demand.repository";
 import { UserRepository } from "../../data-interaction/database/repositories/user/user.repository";
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class EmployeeBackofficeService extends BaseService<EmployeeEntity, any, any> {
@@ -15,7 +16,8 @@ export class EmployeeBackofficeService extends BaseService<EmployeeEntity, any, 
     private userRepository: UserRepository,
     private companyRepository: CompanyRepository,
     private employeeRepository: EmployeeRepository,
-    private demandRepository: DemandRepository
+    private demandRepository: DemandRepository,
+    private dataSource: DataSource
   ) {
     super(employeeRepository);
   }
@@ -76,6 +78,17 @@ export class EmployeeBackofficeService extends BaseService<EmployeeEntity, any, 
   }
 
   async list(): Promise<EmployeeEntity[]> {
-    return await this.employeeRepository.findAll()
+    return await this.employeeRepository.listAll()
+  }
+
+  async getById(id:string): Promise<EmployeeEntity>{
+    return await this.employeeRepository.findById(id);
+  }
+
+  async getByIdFull(id: string): Promise<EmployeeEntity> {
+    return this.dataSource.getRepository(EmployeeEntity).findOne({
+      where: { id },
+      relations: ['company', 'user', 'roles'],
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Logger, Param, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Logger, Param, Post, Put, Req, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { CompanyService } from "./company.service";
 import { JwtAccessTokenGuard } from "../../../core/guards/jwt-access-token.guard";
@@ -19,8 +19,6 @@ export class CompanyController {
 
 
   @Get("")
-  @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard)
   async list() {
     return await this.service.list();
   }
@@ -39,10 +37,21 @@ export class CompanyController {
     return await this.service.getByEmployee(id);
   }
 
+  @Get("by-id/:id")
+  async getById(@Param('id') id: string) {
+    return await this.service.getById(id);
+  }
+
   @Delete("by-id/:id")
-  @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard)
   async delete(@Param('id') id: string) {
     return await this.service.delete(id);
   }
+
+  @Put(':companyId/user-admin/:userAdminId')
+  async updateUserAdmin(
+  @Param('companyId') companyId: string,
+  @Param('userAdminId') userAdminId: string
+) {
+  return await this.service.changeUserAdmin(companyId, userAdminId);
+}
 }

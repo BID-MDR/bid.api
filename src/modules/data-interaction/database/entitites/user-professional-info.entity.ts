@@ -5,6 +5,9 @@ import { UserEntity } from './user.entity';
 import { UserRestingDayEntity } from './user-resting-day.entity';
 import { AddressEntity } from './address.entity';
 import { LevelOfEducationEnum } from '../enums/level-of-education.enum';
+import { RegisterWorkEntity } from './register-work.entity';
+import { ContractResignedEntity } from './contract-resigned.entity';
+import { ContractEntity } from './contract.entity';
 
 @Entity({ name: 'user-professional-info' })
 export class UserProfessionalInfoEntity extends BaseEntity {
@@ -24,6 +27,7 @@ export class UserProfessionalInfoEntity extends BaseEntity {
     @Column({
         type: 'varchar',
         length: 100,
+        nullable: true,
     })
     portifolioLink: string;
 
@@ -69,23 +73,28 @@ export class UserProfessionalInfoEntity extends BaseEntity {
         cascade: true,
         eager: true,
     })
-    restingDays: UserRestingDayEntity[];
+    restingDays?: UserRestingDayEntity[];
 
     @Column({
         type: 'varchar',
         length: 5,
+        nullable: true,
     })
-    worksFrom: string;
+    worksFrom?: string;
 
     @Column({
         type: 'varchar',
         length: 5,
+        nullable: true,
     })
-    worksTo: string;
+    worksTo?: string;
 
     @OneToOne(() => UserEntity, (user) => user.professionalUserInfo)
     user: UserEntity;
 
     @OneToMany(() => AddressEntity, (address) => address.userProfessionalInfo, { cascade: true, eager: true })
     addresses: AddressEntity[];
+
+
+
 }

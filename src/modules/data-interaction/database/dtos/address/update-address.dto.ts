@@ -5,7 +5,6 @@ import { IsCEP } from 'brazilian-class-validator';
 
 export class UpdateAddressDto extends PartialType(CreateAddressDto) {
     @ApiProperty()
-    @IsUUID()
     id!: string;
 
 
@@ -27,7 +26,6 @@ export class UpdateAddressDto extends PartialType(CreateAddressDto) {
     zipcode: string;
 
     @ApiProperty()
-    @Length(1, 50)
     @IsOptional()
     complement: string;
 
@@ -36,8 +34,6 @@ export class UpdateAddressDto extends PartialType(CreateAddressDto) {
     neighborhood: string;
 
     @ApiProperty()
-    @Length(1, 10)
-    @IsNumberString()
     number: string;
 
     @ApiProperty()
@@ -56,4 +52,8 @@ export class UpdateAddressDto extends PartialType(CreateAddressDto) {
     @IsPositive()
     @IsOptional()
     maximumDistanceToWorks?: number;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    userId?: string
 }

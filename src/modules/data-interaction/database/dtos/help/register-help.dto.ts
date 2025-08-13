@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Length } from 'class-validator';
+import { IsEnum, Length } from 'class-validator';
+import { UserProgramTypeEnum } from '../../enums/user-program-type.enum';
 
 export class HelpRegisterRequestDto {
     @ApiProperty()
@@ -9,5 +10,7 @@ export class HelpRegisterRequestDto {
     sentAt: Date
     user:any
 
-
+    @ApiProperty({ enum: UserProgramTypeEnum })
+    @IsEnum(UserProgramTypeEnum)
+    programType: UserProgramTypeEnum;
 }

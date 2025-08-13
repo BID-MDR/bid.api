@@ -1,8 +1,10 @@
-import {  Column, Entity, OneToOne } from "typeorm";
+import {  Column, Entity, JoinColumn, OneToOne } from "typeorm";
 import { DemandEntity } from "./demand.entity";
 import { BaseEntity } from "../../../../core/entities/base.entity";
 import { ConstructionsTypeEnum } from "../enums/constructions-type.status";
 import { ConstructionsStatusEnum } from "../enums/constructions-stauts.enum";
+import { UserProgramTypeEnum } from "../enums/user-program-type.enum";
+import { RegisterWorkEntity } from "./register-work.entity";
 
 @Entity({ name: "constructions" })
 export class ConstructionsEntity extends BaseEntity {
@@ -20,7 +22,7 @@ export class ConstructionsEntity extends BaseEntity {
     type: "varchar",
     length: 255,
   })
-  description: string;
+  description?: string;
 
   @Column({
     type: "decimal",
@@ -35,4 +37,12 @@ export class ConstructionsEntity extends BaseEntity {
     default: ConstructionsStatusEnum.EM_ANDAMENTO,
   })
   status: ConstructionsStatusEnum;
+
+  @Column({
+    type: "enum",
+    enum: UserProgramTypeEnum,
+    nullable: true,
+  })
+  programType: UserProgramTypeEnum;
+  
 }

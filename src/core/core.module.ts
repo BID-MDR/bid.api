@@ -24,7 +24,8 @@ import { FeatureNotificationModule } from 'src/modules/business-logic/feature-no
         }),
         FeatureNotificationModule,
     ],
-    providers: [ExistsInDBConstraint, JwtAccessTokenStrategy,AppGateway],
+    providers: [ExistsInDBConstraint, JwtAccessTokenStrategy, AppGateway],
     exports: [ExistsInDBConstraint, JwtModule],
 })
-export class CoreModule {}
+
+export class CoreModule { }

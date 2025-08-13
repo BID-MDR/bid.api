@@ -10,7 +10,7 @@ export class ResponseConstructionsDto extends BaseResponseDto {
 
     @ApiProperty()
     @Expose()
-    description: string;
+    description?: string;
 
     @ApiProperty()
     @Expose()

@@ -27,95 +27,87 @@ import { CreateUserBeneficiaryInfoDto } from './user-beneficiary-info/create-use
 import { CreateUserProfessionalInfoDto } from './user-professional-info/create-user-professional-info.dto';
 import { UserGenderIdentityEnum } from '../../enums/user-gender-identity.enum';
 import { UserMonthlyFamilyIncomeEnum } from '../../enums/user-monthly-family-income.enum';
+import { UserProgramTypeEnum } from '../../enums/user-program-type.enum';
 
 export class CreateUserDto {
     @ApiProperty()
-    @Length(1, 70)
+    @IsOptional()
     name: string;
 
     @ApiProperty({ enum: UserTypeEnum })
-    @IsEnum(UserTypeEnum)
-    type: UserTypeEnum;
+    @IsOptional()
+    type?: UserTypeEnum;
 
-    @ApiProperty({ example: '+5511999999999' })
-    @IsPhoneNumber('BR')
-    phone: string;
+    @ApiProperty()
+    @IsOptional()
+    phone?: string;
 
-    @ApiProperty({ example: 'test@email.com' })
-    @IsEmail()
-    email: string;
+    @ApiProperty()
+    @IsOptional()
+    email?: string;
 
-    @ApiProperty({ example: '12345678901' })
-    @IsCPF()
-    cpf: string;
+    @ApiProperty()
+    @IsOptional()
+    cpf?: string;
 
     @ApiProperty({ type: CreateAddressDto })
-    @ValidateNested()
-    @Type(() => CreateAddressDto)
-    address: CreateAddressDto;
-
-    @ApiProperty({ example: 18 })
-    @Min(18)
-    @Max(120)
     @IsOptional()
-    age: number;
+    address?: CreateAddressDto;
+
+    @ApiProperty()
+    @IsOptional()
+    age?: number;
 
     @ApiProperty({ enum: UserBirthGenderEnum })
-    @IsEnum(UserBirthGenderEnum)
-    birthGender: UserBirthGenderEnum;
+    @IsOptional()
+    birthGender?: UserBirthGenderEnum;
 
     @ApiProperty({ example: '1999-12-31' })
-    birthDate: string;
+    @IsOptional()
+    birthDate?: string;
 
     @ApiProperty({ enum: UserGenderIdentityEnum })
-    @IsEnum(UserGenderIdentityEnum)
-    genderIdentity: UserGenderIdentityEnum;
+    @IsOptional()
+    genderIdentity?: UserGenderIdentityEnum;
 
     @ApiProperty({ example: 'Boeing AH-64 Apache' })
-    @Length(0, 100)
     @IsOptional()
-    customGenderIdentity: string;
+    customGenderIdentity?: string;
 
     @ApiProperty({ enum: LevelOfEducationEnum })
-    @IsEnum(LevelOfEducationEnum)
-    levelOfEducation: LevelOfEducationEnum;
+    @IsOptional()
+    levelOfEducation?: LevelOfEducationEnum;
 
     @ApiProperty({ enum: MaritalStatusEnum })
-    @IsEnum(MaritalStatusEnum)
-    maritalStatus: MaritalStatusEnum;
+    @IsOptional()
+    maritalStatus?: MaritalStatusEnum;
 
     @ApiProperty({ enum: UserMonthlyFamilyIncomeEnum })
-    @IsEnum(UserMonthlyFamilyIncomeEnum)
     @IsOptional()
-    monthlyFamilyIncome: UserMonthlyFamilyIncomeEnum;
+    monthlyFamilyIncome?: UserMonthlyFamilyIncomeEnum;
 
     @ApiProperty({ enum: RaceEnum })
-    @IsEnum(RaceEnum)
-    race: RaceEnum;
+    @IsOptional()
+    race?: RaceEnum;
 
     @ApiProperty({ type: MediaUploadDto })
-    @ValidateNested()
-    @Type(() => MediaUploadDto)
-    uploadedProfilePicture: MediaUploadDto;
+    @IsOptional()
+    uploadedProfilePicture?: MediaUploadDto;
 
     @ApiProperty({ example: '1234' })
-    @IsNumberString()
-    @Length(4, 4)
-    password: string;
+    @IsOptional()
+    password?: string;
 
     @ApiProperty({ type: CreateUserBeneficiaryInfoDto, required: false })
-    @ValidateNested({ each: true })
-    @Type(() => CreateUserBeneficiaryInfoDto)
-    @ValidateIf((o) => o.type === UserTypeEnum.BENEFICIARIO)
-    @IsDefined()
-    beneficiaryUserInfo: CreateUserBeneficiaryInfoDto;
+    @IsOptional()
+    beneficiaryUserInfo?: CreateUserBeneficiaryInfoDto;
 
     @ApiProperty({ type: CreateUserProfessionalInfoDto, required: false })
-    @ValidateNested({ each: true })
-    @Type(() => CreateUserProfessionalInfoDto)
-    @ValidateIf((o) => o.type === UserTypeEnum.PROFISSIONAL)
-    @IsDefined()
-    professionalUserInfo: CreateUserProfessionalInfoDto;
+    @IsOptional()
+    professionalUserInfo?: CreateUserProfessionalInfoDto;
 
-    profilePicture: string;
+    profilePicture?: string;
+    @ApiProperty({ enum: UserProgramTypeEnum })
+    @IsOptional()
+    programType?: UserProgramTypeEnum
 }

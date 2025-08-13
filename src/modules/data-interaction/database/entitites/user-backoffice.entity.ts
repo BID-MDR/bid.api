@@ -4,6 +4,8 @@ import { UserBackofficeTypeEnum } from "src/modules/backoffice/user/dto/userType
 import { UserRolesBackofficeEntity } from "./user-roles-backoffice.entity";
 import { UserOtpStatusEnum } from "../enums/user-otp.enum";
 import { UserStatusEnum } from "src/modules/backoffice/user/dto/userStatusEnum";
+import { MessageBackofficeEntity } from "./message-backoffice.entity";
+import { UserProgramTypeEnum } from "../enums/user-program-type.enum";
 
 @Entity({ name: "user_backoffice" })
 export class UserBackofficeEntity extends BaseEntity {
@@ -52,6 +54,19 @@ export class UserBackofficeEntity extends BaseEntity {
     default: UserStatusEnum.ACTIVE,
   })
   status: UserStatusEnum;
+
+  @Column({
+    type: "enum",
+    enum: UserProgramTypeEnum,
+    nullable: true,
+  })
+  programType: UserProgramTypeEnum;
+
+  @OneToMany(() => MessageBackofficeEntity, message => message.sender)
+  sentMessages: MessageBackofficeEntity[];
+
+  @OneToMany(() => MessageBackofficeEntity, message => message.receiver)
+  receivedMessages: MessageBackofficeEntity[];
       
   @ManyToMany(() => UserRolesBackofficeEntity, roles => roles.user, { eager: true})
   @JoinTable()

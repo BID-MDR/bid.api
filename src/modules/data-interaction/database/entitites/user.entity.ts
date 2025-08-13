@@ -21,6 +21,15 @@ import { HelpEntity } from "./help.entity";
 import { CompanyEntity } from "./company.entity";
 import { EmployeeEntity } from "./employee.entity";
 import { SatisfactionResearchEntity } from "./satisfaction-research.entity";
+import { WorkRequestEntity } from "./work-request.entity";
+import { ImprovementProjectEntity } from "./improvement-project.entity";
+import { CostEstimateEntity } from "./cost-estimate.entity";
+import { SurveyEntity } from "./survey.entity";
+import { UnavailabilityEntity } from "./unavailability.entity";
+import { RegisterWorkEntity } from "./register-work.entity";
+import { ContractResignedEntity } from "./contract-resigned.entity";
+import { ContractEntity } from "./contract.entity";
+
 
 @Entity({ name: "user" })
 export class UserEntity extends BaseEntity {
@@ -63,8 +72,7 @@ export class UserEntity extends BaseEntity {
   email: string;
 
   @OneToOne(() => AddressEntity, address => address.user, {
-    cascade: true,
-    eager: true,
+    cascade: true
   })
   @JoinColumn()
   address: AddressEntity;
@@ -76,10 +84,11 @@ export class UserEntity extends BaseEntity {
   age: number;
 
   @Column({
-    type: "datetime",
+    type: "varchar",
+    length: 100,
     nullable: true,
   })
-  birthDate: Date;
+  birthDate: String;
 
   @Column({
     type: "enum",
@@ -131,8 +140,10 @@ export class UserEntity extends BaseEntity {
   @Column({
     type: "varchar",
     length: 200,
+    default: '',
+    nullable: true,
   })
-  profilePicture: string;
+  profilePicture?: string;
 
   @Column({
     type: "varchar",
@@ -141,66 +152,115 @@ export class UserEntity extends BaseEntity {
   password: string;
 
   @OneToOne(() => UserBeneficiaryInfoEntity, beneficiaryUserInfo => beneficiaryUserInfo.user, {
-    cascade: true,
-    eager: true,
+    cascade: true
   })
   @JoinColumn()
   beneficiaryUserInfo: UserBeneficiaryInfoEntity;
 
   @OneToOne(() => UserProfessionalInfoEntity, professionalUserInfo => professionalUserInfo.user, {
-    cascade: true,
-    eager: true,
+    nullable: true,
+    cascade: true
   })
   @JoinColumn()
   professionalUserInfo: UserProfessionalInfoEntity;
 
   @OneToMany(() => TechnicalVisitEntity, technicalVisit => technicalVisit.professional, {
-    eager: true,
+    nullable: true,
+    cascade: true
   })
   technicalVisitsAsProfessional: TechnicalVisitEntity[];
 
   @OneToMany(() => UserAppointmentEntity, appointment => appointment.user, {
-    eager: true,
-    cascade: true,
+    nullable: true,
+    cascade: true
   })
   appointments: UserAppointmentEntity[];
 
   @OneToMany(() => TechnicalVisitEntity, technicalVisit => technicalVisit.beneficiary, {
-    eager: true,
+    nullable: true,
+    cascade: true
   })
   technicalVisitsAsBeneficiary: TechnicalVisitEntity[];
 
   @OneToMany(() => NotificationEntity, notificationEntity => notificationEntity.user, {
-    eager: true,
+    nullable: true,
+    cascade: true
   })
   notificationUser: NotificationEntity[];
 
   @OneToOne(() => UserOtpRequestEntity, otpRequest => otpRequest.user, {
     cascade: true,
-    eager: true,
     nullable: true,
   })
   @JoinColumn()
   otpRequest: UserOtpRequestEntity;
 
-  @OneToMany(() => DemandEntity, demand => demand.beneficiary)
-  demands: DemandEntity[];
+  @OneToMany(() => DemandEntity, demand => demand.beneficiary, {nullable: true, cascade: true})
+  demands?: DemandEntity[];
 
-  @OneToMany(() => MessageEntity, message => message.sender)
+  @OneToMany(() => MessageEntity, message => message.sender, {nullable: true, cascade: true})
   sentMessages: MessageEntity[];
 
-  @OneToMany(() => MessageEntity, message => message.receiver)
+  @OneToMany(() => MessageEntity, message => message.receiver, {nullable: true, cascade: true})
   receivedMessages: MessageEntity[];
 
-  @OneToMany(() => HelpEntity, help => help.user)
+  @OneToMany(() => HelpEntity, help => help.user, {nullable: true, cascade: true})
   helpRequests: HelpEntity[];
 
-  @OneToOne(() => CompanyEntity, company => company.userAdmin, { nullable: true })
+  @OneToOne(() => CompanyEntity, company => company.userAdmin, { nullable: true, cascade: true })
   companyAdministrator: CompanyEntity;
 
-  @OneToOne(() => EmployeeEntity, employee => employee.user, { nullable: true })
+  @OneToOne(() => EmployeeEntity, employee => employee.user, { nullable: true, cascade: true })
   employee: EmployeeEntity;
 
-  @OneToMany(() => SatisfactionResearchEntity, (satisfaction) => satisfaction.user)
+  @OneToMany(() => SatisfactionResearchEntity, (satisfaction) => satisfaction.user, {nullable: true, cascade: true})
   satisfaction: SatisfactionResearchEntity[];
+
+  @OneToOne(() => WorkRequestEntity, workRequest => workRequest.demand, {
+    cascade: true,
+    nullable: true,
+  })
+  @JoinColumn()
+  workRequest?: WorkRequestEntity;
+
+  @OneToOne(() => SurveyEntity, survey => survey.professional, {
+    cascade: true,
+    nullable: true,
+  })
+  @JoinColumn()
+  surveyProfessional: SurveyEntity;
+  
+  @OneToOne(() => SurveyEntity, survey => survey.beneficiary, {
+    cascade: true,
+    nullable: true,
+  })
+
+  surveybeneficiary?: SurveyEntity;
+
+  @OneToMany(() => ImprovementProjectEntity, workRequest => workRequest.professional, {
+    cascade: true,
+    nullable: true,
+  })
+  projects?: ImprovementProjectEntity[];
+
+  @OneToMany(() => CostEstimateEntity, costEstimate => costEstimate.professional, {
+    cascade: true,
+    nullable: true,
+  })
+  costEstimate?: CostEstimateEntity[];
+
+  @OneToMany(() => UnavailabilityEntity, unavailability => unavailability.user, {
+    cascade: true,
+    nullable: true,
+  })
+  unavailabilityList?: UnavailabilityEntity[];
+
+  @OneToMany(() => RegisterWorkEntity, (registerWork) => registerWork.professional, { cascade: true, nullable: true })
+  registerWorkList: RegisterWorkEntity[];
+
+  @OneToMany(() => ContractResignedEntity, (registerWork) => registerWork.professional, { cascade: true,  nullable: true })
+  contractResignedList: ContractResignedEntity[];
+
+  @OneToMany(() => ContractEntity, (contract) => contract.professional, { cascade: true,  nullable: true })
+  contractList: ContractEntity[];
 }

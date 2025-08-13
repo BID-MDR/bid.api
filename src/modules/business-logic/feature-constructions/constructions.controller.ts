@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Logger,
   Param,
   Post,
@@ -29,10 +30,24 @@ export class ConstructionsController {
 
   constructor(private constructionsService: ConstructionsService) {}
 
+  @Get("")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  async get() {
+    return await this.constructionsService.list();
+  }
+
+  @Get("get-month/:month")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  async getMonth(@Param('month') month: number) {
+    return await this.constructionsService.listByMonth(month);
+  }
+
   @Post("first-step-photos/:demandId")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
+  @UseGuards(JwtAccessTokenGuard)
+  // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction, EmployeeRoleEnum.manager_demand])
   @UseInterceptors(FilesInterceptor("files"))
   @ApiConsumes("multipart/form-data")
   @ApiBody({
@@ -60,10 +75,41 @@ export class ConstructionsController {
     return await this.constructionsService.firstStepPhotos(dto.roomSolutionId, files, demandId, user.companyId);
   }
 
+  @Post("first-step-photos-conclusion/:demandId")
+  @ApiBearerAuth()
+  @UseGuards(JwtAccessTokenGuard)
+  // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction, EmployeeRoleEnum.manager_demand])
+  @UseInterceptors(FilesInterceptor("files"))
+  @ApiConsumes("multipart/form-data")
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        files: {
+          type: "array",
+          items: {
+            type: "string",
+            format: "binary",
+          },
+        },
+        roomSolutionId: { type: "string" },
+      },
+    },
+  })
+  async registerPhotosConclusion(
+    @Param("demandId") demandId: string,
+    @Body() dto: { roomSolutionId: string },
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Req() req: Request
+  ) {
+    const user = req.user as JwtPayloadInterface;
+    return await this.constructionsService.registerPhotosConclusion(dto.roomSolutionId, files, demandId);
+  }
+
   @Post("second-step-constructions/:demandId")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
+  @UseGuards(JwtAccessTokenGuard)
+//  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction, EmployeeRoleEnum.manager_demand])
   async secondStepConstructions(
     @Param("demandId") demandId: string,
     @Body() dto: CreateConstructionsDto,
@@ -75,8 +121,8 @@ export class ConstructionsController {
 
   @Put("update-constructions/:demandId")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
+  @UseGuards(JwtAccessTokenGuard)
+  // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
   async update(@Param("demandId") demandId: string, @Body() dto: CreateConstructionsDto, @Req() req: Request) {
     const user = req.user as JwtPayloadInterface;
     return await this.constructionsService.update(dto, demandId, user.companyId);
@@ -84,16 +130,16 @@ export class ConstructionsController {
 
   @Delete("photo/:demandId/:photoId")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
+  @UseGuards(JwtAccessTokenGuard)
+  // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
   async deletePhoto(@Param("demandId") demandId: string, @Param("photoId") photoId: string) {
     return await this.constructionsService.deletePhoto(demandId, photoId);
   }
 
   @Put("finish-constructions/:demandId")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesGuard)
-  @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
+  @UseGuards(JwtAccessTokenGuard)
+  // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_construction])
   async finishConstructions(@Param("demandId") demandId: string, @Req() req: Request) {
     const user = req.user as JwtPayloadInterface;
     return await this.constructionsService.conclude(demandId, user.companyId);

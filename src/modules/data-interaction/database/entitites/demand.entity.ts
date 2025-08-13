@@ -6,6 +6,7 @@ import { TechnicalVisitEntity } from "./technical-visit.entity";
 import { DemandStatusEnum } from "../enums/demand-status.enum";
 import { ConstructionsEntity } from "./constructions.entity";
 import { CompanyEntity } from "./company.entity";
+import { SustainabilityItensEntity } from "./sustainability-Itens.entity";
 
 @Entity({ name: "demands" })
 export class DemandEntity extends BaseEntity {
@@ -54,7 +55,7 @@ export class DemandEntity extends BaseEntity {
 
   @Column({
     type: "varchar",
-    length: 30,
+    length: 100,
   })
   street: string;
 
@@ -83,36 +84,37 @@ export class DemandEntity extends BaseEntity {
   conclusionDate: Date;
 
   @ManyToOne(() => UserEntity, user => user.demands, {
-    eager: true,
   })
-  beneficiary: UserEntity;
+  beneficiary?: UserEntity;
 
   @ManyToOne(() => CompanyEntity, company => company.demands, {
-    eager: true,
   })
   company: CompanyEntity;
 
   @OneToOne(() => WorkRequestEntity, workRequest => workRequest.demand, {
     cascade: true,
-    eager: true,
     nullable: true,
   })
   @JoinColumn()
   workRequest?: WorkRequestEntity;
 
   @OneToOne(() => TechnicalVisitEntity, technical => technical.demand, {
-    nullable: true,
-    eager: true,
-    cascade: true,
+    nullable: true
   })
   @JoinColumn()
   technicalVisit?: TechnicalVisitEntity;
 
   @OneToOne(() => ConstructionsEntity, c => c.demand, {
     nullable: true,
-    eager: true,
     cascade: true,
   })
   @JoinColumn()
   construction?: ConstructionsEntity;
+
+  @OneToOne(() => SustainabilityItensEntity, c => c.demand, {
+    nullable: true,
+    cascade: true,
+  })
+  @JoinColumn()
+  sustainabilityItens?: SustainabilityItensEntity;
 }

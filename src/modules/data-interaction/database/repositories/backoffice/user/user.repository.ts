@@ -3,11 +3,20 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { BaseRepository } from "src/core/repositories/base.repository";
 import { Repository } from "typeorm";
 import { UserBackofficeEntity } from "../../../entitites/user-backoffice.entity";
+import { UserProgramTypeEnum } from "../../../enums/user-program-type.enum";
 
 @Injectable()
 export class UserBackofficeRepository extends BaseRepository<UserBackofficeEntity, any, any> {
   constructor(@InjectRepository(UserBackofficeEntity) private repository: Repository<UserBackofficeEntity>) {
     super(repository);
+  }
+
+  async getRegmel(){
+    return await this.repository.find({where: {programType: UserProgramTypeEnum.REGMEL}})
+  }
+
+  async getMinhaCasa(){
+    return await this.repository.find({where: {programType: UserProgramTypeEnum.MINHA_CASA}})
   }
 
   async getById(_id: string) {

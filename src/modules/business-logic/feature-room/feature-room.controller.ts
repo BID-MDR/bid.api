@@ -4,11 +4,13 @@ import {
     Get,
     Param,
     Post,
+    Put,
     SerializeOptions,
+    UploadedFiles,
     UseGuards,
     UseInterceptors
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ApiOkResponseDtoData } from 'src/core/decorators/swagger/api-ok-response-dto.decorator';
 import { JwtAccessTokenGuard } from 'src/core/guards/jwt-access-token.guard';
 import { EncryptInterceptor } from 'src/core/interceptors/encrypt.interceptor';
@@ -20,6 +22,7 @@ import { RequestRoomSolutionDto } from 'src/modules/data-interaction/database/dt
 import { Roles } from '../../../core/decorators/roles.decorator';
 import { RolesGuard } from '../../../core/guards/roles.guard';
 import { EmployeeRoleEnum } from '../../data-interaction/database/enums/employee-role.enum';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('room')
 @ApiTags('Quarto')
@@ -27,24 +30,55 @@ export class FeatureRoomController {
     constructor(
         private featureRoomService: FeatureRoomService
     ) {}
-    // @Get('')
-    // @ApiBearerAuth()
-    // @UseGuards(JwtAccessTokenGuard)
-    // @ApiOperation({
-    //     description: 'Lista as construções do usuário logado que iniciou a requisição através do JWT no header.',
-    //     summary: 'Lista as construções do usuário logado que iniciou a requisição.',
-    // })
-    // @ApiOkResponseDtoData({
-    //     type: RoomResponseDto,
-    //     description: 'Pedido de Construção.',
-    // })
-    // @SerializeOptions({
-    //     type: RoomResponseDto,
-    // })
-    // async listLogged(@Req() req: Request) {
-    //     const userId = (req.user as JwtPayloadInterface).userId;
-    //     return await this.featureRoomService.listByUserId(userId);
-    // }
+    @Put("add-start-photo/:roomId")
+     @UseInterceptors(FilesInterceptor("files"))
+     @ApiConsumes("multipart/form-data")
+     @ApiBody({
+       schema: {
+         type: "object",
+         properties: {
+           files: {
+             type: "array",
+             items: {
+               type: "string",
+               format: "binary",
+             },
+           },
+         },
+       },
+     })
+     async addStartPhotos(
+       @Param("roomId") roomId: string,
+       @UploadedFiles() files: Array<Express.Multer.File>,
+    
+     ) {
+       return await this.featureRoomService.addStartPhoto(roomId, files);
+     }
+
+     @Put("add-end-photo/:roomId")
+     @UseInterceptors(FilesInterceptor("files"))
+     @ApiConsumes("multipart/form-data")
+     @ApiBody({
+       schema: {
+         type: "object",
+         properties: {
+           files: {
+             type: "array",
+             items: {
+               type: "string",
+               format: "binary",
+             },
+           },
+         },
+       },
+     })
+     async addEndPhotos(
+       @Param("roomId") roomId: string,
+       @UploadedFiles() files: Array<Express.Multer.File>,
+    
+     ) {
+       return await this.featureRoomService.addEndPhoto(roomId, files);
+     }
 
     @Get('')
     // @ApiBearerAuth()
@@ -58,6 +92,13 @@ export class FeatureRoomController {
     // @UseGuards(JwtAccessTokenGuard)
     async listByWorkRequest(@Param('id') id: string) {
         return await this.featureRoomService.selectAllWithIntervention(id);
+    }
+
+    @Get('get-room-by/:id')
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAccessTokenGuard)
+    async getRoomById(@Param('id') id: string) {
+        return await this.featureRoomService.getRoomById(id);
     }
 
     @Get('listbyworkrequest/:id')
@@ -158,9 +199,9 @@ export class FeatureRoomController {
     }
 
     @Post('room-solution/wait-intervention')
-    @UseGuards(JwtAccessTokenGuard, RolesGuard)
-    @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_quality])
-    @UseInterceptors(new EncryptInterceptor())
+    // @UseGuards(JwtAccessTokenGuard, RolesGuard)
+    // @Roles([EmployeeRoleEnum.manager_admin, EmployeeRoleEnum.manager_quality])
+    // @UseInterceptors(new EncryptInterceptor())
     async waitIntervention(@Body() body: RequestRoomSolutionDto){
 
        return await this.featureRoomService.register(body)

@@ -19,8 +19,8 @@ async function bootstrap() {
     const configService = app.get(ConfigService);
     const logger = new Logger("main");
 
-    app.use(bodyParser.json({ limit: "50mb" }));
-    app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+    app.use(bodyParser.json({ limit: "70mb" }));
+    app.use(bodyParser.urlencoded({ limit: "70mb", extended: true }));
 
     useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
@@ -38,7 +38,7 @@ async function bootstrap() {
     app.useGlobalInterceptors(new ResponseInterceptor(app.get(Reflector)));
     
 
-    if (configService.get(EnviromentVariablesEnum.ENABLE_CORS) === "true") {
+    //if (configService.get(EnviromentVariablesEnum.ENABLE_CORS) === "true") {
         const corsOptions: CorsOptions = {
             origin: "*",
             methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
@@ -50,13 +50,13 @@ async function bootstrap() {
         app.enableCors(corsOptions);
 
         logger.debug("CORS ENABLED");
-    }
+    //}
 
     const appVersion = configService.get(EnviromentVariablesEnum.APP_VERSION);
 
     const appName = "BID - API";
 
-    if (configService.get(EnviromentVariablesEnum.ENABLE_DOCS) === "true") {
+    //if (configService.get(EnviromentVariablesEnum.ENABLE_DOCS) === "true") {
         const swaggerOptions = new DocumentBuilder()
             .setTitle(
                 appName +
@@ -70,14 +70,14 @@ async function bootstrap() {
             })
             .build();
 
-        if (
-            configService.get(EnviromentVariablesEnum.NODE_ENV) !==
-            "development"
-        ) {
-            app.setGlobalPrefix(
-                configService.get(EnviromentVariablesEnum.SERVER_PATH_PREFIX),
-            );
-        }
+        //if (
+        //    configService.get(EnviromentVariablesEnum.NODE_ENV) !==
+        //    "development"
+        //) {
+        //    app.setGlobalPrefix(
+        //        configService.get(EnviromentVariablesEnum.SERVER_PATH_PREFIX),
+        //    );
+        //}
 
         const document = SwaggerModule.createDocument(app, swaggerOptions, {
             ignoreGlobalPrefix: false,
@@ -88,15 +88,22 @@ async function bootstrap() {
         });
 
         logger.debug("DOCS ENABLED");
-    }
+    //}
 
     const port = configService.get(EnviromentVariablesEnum.PORT) || 3000;
     await app.listen(port);
     Logger.log(
         `🚀 Application is running on: http://localhost:${port} - ${configService
-            .get(EnviromentVariablesEnum.NODE_ENV)
-            .toUpperCase()} MODE`,
+            .get(EnviromentVariablesEnum.NODE_ENV)}`,
     );
 }
 
 bootstrap();
+
+process.on('uncaughtException', (err) => {
+    console.error('🔥 Uncaught Exception:', err);
+  });
+  
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('🔥 Unhandled Rejection at:', promise, 'reason:', reason);
+  });

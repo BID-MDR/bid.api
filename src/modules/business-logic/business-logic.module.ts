@@ -13,6 +13,18 @@ import { CompanyModule } from './feature-company/company.module';
 import { EmployeeModule } from './feature-employee/employee.module';
 import { EmployeeRoleModule } from './feature-employee-role/employee-role.module';
 import { SatisfactionResearchModule } from './satisfaction-research/satisfaction-research.module';
+import { InterventionModule } from './intervention/intervention.module';
+import { CostEstimateModule } from './cost-estimate/costEstimate.module';
+import { ContractModule } from '../contract/contract.module';
+import { BidDocumentModule } from './bid-document/bidDocument.module';
+import { ImprovementProjectModule } from './improvement-project/improvement-project.module';
+import { RegisterWorkModule } from './register-work/registerWork.module';
+import { ContractResignedModule } from './conctract-resigned/costEstimate.module';
+import { UnavailabilityModule } from './unavailability/unavailability.module';
+import { TaskServiceModule } from './tasService/unavailability.module';
+import { NotificationMessageModule } from './notification-msg/notification-message.module';
+import { SeedModule } from './seed/seed.module';
+import { StorageModule } from '../data-interaction/facade/apis/storage/storage.module';
 @Module({
     imports: [
         FeatureUserModule,
@@ -28,7 +40,19 @@ import { SatisfactionResearchModule } from './satisfaction-research/satisfaction
         CompanyModule,
         EmployeeModule,
         EmployeeRoleModule,
-        SatisfactionResearchModule
+        SatisfactionResearchModule,
+        InterventionModule,
+        CostEstimateModule,
+        ContractModule,
+        BidDocumentModule,
+        ImprovementProjectModule,
+        RegisterWorkModule,
+        ContractResignedModule,
+        UnavailabilityModule,
+        TaskServiceModule,
+        NotificationMessageModule,
+        StorageModule,
+        SeedModule
     ],
 })
 export class BusinessLogicModule {}
