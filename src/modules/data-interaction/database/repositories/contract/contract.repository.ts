@@ -23,9 +23,9 @@ export class ContractRepository extends BaseRepository<
   async listWithRelations() {
     return this.repository.find({
       where: {
-     
+
       },
-      relations: ['technicalVisit','technicalVisit.beneficiary', 'professional'],
+      relations: ['technicalVisit', 'technicalVisit.beneficiary', 'professional'],
     });
   }
   // async requestAdjust(costEstimateId: string, adjustDetail: string) {
@@ -106,6 +106,17 @@ export class ContractRepository extends BaseRepository<
 
     return await this.repository.update({ id: costEstimateId }, { cancelReasonEnum: dto.cancelReasonEnum, cancelationReason: dto.cancelationReason, status: ContractStatusEnum.REPROVED });
 
+  }
+
+  async countContracts() {
+    const count = await this.repository.createQueryBuilder('contracts')
+      .where('contracts.status NOT IN (:...status)', {
+        status: [ContractStatusEnum.APPROVED, ContractStatusEnum.REPROVED],
+      })
+      .select('COUNT(contracts.id)', 'count')
+      .getRawOne();
+
+    return Number(count.count)
   }
 
 }
