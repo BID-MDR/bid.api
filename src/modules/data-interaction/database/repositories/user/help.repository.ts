@@ -55,16 +55,21 @@ export class HelpRepository extends BaseRepository<HelpEntity, any, any> {
 
     async findMonthMcmv(month: number) {
         const now = new Date();
-        const pastDate = addMonths(now, -month);
-    
-    
-        return this.repository.createQueryBuilder('help')
-        .where('help.createdAt BETWEEN :pastDate AND :now', {
-          pastDate: pastDate.toISOString(),
-          now: now.toISOString(),
-        })
-        .andWhere('help.programType = :programType', {programType: UserProgramTypeEnum.MINHA_CASA})
-        .getMany()
+
+        const query = this.repository.createQueryBuilder('help')
+            .where('help.programType = :programType', {
+            programType: UserProgramTypeEnum.MINHA_CASA,
+            });
+
+        if (month && month > 0) {
+            const pastDate = addMonths(now, -month);
+            query.andWhere('help.createdAt BETWEEN :pastDate AND :now', {
+            pastDate: pastDate.toISOString(),
+            now: now.toISOString(),
+            });
+        }
+
+        return query.getMany();
     }
 
    

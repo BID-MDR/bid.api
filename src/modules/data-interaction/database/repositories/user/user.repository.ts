@@ -199,19 +199,22 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
 
   async findMonthMcmv(month: number) {
     const now = new Date();
-    const pastDate = addMonths(now, -month);
 
-
-    return this.repository.createQueryBuilder('user')
+    const query = this.repository.createQueryBuilder('user')
       .where('user.type = :type', { type: UserTypeEnum.BENEFICIARIO })
-      .andWhere('user.createdAt BETWEEN :pastDate AND :now', {
+      .andWhere('user.programType = :programType', {
+        programType: UserProgramTypeEnum.MINHA_CASA,
+      });
+
+    if (month && month > 0) {
+      const pastDate = addMonths(now, -month);
+      query.andWhere('user.createdAt BETWEEN :pastDate AND :now', {
         pastDate: pastDate.toISOString(),
         now: now.toISOString(),
-      })
-      .andWhere('user.programType = :programType', { programType: UserProgramTypeEnum.MINHA_CASA })
-      .getMany()
+      });
+    }
 
-
+    return query.getMany();
   }
 async findProfessionalBackoffice(): Promise<UserEntity[]> {
   return this.repository
