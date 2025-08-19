@@ -33,25 +33,22 @@ export class EmployeeBackofficeController {
 
   @Get("")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_AGENTE_PROMOTOR, FunctionTypeEnum.VISUALIZADOR])
-  async list() {
+  @UseGuards(JwtAccessTokenGuard)
+    async list() {
     return await this.service.list();
   }
 
   @Get("by-id/:id")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_AGENTE_PROMOTOR, FunctionTypeEnum.VISUALIZADOR])
-  async getById(@Param('id') id: string) {
+  @UseGuards(JwtAccessTokenGuard)
+    async getById(@Param('id') id: string) {
     return await this.service.getById(id);
   }
 
   @Get("by-id-full/:id")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_AGENTE_PROMOTOR, FunctionTypeEnum.VISUALIZADOR])
-  async getByIdFull(@Param('id') id: string) {
+  @UseGuards(JwtAccessTokenGuard)
+    async getByIdFull(@Param('id') id: string) {
     return await this.service.getByIdFull(id);
   }
 

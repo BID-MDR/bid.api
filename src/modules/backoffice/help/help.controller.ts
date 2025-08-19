@@ -19,7 +19,6 @@ import { JwtPayloadInterface } from 'src/core/interfaces/jwt-payload.interface';
 import { ResponseDto } from 'src/core/dtos/response.dto';
 import { HelpRegisterRequestDto } from 'src/modules/data-interaction/database/dtos/help/register-help.dto';
 import { HelpBackofficeService } from './help.service';
-import { RolesBackofficeGuard } from 'src/core/guards/roles-backoffice.guard';
 import { Roles } from 'src/core/decorators/roles-backoffice.decorator';
 import { FunctionTypeEnum } from '../user/dto/functionTypeEnum';
 
@@ -32,8 +31,8 @@ export class HelpBackofficeController {
 
     @Post('')
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA])
+    @UseGuards(JwtAccessTokenGuard, )
+    
     async register(@Req() req: Request, @Body() dto: HelpRegisterRequestDto) {
         const userId = (req.user as JwtPayloadInterface).userId;
         const help = await this.helpService.register(userId, dto);
@@ -42,8 +41,8 @@ export class HelpBackofficeController {
 
     @Get('get-by-id/:id')
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA, FunctionTypeEnum.VISUALIZADOR])
+    @UseGuards(JwtAccessTokenGuard, )
+    
     async GetById(@Param('id') id: string) {
         const help = await this.helpService.getById(id);
         return new ResponseDto(true, help, false)
@@ -51,8 +50,8 @@ export class HelpBackofficeController {
 
     @Get('')
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA, FunctionTypeEnum.VISUALIZADOR])
+    @UseGuards(JwtAccessTokenGuard, )
+    
     async list() {
         const help = await this.helpService.list();
         return new ResponseDto(true, help, false)
@@ -69,8 +68,8 @@ export class HelpBackofficeController {
 
     @Get('user/:id')
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA, FunctionTypeEnum.VISUALIZADOR])
+    @UseGuards(JwtAccessTokenGuard, )
+    
     async listByUser(@Param('id') id: string) {
         const help = await this.helpService.listByUser(id);
         return new ResponseDto(true, help, false)
@@ -78,8 +77,8 @@ export class HelpBackofficeController {
 
     @Put('update/:id/:status')
     @ApiBearerAuth()
-    // @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    // @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA])
+    // @UseGuards(JwtAccessTokenGuard, )
+    // 
     async updateOpen(@Param('id') id: string, @Param('status') status: string) {
         const help = await this.helpService.updateStatus(id, status);
         return new ResponseDto(true, help, false)
@@ -87,8 +86,8 @@ export class HelpBackofficeController {
 
     @Delete('delete-by-id/:id')
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA])
+    @UseGuards(JwtAccessTokenGuard, )
+    
     async delete(@Param('id') id: string) {
         return await this.helpService.delete(id);
     }
@@ -103,8 +102,7 @@ export class HelpBackofficeController {
 
     @Get('list-mcmv')
     @ApiBearerAuth()
-    @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-    @Roles([FunctionTypeEnum.SOLICITACAO_AJUDA, FunctionTypeEnum.VISUALIZADOR])
+    @UseGuards(JwtAccessTokenGuard, )
     async listMcmv() {
         const help = await this.helpService.listMcmv();
         return new ResponseDto(true, help, false)

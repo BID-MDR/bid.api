@@ -26,7 +26,7 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
       where: { id: _id },
       relations: {
         companyAdministrator: true,
-        address:true,
+        address: true,
         employee: {
           company: true,
           roles: true,
@@ -68,12 +68,12 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
     return this.repository.find({ where: { type: UserTypeEnum.BENEFICIARIO } });
   }
   async listProgramTypeMCMVBENEFICIARIO() {
-    return this.repository.find({ where: { programType: UserProgramTypeEnum.MINHA_CASA, type:UserTypeEnum.BENEFICIARIO } });
+    return this.repository.find({ where: { programType: UserProgramTypeEnum.MINHA_CASA, type: UserTypeEnum.BENEFICIARIO } });
   }
-    async listProgramTypeMCMVPROFESSIONAL() {
-    return this.repository.find({ where: { programType: UserProgramTypeEnum.MINHA_CASA, type:UserTypeEnum.PROFISSIONAL || UserTypeEnum.ARQUITETO } });
+  async listProgramTypeMCMVPROFESSIONAL() {
+    return this.repository.find({ where: { programType: UserProgramTypeEnum.MINHA_CASA, type: UserTypeEnum.PROFISSIONAL || UserTypeEnum.ARQUITETO } });
   }
-    async listProgramTypeREGMEL() {
+  async listProgramTypeREGMEL() {
     return this.repository.find({ where: { programType: UserProgramTypeEnum.REGMEL } });
   }
 
@@ -164,10 +164,10 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
       )
       .setParameters({ longitude, latitude })
       .getRawAndEntities();
-  
+
     const employees = result.entities;
     const rawData = result.raw;
-  
+
     return employees.map((employee, index) => {
       return {
         ...employee,
@@ -199,37 +199,45 @@ export class UserRepository extends BaseRepository<UserEntity, CreateUserDto, Up
 
   async findMonthMcmv(month: number) {
     const now = new Date();
-    const pastDate = addMonths(now, -month);
 
-
-    return this.repository.createQueryBuilder('user')
+    const query = this.repository.createQueryBuilder('user')
       .where('user.type = :type', { type: UserTypeEnum.BENEFICIARIO })
-      .andWhere('user.createdAt BETWEEN :pastDate AND :now', {
+      .andWhere('user.programType = :programType', {
+        programType: UserProgramTypeEnum.MINHA_CASA,
+      });
+
+    if (month && month > 0) {
+      const pastDate = addMonths(now, -month);
+      query.andWhere('user.createdAt BETWEEN :pastDate AND :now', {
         pastDate: pastDate.toISOString(),
         now: now.toISOString(),
-      })
-      .andWhere('user.programType = :programType', { programType: UserProgramTypeEnum.MINHA_CASA })
-      .getMany()
+      });
+    }
+
+    return query.getMany();
 
 
   }
-async findProfessionalBackoffice(): Promise<UserEntity[]> {
-  return this.repository
-    .createQueryBuilder('user')
-    .leftJoinAndSelect('user.address', 'address')
+  async findProfessionalBackoffice(): Promise<UserEntity[]> {
+    return this.repository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.address', 'address')
 
-    .leftJoinAndSelect('user.professionalUserInfo', 'profInfo')
-        .leftJoinAndSelect('profInfo.addresses', 'addresses')
+      .leftJoinAndSelect('user.registerWorkList', 'registerWorkList')
+      .leftJoinAndSelect('registerWorkList.sustainabilityItens', 'sustainabilityItens')
 
-    .where('user.programType = :programType', {
-      programType: UserProgramTypeEnum.MINHA_CASA,
-    })
-    .andWhere('user.type IN (:...types)', {
-      types: [
-        UserTypeEnum.PROFISSIONAL,
-        UserTypeEnum.ARQUITETO,
-      ],
-    })
-    .getMany();
-}
+      .leftJoinAndSelect('user.professionalUserInfo', 'profInfo')
+      .leftJoinAndSelect('profInfo.addresses', 'addresses')
+
+      .where('user.programType = :programType', {
+        programType: UserProgramTypeEnum.MINHA_CASA,
+      })
+      .andWhere('user.type IN (:...types)', {
+        types: [
+          UserTypeEnum.PROFISSIONAL,
+          UserTypeEnum.ARQUITETO,
+        ],
+      })
+      .getMany();
+  }
 }

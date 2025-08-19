@@ -16,7 +16,7 @@ export class CompanyBackofficeController {
 
   @Post("register")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+  @UseGuards(JwtAccessTokenGuard)
   @Roles([FunctionTypeEnum.GERIR_EMPRESAS])
   async register(@Body() dto: CreateCompanyDto) {
     return await this.service.register(dto);
@@ -25,8 +25,7 @@ export class CompanyBackofficeController {
 
   @Get("")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_EMPRESAS, FunctionTypeEnum.VISUALIZADOR])
+  @UseGuards(JwtAccessTokenGuard)
   async list() {
     return await this.service.list();
   }
@@ -40,31 +39,28 @@ export class CompanyBackofficeController {
 
   @Get("by-id/:id")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_EMPRESAS, FunctionTypeEnum.VISUALIZADOR])
+  @UseGuards(JwtAccessTokenGuard)
   async getById(@Param('id') id: string) {
     return await this.service.getById(id);
   }
 
   @Get("by-owner/:id")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_EMPRESAS, FunctionTypeEnum.VISUALIZADOR])
+  @UseGuards(JwtAccessTokenGuard)
   async getByOwner(@Param('id') id: string) {
     return await this.service.getByOwner(id);
   }
 
   @Get("by-employee/:id")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
-  @Roles([FunctionTypeEnum.GERIR_EMPRESAS, FunctionTypeEnum.VISUALIZADOR])
+  @UseGuards(JwtAccessTokenGuard)
   async getByEmployee(@Param('id') id: string) {
     return await this.service.getByEmployee(id);
   }
 
   @Delete("by-id/:id")
   @ApiBearerAuth()
-  @UseGuards(JwtAccessTokenGuard, RolesBackofficeGuard)
+  @UseGuards(JwtAccessTokenGuard)
   @Roles([FunctionTypeEnum.GERIR_EMPRESAS])
   async delete(@Param('id') id: string) {
     return await this.service.delete(id);

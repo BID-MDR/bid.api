@@ -1,18 +1,17 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
+import { SustainabilityItensRequestDto } from "src/modules/data-interaction/database/dtos/work-request/sustainability-itens-request.dto";
+import { TechnicalVisitStatusEnum } from "src/modules/data-interaction/database/enums/technical-visit-status.enum";
+import { TechnicalVisitRepository } from "src/modules/data-interaction/database/repositories/technical-visit.repository";
+import { UserRepository } from "src/modules/data-interaction/database/repositories/user/user.repository";
+import { SustainabilityItensRepository } from "src/modules/data-interaction/database/repositories/work-request/sustainability-itens.repository";
+import { StorageFacade } from "src/modules/data-interaction/facade/apis/storage/storage.facade";
 import { BaseService } from "../../../core/services/base.service";
 import { CreateWorkRequestDto } from "../../data-interaction/database/dtos/work-request/create-work-request.dto";
 import { UpdateWorkRequestDto } from "../../data-interaction/database/dtos/work-request/update-work-request.dto";
 import { WorkRequestEntity } from "../../data-interaction/database/entitites/work-request.entity";
-import { WorkRequestRepository } from "../../data-interaction/database/repositories/work-request/work-request.repository";
-import { DemandRepository } from "../../data-interaction/database/repositories/user/demand.repository";
 import { DemandStatusEnum } from "../../data-interaction/database/enums/demand-status.enum";
-import { TechnicalVisitStatusEnum } from "src/modules/data-interaction/database/enums/technical-visit-status.enum";
-import { SustainabilityItensRequestDto } from "src/modules/data-interaction/database/dtos/work-request/sustainability-itens-request.dto";
-import { SustainabilityItensRepository } from "src/modules/data-interaction/database/repositories/work-request/sustainability-itens.repository";
-import { UserRepository } from "src/modules/data-interaction/database/repositories/user/user.repository";
-import { StorageFacade } from "src/modules/data-interaction/facade/apis/storage/storage.facade";
-import { TechnicalVisitRepository } from "src/modules/data-interaction/database/repositories/technical-visit.repository";
-import { CostEstimateRepository } from "src/modules/data-interaction/database/repositories/costEstimate/costEstimate.repository";
+import { DemandRepository } from "../../data-interaction/database/repositories/user/demand.repository";
+import { WorkRequestRepository } from "../../data-interaction/database/repositories/work-request/work-request.repository";
 import { CostEstimateService } from "../cost-estimate/costEstimate.service";
 import { NotificationMessageService } from "../notification-msg/notification-message.service";
 
@@ -30,9 +29,30 @@ export class WorkRequestService extends BaseService<
     private readonly notificationMsgService: NotificationMessageService,
     private costEstimateRepo: CostEstimateService,
     private sustainabilityItensRepository: SustainabilityItensRepository,
-    private readonly storageFacade: StorageFacade
+    private readonly storageFacade: StorageFacade,
+
   ) {
     super(workRequestRepository);
+  }
+
+  private async attachPicturesFromSelectedFiles(
+    data: CreateWorkRequestDto | UpdateWorkRequestDto,
+  ): Promise<void> {
+    data.pictures = data.pictures ?? [];
+
+    if (Array.isArray((data as any).selectedFiles) && (data as any).selectedFiles.length) {
+      await Promise.all(
+        (data as any).selectedFiles.map(async (picture: { mimeType: string; fileName: string; data: string }) => {
+          const imageUrl = await this.storageFacade.uploadMedia(
+            picture.mimeType,
+            picture.fileName,
+            picture.data,
+          );
+          data.pictures!.push(imageUrl);
+        }),
+      );
+      delete (data as any).selectedFiles;
+    }
   }
 
   async list() {
@@ -47,51 +67,28 @@ export class WorkRequestService extends BaseService<
     return await this.workRequestRepository.getByUserId(userId);
   }
 
-  async register(data: CreateWorkRequestDto, userId: string) {
-    console.log("data", data);
-    const demand = await this.demandRepository.getById2(data.demandId);
-    console.log("demand", demand);
+  async register(data: CreateWorkRequestDto, companyId: string) {
+    console.log('data', data)
+    const demand = await this.demandRepository.findById(data.demandId);
 
-    // if (demand.company && demand.company.id !== companyId)
-    //   throw new BadRequestException("Não autorizado a acessar essa demanda.");
+    if (demand.company && demand.company.id !== companyId) throw new BadRequestException("Não autorizado a acessar essa demanda.");
 
     data.demand = demand;
 
     const result = await super.create(data);
-    const msgDto = {
-      content: `Vistoria realizada. Siga para a fase de projeto de melhoria`,
-    };
-
-    const msgProfessionalDto = {
-      content: `Vistoria realizada. Siga para a fase de projeto de melhoria`,
-    };
-
-    const beneficiaryId = demand.beneficiary.id;
-    if (beneficiaryId) {
-      await this.notificationMsgService.register(beneficiaryId, msgDto);
-    }
-
-    const professional = await this.userRepository.getById(userId);
-    if (professional) {
-      await this.notificationMsgService.register(
-        professional.id,
-        msgProfessionalDto
-      );
-    }
 
     demand.workRequest = result;
     demand.status = DemandStatusEnum.ESPERANDO_MELHORIA;
-
     await demand.save();
 
     return result;
   }
 
   async registerBenefficiary(data: CreateWorkRequestDto, userId: string) {
-    data.pictures = data.pictures || [];
-    data.beneficiary = await this.userRepository.getById(userId);
+    data.pictures = data.pictures || []; 
+    data.beneficiary = await this.userRepository.getById(userId)
 
-    if (data.selectedFiles) {
+    if(data.selectedFiles){
       const uploadedFiles = await Promise.all(
         data.selectedFiles.map(async (picture) => {
           const imageUrl = await this.storageFacade.uploadMedia(
@@ -99,53 +96,42 @@ export class WorkRequestService extends BaseService<
             picture.fileName,
             picture.data
           );
-          data.pictures.push(imageUrl);
+          data.pictures.push(imageUrl)
         })
       );
     }
-
+  
+   
     const result = await super.create(data);
-
     return result;
   }
 
-  async update(
-    workRequestId: string,
-    data: UpdateWorkRequestDto,
-    tecvisitId?: string,
-    userId?: string
-  ) {
-    if (data.selectedFiles) {
-      await Promise.all(
+  async update(workRequestId: string, data: UpdateWorkRequestDto, tecvisitId?:string, userId?:string) {
+
+        if(data.selectedFiles){
+         await Promise.all(
         data.selectedFiles.map(async (picture) => {
           const imageUrl = await this.storageFacade.uploadMedia(
             picture.mimeType,
             picture.fileName,
             picture.data
           );
-          if (!data.pictures) {
-            data.pictures = [];
+          if(!data.pictures){
+            data.pictures = []
           }
-          data.pictures.push(imageUrl);
+          data.pictures.push(imageUrl)
         })
       );
     }
-    const wkRequest = await this.workRequestRepository.updateAll(
-      workRequestId,
-      data
-    );
-    if (tecvisitId) {
-      await this.tecVisitRepository.updateStatusToFinishById(tecvisitId);
+    const wkRequest = await this.workRequestRepository.updateAll(workRequestId, data);
+    if(tecvisitId){
+       await this.tecVisitRepository.updateStatusToFinishById(tecvisitId)
 
-      const professional = await this.userRepository.getById(userId);
-      if (!professional)
-        throw new BadRequestException("Profissional não ecnotnrado!");
-      const costEstimate = await this.costEstimateRepo.create({
-        workRequest: wkRequest,
-        professional: professional,
-      });
+      const professional = await this.userRepository.getById(userId)
+      if(!professional)throw new BadRequestException("Professional not found!");
+     const costEstimate =  await this.costEstimateRepo.create({workRequest: wkRequest, professional: professional})
     }
-    return wkRequest;
+    return wkRequest
   }
 
   async updateStatus(workRequestId: string, status: TechnicalVisitStatusEnum) {
