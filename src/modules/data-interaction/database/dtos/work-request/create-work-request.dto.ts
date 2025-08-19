@@ -1,14 +1,14 @@
 import { ApiProperty } from "@nestjs/swagger";
 import {
-    IsEnum,
-    IsNotEmpty,
-    IsNumber,
-    IsOptional,
-    IsString,
-    IsUUID,
-    Max,
-    Min,
-    ValidateNested,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Max,
+  Min,
+  ValidateNested,
 } from "class-validator";
 import { DemandEntity } from "../../entitites/demand.entity";
 import { KinshipEnum } from "../../enums/kinship.enum";
@@ -24,85 +24,84 @@ import { MediaUploadDto } from "../media/media-upload.dto";
 import { SolvedProblemsEnum } from "../../enums/solved-problems.enum";
 
 class CreateWorkRequestWelfareProgramDto {
-    @ApiProperty({ enum: WelfareProgramEnum })
-    @IsNotEmpty()
-    @IsEnum(WelfareProgramEnum)
-    welfareProgram: WelfareProgramEnum;
+  @ApiProperty({ enum: WelfareProgramEnum })
+  @IsNotEmpty()
+  @IsEnum(WelfareProgramEnum)
+  welfareProgram: WelfareProgramEnum;
 }
 
 export class CreateWorkRequestDto {
-    @ApiProperty()
-    demandId?: string;
-    demand?: DemandEntity;
+  @ApiProperty()
+  demandId?: string;
+  demand?: DemandEntity;
 
-    @ApiProperty()
-    beneficiary?: UserEntity;
+  @ApiProperty()
+  beneficiary?: UserEntity;
 
-    @ApiProperty()
-    @IsString()
-    description: string;
+  @ApiProperty()
+  @IsString()
+  description: string;
 
-    @ApiProperty()
-    @IsString()
-    responsiblePersonName: string;
+  @ApiProperty()
+  @IsString()
+  responsiblePersonName: string;
 
-    @ApiProperty()
-    @IsNumber()
-    @Max(10)
-    @Min(0)
-    @IsNotEmpty()
-    resident: number;
+  @ApiProperty()
+  @IsNumber()
+  @Max(10)
+  @Min(0)
+  @IsNotEmpty()
+  resident: number;
 
-    @ApiProperty()
-    @IsNotEmpty()
-    @IsEnum(KinshipEnum)
-    kinship: KinshipEnum;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsEnum(KinshipEnum)
+  kinship: KinshipEnum;
 
-    @ApiProperty()
-    @IsNotEmpty()
-    @IsEnum(PropertyTypeEnum)
-    propertyType: PropertyTypeEnum;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsEnum(PropertyTypeEnum)
+  propertyType: PropertyTypeEnum;
 
-    @ApiProperty({ required: false, enum: HouseTypeEnum, nullable: true })
-    houseType?: HouseTypeEnum | null;
+  @ApiProperty({ required: false, enum: HouseTypeEnum, nullable: true })
+  houseType?: HouseTypeEnum | null;
 
-    @ApiProperty()
-    @IsNotEmpty()
-    @IsEnum(FlooringEnum)
-    flooring: FlooringEnum;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsEnum(FlooringEnum)
+  flooring: FlooringEnum;
 
-    @ApiProperty()
-    @IsNotEmpty()
-    @IsEnum(PrevalingConstructionMaterialsEnum)
-    prevailingConstructionMaterials: PrevalingConstructionMaterialsEnum;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsEnum(PrevalingConstructionMaterialsEnum)
+  prevailingConstructionMaterials: PrevalingConstructionMaterialsEnum;
 
-    @ApiProperty()
-    othersMaterials?: string;
+  @ApiProperty()
+  othersMaterials?: string;
 
-    @ApiProperty({ type: CreateWorkRequestWelfareProgramDto, isArray: true })
-    @ValidateNested({ each: true })
-    @Type(() => CreateWorkRequestWelfareProgramDto)
-    welfare: CreateWorkRequestWelfareProgramDto[];
+  @ApiProperty({ type: CreateWorkRequestWelfareProgramDto, isArray: true })
+  @ValidateNested({ each: true })
+  @Type(() => CreateWorkRequestWelfareProgramDto)
+  welfare: CreateWorkRequestWelfareProgramDto[];
 
-    @ApiProperty({ type: CreateRoomDto, isArray: true })
-    @ValidateNested({ each: true })
-    @Type(() => CreateRoomDto)
-    room: CreateRoomDto[];
+  @ApiProperty({ type: CreateRoomDto, isArray: true })
+  @ValidateNested({ each: true })
+  @Type(() => CreateRoomDto)
+  room: CreateRoomDto[];
 
+  @ApiProperty({ type: [MediaUploadDto] })
+  @ValidateNested()
+  @Type(() => MediaUploadDto)
+  selectedFiles?: MediaUploadDto[];
 
-    @ApiProperty({ type: [MediaUploadDto] })
-    @ValidateNested()
-    @Type(() => MediaUploadDto)
-    selectedFiles?: MediaUploadDto[];
-    
+  pictures?: string[];
 
-    pictures?: string[];
+  @ApiProperty({ type: CreateRoomDto, isArray: true })
+  @ValidateNested({ each: true })
+  @Type(() => CreateRoomDto)
+  improvementRoom?: CreateRoomDto[];
 
-    @ApiProperty({ type: CreateRoomDto, isArray: true })
-    @ValidateNested({ each: true })
-    @Type(() => CreateRoomDto)
-    improvementRoom?: CreateRoomDto[];
-      
-    @ApiProperty({ isArray: true, enum: SolvedProblemsEnum })
-    solvedProblems?: SolvedProblemsEnum[];
+  @ApiProperty({ isArray: true, enum: SolvedProblemsEnum })
+  solvedProblems?: SolvedProblemsEnum[];
+  professional: any;
 }

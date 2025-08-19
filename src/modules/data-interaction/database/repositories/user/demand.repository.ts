@@ -240,11 +240,12 @@ export class DemandRepository extends BaseRepository<
       .leftJoinAndSelect("demand.workRequest", "workRequest")
       .leftJoinAndSelect("demand.sustainabilityItens", "sustainabilityItens")
       .leftJoinAndSelect("demand.technicalVisit", "technicalVisit")
+      .leftJoinAndSelect("technicalVisit.professional", "professional")
       .leftJoinAndSelect("demand.construction", "constructions")
       .leftJoinAndSelect("workRequest.room", "room")
       .leftJoinAndSelect("workRequest.welfare", "welfare")
       .leftJoinAndSelect("room.roomSolutions", "roomSolution")
       .leftJoinAndSelect("roomSolution.picturesAndVideos", "pictures")
-      .leftJoinAndSelect("roomSolution.picturesAndVideosConclusion", "picturesConclusion")
+      .leftJoinAndSelect("roomSolution.picturesAndVideosConclusion", "picturesConclusion");
   }
 }

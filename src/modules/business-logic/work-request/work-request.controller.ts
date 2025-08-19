@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Logger, Param, Post, Put, Req, SerializeOptions, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Logger,
+  Param,
+  Post,
+  Put,
+  Req,
+  SerializeOptions,
+  UseGuards,
+} from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { Roles } from "../../../core/decorators/roles.decorator";
 import { ApiOkResponseDtoData } from "../../../core/decorators/swagger/api-ok-response-dto.decorator";
@@ -18,7 +29,7 @@ import { FeatureUserService } from "../feature-user/feature-user.service";
 @ApiTags("Work Request/Vistoria")
 export class WorkRequestController {
   private readonly _logger = new Logger(WorkRequestController.name);
-  constructor(private service: WorkRequestService) { }
+  constructor(private service: WorkRequestService) {}
 
   @Get("")
   // @ApiBearerAuth()
@@ -40,7 +51,6 @@ export class WorkRequestController {
 
   @Get("id/:id")
   @ApiBearerAuth()
-
   async getById(@Param("id") id: string) {
     return await this.service.getById(id);
   }
@@ -56,7 +66,6 @@ export class WorkRequestController {
     const userId = (req.user as JwtPayloadInterface).userId;
     return await this.service.getByUser(userId);
   }
-
 
   @Get("find/byBeneficiaryId/id/:id")
   @ApiBearerAuth()
@@ -87,8 +96,8 @@ export class WorkRequestController {
     description: "Construção a ser criado.",
   })
   async create(@Body() dto: CreateWorkRequestDto, @Req() req: Request) {
-    const companyId = (req.user as JwtPayloadInterface).companyId;
-    return await this.service.register(dto, companyId);
+    const userId = (req.user as JwtPayloadInterface).userId;
+    return await this.service.register(dto, userId);
   }
 
   @Post("beneficiary")
@@ -108,7 +117,10 @@ export class WorkRequestController {
     required: true,
     description: "Construção a ser criado.",
   })
-  async createBeneficiary(@Body() dto: CreateWorkRequestDto, @Req() req: Request) {
+  async createBeneficiary(
+    @Body() dto: CreateWorkRequestDto,
+    @Req() req: Request
+  ) {
     const userId = (req.user as JwtPayloadInterface).userId;
     return await this.service.registerBenefficiary(dto, userId);
   }
@@ -186,20 +198,25 @@ export class WorkRequestController {
     type: SustainabilityItensRequestDto,
     required: true,
   })
-  async createSustainabilityItens(@Body() dto: SustainabilityItensRequestDto, @Req() req: Request, @Param('workRequestId') workRequestId: string) {
+  async createSustainabilityItens(
+    @Body() dto: SustainabilityItensRequestDto,
+    @Req() req: Request,
+    @Param("workRequestId") workRequestId: string
+  ) {
     const userId = (req.user as JwtPayloadInterface).companyId;
-    return await this.service.createSustainabilityItens(dto, userId, workRequestId);
+    return await this.service.createSustainabilityItens(
+      dto,
+      userId,
+      workRequestId
+    );
   }
 
   @Get("look-for-beneficiary")
   @ApiBearerAuth()
   @UseGuards(JwtAccessTokenGuard)
-
-  async getLookForBeneficiary( @Req() req: Request) {
+  async getLookForBeneficiary(@Req() req: Request) {
     const userId = (req.user as JwtPayloadInterface).userId;
-   
-    return await this.service.findNearbyBeneficiary(userId)
 
+    return await this.service.findNearbyBeneficiary(userId);
   }
-
 }
