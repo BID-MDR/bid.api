@@ -30,7 +30,7 @@ export class FeatureTechnicalVisitService extends BaseService<
         private workRequestRepository: WorkRequestRepository,
         private registerWorkRepo: RegisterWorkRepository,
         private contractRepository: ContractRepository,
-        private notifcationMsgService: NotificationMessageService,
+        private notificationMsgService: NotificationMessageService,
         private improvementProjectRepo: ImprovementProjectRepository,
         private unaVailabilityRepo: UnavailabilityRepository
     ) {
@@ -195,15 +195,39 @@ export class FeatureTechnicalVisitService extends BaseService<
                 }
             if(dto.msgType === 'PROJETO_DE_MELHORIA') {
                 msg.content = `${professional.name} solicitou a entrega e assinatura do contrato para o dia ${dto.to}`
-                await this.notifcationMsgService.register(beneficiary.id, msg)
+                await this.notificationMsgService.register(beneficiary.id, msg)
+
+            } else if (dto.msgType === 'VISITA_TECNICA') {
+                msg.content = `${professional.name} solicitou uma visita técnica para as ${dto.to}`
+                await this.notificationMsgService.register(beneficiary.id, msg)
 
             } else if (dto.msgType === 'CADASTRO_DE_OBRA') {
                 msg.content = `${professional.name} solicitou o cadastro da obra para o dia ${dto.to}`
-                await this.notifcationMsgService.register(beneficiary.id, msg)
+                await this.notificationMsgService.register(beneficiary.id, msg)
 
             } else if (dto.msgType === 'CONCLUSÃO_DE_OBRA') {
                 msg.content = `${professional.name} solicitou a conclusão da obra para o dia${dto.to}`
-                await this.notifcationMsgService.register(beneficiary.id, msg)
+                await this.notificationMsgService.register(beneficiary.id, msg)
+
+            }else {
+                throw new NotFoundException('To send a msg sucessfuly, property msgType must be  CADASTRO_DE_OBRA , CONCLUSÃO_DE_OBRA or PROJETO_DE_MELHORIA')
+            }
+            }
+            else if (professional) {
+                const msg = {
+                    content: ''
+                }
+            if (dto.msgType === 'VISITA_TECNICA') {
+                msg.content = `${beneficiary.name} solicitou uma visita técnica para as ${dto.to}`
+                await this.notificationMsgService.register(beneficiary.id, msg)
+
+            } else if (dto.msgType === 'CADASTRO_DE_OBRA') {
+                msg.content = `${professional.name} solicitou o cadastro da obra para o dia ${dto.to}`
+                await this.notificationMsgService.register(beneficiary.id, msg)
+
+            } else if (dto.msgType === 'CONCLUSÃO_DE_OBRA') {
+                msg.content = `${professional.name} solicitou a conclusão da obra para o dia${dto.to}`
+                await this.notificationMsgService.register(beneficiary.id, msg)
 
             }else {
                 throw new NotFoundException('To send a msg sucessfuly, property msgType must be  CADASTRO_DE_OBRA , CONCLUSÃO_DE_OBRA or PROJETO_DE_MELHORIA')

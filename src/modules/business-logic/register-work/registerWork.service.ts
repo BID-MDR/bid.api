@@ -41,11 +41,21 @@ export class RegisterWorkService extends BaseService<RegisterWorkEntity, Registe
     return await this.repository.getByWorkRequestId(workRequestId);
   }
   async updateByWorkRequestId(workRequestId: string, dto: UpdateRegisterWorkDto) {
+    console.log(dto);
     const registerWork = await this.repository.getByWorkRequestId(workRequestId);
-    return await this.repository.updateTypeAreaDesc(registerWork.id, dto.type, dto.area, dto.description)
-     
+     if(!registerWork.workRequest.beneficiary) throw new NotFoundException('Beneficary not found, notification not sended!')
+        const msg = {
+          content:
+          'Obra cadastrada com sucesso. Aguarde a realização da obra para seguir para a conclusão',
+        };
+        await Promise.all([
+          this.notiMsgService.register(registerWork.workRequest.beneficiary.id, msg),
+          this.notiMsgService.register(registerWork.professional.id, msg),
+        ]);
+        return await this.repository.updateTypeAreaDesc(registerWork.id, dto.type, dto.area, dto.description);
   }
-  async createSustainabilityItens(dto: SustainabilityItensRequestDto, registerWorkId: string) {
+
+   async createSustainabilityItens(dto: SustainabilityItensRequestDto, registerWorkId: string) {
     const registerWK = await this.repository.getByWorkRequestId(registerWorkId);
     const request = await this.sustainabilityItensRepository.create(dto);
     registerWK.sustainabilityItens = request;
@@ -85,8 +95,7 @@ async getByBeneficary(beneficaryId: string) {
   return result;
 }
 
-
-  async register(data: RegisterWorkCreateDto) {
+ async register(data: RegisterWorkCreateDto) {
     const workRequest = await this.workRequestRepo.findByIdAndBringBeneficiary(data.workRequestId)
     if (!workRequest) throw new NotFoundException('WorkRequest not found!')
       data.workRequest = workRequest
@@ -102,31 +111,25 @@ async getByBeneficary(beneficaryId: string) {
     data.professional = professional
   
     const registerWork =  await this.repository.create(data)
-    if(data.regmelOuMinhaCasa && data.regmelOuMinhaCasa !== '') {
-      if(!workRequest.beneficiary) throw new NotFoundException('Beneficary not found, notification not sended!')
-        const msg = {
-        content: ''
-      }
-        if(data.regmelOuMinhaCasa === 'MINHA_CASA') {
-          msg.content = `Confirmação de entrega e assinatura do projeto de melhoria e cronograma físico-financeiro. Siga para a fase de cadastro de obra`
-          await this.notiMsgService.register(workRequest.beneficiary.id, msg)
-          await this.notiMsgService.register(professional.id, msg)
 
-        } else if (data.regmelOuMinhaCasa === 'REGMEL') {
-        msg.content = `Confirmação de entrega e assinatura do projeto de melhoria. Siga para a fase de cadastro de obra`
-        await this.notiMsgService.register(workRequest.beneficiary.id, msg)
-        await this.notiMsgService.register(professional.id, msg)
-
-      } else {
-        throw new NotFoundException('To send a msg sucessfuly, property regmelOuMinhaCasa must be  MINHA_CASA or REGMEL')
-      }
-    }
-    return registerWork
+    if (!workRequest.beneficiary) {
+    throw new NotFoundException('Beneficiary not found, notification not sent!');
   }
 
- 
+  const msg = {
+    content:
+      'Confirmação de entrega e assinatura do projeto. Siga para a fase de cadastro de obra',
+  };
 
-  async update(interventionId: string, data: RegisterWorkCreateDto) {
+  await Promise.all([
+    this.notiMsgService.register(workRequest.beneficiary.id, msg),
+    this.notiMsgService.register(professional.id, msg),
+  ]);
+
+  return registerWork;
+}
+
+async update(interventionId: string, data: RegisterWorkCreateDto) {
     if (data.workRequestId) {
       const workRequest = await this.workRequestRepo.findById(data.workRequestId)
       if (!workRequest) throw new NotFoundException('Work request not found!')
@@ -147,6 +150,7 @@ async getByBeneficary(beneficaryId: string) {
     }
     return await super.update(interventionId, data);
   }
+
 
   async finishRegisterWork(registerWorkId: string, data: RegisterWorkFinishDto) {
     const registerWork = await this.repository.findById(registerWorkId)
