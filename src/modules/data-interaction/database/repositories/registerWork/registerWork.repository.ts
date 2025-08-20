@@ -29,9 +29,17 @@ export class RegisterWorkRepository extends BaseRepository<
     });
   }
   async getByWorkRequestId(workRequestId: string): Promise<RegisterWorkEntity> {
-    return this.repository.findOne({
-      where: { workRequest: { id: workRequestId } },
-    });
+    return this.repository
+      .createQueryBuilder('registerWork')
+      .leftJoinAndSelect('registerWork.workRequest', 'workRequest')
+      .leftJoinAndSelect('registerWork.professional', 'professional')
+      .leftJoinAndSelect('workRequest.beneficiary', 'beneficiary')
+      .leftJoinAndSelect('beneficiary.address', 'address')
+      .leftJoinAndSelect('workRequest.contracts', 'contract')
+      .leftJoinAndSelect('workRequest.contractResignedList', 'contractResignedList')
+      .leftJoinAndSelect('workRequest.room', 'room')
+      .where('workRequest.id = :workRequestId', { workRequestId })
+      .getOne();
   }
   async find(): Promise<RegisterWorkEntity[]> {
     return await this.repository.find({
