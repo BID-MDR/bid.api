@@ -79,8 +79,10 @@ export class DemandService extends BaseService<
     return await this.demandRepository.getByWorkRequestId(workRequestId);
   }
 
-  async updateStatus(id: string, dto: StatusDemandDto) {
+  async updateStatus(id: string, dto: StatusDemandDto, userId: string) {
     const demand = await this.demandRepository.getById(id);
+    console.log(demand);
+    const professional = await this.userRepository.getById(userId);
 
     const { status } = dto;
 
@@ -121,6 +123,21 @@ export class DemandService extends BaseService<
     this.checkStatusForConstruction(demand, status);
 
     demand.status = status;
+
+      const msgDto = {
+        content: `${professional.name} cadastrou intervenções da sua obra de melhoria. Visualize em Projetos de Melhoria`,
+      };
+
+      const msgProfessionalDto = {
+        content: `Você cadastrou intervenções para ${demand.beneficiary.name}. Confirme a entrega do projeto em Projetos de Melhoria`,
+      };
+      await this.notificationMsgService.register(demand.beneficiary.id, msgDto);
+
+      await this.notificationMsgService.register(
+        professional.id,
+        msgProfessionalDto
+      );
+
     return await demand.save({ reload: true });
   }
 
@@ -150,12 +167,13 @@ export class DemandService extends BaseService<
       }
 
       const demand = await super.create(data);
+      
       const msgDto = {
-        content: `${professional.name} cadastrou seu CPF e será responsável pela sua obra de melhoria`,
+        content: `${professional.name} cadastrou seu CPF e será responsável pela sua obra de melhoria. Siga para a fase de Vistoria`,
       };
 
       const msgProfessionalDto = {
-        content: `Você cadastrou uma demanda para ${data.beneficiary.name}`,
+        content: `Você cadastrou uma demanda para ${data.beneficiary.name}. Siga para a fase de Vistoria`,
       };
       await this.notificationMsgService.register(data.beneficiary.id, msgDto);
 
@@ -196,11 +214,11 @@ export class DemandService extends BaseService<
 
       const demand = await super.create(data);
       const msgDto = {
-        content: `${professional.name} cadastrou seu CPF e será responsável pela sua obra de melhoria`,
+        content: `${professional.name} cadastrou seu CPF e será responsável pela sua obra de melhoria. Siga para a fase de Vistoria`,
       };
 
       const msgProfessionalDto = {
-        content: `Você cadastrou uma demanda para ${data.beneficiary.name}`,
+        content: `Você cadastrou uma demanda para ${data.beneficiary.name}. Siga para a fase de Vistoria`,
       };
       await this.notificationMsgService.register(data.beneficiary.id, msgDto);
 

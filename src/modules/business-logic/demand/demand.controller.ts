@@ -96,8 +96,9 @@ export class DemandController {
     @Put("changeStatus/:id")
     @ApiBearerAuth()
     @UseGuards(JwtAccessTokenGuard)
-    async changeStatus(@Param("id") id: string, @Body() status: StatusDemandDto) {
-        return await this.demandService.updateStatus(id, status);
+    async changeStatus(@Param("id") id: string, @Body() status: StatusDemandDto, @Req() req: Request) {
+        const userId = (req.user as JwtPayloadInterface).userId;
+        return await this.demandService.updateStatus(id, status, userId);
     }
 
     @Get("visit")

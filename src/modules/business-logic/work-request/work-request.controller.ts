@@ -97,7 +97,8 @@ export class WorkRequestController {
   })
   async create(@Body() dto: CreateWorkRequestDto, @Req() req: Request) {
     const userId = (req.user as JwtPayloadInterface).userId;
-    return await this.service.register(dto, userId);
+    const companyId = (req.user as JwtPayloadInterface).companyId;
+    return await this.service.register(dto, companyId, userId);
   }
 
   @Post("beneficiary")
