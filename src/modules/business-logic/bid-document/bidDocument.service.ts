@@ -37,7 +37,7 @@ export class BidDocumentService extends BaseService<BidDocumentEntity, BidDocume
   if (data.professionalId) {
     const prof = await this.userRepo.findById(data.professionalId)
     const msg = {
-      content: `O profissional ${prof.name} enviou o documento ${data.type}`
+      content: `Documento ${data.type} enviado`
     }
     await this.notificationMsgService.register(prof.id, msg)
     delete data.professionalId
